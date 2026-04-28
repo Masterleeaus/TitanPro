@@ -21,6 +21,9 @@ class StripeController extends Controller
 
         $invoice->load('lineItems', 'customer');
 
+        $customer = $invoice->customer;
+        abort_if($customer === null || empty($customer->email), 422, 'Invoice has no customer email');
+
         $lineItems = $invoice->lineItems->map(fn ($li) => [
             'price_data' => [
                 'currency'     => 'usd',
@@ -33,7 +36,7 @@ class StripeController extends Controller
         // If totals don't map cleanly to line items (tax/discount), use a single line item for the balance
         $session = CheckoutSession::create([
             'mode'                => 'payment',
-            'customer_email'      => $invoice->customer?->email ?? null,
+            'customer_email'      => $customer->email,
             'line_items'          => $lineItems ?: [[
                 'price_data' => [
                     'currency'     => 'usd',
