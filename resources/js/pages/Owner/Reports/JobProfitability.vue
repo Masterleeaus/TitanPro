@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OwnerLayout from '@/layouts/OwnerLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -42,9 +43,7 @@ function formatCurrency(val: number): string {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 }
 
-function formatDate(d: string | null): string {
-    return d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-}
+const { formatDate } = useDate();
 
 const totals = computed(() => ({
     revenue: props.jobs.reduce((s, j) => s + j.revenue, 0),
