@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TechnicianLayout from '@/layouts/TechnicianLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, reactive, ref } from 'vue';
 
@@ -383,13 +384,7 @@ function saveCustomerNotes() {
     });
 }
 
-function formatDate(dt: string | null): string {
-    if (!dt) return '—';
-    return new Date(dt).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit',
-    });
-}
+const { formatDateTime } = useDate();
 
 function formatTime(dt: string | null): string {
     if (!dt) return '—';
@@ -523,19 +518,19 @@ const timeline = computed(() => {
                     </div>
                     <div class="flex justify-between px-4 py-3">
                         <dt class="text-slate-500">Scheduled</dt>
-                        <dd class="font-medium text-slate-800">{{ formatDate(job.scheduled_at) }}</dd>
+                        <dd class="font-medium text-slate-800">{{ formatDateTime(job.scheduled_at) }}</dd>
                     </div>
                     <div v-if="job.arrived_at" class="flex justify-between px-4 py-3">
                         <dt class="text-slate-500">Arrived</dt>
-                        <dd class="font-medium text-slate-800">{{ formatDate(job.arrived_at) }}</dd>
+                        <dd class="font-medium text-slate-800">{{ formatDateTime(job.arrived_at) }}</dd>
                     </div>
                     <div v-if="job.started_at" class="flex justify-between px-4 py-3">
                         <dt class="text-slate-500">Started</dt>
-                        <dd class="font-medium text-slate-800">{{ formatDate(job.started_at) }}</dd>
+                        <dd class="font-medium text-slate-800">{{ formatDateTime(job.started_at) }}</dd>
                     </div>
                     <div v-if="job.completed_at" class="flex justify-between px-4 py-3">
                         <dt class="text-slate-500">Completed</dt>
-                        <dd class="font-medium text-green-700">{{ formatDate(job.completed_at) }}</dd>
+                        <dd class="font-medium text-green-700">{{ formatDateTime(job.completed_at) }}</dd>
                     </div>
                 </dl>
             </div>

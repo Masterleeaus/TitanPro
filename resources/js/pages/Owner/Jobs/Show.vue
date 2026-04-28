@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OwnerLayout from '@/layouts/OwnerLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 
 interface Invoice {
@@ -79,13 +80,7 @@ function changeStatus(newStatus: string) {
     statusForm.patch(`/owner/jobs/${props.job.id}/status`);
 }
 
-function formatDate(dt: string | null): string {
-    if (!dt) return '—';
-    return new Date(dt).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit',
-    });
-}
+const { formatDateTime } = useDate();
 
 function cancelJob() {
     if (confirm('Cancel this job?')) {
@@ -201,15 +196,15 @@ function cancelJob() {
                         </div>
                         <div class="flex justify-between px-5 py-3 text-sm">
                             <dt class="text-slate-500">Scheduled</dt>
-                            <dd class="font-medium text-slate-800">{{ formatDate(job.scheduled_at) }}</dd>
+                            <dd class="font-medium text-slate-800">{{ formatDateTime(job.scheduled_at) }}</dd>
                         </div>
                         <div v-if="job.started_at" class="flex justify-between px-5 py-3 text-sm">
                             <dt class="text-slate-500">Started</dt>
-                            <dd class="font-medium text-slate-800">{{ formatDate(job.started_at) }}</dd>
+                            <dd class="font-medium text-slate-800">{{ formatDateTime(job.started_at) }}</dd>
                         </div>
                         <div v-if="job.completed_at" class="flex justify-between px-5 py-3 text-sm">
                             <dt class="text-slate-500">Completed</dt>
-                            <dd class="font-medium text-green-700">{{ formatDate(job.completed_at) }}</dd>
+                            <dd class="font-medium text-green-700">{{ formatDateTime(job.completed_at) }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -270,7 +265,7 @@ function cancelJob() {
                                     <p class="mt-1 truncate text-xs text-slate-500">To: {{ msg.recipient }}</p>
                                     <p v-if="msg.error" class="mt-0.5 text-xs text-red-500">{{ msg.error }}</p>
                                 </div>
-                                <span class="shrink-0 text-xs text-slate-400">{{ formatDate(msg.created_at) }}</span>
+                                <span class="shrink-0 text-xs text-slate-400">{{ formatDateTime(msg.created_at) }}</span>
                             </div>
                         </div>
                     </div>
