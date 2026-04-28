@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * TenantMetrics — tenant-aware query helpers scoped to the current user's
- * organisation. All methods respect the organization_id of the authenticated
- * user and return zero / empty results when no organisation context exists.
+ * organization. All methods respect the organization_id of the authenticated
+ * user and return zero / empty results when no organization context exists.
  *
  * This complements CleaningAdminMetrics, providing lightweight helpers that
  * can be consumed directly from Filament widgets without pulling in the full
@@ -27,7 +27,7 @@ class TenantMetrics
     }
 
     /**
-     * Scope an Eloquent query to the current tenant's organisation.
+     * Scope an Eloquent query to the current tenant's organization.
      *
      * @template TModel of \Illuminate\Database\Eloquent\Model
      * @param  Builder<TModel>  $query
