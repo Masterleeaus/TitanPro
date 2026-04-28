@@ -1,0 +1,14 @@
+{
+  "schema": "titan.database.manifest.v1",
+  "owned_tables": [
+    "crmcore_activity_logs"
+  ],
+  "external_tables": [
+    "client_details",
+    "users",
+    "leads",
+    "deals",
+    "projects",
+    "products"
+  ]
+}

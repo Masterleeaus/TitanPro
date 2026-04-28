@@ -1,0 +1,8 @@
+{
+  "schema": "titan.migrations.manifest.v1",
+  "active": [
+    "2026_04_28_000001_create_crmcore_activity_logs_table.php"
+  ],
+  "legacy_preserved": "_legacy_original_migrations",
+  "safe_idempotent": true
+}

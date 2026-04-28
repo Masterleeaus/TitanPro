@@ -1,0 +1,7 @@
+{
+  "schema": "titan.search.manifest.v1",
+  "indexes": [
+    "crmcore_pipeline",
+    "crmcore_original_archive"
+  ]
+}

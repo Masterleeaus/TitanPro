@@ -1,0 +1,17 @@
+{
+  "schema": "titan.module.manifest.v1",
+  "name": "CRMCore",
+  "type": "fullfat-bridge-extension",
+  "preserves_original_source": true,
+  "original_source_path": "Modules/CRMCore/_original_source",
+  "owns": [
+    "crmcore_activity_logs"
+  ],
+  "bridges": [
+    "App\\Models\\Customer",
+    "Modules\\CRMCore\\Models\\Lead",
+    "Modules\\CRMCore\\Models\\Deal",
+    "App\\Models\\Job",
+    "App\\Models\\Item"
+  ]
+}

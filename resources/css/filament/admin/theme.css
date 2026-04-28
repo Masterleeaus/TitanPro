@@ -1,0 +1,24 @@
+/*
+ * Only override text colour for button variants whose background is too light
+ * to show white text.  Do NOT add a global .fi-btn rule — doing so forces
+ * white text on outlined / ghost buttons (white text on white background) and
+ * breaks the CSS-variable overrides used by shadcn/openplain themes.
+ */
+
+.fi-btn-color-gray,
+.fi-btn-color-gray .fi-btn-label,
+.fi-btn-color-gray span {
+    color: #111827 !important;
+}
+
+.dark .fi-btn-color-gray,
+.dark .fi-btn-color-gray .fi-btn-label,
+.dark .fi-btn-color-gray span {
+    color: #f9fafb !important;
+}
+
+.fi-btn-color-white,
+.fi-btn-color-white .fi-btn-label,
+.fi-btn-color-white span {
+    color: #111827 !important;
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "titan.navigation.manifest.v1",
+  "groups": [
+    {
+      "label": "CRM Core",
+      "items": [
+        "CRM Overview",
+        "Client Pipeline",
+        "Lead Scoring",
+        "Deal \u2192 Project"
+      ]
+    },
+    {
+      "label": "CRM Automation",
+      "items": [
+        "Activity Log"
+      ]
+    }
+  ]
+}

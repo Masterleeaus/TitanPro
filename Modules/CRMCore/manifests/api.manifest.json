@@ -1,0 +1,8 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "resources": [
+    "pipeline-summary",
+    "deal-conversion",
+    "original-source-index"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "schema": "titan.tenancy.manifest.v1",
+  "company_key": "company_id"
+}

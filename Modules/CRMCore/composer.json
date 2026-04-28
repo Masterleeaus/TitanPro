@@ -1,0 +1,19 @@
+{
+    "name": "modules/crmcore",
+    "description": "Full-fat Titan CRMCore module for Filament v4 upgraded site.",
+    "type": "laravel-module",
+    "autoload": {
+        "psr-4": {
+            "Modules\\CRMCore\\": ""
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\CRMCore\\Providers\\ModuleServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

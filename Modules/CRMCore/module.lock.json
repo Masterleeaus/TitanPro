@@ -1,0 +1,8 @@
+{
+  "schema": "titan.module.lock.v1",
+  "locked": true,
+  "generated_at": "2026-04-27T20:59:42.687609+00:00",
+  "original_files_preserved": 172,
+  "active_original_migrations": false,
+  "reason_original_migrations_inactive": "Upgraded site already contains Worksuite CRM tables such as leads, deals, companies, lead_sources."
+}

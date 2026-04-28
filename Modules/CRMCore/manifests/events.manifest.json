@@ -1,0 +1,12 @@
+{
+  "schema": "titan.events.manifest.v1",
+  "emits": [
+    "crmcore.lead.scored",
+    "crmcore.deal.converted_to_project"
+  ],
+  "consumes": [
+    "worksuite.lead.created",
+    "worksuite.deal.won",
+    "worksuite.project.completed"
+  ]
+}

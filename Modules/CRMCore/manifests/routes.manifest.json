@@ -1,0 +1,9 @@
+{
+  "schema": "titan.routes.manifest.v1",
+  "routes": [
+    "web",
+    "api",
+    "internal",
+    "tenant"
+  ]
+}
