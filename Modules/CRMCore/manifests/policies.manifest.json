@@ -1,0 +1,6 @@
+{
+  "schema": "titan.policies.manifest.v1",
+  "policies": [
+    "CRMCorePolicy"
+  ]
+}

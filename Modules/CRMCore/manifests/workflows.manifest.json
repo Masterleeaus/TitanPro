@@ -1,0 +1,6 @@
+{
+  "schema": "titan.workflows.manifest.v1",
+  "workflows": [
+    "DealToProjectWorkflow"
+  ]
+}

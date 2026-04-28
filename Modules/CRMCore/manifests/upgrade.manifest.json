@@ -1,0 +1,8 @@
+{
+  "schema": "titan.upgrade.manifest.v1",
+  "hooks": [
+    "PreserveOriginalSource",
+    "EnsureActivityLogTable"
+  ],
+  "legacy_original_migrations": "_legacy_original_migrations"
+}

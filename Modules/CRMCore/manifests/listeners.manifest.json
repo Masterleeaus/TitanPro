@@ -1,0 +1,7 @@
+{
+  "schema": "titan.listeners.manifest.v1",
+  "listeners": [
+    "RecordDealConvertedToProject",
+    "RecordLeadScored"
+  ]
+}

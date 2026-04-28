@@ -1,0 +1,9 @@
+{
+  "schema": "titan.ai.manifest.v1",
+  "tools": [
+    "client_pipeline_context",
+    "deal_project_advisor",
+    "service_interest_matcher",
+    "original_crmcore_context"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "schema": "titan.ui.manifest.v1",
+  "filament_plugin": "Modules\\CRMCore\\Filament\\Plugin\\CRMCorePlugin",
+  "filament": "^4.0"
+}

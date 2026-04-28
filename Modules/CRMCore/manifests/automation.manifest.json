@@ -1,0 +1,12 @@
+{
+  "schema": "titan.automation.manifest.v1",
+  "triggers": [
+    "DealWonTrigger"
+  ],
+  "handlers": [
+    "CreateProjectForWonDealHandler"
+  ],
+  "pipelines": [
+    "DealToProjectPipeline"
+  ]
+}
