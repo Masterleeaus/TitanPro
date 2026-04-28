@@ -86,7 +86,7 @@ class JobController extends Controller
         abort_unless(
             in_array($request->status, Job::allowedTransitions()[$job->status] ?? []),
             422,
-            'Invalid status transition'
+            "Cannot transition job from '{$job->status}' to '{$request->status}'"
         );
 
         $timestamps = match ($request->status) {

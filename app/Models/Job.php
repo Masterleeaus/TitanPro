@@ -90,6 +90,16 @@ class Job extends Model
         ];
     }
 
+    /**
+     * Returns the valid status transitions for each job state.
+     *
+     * The technician lifecycle follows: SCHEDULED → EN_ROUTE → IN_PROGRESS → COMPLETED
+     * with optional intermediate states (ASSIGNED, ARRIVED, QUALITY_CHECK) and
+     * a pause state (ON_HOLD) that allows resuming from several points.
+     * Shortcuts like SCHEDULED → IN_PROGRESS are permitted for technicians who
+     * skip the en-route/arrived steps. Terminal states (COMPLETED, INVOICED, PAID,
+     * CANCELLED) have no outbound transitions available to technicians.
+     */
     public static function allowedTransitions(): array
     {
         return [
