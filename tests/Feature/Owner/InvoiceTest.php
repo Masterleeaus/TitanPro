@@ -168,6 +168,45 @@ test('user can send a draft invoice', function () {
 
     expect($invoice->fresh()->status)->toBe(Invoice::STATUS_SENT);
     expect($invoice->fresh()->sent_at)->not->toBeNull();
+    expect($invoice->fresh()->send_count)->toBe(1);
+});
+
+test('user can re-send a sent invoice', function () {
+    [$user, $org, $customer] = invoiceSetup();
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create();
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/send")
+        ->assertRedirect();
+
+    expect($invoice->fresh()->status)->toBe(Invoice::STATUS_SENT);
+    expect($invoice->fresh()->send_count)->toBe(2);
+});
+
+test('user can re-send an overdue invoice', function () {
+    [$user, $org, $customer] = invoiceSetup();
+    $invoice = Invoice::factory()->forCustomer($customer)->overdue()->create();
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/send")
+        ->assertRedirect();
+
+    expect($invoice->fresh()->status)->toBe(Invoice::STATUS_SENT);
+    expect($invoice->fresh()->send_count)->toBe(2);
+});
+
+test('send_count increments on each send', function () {
+    [$user, $org, $customer] = invoiceSetup();
+    $invoice = Invoice::factory()->forCustomer($customer)->draft()->create();
+
+    $this->actingAs($user)->post("/owner/invoices/{$invoice->id}/send");
+    expect($invoice->fresh()->send_count)->toBe(1);
+
+    $this->actingAs($user)->post("/owner/invoices/{$invoice->id}/send");
+    expect($invoice->fresh()->send_count)->toBe(2);
+
+    $this->actingAs($user)->post("/owner/invoices/{$invoice->id}/send");
+    expect($invoice->fresh()->send_count)->toBe(3);
 });
 
 test('cannot send a paid invoice', function () {

@@ -103,11 +103,16 @@ class InvoiceController extends Controller
     public function send(Request $request, Invoice $invoice): RedirectResponse
     {
         abort_unless($invoice->organization_id === $request->user()->organization_id, 403);
-        abort_unless(in_array($invoice->status, [Invoice::STATUS_DRAFT, Invoice::STATUS_OVERDUE]), 422);
+        abort_unless(in_array($invoice->status, [
+            Invoice::STATUS_DRAFT,
+            Invoice::STATUS_SENT,
+            Invoice::STATUS_OVERDUE,
+        ]), 422);
 
         $invoice->update([
-            'status'  => Invoice::STATUS_SENT,
-            'sent_at' => now(),
+            'status'     => Invoice::STATUS_SENT,
+            'sent_at'    => now(),
+            'send_count' => $invoice->send_count + 1,
         ]);
 
         // TODO: dispatch InvoiceSent notification in future milestone

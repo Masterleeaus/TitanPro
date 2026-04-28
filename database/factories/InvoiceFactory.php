@@ -32,6 +32,7 @@ class InvoiceFactory extends Factory
             'issued_at'       => today()->toDateString(),
             'due_at'          => today()->addDays(30)->toDateString(),
             'sent_at'         => null,
+            'send_count'      => 0,
             'paid_at'         => null,
             'notes'           => null,
         ];
@@ -53,8 +54,19 @@ class InvoiceFactory extends Factory
     public function sent(): static
     {
         return $this->state([
-            'status'  => Invoice::STATUS_SENT,
-            'sent_at' => now(),
+            'status'     => Invoice::STATUS_SENT,
+            'sent_at'    => now(),
+            'send_count' => 1,
+        ]);
+    }
+
+    public function overdue(): static
+    {
+        return $this->state([
+            'status'     => Invoice::STATUS_OVERDUE,
+            'sent_at'    => now()->subDays(35),
+            'send_count' => 1,
+            'due_at'     => today()->subDays(5)->toDateString(),
         ]);
     }
 
