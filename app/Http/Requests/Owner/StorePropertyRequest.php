@@ -8,20 +8,25 @@ class StorePropertyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $user = $this->user();
+        $customer = $this->route('customer');
+
+        return $user !== null
+            && $customer !== null
+            && $user->organization_id === $customer->organization_id;
     }
 
     public function rules(): array
     {
         return [
-            'name'          => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'address_line1' => ['required', 'string', 'max:255'],
             'address_line2' => ['nullable', 'string', 'max:255'],
-            'city'          => ['required', 'string', 'max:100'],
-            'state'         => ['required', 'string', 'max:50'],
-            'postal_code'   => ['required', 'string', 'max:20'],
-            'country'       => ['nullable', 'string', 'size:2'],
-            'notes'         => ['nullable', 'string'],
+            'city' => ['required', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:50'],
+            'postal_code' => ['required', 'string', 'max:20'],
+            'country' => ['nullable', 'string', 'size:2'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }
