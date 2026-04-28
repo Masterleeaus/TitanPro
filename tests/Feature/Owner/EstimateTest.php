@@ -392,7 +392,7 @@ test('user cannot convert another org\'s estimate', function () {
         ->assertForbidden();
 });
 
-test('convert falls back to first package when accepted_package has no match', function () {
+test('convert returns 422 when accepted_package tier has no matching package', function () {
     [$user, $org, $customer] = estimateSetup();
 
     $estimate = Estimate::factory()->forCustomer($customer)->accepted('best')->create([
@@ -400,20 +400,14 @@ test('convert falls back to first package when accepted_package has no match', f
     ]);
 
     // Only create a 'good' package (no 'best' package)
-    $package = $estimate->packages()->create([
+    $estimate->packages()->create([
         'tier' => 'good', 'label' => 'Basic', 'description' => 'Fallback package',
         'subtotal' => 50, 'tax_amount' => 0, 'total' => 50,
     ]);
 
-    $package->lineItems()->create([
-        'name' => 'Item A', 'unit_price' => 50, 'quantity' => 1, 'is_taxable' => true, 'sort_order' => 0,
-    ]);
-
     $this->actingAs($user)
         ->post("/owner/estimates/{$estimate->id}/convert")
-        ->assertRedirect();
+        ->assertStatus(422);
 
-    $job = \App\Models\Job::where('estimate_id', $estimate->id)->firstOrFail();
-    expect($job->description)->toBe('Fallback package');
-    expect($job->lineItems)->toHaveCount(1);
+    expect(\App\Models\Job::where('estimate_id', $estimate->id)->exists())->toBeFalse();
 });
