@@ -5,8 +5,10 @@ use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\JobLineItem;
 use App\Models\Organization;
+use App\Models\Payment;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Support\Facades\DB;
 
 function invoiceSetup(): array
 {
@@ -382,4 +384,35 @@ test('user cannot record payment for another org\'s invoice', function () {
             'paid_at' => today()->toDateString(),
         ])
         ->assertForbidden();
+});
+
+test('payment is rejected inside transaction when amount exceeds locked balance_due', function () {
+    [$user, $org, $customer] = invoiceSetup();
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 100.00,
+        'balance_due' => 50.00,
+        'amount_paid' => 50.00,
+    ]);
+
+    // Simulate a race condition: the invoice balance_due has already been reduced
+    // (e.g. by a concurrent request) but the current request passes the initial
+    // validation with the stale value. Inside the transaction the locked row
+    // exposes the true (lower) balance_due and the abort_if guard must reject it.
+    DB::transaction(function () use ($invoice, $user) {
+        $locked = Invoice::lockForUpdate()->findOrFail($invoice->id);
+        // Manually reduce balance_due to simulate a concurrent payment having
+        // already consumed the remaining balance.
+        $locked->update(['balance_due' => 0.00, 'amount_paid' => 100.00, 'status' => Invoice::STATUS_PAID]);
+    });
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/payments", [
+            'amount'  => 50.00,
+            'method'  => 'cash',
+            'paid_at' => today()->toDateString(),
+        ])
+        ->assertStatus(422);
+
+    // Ensure no extra payment record was created
+    expect(Payment::where('invoice_id', $invoice->id)->count())->toBe(0);
 });
