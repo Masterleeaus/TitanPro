@@ -78,13 +78,9 @@ test('checkout rejects invoice with zero-price line item', function () {
     [$user, $org, $customer] = stripeSetup();
 
     $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
-        'total'       => 0.00,
-        'balance_due' => 0.004,
+        'total'       => 1.00,
+        'balance_due' => 1.00,
     ]);
-
-    // Manually override balance_due so the positive-balance guard passes
-    $invoice->balance_due = 1.00;
-    $invoice->save();
 
     // Create a line item with unit_price = 0
     $invoice->lineItems()->create([
