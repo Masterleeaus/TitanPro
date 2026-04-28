@@ -232,6 +232,21 @@ test('job update rejects a customer from another organization', function () {
         ->assertSessionHasErrors(['customer_id']);
 });
 
+test('job update rejects a technician from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $job = Job::factory()->forCustomer($customer)->create();
+    $otherOrg = Organization::factory()->create();
+    $otherTechnician = User::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->patch("/owner/jobs/{$job->id}", [
+            'customer_id' => $customer->id,
+            'assigned_to' => $otherTechnician->id,
+            'title'       => 'Updated Title',
+        ])
+        ->assertSessionHasErrors(['assigned_to']);
+});
+
 // ── Status ────────────────────────────────────────────────────────────────────
 
 test('user can update job status', function () {
