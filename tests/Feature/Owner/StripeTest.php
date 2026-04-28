@@ -87,6 +87,42 @@ test('user cannot initiate checkout for another org invoice', function () {
         ->assertForbidden();
 });
 
+test('checkout returns 422 when invoice has no customer', function () {
+    [$user, $org] = stripeSetup();
+
+    $customer = Customer::factory()->create(['organization_id' => $org->id]);
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 100.00,
+        'balance_due' => 100.00,
+    ]);
+
+    // Soft-delete the customer so $invoice->customer resolves to null
+    $customer->delete();
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
+test('checkout returns 422 when customer has no email', function () {
+    [$user, $org] = stripeSetup();
+
+    $customer = Customer::factory()->create([
+        'organization_id' => $org->id,
+        'email'           => null,
+    ]);
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 100.00,
+        'balance_due' => 100.00,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
 // ── Webhook ────────────────────────────────────────────────────────────────────
 
 test('webhook rejects missing or invalid signature', function () {
