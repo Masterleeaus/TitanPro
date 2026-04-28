@@ -105,3 +105,35 @@ test('cannot decline an already accepted estimate', function () {
 
     $this->post("/estimates/{$estimate->token}/decline")->assertStatus(422);
 });
+
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+
+test('public estimate view is rate limited after 10 requests per minute', function () {
+    $estimate = sentEstimateWithPackages();
+
+    for ($attempt = 0; $attempt < 10; $attempt++) {
+        $this->get("/estimates/{$estimate->token}")->assertOk();
+    }
+
+    $this->get("/estimates/{$estimate->token}")->assertStatus(429);
+});
+
+test('public estimate accept is rate limited after 10 requests per minute', function () {
+    $estimate = sentEstimateWithPackages();
+
+    for ($attempt = 0; $attempt < 10; $attempt++) {
+        $this->post("/estimates/{$estimate->token}/accept", ['tier' => 'good']);
+    }
+
+    $this->post("/estimates/{$estimate->token}/accept", ['tier' => 'good'])->assertStatus(429);
+});
+
+test('public estimate decline is rate limited after 10 requests per minute', function () {
+    $estimate = sentEstimateWithPackages();
+
+    for ($attempt = 0; $attempt < 10; $attempt++) {
+        $this->post("/estimates/{$estimate->token}/decline");
+    }
+
+    $this->post("/estimates/{$estimate->token}/decline")->assertStatus(429);
+});
