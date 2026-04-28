@@ -83,6 +83,26 @@ class JobController extends Controller
             'status' => ['required', Rule::in($allowedStatuses)],
         ]);
 
+        $transitions = [
+            Job::STATUS_SCHEDULED    => [Job::STATUS_ASSIGNED, Job::STATUS_EN_ROUTE, Job::STATUS_IN_PROGRESS, Job::STATUS_ON_HOLD],
+            Job::STATUS_ASSIGNED     => [Job::STATUS_SCHEDULED, Job::STATUS_EN_ROUTE, Job::STATUS_IN_PROGRESS, Job::STATUS_ON_HOLD],
+            Job::STATUS_EN_ROUTE     => [Job::STATUS_ARRIVED, Job::STATUS_IN_PROGRESS, Job::STATUS_ON_HOLD, Job::STATUS_SCHEDULED],
+            Job::STATUS_ARRIVED      => [Job::STATUS_IN_PROGRESS, Job::STATUS_ON_HOLD, Job::STATUS_EN_ROUTE],
+            Job::STATUS_IN_PROGRESS  => [Job::STATUS_QUALITY_CHECK, Job::STATUS_COMPLETED, Job::STATUS_ON_HOLD],
+            Job::STATUS_QUALITY_CHECK => [Job::STATUS_COMPLETED, Job::STATUS_IN_PROGRESS],
+            Job::STATUS_COMPLETED    => [],
+            Job::STATUS_INVOICED     => [],
+            Job::STATUS_PAID         => [],
+            Job::STATUS_ON_HOLD      => [Job::STATUS_SCHEDULED, Job::STATUS_EN_ROUTE, Job::STATUS_IN_PROGRESS],
+            Job::STATUS_CANCELLED    => [],
+        ];
+
+        abort_unless(
+            in_array($request->status, $transitions[$job->status] ?? []),
+            422,
+            'Invalid status transition'
+        );
+
         $timestamps = match ($request->status) {
             Job::STATUS_IN_PROGRESS => [
                 'arrived_at' => $job->arrived_at ?? now(),

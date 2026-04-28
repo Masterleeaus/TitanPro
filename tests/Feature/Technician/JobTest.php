@@ -384,6 +384,53 @@ test('status update rejects an invalid status value', function () {
         ->assertUnprocessable();
 });
 
+test('technician cannot skip from scheduled directly to completed', function () {
+    [$technician, , $customer] = techJobSetup();
+
+    $job = Job::factory()->forCustomer($customer)->scheduled()->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->patchJson("/api/technician/jobs/{$job->id}/status", ['status' => 'completed'])
+        ->assertUnprocessable();
+
+    expect($job->fresh()->status)->toBe(Job::STATUS_SCHEDULED);
+});
+
+test('technician cannot move a completed job back to scheduled', function () {
+    [$technician, , $customer] = techJobSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+        'status'       => Job::STATUS_COMPLETED,
+    ]);
+
+    $this->actingAs($technician)
+        ->patchJson("/api/technician/jobs/{$job->id}/status", ['status' => 'scheduled'])
+        ->assertUnprocessable();
+
+    expect($job->fresh()->status)->toBe(Job::STATUS_COMPLETED);
+});
+
+test('technician cannot move a completed job to in_progress', function () {
+    [$technician, , $customer] = techJobSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+        'status'       => Job::STATUS_COMPLETED,
+    ]);
+
+    $this->actingAs($technician)
+        ->patchJson("/api/technician/jobs/{$job->id}/status", ['status' => 'in_progress'])
+        ->assertUnprocessable();
+
+    expect($job->fresh()->status)->toBe(Job::STATUS_COMPLETED);
+});
+
 test('technician cannot update status on another technician\'s job', function () {
     [$technician, $org, $customer] = techJobSetup();
 
