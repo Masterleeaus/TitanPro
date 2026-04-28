@@ -226,10 +226,9 @@ class EstimateController extends Controller
         $estimate->load('packages.lineItems');
 
         $package = $estimate->packages
-            ->firstWhere('tier', $estimate->accepted_package)
-            ?? $estimate->packages->first();
+            ->firstWhere('tier', $estimate->accepted_package);
 
-        abort_if($package === null, 422);
+        abort_if($package === null, 422, 'Accepted package tier not found on this estimate');
 
         $job = Job::create([
             'organization_id' => $estimate->organization_id,
