@@ -1,8 +1,15 @@
 /*
- * Only override text colour for button variants whose background is too light
- * to show white text.  Do NOT add a global .fi-btn rule — doing so forces
- * white text on outlined / ghost buttons (white text on white background) and
- * breaks the CSS-variable overrides used by shadcn/openplain themes.
+ * TitanPro — Filament Admin Panel Custom Theme CSS
+ *
+ * Rules here are intentionally minimal. Only override what Filament's default
+ * tokens get wrong for this project (e.g. invisible button text on light
+ * backgrounds). Do NOT add blanket rules that break CSS-variable overrides
+ * from third-party themes (openplain/shadcn, osamanagi/abyss, etc.).
+ */
+
+/* ── Button text visibility fix ─────────────────────────────────────────────
+ * Gray / white buttons rendered by Filament can produce white text on a near-
+ * white background.  Enforce legible colours without touching primary buttons.
  */
 
 .fi-btn-color-gray,
@@ -22,3 +29,66 @@
 .fi-btn-color-white span {
     color: #111827 !important;
 }
+
+/* ── "New Dashboard" and resource action header buttons ─────────────────────
+ * Ensure the primary action header button in list pages always has white text
+ * regardless of the active theme's CSS variables.
+ */
+
+.fi-header-actions .fi-btn-color-primary,
+.fi-header-actions .fi-btn-color-primary .fi-btn-label,
+.fi-header-actions .fi-btn-color-primary span {
+    color: #ffffff !important;
+}
+
+/* ── Dynamic Dashboard widget grid ──────────────────────────────────────────
+ * Ensure Dynamic Dashboard layout widgets are properly spaced and display
+ * in a responsive grid when rendered on the Filament dashboard page.
+ */
+
+.fi-dashboard-zeus-widget-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .fi-dashboard-zeus-widget-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .fi-dashboard-zeus-widget-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* ── Widget card base styles ─────────────────────────────────────────────────
+ * Applied by the Zeus widget HTML output.  Ensure consistent appearance.
+ */
+
+.fi-stats-card,
+.fi-metric-card,
+.fi-icon-card,
+.fi-link-card,
+.fi-image-card,
+.fi-cta-card,
+.fi-chart-placeholder-card,
+.fi-table-list-card,
+.fi-activity-card,
+.fi-profile-card,
+.fi-kpi-grid-card,
+.fi-alert-card,
+.fi-markdown-card {
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.fi-stats-card:hover,
+.fi-metric-card:hover,
+.fi-icon-card:hover,
+.fi-link-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
+                0 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
