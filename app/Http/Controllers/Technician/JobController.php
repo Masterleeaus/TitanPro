@@ -83,6 +83,12 @@ class JobController extends Controller
             'status' => ['required', Rule::in($allowedStatuses)],
         ]);
 
+        abort_unless(
+            in_array($request->status, Job::allowedTransitions()[$job->status] ?? []),
+            422,
+            "Cannot transition job from '{$job->status}' to '{$request->status}'"
+        );
+
         $timestamps = match ($request->status) {
             Job::STATUS_IN_PROGRESS => [
                 'arrived_at' => $job->arrived_at ?? now(),
