@@ -82,8 +82,9 @@ class StripeWebhookController extends Controller
             'reference'                => $session->id,
         ]);
 
-        $newAmountPaid = (float) $invoice->amount_paid + $amountPaid;
-        $balanceDue    = max(0, round((float) $invoice->total - $newAmountPaid, 2));
+        $rawAmountPaid = (float) $invoice->amount_paid + $amountPaid;
+        $newAmountPaid = round($rawAmountPaid, 2);
+        $balanceDue    = max(0, round((float) $invoice->total - $rawAmountPaid, 2));
 
         $invoice->update([
             'amount_paid' => $newAmountPaid,

@@ -383,3 +383,39 @@ test('user cannot record payment for another org\'s invoice', function () {
         ])
         ->assertForbidden();
 });
+
+test('cumulative partial payments compute balance without rounding drift', function () {
+    [$user, $org, $customer] = invoiceSetup();
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 10.00,
+        'balance_due' => 10.00,
+        'amount_paid' => 0.00,
+    ]);
+
+    // First partial payment: 3.335 — stored rounded to 3.34
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/payments", [
+            'amount'  => 3.335,
+            'method'  => 'cash',
+            'paid_at' => today()->toDateString(),
+        ])
+        ->assertRedirect();
+
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(3.34);
+    expect((float) $invoice->balance_due)->toBe(6.66);
+
+    // Second partial payment: 3.335 — raw sum is 6.67, balance is 3.33
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/payments", [
+            'amount'  => 3.335,
+            'method'  => 'cash',
+            'paid_at' => today()->toDateString(),
+        ])
+        ->assertRedirect();
+
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(6.67);
+    // balance_due computed from unrounded raw sum (6.67), not from already-rounded amount_paid
+    expect((float) $invoice->balance_due)->toBe(3.33);
+});

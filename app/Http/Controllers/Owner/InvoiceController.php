@@ -162,8 +162,9 @@ class InvoiceController extends Controller
             'paid_at'         => $data['paid_at'],
         ]);
 
-        $newAmountPaid = round((float) $invoice->amount_paid + (float) $data['amount'], 2);
-        $balanceDue    = max(0, round((float) $invoice->total - $newAmountPaid, 2));
+        $rawAmountPaid = (float) $invoice->amount_paid + (float) $data['amount'];
+        $newAmountPaid = round($rawAmountPaid, 2);
+        $balanceDue    = max(0, round((float) $invoice->total - $rawAmountPaid, 2));
 
         $invoice->update([
             'amount_paid' => $newAmountPaid,
