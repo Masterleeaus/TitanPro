@@ -172,7 +172,12 @@ class JobController extends Controller
     public function deletePhoto(Request $request, Job $job, Attachment $attachment): JsonResponse
     {
         abort_unless($job->assigned_to === $request->user()->id, 403);
-        abort_unless($attachment->attachable_type === Job::class && $attachment->attachable_id === $job->id, 404);
+        abort_unless(
+            $attachment->attachable_type === Job::class
+                && $attachment->attachable_id === $job->id
+                && $job->organization_id === $request->user()->organization_id,
+            404
+        );
 
         Storage::disk($attachment->disk)->delete($attachment->path);
         $attachment->delete();
@@ -185,7 +190,7 @@ class JobController extends Controller
         abort_unless($job->assigned_to === $request->user()->id, 403);
 
         $data = $request->validate([
-            'item_id'    => ['nullable', 'integer', 'exists:items,id'],
+            'item_id'    => ['nullable', 'integer', Rule::exists('items', 'id')->where('organization_id', $request->user()->organization_id)],
             'name'       => ['required', 'string', 'max:255'],
             'unit_price' => ['required', 'numeric', 'min:0'],
             'quantity'   => ['required', 'numeric', 'min:0.001'],
