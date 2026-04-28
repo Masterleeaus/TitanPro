@@ -106,6 +106,22 @@ test('upload rejects an invalid tag value', function () {
         ->assertUnprocessable();
 });
 
+test('upload rejects a zero-byte image file', function () {
+    Storage::fake(attachmentDisk());
+    [$technician, , $customer] = photoSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/photos", [
+            'photo' => UploadedFile::fake()->create('empty.jpg', 0, 'image/jpeg'),
+        ])
+        ->assertUnprocessable();
+});
+
 test('upload rejects a non-image file', function () {
     Storage::fake(attachmentDisk());
     [$technician, , $customer] = photoSetup();

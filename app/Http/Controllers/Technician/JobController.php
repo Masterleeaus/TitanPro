@@ -153,7 +153,7 @@ class JobController extends Controller
         abort_unless($job->assigned_to === $request->user()->id, 403);
 
         $request->validate([
-            'photo' => ['required', 'file', 'image', 'max:10240'], // 10 MB max (client compresses first)
+            'photo' => ['required', 'file', 'image', 'min:1', 'max:10240'], // 1 byte min, 10 MB max (client compresses first)
             'tag'   => ['nullable', Rule::in(['before', 'after'])],
         ]);
 
