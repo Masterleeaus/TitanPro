@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\Organization;
 use App\Models\Payment;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
@@ -105,12 +106,11 @@ class StripeWebhookController extends Controller
      */
     private function handleSubscriptionCheckoutCompleted(object $session): void
     {
-        $meta           = $session->metadata ?? null;
-        $organizationId = $meta->organization_id ?? null;
-        $plan           = $meta->plan ?? null;
-        $interval       = $meta->interval ?? 'monthly';
+        $meta     = $session->metadata ?? null;
+        $plan     = $meta->plan ?? null;
+        $interval = $meta->interval ?? 'monthly';
 
-        if (! $organizationId || ! $plan) {
+        if (! $plan) {
             return;
         }
 
@@ -120,13 +120,25 @@ class StripeWebhookController extends Controller
             return;
         }
 
+        // Use stripe_customer_id as the authoritative source for resolving the
+        // organization — never trust metadata alone, as it could be manipulated.
+        $stripeCustomerId = $session->customer ?? null;
+        if (! $stripeCustomerId) {
+            return;
+        }
+
+        $organization = Organization::where('stripe_customer_id', $stripeCustomerId)->first();
+        if (! $organization) {
+            return;
+        }
+
         $stripeSub = (new \Stripe\StripeClient(config('services.stripe.secret')))
             ->subscriptions->retrieve($stripeSubId);
 
         $priceId = $stripeSub->items->data[0]->price->id ?? null;
 
         $this->subscriptionService->activateFromStripe(
-            organizationId: $organizationId,
+            organization: $organization,
             stripeSubscriptionId: $stripeSubId,
             plan: $plan,
             interval: $interval,
