@@ -99,7 +99,7 @@ class SetupController extends Controller
 
         $data = $request->validate([
             'name'  => ['required', 'string', 'max:100', Rule::unique('job_types')->where('organization_id', $orgId)],
-            'color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'color' => ['required', 'string', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
         ]);
 
         JobType::create([
