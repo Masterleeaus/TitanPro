@@ -228,8 +228,17 @@ HTML;
         $text = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text) ?? $text;
         // Italic
         $text = preg_replace('/\*(.+?)\*/', '<em>$1</em>', $text) ?? $text;
-        // Links
-        $text = preg_replace('/\[(.+?)\]\((https?:\/\/[^\)]+)\)/', '<a href="$2" class="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer" target="_blank">$1</a>', $text) ?? $text;
+        // Links — callback form so the URL is HTML-escaped before insertion
+        $text = preg_replace_callback(
+            '/\[(.+?)\]\((https?:\/\/[^\)]+)\)/',
+            static function (array $m): string {
+                $label = $m[1];
+                $url   = htmlspecialchars($m[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+                return '<a href="' . $url . '" class="underline text-primary-600 dark:text-primary-400" rel="noopener noreferrer" target="_blank">' . $label . '</a>';
+            },
+            $text
+        ) ?? $text;
 
         return $text;
     }

@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  * Seeds a default "Welcome" dashboard layout using the registered Zeus widgets.
@@ -35,6 +34,10 @@ class DefaultDashboardLayoutSeeder extends Seeder
             return;
         }
 
+        // Use the first existing user, or fall back to a safe default of 0
+        // (some DynamicDashboard versions store user_id as a string / nullable).
+        $userId = (string) (DB::table('users')->min('id') ?? 0);
+
         $widgets = [
             // Row 1: Welcome KPI header
             [
@@ -55,7 +58,7 @@ class DefaultDashboardLayoutSeeder extends Seeder
                 'type' => 'alert-notice-card',
                 'data' => [
                     'title'     => 'Welcome to TitanPro',
-                    'message'   => 'This dashboard is fully customisable. Use Admin → Dashboard Layouts to add, remove or rearrange widgets.',
+                    'message'   => 'This dashboard is fully customizable. Use Admin → Dashboard Layouts to add, remove or rearrange widgets.',
                     'type'      => 'info',
                     'show_icon' => true,
                 ],
@@ -102,7 +105,7 @@ class DefaultDashboardLayoutSeeder extends Seeder
         ];
 
         DB::table('layouts')->insert([
-            'user_id'      => 1,
+            'user_id'      => $userId,
             'layout_title' => 'Welcome Dashboard',
             'layout_slug'  => $slug,
             'widgets'      => json_encode($widgets),

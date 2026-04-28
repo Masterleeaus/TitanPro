@@ -97,7 +97,21 @@
                                 if ($type) {
                                     $registeredWidgets = config('zeus-dynamic-dashboard.widgets', []);
                                     foreach ($registeredWidgets as $widgetClass) {
-                                        $instance = app($widgetClass);
+                                        // Only instantiate classes that implement the Widget contract
+                                        if (
+                                            ! is_string($widgetClass)
+                                            || ! class_exists($widgetClass)
+                                            || ! in_array(\LaraZeus\DynamicDashboard\Contracts\Widget::class, class_implements($widgetClass) ?: [])
+                                        ) {
+                                            continue;
+                                        }
+
+                                        try {
+                                            $instance = app($widgetClass);
+                                        } catch (\Throwable) {
+                                            continue;
+                                        }
+
                                         if ($instance->enabled() && method_exists($instance, 'form')) {
                                             $block = $instance->form();
                                             if (method_exists($block, 'getName') && $block->getName() === $type) {
