@@ -74,6 +74,52 @@ test('checkout requires positive balance due', function () {
         ->assertStatus(422);
 });
 
+test('checkout rejects invoice with zero-price line item', function () {
+    [$user, $org, $customer] = stripeSetup();
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 0.00,
+        'balance_due' => 0.004,
+    ]);
+
+    // Manually override balance_due so the positive-balance guard passes
+    $invoice->balance_due = 1.00;
+    $invoice->save();
+
+    // Create a line item with unit_price = 0
+    $invoice->lineItems()->create([
+        'name'        => 'Free Item',
+        'description' => 'Free Item',
+        'quantity'    => 1,
+        'unit_price'  => 0.00,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
+test('checkout rejects invoice with sub-cent line item price', function () {
+    [$user, $org, $customer] = stripeSetup();
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 1.00,
+        'balance_due' => 1.00,
+    ]);
+
+    // Create a line item with unit_price that rounds to 0 cents (0.004 * 100 = 0.4 → 0)
+    $invoice->lineItems()->create([
+        'name'        => 'Tiny Item',
+        'description' => 'Tiny Item',
+        'quantity'    => 1,
+        'unit_price'  => 0.004,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
 test('user cannot initiate checkout for another org invoice', function () {
     [$user] = stripeSetup();
     [, , $otherCustomer] = stripeSetup();

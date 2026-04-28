@@ -21,14 +21,19 @@ class StripeController extends Controller
 
         $invoice->load('lineItems', 'customer');
 
-        $lineItems = $invoice->lineItems->map(fn ($li) => [
-            'price_data' => [
-                'currency'     => 'usd',
-                'product_data' => ['name' => $li->name],
-                'unit_amount'  => (int) round((float) $li->unit_price * 100),
-            ],
-            'quantity' => (int) round((float) $li->quantity),
-        ])->values()->all();
+        $lineItems = $invoice->lineItems->map(function ($li) {
+            $unitAmount = (int) round((float) $li->unit_price * 100);
+            abort_if($unitAmount < 1, 422, "Line item '{$li->name}' has an invalid price (must be at least \$0.01).");
+
+            return [
+                'price_data' => [
+                    'currency'     => 'usd',
+                    'product_data' => ['name' => $li->name],
+                    'unit_amount'  => $unitAmount,
+                ],
+                'quantity' => (int) round((float) $li->quantity),
+            ];
+        })->values()->all();
 
         // If totals don't map cleanly to line items (tax/discount), use a single line item for the balance
         $session = CheckoutSession::create([
