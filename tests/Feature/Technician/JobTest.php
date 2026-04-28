@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\Item;
 use App\Models\Job;
 use App\Models\Organization;
 use App\Models\User;
@@ -527,6 +528,68 @@ test('customer notes update rejects a value exceeding the maximum length', funct
     $this->actingAs($technician)
         ->patchJson("/api/technician/jobs/{$job->id}/customer-notes", [
             'customer_notes' => str_repeat('x', 5001),
+        ])
+        ->assertUnprocessable();
+});
+
+// ── JSON API: POST /api/technician/jobs/{job}/line-items ─────────────────────
+
+test('technician can add a line item without a catalog item', function () {
+    [$technician, , $customer] = techJobSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/line-items", [
+            'name'       => 'Labour',
+            'unit_price' => 75.00,
+            'quantity'   => 2,
+        ])
+        ->assertCreated()
+        ->assertJsonPath('status', 'ok');
+});
+
+test('technician can add a line item linked to their own organization catalog item', function () {
+    [$technician, $org, $customer] = techJobSetup();
+
+    $item = Item::factory()->create(['organization_id' => $org->id, 'unit_price' => 50.00]);
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/line-items", [
+            'item_id'    => $item->id,
+            'name'       => $item->name,
+            'unit_price' => $item->unit_price,
+            'quantity'   => 1,
+        ])
+        ->assertCreated()
+        ->assertJsonPath('status', 'ok');
+});
+
+test('technician cannot add a line item using an item_id from another organization', function () {
+    [$technician, , $customer] = techJobSetup();
+
+    $otherOrg  = Organization::factory()->create();
+    $otherItem = Item::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/line-items", [
+            'item_id'    => $otherItem->id,
+            'name'       => 'Cross-org item',
+            'unit_price' => 99.99,
+            'quantity'   => 1,
         ])
         ->assertUnprocessable();
 });
