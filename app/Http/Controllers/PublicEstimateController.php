@@ -21,6 +21,8 @@ class PublicEstimateController extends Controller
             404
         );
 
+        abort_if($estimate->isExpired(), 410, 'Estimate link has expired');
+
         return inertia('Public/Estimate', [
             'estimate' => $estimate,
         ]);
@@ -31,6 +33,8 @@ class PublicEstimateController extends Controller
         $estimate = Estimate::where('token', $token)->firstOrFail();
 
         abort_unless($estimate->status === Estimate::STATUS_SENT, 422);
+
+        abort_if($estimate->isExpired(), 410, 'Estimate link has expired');
 
         $request->validate([
             'tier' => ['required', 'in:' . implode(',', Estimate::TIERS)],
@@ -56,6 +60,8 @@ class PublicEstimateController extends Controller
         $estimate = Estimate::where('token', $token)->firstOrFail();
 
         abort_unless($estimate->status === Estimate::STATUS_SENT, 422);
+
+        abort_if($estimate->isExpired(), 410, 'Estimate link has expired');
 
         $estimate->update([
             'status'      => Estimate::STATUS_DECLINED,
