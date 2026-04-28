@@ -24,7 +24,7 @@ class SubscriptionService
      */
     public function createTrial(Organization $org, string $plan): Subscription
     {
-        $trialEndsAt = now()->addDays(PlanService::TRIAL_DAYS);
+        $trialEndsAt = now()->addDays(config('subscription.trial_days'));
 
         // Update org with chosen plan and trial end date
         $org->update([

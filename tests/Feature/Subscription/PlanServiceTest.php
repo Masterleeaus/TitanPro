@@ -18,8 +18,8 @@ test('PlanService exposes the correct plan constants', function () {
     expect(PlanService::PLAN_PRO)->toBe('pro');
 });
 
-test('PlanService defines 14 trial days', function () {
-    expect(PlanService::TRIAL_DAYS)->toBe(14);
+test('subscription config defaults to 14 trial days', function () {
+    expect(config('subscription.trial_days'))->toBe(14);
 });
 
 test('label returns human readable plan name', function () {
