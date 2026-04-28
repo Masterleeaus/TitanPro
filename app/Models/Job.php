@@ -89,4 +89,21 @@ class Job extends Model
             self::STATUS_SCHEDULED => 'Scheduled', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_EN_ROUTE => 'En Route', self::STATUS_ARRIVED => 'Arrived', self::STATUS_IN_PROGRESS => 'In Progress', self::STATUS_QUALITY_CHECK => 'Quality Check', self::STATUS_COMPLETED => 'Completed', self::STATUS_INVOICED => 'Invoiced', self::STATUS_PAID => 'Paid', self::STATUS_CANCELLED => 'Cancelled', self::STATUS_ON_HOLD => 'On Hold',
         ];
     }
+
+    public static function allowedTransitions(): array
+    {
+        return [
+            self::STATUS_SCHEDULED    => [self::STATUS_ASSIGNED, self::STATUS_EN_ROUTE, self::STATUS_IN_PROGRESS, self::STATUS_ON_HOLD],
+            self::STATUS_ASSIGNED     => [self::STATUS_SCHEDULED, self::STATUS_EN_ROUTE, self::STATUS_IN_PROGRESS, self::STATUS_ON_HOLD],
+            self::STATUS_EN_ROUTE     => [self::STATUS_ARRIVED, self::STATUS_IN_PROGRESS, self::STATUS_ON_HOLD, self::STATUS_SCHEDULED],
+            self::STATUS_ARRIVED      => [self::STATUS_IN_PROGRESS, self::STATUS_ON_HOLD, self::STATUS_EN_ROUTE],
+            self::STATUS_IN_PROGRESS  => [self::STATUS_QUALITY_CHECK, self::STATUS_COMPLETED, self::STATUS_ON_HOLD],
+            self::STATUS_QUALITY_CHECK => [self::STATUS_COMPLETED, self::STATUS_IN_PROGRESS],
+            self::STATUS_COMPLETED    => [],
+            self::STATUS_INVOICED     => [],
+            self::STATUS_PAID         => [],
+            self::STATUS_ON_HOLD      => [self::STATUS_SCHEDULED, self::STATUS_EN_ROUTE, self::STATUS_IN_PROGRESS],
+            self::STATUS_CANCELLED    => [],
+        ];
+    }
 }
