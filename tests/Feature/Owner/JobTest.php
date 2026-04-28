@@ -50,6 +50,22 @@ test('job list is scoped to the authenticated user\'s organization', function ()
         ->assertInertia(fn ($page) => $page->has('jobs.data', 0));
 });
 
+test('job index rejects a search string longer than 100 characters', function () {
+    [$user] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->get('/owner/jobs?search=' . str_repeat('a', 101))
+        ->assertSessionHasErrors(['search']);
+});
+
+test('job index accepts a search string of exactly 100 characters', function () {
+    [$user] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->get('/owner/jobs?search=' . str_repeat('a', 100))
+        ->assertOk();
+});
+
 test('job list can be filtered by status', function () {
     [$user, $org, $customer] = userOrgCustomer();
     Job::factory()->forCustomer($customer)->scheduled()->count(2)->create();

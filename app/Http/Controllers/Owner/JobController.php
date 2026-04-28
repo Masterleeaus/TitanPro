@@ -22,6 +22,11 @@ class JobController extends Controller
 {
     public function index(Request $request): Response|ResponseFactory
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'string'],
+        ]);
+
         $orgId = $request->user()->organization_id;
 
         $jobs = Job::where('organization_id', $orgId)
