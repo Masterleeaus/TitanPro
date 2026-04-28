@@ -33,9 +33,9 @@ class AdminPanelProvider extends PanelProvider
 
         return $panel
             ->default()
-            ->id('admin')
+            ->id('titanpro')
             ->path('admin')
-            ->brandName('TITAN ZERO — Admin')
+            ->brandName('TitanPro — Super Admin')
             ->colors([
                 'primary' => $this->primaryColor(),
             ])
