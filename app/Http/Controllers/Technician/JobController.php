@@ -172,7 +172,12 @@ class JobController extends Controller
     public function deletePhoto(Request $request, Job $job, Attachment $attachment): JsonResponse
     {
         abort_unless($job->assigned_to === $request->user()->id, 403);
-        abort_unless($attachment->attachable_type === Job::class && $attachment->attachable_id === $job->id, 404);
+        abort_unless(
+            $attachment->attachable_type === Job::class
+                && $attachment->attachable_id === $job->id
+                && $job->organization_id === $request->user()->organization_id,
+            404
+        );
 
         Storage::disk($attachment->disk)->delete($attachment->path);
         $attachment->delete();
