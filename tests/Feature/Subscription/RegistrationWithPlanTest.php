@@ -3,7 +3,6 @@
 use App\Models\Organization;
 use App\Models\Subscription;
 use App\Models\User;
-use App\Services\PlanService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 beforeEach(fn () => (new RolesAndPermissionsSeeder)->run());
@@ -125,7 +124,7 @@ test('trial period is exactly 14 days', function () {
     $org = User::where('email', 'jane@acme.com')->first()->organization;
     $daysUntilExpiry = (int) round(now()->diffInDays($org->trial_ends_at));
 
-    expect($daysUntilExpiry)->toBe(PlanService::TRIAL_DAYS);
+    expect($daysUntilExpiry)->toBe(config('subscription.trial_days'));
 });
 
 test('registration slug is unique even when company names collide', function () {
