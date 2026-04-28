@@ -44,7 +44,7 @@ class JobTypeResource extends Resource
                 TextInput::make('default_price')->label('Default Price')->numeric()->prefix('$')->minValue(0)->step(0.01),
                 TextInput::make('default_duration_minutes')->label('Default Duration Minutes')->numeric()->minValue(0),
                 TextInput::make('recommended_team_size')->label('Recommended Team Size')->numeric()->minValue(1)->default(1),
-                ColorPicker::make('color')->required()->default('#6366f1'),
+                ColorPicker::make('color')->required()->default('#6366f1')->rules(['regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/']),
                 Toggle::make('allows_recurring')->label('Can Be Recurring')->default(true),
                 Toggle::make('requires_quality_check')->label('Quality Check by Default')->default(false),
                 Textarea::make('required_equipment')->label('Required Equipment')->rows(3)->columnSpanFull(),
