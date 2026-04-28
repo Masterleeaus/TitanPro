@@ -118,7 +118,7 @@ class SubscriptionService
      * Called from the webhook handler.
      */
     public function activateFromStripe(
-        string $organizationId,
+        Organization $organization,
         string $stripeSubscriptionId,
         string $plan,
         string $interval,
@@ -126,20 +126,15 @@ class SubscriptionService
         int $periodStart,
         int $periodEnd,
     ): void {
-        $org = Organization::find($organizationId);
-        if (! $org) {
-            return;
-        }
-
-        $org->update(['plan' => $plan]);
+        $organization->update(['plan' => $plan]);
 
         // Cancel any existing local subscription records
-        Subscription::where('organization_id', $org->id)
+        Subscription::where('organization_id', $organization->id)
             ->whereIn('status', [Subscription::STATUS_TRIALING, Subscription::STATUS_ACTIVE])
             ->update(['status' => Subscription::STATUS_CANCELED, 'canceled_at' => now()]);
 
         Subscription::create([
-            'organization_id'        => $org->id,
+            'organization_id'        => $organization->id,
             'plan'                   => $plan,
             'status'                 => Subscription::STATUS_ACTIVE,
             'billing_interval'       => $interval,
@@ -149,7 +144,7 @@ class SubscriptionService
             'current_period_end'     => \Carbon\Carbon::createFromTimestamp($periodEnd),
         ]);
 
-        $this->flushOrgCache($org->id);
+        $this->flushOrgCache($organization->id);
     }
 
     /**
