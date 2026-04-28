@@ -33,5 +33,6 @@ Route::middleware(['auth', 'role:technician'])
         Route::get('/catalog', [TechnicianJobController::class, 'catalogItems'])
             ->name('catalog.index');
         Route::post('/location', [LocationController::class, 'store'])
+            ->middleware('throttle:60,1')
             ->name('location.store');
     });
