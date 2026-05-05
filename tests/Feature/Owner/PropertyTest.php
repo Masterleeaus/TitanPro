@@ -104,6 +104,37 @@ test('user can update a property', function () {
     expect($property->fresh()->address_line1)->toBe('456 New St');
 });
 
+test('store rejects a customer_id from another organization', function () {
+    [$user, $customer] = userWithOrgAndCustomer();
+    $otherCustomer = Customer::factory()->create(); // different org
+
+    $this->actingAs($user)
+        ->post("/owner/customers/{$customer->id}/properties", [
+            'customer_id'   => $otherCustomer->id,
+            'address_line1' => '123 Main St',
+            'city'          => 'Springfield',
+            'state'         => 'IL',
+            'postal_code'   => '62701',
+        ])
+        ->assertSessionHasErrors(['customer_id']);
+});
+
+test('update rejects a customer_id from another organization', function () {
+    [$user, $customer] = userWithOrgAndCustomer();
+    $property = Property::factory()->forCustomer($customer)->create();
+    $otherCustomer = Customer::factory()->create(); // different org
+
+    $this->actingAs($user)
+        ->patch("/owner/properties/{$property->id}", [
+            'customer_id'   => $otherCustomer->id,
+            'address_line1' => '456 New St',
+            'city'          => 'Chicago',
+            'state'         => 'IL',
+            'postal_code'   => '60601',
+        ])
+        ->assertSessionHasErrors(['customer_id']);
+});
+
 // ── Destroy ───────────────────────────────────────────────────────────────────
 
 test('user can remove their property', function () {

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Owner;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePropertyRequest extends FormRequest
 {
@@ -18,7 +19,10 @@ class StorePropertyRequest extends FormRequest
 
     public function rules(): array
     {
+        $orgId = $this->user()->organization_id;
+
         return [
+            'customer_id' => ['sometimes', 'integer', Rule::exists('customers', 'id')->where('organization_id', $orgId)],
             'name' => ['nullable', 'string', 'max:255'],
             'address_line1' => ['required', 'string', 'max:255'],
             'address_line2' => ['nullable', 'string', 'max:255'],
