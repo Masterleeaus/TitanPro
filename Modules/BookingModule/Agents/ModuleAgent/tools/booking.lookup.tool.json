@@ -1,0 +1,1 @@
+{"name":"booking.lookup","module":"bookingmodule","description":"Lookup booking status/details in the current tenant.","requires_policy":"view_booking"}

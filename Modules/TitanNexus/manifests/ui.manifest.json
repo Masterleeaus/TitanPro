@@ -1,0 +1,10 @@
+{
+  "enables": "Filament resources/widgets and SPA cards",
+  "cards": [
+    "Overdue Follow-ups",
+    "Campaign Performance",
+    "Lead Quality",
+    "Targeting Optimizer",
+    "Conversion Repair"
+  ]
+}

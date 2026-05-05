@@ -1,0 +1,10 @@
+{
+  "enables": [
+    "job lifecycle event publication"
+  ],
+  "events": [
+    "WorkOrderCreated",
+    "WorkOrderUpdated",
+    "WorkOrderCompleted"
+  ]
+}

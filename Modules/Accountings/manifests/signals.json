@@ -1,0 +1,15 @@
+{
+  "schema": "titan.signals.v1",
+  "module": "accountings",
+  "consumes": [
+    "einvoice.issued",
+    "einvoice.paid",
+    "zeropay.payment.completed",
+    "zeropay.bank_deposit.matched"
+  ],
+  "emits": [
+    "accounting.journal.posted",
+    "accounting.reconciliation.completed",
+    "accounting.gst.updated"
+  ]
+}

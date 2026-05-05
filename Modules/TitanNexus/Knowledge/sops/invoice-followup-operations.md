@@ -1,0 +1,1 @@
+Day 3 friendly reminder. Day 7 reminder with payment link. Day 14 business reminder. Day 21 payment plan option. Day 30 escalation recommendation. Human approval remains required unless tenant policy enables auto-send.

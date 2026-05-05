@@ -1,0 +1,15 @@
+{
+  "module": "TitanNexus",
+  "single_control_panel": true,
+  "items": [
+    "Overview",
+    "Leads",
+    "Campaigns",
+    "Invoices",
+    "Payments",
+    "Jobs",
+    "Marketing Agent",
+    "Automation",
+    "Telemetry"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "module": "TitanNexus",
+  "events": [
+    "InvoiceBecameOverdue",
+    "LateInvoiceFollowupDue",
+    "PaymentLinkRequested",
+    "PaymentReceived",
+    "PaymentFailed",
+    "PaymentPlanSuggested",
+    "JobScheduled",
+    "JobStatusChanged",
+    "JobCompleted",
+    "MarketingAgentActionApproved",
+    "MarketingAgentActionBlocked"
+  ]
+}

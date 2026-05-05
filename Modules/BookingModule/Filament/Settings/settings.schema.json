@@ -1,0 +1,1 @@
+{"module":"bookingmodule","settings":["automation.reminders.lead_time_minutes","automation.invoice.auto_generate","automation.dispatch.sync_on_complete"]}

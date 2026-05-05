@@ -1,0 +1,11 @@
+{
+  "schema": "titan.omni.v1",
+  "module": "einvoice",
+  "channels": [
+    "email",
+    "sms",
+    "portal",
+    "push",
+    "titan-go"
+  ]
+}

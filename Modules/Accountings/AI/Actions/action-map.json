@@ -1,0 +1,5 @@
+{
+  "accounting.lookup_ledger": "Modules\\Accountings\\Actions\\LookupLedgerAction",
+  "accounting.post_invoice_journal": "Modules\\Accountings\\Actions\\PostInvoiceJournalAction",
+  "accounting.match_reconciliation_record": "Modules\\Accountings\\Actions\\MatchBankDepositAction"
+}

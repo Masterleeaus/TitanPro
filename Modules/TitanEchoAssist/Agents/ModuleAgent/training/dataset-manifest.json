@@ -1,0 +1,9 @@
+{
+  "module": "TitanChatbot",
+  "datasets": [
+    "chatbot_knowledge_bases",
+    "chatbot_knowledge_articles"
+  ],
+  "indexing_manifest": "AI/Indexing/indexing.manifest.json",
+  "retrieval_policy": "AI/Retrieval/retrieval.policy.json"
+}

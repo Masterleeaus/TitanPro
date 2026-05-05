@@ -1,0 +1,7 @@
+{
+  "no_auto_send_without_approval": true,
+  "tenant_data_boundary": true,
+  "require_opt_out_awareness": true,
+  "block_sensitive_claims_without_source": true,
+  "human_approval_for_booking_handoff": true
+}

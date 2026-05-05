@@ -1,0 +1,34 @@
+{
+    "name": "titanzero/titan-chatbot",
+    "description": "Unified multi-channel AI chatbot, voice, live-agent and PWA-ready module.",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Modules\\TitanChatbot\\": "./",
+            "Modules\\TitanGo\\": "Integrations/TitanGo/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\AutomationServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\BillingServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\AuthServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\EventServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\FilamentServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\ModuleBootServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\PolicyServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\RepositoryServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\RouteServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\SearchServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\TenancyServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\TitanChatbotServiceProvider",
+                "Modules\\TitanChatbot\\Providers\\WorkflowServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

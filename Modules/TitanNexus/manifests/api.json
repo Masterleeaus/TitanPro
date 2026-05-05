@@ -1,0 +1,6 @@
+{
+  "base": "/api/titan-nexus",
+  "resources": [
+    "records"
+  ]
+}

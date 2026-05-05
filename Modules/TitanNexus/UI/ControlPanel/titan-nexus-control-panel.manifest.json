@@ -1,0 +1,28 @@
+{
+  "module": "TitanNexus",
+  "single_control_panel": true,
+  "agent": "MarketingAgent",
+  "sections": [
+    "KPI widgets",
+    "Lead table",
+    "Campaign table",
+    "AI cards",
+    "Follow-up queue",
+    "Inbox timeline",
+    "Booking handoff queue"
+  ],
+  "primary_tables": [
+    "leads",
+    "campaigns",
+    "deals",
+    "messages",
+    "voice_sessions"
+  ],
+  "primary_widgets": [
+    "lead_quality",
+    "campaign_performance",
+    "overdue_followups",
+    "booking_ready",
+    "channel_health"
+  ]
+}

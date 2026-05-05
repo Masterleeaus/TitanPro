@@ -1,0 +1,16 @@
+{
+  "agents": [
+    {
+      "name": "MoneyAgent",
+      "class": "Modules\\Accountings\\Agents\\MoneyAgent",
+      "role": "accounting_money_manager",
+      "default": true
+    },
+    {
+      "name": "FinanceOpsAgent",
+      "class": "Modules\\Accountings\\Agents\\FinanceOpsAgent",
+      "role": "legacy_alias",
+      "default": false
+    }
+  ]
+}

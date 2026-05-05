@@ -1,0 +1,15 @@
+{
+  "module": "TitanChatbot",
+  "routes": [
+    "api.titan-chatbot.health",
+    "api.chatbots.message",
+    "api.chatbots.voice",
+    "api.chatbots.history",
+    "api.chatbots.train"
+  ],
+  "controllers": [
+    "Modules\\TitanChatbot\\Http\\Controllers\\TitanChatbotController",
+    "Modules\\TitanChatbot\\Http\\Controllers\\Api\\ConversationController",
+    "Modules\\TitanChatbot\\Http\\Controllers\\Api\\ModuleAgentController"
+  ]
+}

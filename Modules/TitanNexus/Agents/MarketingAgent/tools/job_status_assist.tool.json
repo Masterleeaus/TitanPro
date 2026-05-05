@@ -1,0 +1,12 @@
+{
+  "name": "job_status_assist",
+  "description": "Draft customer/internal job updates.",
+  "input_schema": {
+    "payload": "object"
+  },
+  "output_schema": {
+    "result": "object",
+    "approval_required": "boolean"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\JobStatusAssistTool"
+}

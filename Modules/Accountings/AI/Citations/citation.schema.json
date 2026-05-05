@@ -1,0 +1,4 @@
+{
+  "schema": "titan.citation.v1",
+  "fields": ["module", "source_path", "chunk_id", "title", "page", "line_start", "line_end", "confidence"]
+}

@@ -1,0 +1,6 @@
+{
+  "schema": "titan.package.v1",
+  "module": "einvoice",
+  "version": "2.0.0-ai-native",
+  "build": "pass-6"
+}

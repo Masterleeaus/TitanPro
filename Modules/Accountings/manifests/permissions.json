@@ -1,0 +1,20 @@
+{
+  "schema": "titan.module.permissions.v1",
+  "module": "accountings",
+  "permissions": [
+    "money.agent.use",
+    "money.view",
+    "accounting.view",
+    "accounting.create",
+    "accounting.update",
+    "accounting.delete",
+    "accounting.export",
+    "accounting.import",
+    "accounting.reconcile",
+    "accounting.gst.view",
+    "accounting.cashflow.view",
+    "accounting.agent.use",
+    "accounting.agent.train",
+    "accounting.knowledge.manage"
+  ]
+}

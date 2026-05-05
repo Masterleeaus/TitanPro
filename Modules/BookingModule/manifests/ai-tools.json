@@ -1,0 +1,12 @@
+{
+  "module": "bookingmodule",
+  "tools": [
+    "booking.lookup",
+    "booking.status",
+    "booking.complete",
+    "booking.cancel",
+    "schedule.lookup",
+    "schedule.assign",
+    "schedule.reschedule"
+  ]
+}

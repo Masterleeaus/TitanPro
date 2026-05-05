@@ -1,0 +1,231 @@
+{
+    "name": "CallingAgent",
+    "studlyName": "CallingAgent",
+    "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/CallingAgent",
+    "enabled": true,
+    "namespace": "Modules\\CallingAgent\\",
+    "panels": [
+        "*"
+    ],
+    "dependencies": [],
+    "optionalDependencies": [],
+    "priority": 0,
+    "manifestPath": "/home/saassmar/domains/titanzero.pro/public_html/Modules/CallingAgent/manifests/module.manifest.json",
+    "manifestFiles": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/CallingAgent/manifests/module.manifest.json"
+    ],
+    "plugins": [],
+    "resources": [
+        "Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallOutcomeResource",
+        "Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallResource",
+        "Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallerProfileResource",
+        "Modules\\CallingAgent\\Filament\\Resources\\CallingAgentUsageRecordResource",
+        "Modules\\CallingAgent\\Resources\\lang\\en\\messages"
+    ],
+    "pages": [
+        "Modules\\CallingAgent\\Filament\\Pages\\CallingAgentBuilderPage"
+    ],
+    "widgets": [],
+    "clusters": [],
+    "providers": [
+        "Modules\\CallingAgent\\Providers\\AutomationServiceProvider",
+        "Modules\\CallingAgent\\Providers\\BillingServiceProvider",
+        "Modules\\CallingAgent\\Providers\\EventServiceProvider",
+        "Modules\\CallingAgent\\Providers\\FilamentServiceProvider",
+        "Modules\\CallingAgent\\Providers\\ModuleBootServiceProvider",
+        "Modules\\CallingAgent\\Providers\\ModuleServiceProvider",
+        "Modules\\CallingAgent\\Providers\\PolicyServiceProvider",
+        "Modules\\CallingAgent\\Providers\\RepositoryServiceProvider",
+        "Modules\\CallingAgent\\Providers\\RouteServiceProvider",
+        "Modules\\CallingAgent\\Providers\\SearchServiceProvider",
+        "Modules\\CallingAgent\\Providers\\TenancyServiceProvider",
+        "Modules\\CallingAgent\\Providers\\WorkflowServiceProvider"
+    ],
+    "migrations": [],
+    "views": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Resources/views"
+    ],
+    "translations": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Resources/lang"
+    ],
+    "routes": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Routes/api.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Routes/internal.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Routes/tenant.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Routes/web.php"
+    ],
+    "issues": [
+        {
+            "level": "warning",
+            "code": "missing_psr4",
+            "message": "Missing module composer PSR-4 autoload; using fallback namespace.",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/composer.json"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallOutcomeResource",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallResource",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Filament\\Resources\\CallingAgentCallerProfileResource",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Filament\\Resources\\CallingAgentUsageRecordResource",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Filament\\Pages\\CallingAgentBuilderPage",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\AutomationServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\BillingServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\EventServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\FilamentServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\ModuleBootServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\ModuleServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\PolicyServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\RepositoryServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\RouteServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\SearchServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\TenancyServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\CallingAgent\\Providers\\WorkflowServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Filament/Resources/CallingAgentCallOutcomeResource.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Filament/Resources/CallingAgentCallResource.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Filament/Resources/CallingAgentCallerProfileResource.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanEchoVoice/Filament/Resources/CallingAgentUsageRecordResource.php"
+        }
+    ],
+    "repairs": [],
+    "manifest": {
+        "module": "CallingAgent",
+        "manifest": "module",
+        "version": "1.0.0",
+        "items": [],
+        "file_count": 356
+    },
+    "health": {
+        "checked_at": "2026-04-29T03:58:42+00:00",
+        "checks_file": null,
+        "repair_file": null,
+        "contracts_file": null,
+        "checks": [],
+        "repair_actions": []
+    },
+    "fingerprint": "615641a5bdfb350937ec7b9472f4e5d4325b3be6",
+    "healthy": true
+}

@@ -1,0 +1,47 @@
+{
+  "module": "accountings",
+  "sidebar": {
+    "enabled": false,
+    "single_link": false,
+    "label": "Money Manager",
+    "icon": "heroicon-o-banknotes",
+    "group": "Finance",
+    "sort": 100,
+    "permission": "money.view"
+  },
+  "layout": {
+    "top_half": [
+      "metrics_cards",
+      "widget_grid",
+      "module_agent_chat",
+      "shortcuts_card",
+      "settings_card"
+    ],
+    "bottom_half": [
+      "single_tabbed_table_card"
+    ]
+  },
+  "chat": {
+    "agent": "titanzero.money",
+    "provider": "TitanAgents",
+    "system_supervisor": "TitanZero",
+    "supports": [
+      "text",
+      "voice",
+      "pwa",
+      "web_chat",
+      "external_channels"
+    ],
+    "mode": "grounded_with_citations_and_tool_control"
+  },
+  "tables": {
+    "mode": "single_card_with_tabs",
+    "manifest": "Filament/Tables/table-tabs.json"
+  },
+  "resources_navigation": {
+    "register_resource_sidebar_links": false,
+    "open_resource_pages_from_table_tabs": true
+  },
+  "title": "Titan Money Panel Accounting Workspace",
+  "workspace_parent": "Modules/EInvoice/Filament/Pages/InvoiceControlPanel.php"
+}

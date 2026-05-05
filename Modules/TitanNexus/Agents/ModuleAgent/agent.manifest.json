@@ -1,0 +1,40 @@
+{
+  "schema": "titan.agent.module.v1",
+  "agent": "titan-nexus.agent",
+  "display_name": "Titan Nexus Agent",
+  "module": "titan-nexus",
+  "owner": "TitanAgents",
+  "runtime": "TitanCore.ProviderRouter",
+  "system_supervisor": "TitanZero",
+  "answer_mode": "grounded_with_citations",
+  "knowledge_scope": [
+    "Knowledge/guides",
+    "Knowledge/policies",
+    "Knowledge/pricing",
+    "Knowledge/faqs",
+    "Knowledge/contracts",
+    "Knowledge/compliance",
+    "Knowledge/sops",
+    "Knowledge/checklists"
+  ],
+  "tools": [
+    "titan_nexus.lookup_record",
+    "titan_nexus.create_record",
+    "titan_nexus.update_record"
+  ],
+  "permissions": [
+    "titan_nexus.view",
+    "titan_nexus.create",
+    "titan_nexus.update"
+  ],
+  "guardrails": {
+    "tenant_scoped": true,
+    "require_citations_for_knowledge_answers": true,
+    "deny_cross_company_data": true,
+    "human_confirm_for_write_actions": true
+  },
+  "training": {
+    "dataset_manifest": "Agents/ModuleAgent/training/dataset-manifest.json",
+    "evaluation_suite": "Agents/ModuleAgent/evaluations/eval-suite.json"
+  }
+}

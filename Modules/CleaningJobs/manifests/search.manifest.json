@@ -1,0 +1,6 @@
+{
+  "enables": [
+    "global job/request/customer search",
+    "index mapping"
+  ]
+}

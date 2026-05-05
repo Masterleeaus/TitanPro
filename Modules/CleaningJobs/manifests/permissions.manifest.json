@@ -1,0 +1,18 @@
+{
+  "enables": [
+    "RBAC seeding",
+    "policy mapping",
+    "feature guards"
+  ],
+  "permissions": [
+    "titanwork.view",
+    "titanwork.create",
+    "titanwork.update",
+    "titanwork.delete",
+    "titanwork.settings",
+    "titanwork.dispatch",
+    "titanwork.complete",
+    "titanwork.export",
+    "titanwork.import"
+  ]
+}

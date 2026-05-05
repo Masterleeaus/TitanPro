@@ -1,0 +1,12 @@
+{
+    "name": "TitanZero",
+    "alias": "titanzero",
+    "description": "Titan Zero – AI Orchestration Node. Single AI entry point for the platform.",
+    "keywords": ["ai", "orchestration", "titan-zero"],
+    "priority": 0,
+    "version": "4.0.0",
+    "providers": [
+        "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,17 @@
+{
+  "workflow": "MarketingAgentApprovalWorkflow",
+  "description": "Guardrail check, approval gate, execute safe tool, telemetry.",
+  "steps": [
+    "detect",
+    "draft",
+    "guardrail",
+    "approval",
+    "execute",
+    "record"
+  ],
+  "guards": [
+    "tenant_scope",
+    "approval_required",
+    "channel_policy"
+  ]
+}

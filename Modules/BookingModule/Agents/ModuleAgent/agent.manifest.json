@@ -1,0 +1,8 @@
+{
+  "module": "bookingmodule",
+  "agent": "BookingModuleAgent",
+  "description": "Internal booking, scheduling and dispatch specialist.",
+  "knowledge_roots": ["Knowledge", "Docs"],
+  "tools": ["booking.lookup", "booking.status", "schedule.lookup", "schedule.assign", "schedule.reschedule"],
+  "direct_user_access": false
+}

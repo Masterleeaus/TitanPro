@@ -1,0 +1,1 @@
+{"module":"bookingmodule","default_scope":"company_id","preferred_sources":["Knowledge","Booking records","Schedule records"],"deny_cross_tenant":true}

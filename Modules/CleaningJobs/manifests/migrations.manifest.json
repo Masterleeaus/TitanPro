@@ -1,0 +1,15 @@
+{
+  "enables": [
+    "schema install/upgrade ordering"
+  ],
+  "tables": [
+    "work_orders",
+    "wo_requests",
+    "wo_service_appointments",
+    "wo_service_tasks",
+    "wo_service_parts",
+    "service_tasks",
+    "service_parts",
+    "workorders_settings"
+  ]
+}

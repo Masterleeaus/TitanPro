@@ -1,0 +1,12 @@
+{
+  "module": "TitanNexus",
+  "tables": [
+    "nexus_leads",
+    "nexus_campaigns",
+    "nexus_deals",
+    "nexus_invoices",
+    "nexus_payments",
+    "nexus_jobs",
+    "nexus_automation_runs"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "CleaningJobs",
+  "enabled": true,
+  "priority": 10,
+  "providers": [
+    "Modules\\CleaningJobs\\Providers\\ModuleServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\RouteServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\EventServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\PolicyServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\RepositoryServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\AutomationServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\WorkflowServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\TenancyServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\BillingServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\SearchServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\FilamentServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\ModuleBootServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\AgentServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\ControlPanelServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\KnowledgeServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\ManifestServiceProvider"
+  ],
+  "filament": {
+    "panels": ["*"],
+    "navigation": true,
+    "resources_path": "Filament/Resources",
+    "pages_path": "Filament/Pages",
+    "widgets_path": "Filament/Widgets"
+  },
+  "health": {
+    "checks": [
+      "provider_exists",
+      "filament_resources_valid",
+      "translations_loaded",
+      "routes_present",
+      "migrations_present",
+      "composer_psr4_present"
+    ],
+    "report_path": "Health/reports/latest.json"
+  },
+  "repair": {
+    "recipes_path": "Repair/repair.php",
+    "safe_auto_repair": true
+  }
+}

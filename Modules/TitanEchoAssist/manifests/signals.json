@@ -1,0 +1,7 @@
+{
+  "module": "TitanChatbot",
+  "signals": [
+    "Modules\\TitanChatbot\\Signals\\ChatbotAnalyticsSignal"
+  ],
+  "events_manifest": "manifests/events.manifest.json"
+}

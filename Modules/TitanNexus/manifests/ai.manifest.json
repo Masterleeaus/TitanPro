@@ -1,0 +1,16 @@
+{
+  "module": "TitanNexus",
+  "primary_agent": "titan-nexus.marketing-agent",
+  "tools_path": "Agents/MarketingAgent/tools",
+  "knowledge_path": "Knowledge",
+  "guardrails": "AI/Guardrails/guardrails.json",
+  "retrieval": "AI/Retrieval/retrieval.policy.json",
+  "memory": [
+    "campaign_lessons",
+    "lead_preferences",
+    "conversion_patterns",
+    "invoice_outcomes",
+    "payment_preferences",
+    "job_update_patterns"
+  ]
+}

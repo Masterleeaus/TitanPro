@@ -1,0 +1,6 @@
+{
+  "schema": "titan.navigation.v1",
+  "module": "accountings",
+  "items": [],
+  "navigation_note": "Hidden from sidebar. Accountings is exposed inside Money Manager -> Titan Money Panel workspace tabs."
+}

@@ -1,0 +1,16 @@
+{
+  "agents": [
+    {
+      "id": "titanzero-finance",
+      "name": "TitanZero Finance",
+      "audience": "platform_user",
+      "payment_execution": false
+    },
+    {
+      "id": "titanecho-invoice-assistant",
+      "name": "TitanEcho Invoice Assistant",
+      "audience": "customer_of_platform_user",
+      "runtime": "external_customer_channel_or_zeropay"
+    }
+  ]
+}

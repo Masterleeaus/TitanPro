@@ -1,0 +1,11 @@
+{
+  "module": "TitanNexus",
+  "indexes": [
+    "nexus_leads",
+    "nexus_campaigns",
+    "nexus_invoices",
+    "nexus_payments",
+    "nexus_jobs",
+    "nexus_messages"
+  ]
+}

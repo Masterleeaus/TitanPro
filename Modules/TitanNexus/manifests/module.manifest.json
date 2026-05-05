@@ -1,0 +1,35 @@
+{
+  "name": "TitanNexus",
+  "slug": "titan-hello",
+  "type": "spa-control-panel",
+  "version": "0.7.0",
+  "converted_from": [
+    "MarketingBot.zip",
+    "TitanNexusBase.zip"
+  ],
+  "enables": [
+    "lead acquisition SPA",
+    "campaign automation",
+    "AI cards",
+    "target discovery",
+    "vertical templates",
+    "follow-up sequencing",
+    "lead tracking",
+    "Ground Zero booking handoff",
+    "tenancy",
+    "billing",
+    "search"
+  ],
+  "merge_status": "legacy-code-merge-started",
+  "capability_groups": [
+    "campaigns",
+    "leads",
+    "deals",
+    "channels",
+    "voice_ai",
+    "inbox",
+    "outbox",
+    "ai_knowledge",
+    "booking_handoff"
+  ]
+}

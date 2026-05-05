@@ -1,0 +1,11 @@
+{
+  "permissions": [
+    "titan_nexus.view",
+    "titan_nexus.create",
+    "titan_nexus.update",
+    "titan_nexus.delete",
+    "titan_nexus.export",
+    "titan_nexus.import",
+    "titan_nexus.approve"
+  ]
+}

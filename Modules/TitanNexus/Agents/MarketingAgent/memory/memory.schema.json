@@ -1,0 +1,23 @@
+{
+  "collections": {
+    "campaign_lessons": [
+      "tenant_id",
+      "vertical",
+      "campaign_id",
+      "lesson",
+      "confidence"
+    ],
+    "lead_preferences": [
+      "tenant_id",
+      "segment",
+      "winning_angle",
+      "blocked_terms"
+    ],
+    "conversion_patterns": [
+      "tenant_id",
+      "source",
+      "pattern",
+      "metric"
+    ]
+  }
+}

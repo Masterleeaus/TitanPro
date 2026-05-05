@@ -1,0 +1,25 @@
+{
+  "module": "titan-nexus",
+  "enabled": true,
+  "route": "/app/titan-nexus",
+  "offline_mode": "read_cached_summary_only",
+  "screens": [
+    "module_dashboard",
+    "module_chat",
+    "module_tables",
+    "module_settings"
+  ],
+  "capabilities": [
+    "push_notifications",
+    "voice_input",
+    "camera_uploads",
+    "file_uploads",
+    "quick_actions"
+  ],
+  "agent": {
+    "chat_enabled": true,
+    "voice_enabled": true,
+    "control_enabled": true,
+    "confirmation_required_for_writes": true
+  }
+}

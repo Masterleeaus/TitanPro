@@ -1,0 +1,8 @@
+{
+  "name": "Cleaning Job Unified Workflow",
+  "version": "0.5.0",
+  "planning_enables": ["budget baseline", "crew capacity", "timesheet cost rollup", "resource schedule", "job/status reporting"],
+  "execution_enables": ["kanban stages", "task checklist", "subtasks", "comments", "files", "activity audit", "quality issues"],
+  "stages": ["intake", "quoted", "scheduled", "in_progress", "quality_check", "completed", "invoiced"],
+  "tables": ["work_orders", "wo_service_appointments", "cleaning_job_tasks", "cleaning_job_timesheets", "cleaning_job_resource_allocations"]
+}

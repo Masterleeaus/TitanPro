@@ -1,0 +1,10 @@
+{
+  "schema": "titan.module.api.v1",
+  "module": "accountings",
+  "boundary": "accounting_only_no_payment_execution",
+  "routes": [
+    {"method":"GET","path":"/api/accountings/ledger","permission":"accounting.view"},
+    {"method":"POST","path":"/api/accountings/invoice-journals","permission":"accounting.create"},
+    {"method":"GET","path":"/api/accountings/gst","permission":"accounting.gst.view"}
+  ]
+}

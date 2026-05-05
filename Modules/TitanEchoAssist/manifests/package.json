@@ -1,0 +1,5 @@
+{
+  "module": "module.json",
+  "composer": "composer.json",
+  "version": "version.json"
+}

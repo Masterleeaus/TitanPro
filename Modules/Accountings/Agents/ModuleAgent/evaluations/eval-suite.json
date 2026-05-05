@@ -1,0 +1,9 @@
+{
+  "schema": "titan.agent.eval.v1",
+  "checks": [
+    "tenant_scope",
+    "requires_confirmation_for_writes",
+    "cites_knowledge",
+    "refuses_cross_company_data"
+  ]
+}

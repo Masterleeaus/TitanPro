@@ -1,0 +1,9 @@
+{
+  "enables": "web/API/internal/tenant route discovery",
+  "v6_integrations": {
+    "voice_webhooks": true,
+    "sms_voice_channels": true,
+    "legacy_leads_base": true,
+    "extracted_source_preserved": true
+  }
+}

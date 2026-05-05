@@ -1,0 +1,8 @@
+{
+  "module": "TitanChatbot",
+  "action_map": "AI/Actions/action-map.json",
+  "tools": [
+    "titan-chatbot.generate_reply",
+    "titan-chatbot.route_inbound_message"
+  ]
+}

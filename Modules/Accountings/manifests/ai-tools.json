@@ -1,0 +1,10 @@
+{
+  "schema": "titan.module.ai-tools.v1",
+  "module": "accountings",
+  "boundary": "no_payment_execution",
+  "tools": [
+    {"name":"accounting.lookup_ledger","description":"Read ledger entries and balances."},
+    {"name":"accounting.post_invoice_journal","description":"Post invoice-issued journal entries."},
+    {"name":"accounting.match_reconciliation_record","description":"Suggest accounting reconciliation record matches only; no payment execution."}
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "einvoice.send_invoice": "Modules\\EInvoice\\Actions\\SendInvoiceAction",
+  "einvoice.prepare_zeropay_handoff": "Modules\\EInvoice\\Actions\\PrepareZeroPayHandoffAction",
+  "einvoice.generate_late_followup": "Modules\\EInvoice\\Actions\\GenerateLateInvoiceFollowupAction",
+  "einvoice.generate_xml": "Modules\\EInvoice\\Actions\\GenerateInvoiceXmlAction"
+}

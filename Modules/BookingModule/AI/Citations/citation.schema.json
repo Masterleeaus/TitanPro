@@ -1,0 +1,1 @@
+{"module":"bookingmodule","records":["bookings","cleaning_bookings","appointments","schedules","booking_pages"],"required_fields":["record_type","record_id","company_id"]}

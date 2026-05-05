@@ -1,0 +1,11 @@
+{
+  "module": "bookingmodule",
+  "actions": [
+    {"name": "booking.lookup", "class": "Modules\\BookingModule\\Queries\\BookingOverviewQuery", "risk": "read"},
+    {"name": "booking.status", "class": "Modules\\BookingModule\\Repositories\\BookingReadRepository", "risk": "read"},
+    {"name": "booking.complete", "class": "Modules\\BookingModule\\Actions\\Bookings\\CompleteCleaningBookingAction", "risk": "medium"},
+    {"name": "booking.cancel", "class": "Modules\\BookingModule\\Actions\\Bookings\\CancelCleaningBookingAction", "risk": "high"},
+    {"name": "schedule.assign", "class": "Modules\\BookingModule\\Actions\\Schedules\\AssignScheduleAction", "risk": "medium"},
+    {"name": "schedule.reschedule", "class": "Modules\\BookingModule\\Actions\\Schedules\\RescheduleScheduleAction", "risk": "medium"}
+  ]
+}

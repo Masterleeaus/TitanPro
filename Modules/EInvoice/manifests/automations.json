@@ -1,0 +1,18 @@
+{
+  "automations": [
+    "on_invoice_created",
+    "on_invoice_sent",
+    "on_invoice_viewed",
+    "on_invoice_overdue",
+    "on_invoice_escalated",
+    "on_invoice_closed",
+    "on_job_completed_generate_invoice",
+    "on_customer_created_attach_terms"
+  ],
+  "forbidden": [
+    "process_payment",
+    "charge_card",
+    "create_wallet",
+    "gateway_webhook"
+  ]
+}

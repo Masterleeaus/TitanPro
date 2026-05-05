@@ -1,0 +1,1 @@
+{"name":"cleaning_jobs.generate_checklist","description":"Cleaning Jobs booking agent tool: generate_checklist","input_schema":{"tenant_id":"string","payload":"object"},"tenant_scoped":true}

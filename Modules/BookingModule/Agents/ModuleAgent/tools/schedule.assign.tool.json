@@ -1,0 +1,1 @@
+{"name":"schedule.assign","module":"bookingmodule","action":"Modules\\BookingModule\\Actions\\Schedules\\AssignScheduleAction","requires_policy":"appointments assign"}

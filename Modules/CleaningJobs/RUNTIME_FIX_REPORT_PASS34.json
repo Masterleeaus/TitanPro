@@ -1,0 +1,6 @@
+{
+  "module": "TitanWork",
+  "pass": 34,
+  "fix": "Updated TitanWorkControlPanel::$navigationIcon type to match Filament Page signature on PHP 8.4 / Laravel 12.",
+  "file": "Modules/CleaningJobs/Filament/Pages/TitanWorkControlPanel.php"
+}

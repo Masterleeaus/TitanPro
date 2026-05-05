@@ -1,0 +1,23 @@
+{
+  "name": "modules/cleaning-jobs",
+  "description": "Cleaning business SaaS job management module.",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Modules\\CleaningJobs\\": ""
+    },
+    "files": [
+      "Helpers/helpers.php"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\CleaningJobs\\Providers\\ModuleServiceProvider",
+        "Modules\\CleaningJobs\\Providers\\RouteServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -1,0 +1,9 @@
+{
+  "enables": [
+    "sidebar/menu registration",
+    "permission-aware menu items"
+  ],
+  "items": [
+    "TitanWork"
+  ]
+}

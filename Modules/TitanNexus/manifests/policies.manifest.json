@@ -1,0 +1,8 @@
+{
+  "enables": "per-resource authorization",
+  "policies": [
+    "CampaignPolicy",
+    "LeadPolicy",
+    "TemplatePolicy"
+  ]
+}

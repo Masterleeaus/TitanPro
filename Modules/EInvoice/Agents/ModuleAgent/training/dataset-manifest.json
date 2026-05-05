@@ -1,0 +1,11 @@
+{
+  "schema": "titan.agent.training.v1",
+  "datasets": [
+    {
+      "name": "module_knowledge",
+      "path": "Knowledge",
+      "type": "markdown"
+    }
+  ],
+  "tools_manifest": "manifests/ai-tools.json"
+}

@@ -1,0 +1,13 @@
+{
+  "module": "TitanNexus",
+  "listeners": [
+    "QueueLateInvoiceFollowup",
+    "GeneratePaymentLinkForInvoice",
+    "SendPaymentReminderMail",
+    "RecordPaymentReceipt",
+    "NotifyJobScheduled",
+    "NotifyJobCompleted",
+    "RecordMarketingAgentAction",
+    "UpdatePaymentFollowupMetrics"
+  ]
+}
