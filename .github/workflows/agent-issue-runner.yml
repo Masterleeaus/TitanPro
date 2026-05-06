@@ -3,14 +3,23 @@ name: 🤖 Agent — Issue Runner
 on:
   schedule:
     - cron: '*/30 * * * *'   # every 30 minutes
+    # ── Batch size guide ────────────────────────────────────────────────────
+    # Anthropic API Tier 1 (<$100 spent): recommended batch = 5
+    #   50 req/min, 10k req/day → ~50 calls/issue → ~200 issues/day max
+    #   48 batches/day × 5 = 240 → safe with some headroom
+    # Anthropic API Tier 2 ($100–$500 spent): safe to raise batch to 10–12
+    #   1k req/min, no daily cap → time is the only limit (~15 min/issue)
+    # Anthropic API Tier 3 ($500+ spent): batch 15–20 comfortably
+    # GitHub Actions: unlimited minutes on public repos — not a constraint
+    # ────────────────────────────────────────────────────────────────────────
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Specific issue number (blank = 5 oldest open)'
+        description: 'Specific issue number (blank = batch of oldest open)'
         required: false
         type: string
       batch_size:
-        description: 'Number of issues to process (default 5)'
+        description: 'Issues per run — Tier1=5, Tier2=10, Tier3=15 (default 5)'
         required: false
         default: '5'
         type: string
@@ -28,7 +37,7 @@ jobs:
   run-agent:
     name: Work on ${{ github.event.inputs.batch_size || '5' }} open issues
     runs-on: ubuntu-latest
-    timeout-minutes: 60   # 5 issues × up to 12 min each
+    timeout-minutes: 120   # 5 issues × up to 24 min each — raise to 240 at Tier 2+
 
     steps:
       - name: Checkout
