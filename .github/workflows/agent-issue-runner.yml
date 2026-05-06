@@ -122,11 +122,37 @@ jobs:
               echo "  ✓ Copilot assigned (via API) to issue #$ISSUE_NUM"
             fi
 
-            # Post a comment so contributors know Copilot is on it
+            # Post a comment with full Copilot instructions (including issue-docs requirement)
             gh issue comment "$ISSUE_NUM" --repo "$REPO" \
-              --body "🤖 **GitHub Copilot** has been assigned to this issue and will open a pull request with a fix. Track progress in the Pull Requests tab.
+              --body "🤖 **GitHub Copilot** has been assigned to this issue.
 
-> When the fix is merged, an agent will scan \`issue-docs/issue-${ISSUE_NUM}.md\` for any follow-on next steps and create new issues automatically." || true
+## Instructions for Copilot
+
+Please implement the fix described above, then **before committing**:
+
+1. Create the file \`issue-docs/issue-${ISSUE_NUM}.md\` with exactly these sections:
+
+\`\`\`markdown
+## Issue Summary
+<one paragraph describing the problem>
+
+## Root Cause
+<what was causing the bug or what was missing>
+
+## Changes Made
+<list every file modified with key before/after lines>
+
+## Tests Added or Updated
+<list any new or changed test cases>
+
+## Next Steps
+<follow-on work, known gaps, related issues, or 'None' if complete>
+\`\`\`
+
+2. Commit **all** changes (code + \`issue-docs/issue-${ISSUE_NUM}.md\`) together.
+3. Open a pull request targeting \`main\`.
+
+> The \`issue-docs\` file is required — an automated agent reads the **Next Steps** section after merge to create follow-up issues. PRs missing this file will be flagged." || true
 
           done < /tmp/issue_numbers.txt
 
