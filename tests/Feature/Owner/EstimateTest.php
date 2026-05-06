@@ -6,6 +6,7 @@ use App\Models\EstimatePackage;
 use App\Models\Organization;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Support\Facades\DB;
 
 function estimateSetup(): array
 {
@@ -390,6 +391,31 @@ test('user cannot convert another org\'s estimate', function () {
     $this->actingAs($user)
         ->post("/owner/estimates/{$estimate->id}/convert")
         ->assertForbidden();
+});
+
+test('recalculate does nothing when parent estimate is null', function () {
+    $org      = Organization::factory()->create();
+    $customer = Customer::factory()->create(['organization_id' => $org->id]);
+    $estimate = Estimate::factory()->forCustomer($customer)->create(['tax_rate' => 0.10]);
+
+    $package = $estimate->packages()->create([
+        'tier' => 'good', 'label' => 'Basic', 'is_recommended' => false,
+        'subtotal' => 100, 'tax_amount' => 10, 'total' => 110,
+    ]);
+
+    // Delete the estimate row directly (bypasses Eloquent cascade) so the
+    // package's estimate_id becomes a dangling foreign key, simulating the
+    // scenario where a queued job runs after the estimate is removed.
+    DB::table('estimates')->where('id', $estimate->id)->delete();
+
+    // Reload package without the relationship loaded
+    $package = EstimatePackage::find($package->id);
+
+    // Should not throw; totals must remain unchanged
+    expect(fn () => $package->recalculate())->not->toThrow(\Throwable::class);
+    expect((float) $package->fresh()->subtotal)->toBe(100.0);
+    expect((float) $package->fresh()->tax_amount)->toBe(10.0);
+    expect((float) $package->fresh()->total)->toBe(110.0);
 });
 
 test('convert returns 422 when accepted_package tier has no matching package', function () {

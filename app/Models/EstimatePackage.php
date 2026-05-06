@@ -45,6 +45,10 @@ class EstimatePackage extends Model
 
     public function recalculate(): void
     {
+        if (! $this->estimate) {
+            return;
+        }
+
         $taxRate  = (float) ($this->estimate->tax_rate ?? 0);
         $subtotal = $this->lineItems()->sum(DB::raw('unit_price * quantity'));
         $taxable  = $this->lineItems()->where('is_taxable', true)->sum(DB::raw('unit_price * quantity'));
