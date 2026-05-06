@@ -142,8 +142,9 @@ class VersionCompatibilityChecker
     private function normalise(string $version): string
     {
         // Strip stability flags (e.g. "11.0-dev", "8.2.0RC1")
-        $version = preg_replace('/[-+][a-zA-Z0-9.]+$/', '', trim($version));
-        $parts   = explode('.', $version ?? '');
+        // preg_replace returns string|null; cast to string to satisfy explode().
+        $version = (string) preg_replace('/[-+][a-zA-Z0-9.]+$/', '', trim($version));
+        $parts   = explode('.', $version);
 
         while (count($parts) < 3) {
             $parts[] = '0';
