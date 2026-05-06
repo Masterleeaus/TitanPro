@@ -60,11 +60,10 @@ test('technician locations returns empty data when no technicians exist', functi
         ->assertJson(['data' => []]);
 });
 
-test('technician locations returns technician entries scoped to the owner organisation', function () {
+test('technician locations returns technician entries scoped to the owner organization', function () {
     [$owner, $tech] = dispatchSetup();
 
     // Technician from a different org — must not appear
-    (new RolesAndPermissionsSeeder)->run();
     $otherOrg  = Organization::factory()->create();
     $otherTech = User::factory()->create(['organization_id' => $otherOrg->id]);
     $otherTech->assignRole('technician');
