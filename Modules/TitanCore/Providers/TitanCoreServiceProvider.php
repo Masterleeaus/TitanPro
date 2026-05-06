@@ -22,6 +22,8 @@ class TitanCoreServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->validateTitanConfig();
+
         $this->registerTranslations();
         $this->registerViews();
 
@@ -63,6 +65,12 @@ class TitanCoreServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        // App-level Titan config files (config/ directory)
+        $this->mergeConfigFrom(config_path('titan-modules.php'), 'titan-modules');
+        $this->mergeConfigFrom(config_path('titan-ai.php'), 'titan-ai');
+        $this->mergeConfigFrom(config_path('titan-model-runtime.php'), 'titan-model-runtime');
+
+        // Module-level config overrides
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'titancore');
         $this->mergeConfigFrom(__DIR__.'/../Config/titan_agents.php', 'titan_agents');
 
@@ -141,5 +149,39 @@ class TitanCoreServiceProvider extends ServiceProvider
         $paths[] = $sourcePath;
 
         return $paths;
+    }
+
+    /**
+     * Validate that all required Titan config keys are present.
+     * Throws a RuntimeException immediately so the application fails loudly
+     * rather than producing silent "Undefined array key" errors at runtime.
+     */
+    private function validateTitanConfig(): void
+    {
+        $missing = [];
+
+        // titan-modules: path must be a non-empty string
+        if (empty(config('titan-modules.path'))) {
+            $missing[] = 'titan-modules.path';
+        }
+
+        // titan-ai: default_provider must be a non-empty string
+        if (empty(config('titan-ai.default_provider'))) {
+            $missing[] = 'titan-ai.default_provider';
+        }
+
+        // titan-model-runtime: providers must be a non-empty array
+        $providers = config('titan-model-runtime.providers');
+        if (empty($providers) || ! is_array($providers)) {
+            $missing[] = 'titan-model-runtime.providers';
+        }
+
+        if (! empty($missing)) {
+            throw new \RuntimeException(
+                'Titan configuration is incomplete. Missing required keys: '.implode(', ', $missing).'. '
+                .'Check your .env file and ensure config/titan-modules.php, config/titan-ai.php, '
+                .'and config/titan-model-runtime.php are present.'
+            );
+        }
     }
 }
