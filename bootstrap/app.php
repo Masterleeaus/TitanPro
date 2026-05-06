@@ -39,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission'            => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'subscription'          => \App\Http\Middleware\CheckSubscription::class,
             'technician.limit'      => \App\Http\Middleware\CheckTechnicianLimit::class,
+            'module.admin'          => \App\Http\Middleware\EnsureModuleAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

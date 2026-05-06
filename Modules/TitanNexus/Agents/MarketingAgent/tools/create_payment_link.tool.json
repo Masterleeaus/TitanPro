@@ -1,0 +1,12 @@
+{
+  "name": "create_payment_link",
+  "description": "Create payment-link payloads for PayID, bank, or card.",
+  "input_schema": {
+    "payload": "object"
+  },
+  "output_schema": {
+    "result": "object",
+    "approval_required": "boolean"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\PaymentLinkTool"
+}

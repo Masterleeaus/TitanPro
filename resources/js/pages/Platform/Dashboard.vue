@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlatformLayout from '@/layouts/PlatformLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -87,10 +88,7 @@ function activate(organization: Organization): void {
     router.post(`/platform/organizations/${organization.id}/activate`, {}, { preserveScroll: true });
 }
 
-function formatDate(value: string | null): string {
-    if (!value) return '—';
-    return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date(value));
-}
+const { formatDate } = useDate();
 </script>
 
 <template>

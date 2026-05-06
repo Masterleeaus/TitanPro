@@ -1,0 +1,1 @@
+{"module":"bookingmodule","sources":["Knowledge","Docs","Documentation"],"records":["Booking","CleaningBooking","Appointment","Schedule","BookingPage"],"tenant_key":"company_id"}

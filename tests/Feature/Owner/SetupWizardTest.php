@@ -97,6 +97,35 @@ test('owner can add a job type via setup', function () {
     expect(JobType::where('organization_id', $org->id)->where('name', 'HVAC Service')->exists())->toBeTrue();
 });
 
+test('owner can add a job type with a 3-digit hex color', function () {
+    [$user, $org] = setupUser();
+
+    $this->actingAs($user)->post('/owner/setup/job-types', [
+        'name'  => 'Plumbing',
+        'color' => '#abc',
+    ])->assertRedirect();
+
+    expect(JobType::where('organization_id', $org->id)->where('name', 'Plumbing')->exists())->toBeTrue();
+});
+
+test('invalid color is rejected when adding a job type', function () {
+    [$user] = setupUser();
+
+    $this->actingAs($user)->post('/owner/setup/job-types', [
+        'name'  => 'Bad Color',
+        'color' => '"><script>alert(1)</script>',
+    ])->assertSessionHasErrors('color');
+});
+
+test('non-hex color string is rejected when adding a job type', function () {
+    [$user] = setupUser();
+
+    $this->actingAs($user)->post('/owner/setup/job-types', [
+        'name'  => 'Bad Color',
+        'color' => 'red',
+    ])->assertSessionHasErrors('color');
+});
+
 test('owner can add a technician via setup', function () {
     [$user, $org] = setupUser();
 

@@ -1,0 +1,1 @@
+{"agent":"cleaning_jobs.booking_agent","actions":{"lookup_availability":"tool","estimate_job":"tool","create_booking":"tool","generate_checklist":"tool","escalate_overdue_visit":"tool"}}

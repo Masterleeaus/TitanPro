@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use Modules\BookingModule\Entities\BookingModuleSetting;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        \App\Models\Module::validateVersion(BookingModuleSetting::MODULE_NAME);
+
+        if (! Schema::hasTable('booking_schedule_histories')) {
+            return;
+        }
+        Schema::table('booking_schedule_histories', function (Blueprint $table) {
+            if (! Schema::hasColumn('booking_schedule_histories', 'booking_repeat_id')) {
+                $table->foreignUuid('booking_repeat_id')->nullable();
+            }
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('booking_schedule_histories', function (Blueprint $table) {
+            $table->dropColumn('booking_repeat_id');
+        });
+    }
+};

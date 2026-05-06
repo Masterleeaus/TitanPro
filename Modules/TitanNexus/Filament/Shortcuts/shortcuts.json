@@ -1,0 +1,29 @@
+{
+  "module": "titan-nexus",
+  "shortcuts": [
+    {
+      "key": "create_record",
+      "label": "Create record",
+      "action": "titan_nexus.create_record",
+      "permission": "titan_nexus.create"
+    },
+    {
+      "key": "ask_agent",
+      "label": "Ask module agent",
+      "action": "titan_nexus.agent.ask",
+      "permission": "titan_nexus.agent.use"
+    },
+    {
+      "key": "scan_knowledge",
+      "label": "Re-scan knowledge pack",
+      "action": "titan_nexus.knowledge.reindex",
+      "permission": "titan_nexus.agent.train"
+    },
+    {
+      "key": "open_settings",
+      "label": "Module settings",
+      "action": "titan_nexus.settings.open",
+      "permission": "titan_nexus.settings.manage"
+    }
+  ]
+}

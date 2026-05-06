@@ -1,0 +1,13 @@
+{
+  "name": "push_booking",
+  "description": "Prepare a qualified lead payload for Ground Zero booking handoff.",
+  "input_schema": {
+    "lead": "object",
+    "booking_intent": "object"
+  },
+  "output_schema": {
+    "payload": "object",
+    "approval_required": "boolean"
+  },
+  "handler": "Modules\\TitanNexus\\Actions\\PushLeadToGroundZeroAction"
+}

@@ -74,6 +74,48 @@ test('checkout requires positive balance due', function () {
         ->assertStatus(422);
 });
 
+test('checkout rejects invoice with zero-price line item', function () {
+    [$user, $org, $customer] = stripeSetup();
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 1.00,
+        'balance_due' => 1.00,
+    ]);
+
+    // Create a line item with unit_price = 0
+    $invoice->lineItems()->create([
+        'name'        => 'Free Item',
+        'description' => 'Free Item',
+        'quantity'    => 1,
+        'unit_price'  => 0.00,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
+test('checkout rejects invoice with sub-cent line item price', function () {
+    [$user, $org, $customer] = stripeSetup();
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 1.00,
+        'balance_due' => 1.00,
+    ]);
+
+    // Create a line item with unit_price that rounds to 0 cents (0.004 * 100 = 0.4 → 0)
+    $invoice->lineItems()->create([
+        'name'        => 'Tiny Item',
+        'description' => 'Tiny Item',
+        'quantity'    => 1,
+        'unit_price'  => 0.004,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
 test('user cannot initiate checkout for another org invoice', function () {
     [$user] = stripeSetup();
     [, , $otherCustomer] = stripeSetup();
@@ -85,6 +127,42 @@ test('user cannot initiate checkout for another org invoice', function () {
     $this->actingAs($user)
         ->post("/owner/invoices/{$invoice->id}/checkout")
         ->assertForbidden();
+});
+
+test('checkout returns 422 when invoice has no customer', function () {
+    [$user, $org] = stripeSetup();
+
+    $customer = Customer::factory()->create(['organization_id' => $org->id]);
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 100.00,
+        'balance_due' => 100.00,
+    ]);
+
+    // Soft-delete the customer so $invoice->customer resolves to null
+    $customer->delete();
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
+});
+
+test('checkout returns 422 when customer has no email', function () {
+    [$user, $org] = stripeSetup();
+
+    $customer = Customer::factory()->create([
+        'organization_id' => $org->id,
+        'email'           => null,
+    ]);
+
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 100.00,
+        'balance_due' => 100.00,
+    ]);
+
+    $this->actingAs($user)
+        ->post("/owner/invoices/{$invoice->id}/checkout")
+        ->assertStatus(422);
 });
 
 // ── Webhook ────────────────────────────────────────────────────────────────────
@@ -213,6 +291,221 @@ test('webhook partial payment sets status to partial', function () {
     expect($invoice->status)->toBe(Invoice::STATUS_PARTIAL);
     expect((float) $invoice->amount_paid)->toBe(100.0);
     expect((float) $invoice->balance_due)->toBe(200.0);
+});
+
+test('webhook accumulates multiple partial payments without floating-point drift', function () {
+    [, $org, $customer] = stripeSetup();
+
+    // $0.30 invoice paid in three Stripe payments of $0.10 each.
+    // Without rounding: stored 0.20 + 0.10/100 → 0.20 + 0.1 = 0.30000000000000004,
+    // which would never satisfy $balanceDue <= 0 if the balance were not rounded.
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 0.30,
+        'balance_due' => 0.30,
+        'amount_paid' => 0.00,
+    ]);
+
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleCheckoutCompleted');
+    $method->setAccessible(true);
+
+    $makeEvent = function (string $sessionId, string $piId, int $cents) use ($invoice): object {
+        $session                 = new \stdClass();
+        $session->id             = $sessionId;
+        $session->payment_intent = $piId;
+        $session->amount_total   = $cents;
+        $metadata                = new \stdClass();
+        $metadata->invoice_id    = $invoice->id;
+        $session->metadata       = $metadata;
+        $event                   = new \stdClass();
+        $event->data             = new \stdClass();
+        $event->data->object     = $session;
+        return $event;
+    };
+
+    // First payment: $0.10 (10 cents)
+    $method->invoke($controller, $makeEvent('cs_fp1', 'pi_fp1', 10));
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(0.10);
+    expect((float) $invoice->balance_due)->toBe(0.20);
+    expect($invoice->status)->toBe(Invoice::STATUS_PARTIAL);
+
+    // Second payment: $0.10 (10 cents)
+    $method->invoke($controller, $makeEvent('cs_fp2', 'pi_fp2', 10));
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(0.20);
+    expect((float) $invoice->balance_due)->toBe(0.10);
+    expect($invoice->status)->toBe(Invoice::STATUS_PARTIAL);
+
+    // Third payment: $0.10 — triggers the classic 0.20 + 0.10 = 0.30000000000000004 drift
+    $method->invoke($controller, $makeEvent('cs_fp3', 'pi_fp3', 10));
+    $invoice->refresh();
+
+    // With round(..., 2): amount_paid must be exactly 0.30, not 0.30000000000000004
+    expect((float) $invoice->amount_paid)->toBe(0.30);
+    // balance_due must reach exactly 0.00 and the invoice must be marked paid
+    expect((float) $invoice->balance_due)->toBe(0.00);
+    expect($invoice->status)->toBe(Invoice::STATUS_PAID);
+    expect($invoice->paid_at)->not->toBeNull();
+
+    expect(Payment::where('invoice_id', $invoice->id)->count())->toBe(3);
+});
+
+// ── Subscription webhook ───────────────────────────────────────────────────────
+
+test('subscription checkout uses stripe_customer_id as authoritative org lookup', function () {
+    [, $org] = stripeSetup(); // first element ($user) is not needed for this test
+
+    // Assign a Stripe customer ID to the org — this is the authoritative link
+    $org->update(['stripe_customer_id' => 'cus_test_auth']);
+
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleSubscriptionCheckoutCompleted');
+    $method->setAccessible(true);
+
+    // Build a mock Stripe subscription to be returned from ->subscriptions->retrieve()
+    $stripeSub                          = new \stdClass();
+    $stripeSub->current_period_start    = now()->timestamp;
+    $stripeSub->current_period_end      = now()->addMonth()->timestamp;
+    $priceObj                           = new \stdClass();
+    $priceObj->id                       = 'price_test_001';
+    $itemData                           = new \stdClass();
+    $itemData->price                    = $priceObj;
+    $stripeSub->items                   = new \stdClass();
+    $stripeSub->items->data             = [$itemData];
+
+    // Mock the StripeClient so subscriptions->retrieve() returns our stub
+    $subscriptionsMock = Mockery::mock();
+    $subscriptionsMock->shouldReceive('retrieve')->andReturn($stripeSub);
+
+    $stripeClientMock = Mockery::mock(\Stripe\StripeClient::class);
+    $stripeClientMock->subscriptions = $subscriptionsMock;
+
+    // Swap the StripeClient binding
+    $this->instance(\Stripe\StripeClient::class, $stripeClientMock);
+
+    // Build the session object: customer field is the authoritative source
+    $session                   = new \stdClass();
+    $session->customer         = 'cus_test_auth'; // matches org->stripe_customer_id
+    $session->subscription     = 'sub_test_001';
+    $meta                      = new \stdClass();
+    $meta->plan                = 'pro';
+    $meta->interval            = 'monthly';
+    // organization_id in metadata intentionally omitted — must NOT be relied upon
+    $session->metadata         = $meta;
+
+    // Partial-mock the SubscriptionService so activateFromStripe is observable
+    $serviceMock = Mockery::mock(\App\Services\SubscriptionService::class)->makePartial();
+    $serviceMock->shouldReceive('activateFromStripe')
+        ->once()
+        ->withArgs(fn ($passedOrg) => $passedOrg->id === $org->id);
+
+    $refProp = $ref->getProperty('subscriptionService');
+    $refProp->setAccessible(true);
+    $refProp->setValue($controller, $serviceMock);
+
+    $method->invoke($controller, $session);
+});
+
+test('subscription checkout is ignored when stripe_customer_id has no matching org', function () {
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleSubscriptionCheckoutCompleted');
+    $method->setAccessible(true);
+
+    $session               = new \stdClass();
+    $session->customer     = 'cus_unknown_999'; // no org with this ID
+    $session->subscription = 'sub_test_002';
+    $meta                  = new \stdClass();
+    $meta->plan            = 'pro';
+    $meta->interval        = 'monthly';
+    $session->metadata     = $meta;
+
+    // activateFromStripe must NOT be called
+    $serviceMock = Mockery::mock(\App\Services\SubscriptionService::class);
+    $serviceMock->shouldNotReceive('activateFromStripe');
+
+    $refProp = $ref->getProperty('subscriptionService');
+    $refProp->setAccessible(true);
+    $refProp->setValue($controller, $serviceMock);
+
+    $method->invoke($controller, $session);
+
+    // Mockery assertion: shouldNotReceive is verified on teardown
+});
+
+test('subscription checkout is ignored when subscription has no items', function () {
+    [, $org] = stripeSetup();
+
+    $org->update(['stripe_customer_id' => 'cus_test_noitems']);
+
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleSubscriptionCheckoutCompleted');
+    $method->setAccessible(true);
+
+    // Build a mock Stripe subscription with an empty items array
+    $stripeSub                       = new \stdClass();
+    $stripeSub->current_period_start = now()->timestamp;
+    $stripeSub->current_period_end   = now()->addMonth()->timestamp;
+    $stripeSub->items                = new \stdClass();
+    $stripeSub->items->data          = [];
+
+    $subscriptionsMock = Mockery::mock();
+    $subscriptionsMock->shouldReceive('retrieve')->andReturn($stripeSub);
+
+    $stripeClientMock              = Mockery::mock(\Stripe\StripeClient::class);
+    $stripeClientMock->subscriptions = $subscriptionsMock;
+
+    $this->instance(\Stripe\StripeClient::class, $stripeClientMock);
+
+    $session               = new \stdClass();
+    $session->customer     = 'cus_test_noitems';
+    $session->subscription = 'sub_test_noitems';
+    $meta                  = new \stdClass();
+    $meta->plan            = 'pro';
+    $meta->interval        = 'monthly';
+    $session->metadata     = $meta;
+
+    // activateFromStripe must NOT be called when items are empty
+    $serviceMock = Mockery::mock(\App\Services\SubscriptionService::class);
+    $serviceMock->shouldNotReceive('activateFromStripe');
+
+    $refProp = $ref->getProperty('subscriptionService');
+    $refProp->setAccessible(true);
+    $refProp->setValue($controller, $serviceMock);
+
+    $method->invoke($controller, $session);
+
+    // Mockery assertion: shouldNotReceive is verified on teardown
+});
+
+test('subscription checkout is ignored when session has no customer field', function () {
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleSubscriptionCheckoutCompleted');
+    $method->setAccessible(true);
+
+    $session               = new \stdClass();
+    // $session->customer intentionally absent
+    $session->subscription = 'sub_test_003';
+    $meta                  = new \stdClass();
+    $meta->plan            = 'pro';
+    $meta->interval        = 'monthly';
+    $session->metadata     = $meta;
+
+    $serviceMock = Mockery::mock(\App\Services\SubscriptionService::class);
+    $serviceMock->shouldNotReceive('activateFromStripe');
+
+    $refProp = $ref->getProperty('subscriptionService');
+    $refProp->setAccessible(true);
+    $refProp->setValue($controller, $serviceMock);
+
+    $method->invoke($controller, $session);
+
+    // Mockery assertion: shouldNotReceive is verified on teardown
 });
 
 test('webhook with missing invoice_id is ignored gracefully', function () {

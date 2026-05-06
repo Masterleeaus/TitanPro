@@ -1,0 +1,15 @@
+{
+  "name": "generate_outreach",
+  "description": "Generate editable outreach content for email, SMS, and follow-ups.",
+  "input_schema": {
+    "lead": "object",
+    "template": "object",
+    "vertical": "string"
+  },
+  "output_schema": {
+    "email": "object",
+    "sms": "object",
+    "followups": "array"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\OutreachGeneratorTool"
+}

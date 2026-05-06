@@ -1,0 +1,11 @@
+{
+  "module": "TitanChatbot",
+  "channels": [
+    "webchat",
+    "whatsapp",
+    "telegram",
+    "messenger",
+    "voice"
+  ],
+  "manifest": "AI/Channels/channel.manifest.json"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "CleaningJobs",
+  "alias": "cleaningjobs",
+  "description": "Cleaning business SaaS job management module converted from repaired Worksuite work orders module.",
+  "keywords": [
+    "cleaning",
+    "jobs",
+    "work-orders",
+    "appointments",
+    "field-service",
+    "saas",
+    "timesheets",
+    "resource-planning",
+    "kanban",
+    "milestones",
+    "subtasks",
+    "cleaning-saas"
+  ],
+  "priority": 0,
+  "providers": [
+    "Modules\\CleaningJobs\\Providers\\ModuleServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\RouteServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\EventServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\PolicyServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\RepositoryServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\AutomationServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\WorkflowServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\TenancyServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\BillingServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\SearchServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\FilamentServiceProvider",
+    "Modules\\CleaningJobs\\Providers\\ModuleBootServiceProvider"
+  ],
+  "aliases": {},
+  "files": [
+    "Helpers/helpers.php"
+  ],
+  "requires": [],
+  "version": "0.4.0"
+}

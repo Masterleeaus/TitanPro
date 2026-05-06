@@ -1,0 +1,5 @@
+service_type,base_minutes,crew_size,base_price,notes
+regular_home_clean,120,1,120,Adjust by beds baths and condition
+deep_clean,240,2,360,Human approval for extreme condition
+end_of_lease,360,2,550,Checklist and bond notes required
+office_clean,180,1,180,After-hours access may apply

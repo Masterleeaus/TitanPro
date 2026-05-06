@@ -1,0 +1,19 @@
+{
+  "name": "schedule.reschedule",
+  "module": "bookingmodule",
+  "description": "Draft or execute schedule rescheduling through RescheduleScheduleAction.",
+  "risk": "write",
+  "requires_policy": "schedule manage",
+  "requires_confirmation": true,
+  "input_schema": {
+    "type": "object",
+    "required": ["schedule_id", "date", "start_time"],
+    "properties": {
+      "schedule_id": {"type": "integer"},
+      "date": {"type": "string"},
+      "start_time": {"type": "string"},
+      "end_time": {"type": "string"},
+      "company_id": {"type": "integer"}
+    }
+  }
+}

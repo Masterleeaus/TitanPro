@@ -1,0 +1,15 @@
+{
+  "name": "discover_targets",
+  "description": "Find and prepare target lead candidates for a vertical and location.",
+  "input_schema": {
+    "vertical": "string",
+    "location": "string",
+    "filters": "object"
+  },
+  "output_schema": {
+    "targets": "array",
+    "source_summary": "string",
+    "confidence": "number"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\ScrapeTargetsTool"
+}

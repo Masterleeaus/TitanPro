@@ -1,0 +1,17 @@
+{
+  "workflow": "JobAssistWorkflow",
+  "description": "Sync job state, draft update, notify customer/team, record timeline.",
+  "steps": [
+    "detect",
+    "draft",
+    "guardrail",
+    "approval",
+    "execute",
+    "record"
+  ],
+  "guards": [
+    "tenant_scope",
+    "approval_required",
+    "channel_policy"
+  ]
+}

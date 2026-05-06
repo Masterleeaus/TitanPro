@@ -22,6 +22,11 @@ class JobController extends Controller
 {
     public function index(Request $request): Response|ResponseFactory
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'string'],
+        ]);
+
         $orgId = $request->user()->organization_id;
 
         $jobs = Job::where('organization_id', $orgId)
@@ -183,7 +188,7 @@ class JobController extends Controller
         abort_unless($job->organization_id === $request->user()->organization_id, 403);
 
         $request->validate([
-            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+            'assigned_to' => ['nullable', 'integer', Rule::exists('users', 'id')->where('organization_id', $request->user()->organization_id)],
         ]);
 
         $job->update(['assigned_to' => $request->assigned_to]);

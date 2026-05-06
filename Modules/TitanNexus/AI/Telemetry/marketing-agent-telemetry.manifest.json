@@ -1,0 +1,16 @@
+{
+  "events": [
+    "agent_invoked",
+    "tool_called",
+    "lead_scored",
+    "copy_generated",
+    "campaign_optimized",
+    "booking_payload_prepared"
+  ],
+  "metrics": [
+    "tokens",
+    "latency_ms",
+    "approval_rate",
+    "conversion_assist_rate"
+  ]
+}

@@ -2,6 +2,7 @@
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { useDate } from '@/composables/useDate';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -50,10 +51,7 @@ const trialBadgeColor = computed(() => {
     return 'bg-blue-100 text-blue-700 border-blue-200';
 });
 
-function formatDate(iso: string | null): string {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-}
+const { formatDate } = useDate();
 </script>
 
 <template>

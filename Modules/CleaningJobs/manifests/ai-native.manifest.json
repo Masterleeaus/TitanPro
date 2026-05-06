@@ -1,0 +1,1 @@
+{"agent":"cleaning_jobs.booking_agent","knowledge_pack":"Knowledge","tools_path":"Agents/BookingAgent/tools","guardrails":"AI/Guardrails/guardrails.json","retrieval":"AI/Retrieval/retrieval.policy.json"}

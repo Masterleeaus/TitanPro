@@ -1,0 +1,5 @@
+{
+  "schema": "titan.ai_telemetry.v1",
+  "events": ["agent.invoked", "knowledge.retrieved", "tool.called", "guardrail.triggered", "citation.returned"],
+  "owner": "TitanCore.UsageTracker"
+}

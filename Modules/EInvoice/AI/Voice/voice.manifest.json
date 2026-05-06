@@ -1,0 +1,19 @@
+{
+  "module": "einvoice",
+  "agent": "einvoice.collections.agent",
+  "voice_enabled": true,
+  "pipeline": [
+    "speech_to_text",
+    "intent_classification",
+    "module_agent_reasoning",
+    "tool_confirmation",
+    "text_to_speech"
+  ],
+  "confirmation_phrases": {
+    "write": "Please confirm before I make that change.",
+    "destructive": "This is destructive and requires explicit confirmation."
+  },
+  "barge_in": true,
+  "audit_transcripts": true,
+  "store_audio": false
+}

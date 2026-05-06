@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('platform_settings')) {
+            return;
+        }
+
         Schema::create('platform_settings', function (Blueprint $table) {
             $table->id();
             $table->string('app_name')->default('FieldOps Hub');

@@ -1,0 +1,52 @@
+{
+  "name": "EInvoice",
+  "alias": "einvoice",
+  "description": "Titan AI-native electronic invoicing, invoice automation, XML compliance, and late-invoice follow-up module.",
+  "priority": 19,
+  "providers": [
+    "Modules\\EInvoice\\Providers\\EInvoiceServiceProvider",
+    "Modules\\EInvoice\\Providers\\RouteServiceProvider",
+    "Modules\\EInvoice\\Providers\\EventServiceProvider",
+    "Modules\\EInvoice\\Providers\\FilamentServiceProvider"
+  ],
+  "requires": [
+    "TitanCore",
+    "TitanAgents"
+  ],
+  "optional_requires": [
+    "Accountings",
+    "ZeroPay",
+    "TitanDocs"
+  ],
+  "permissions": [
+    "einvoice.view",
+    "einvoice.create",
+    "einvoice.update",
+    "einvoice.delete",
+    "einvoice.export",
+    "einvoice.send",
+    "einvoice.xml.generate",
+    "einvoice.followup.run",
+    "einvoice.agent.use",
+    "einvoice.agent.train",
+    "einvoice.knowledge.manage"
+  ],
+  "manifest": {
+    "lifecycle": "manifests/lifecycle.json",
+    "api": "manifests/api.json",
+    "permissions": "manifests/permissions.json",
+    "signals": "manifests/signals.json",
+    "ai": "manifests/ai-tools.json",
+    "cms": "manifests/cms.json",
+    "omni": "manifests/omni.json",
+    "agent": "Agents/ModuleAgent/agent.manifest.json",
+    "knowledge": "AI/Indexing/indexing.manifest.json",
+    "retrieval": "AI/Retrieval/retrieval.policy.json",
+    "citations": "AI/Citations/citation.schema.json",
+    "guardrails": "AI/Guardrails/guardrails.json",
+    "actions": "AI/Actions/action-map.json",
+    "telemetry": "AI/Telemetry/telemetry.manifest.json"
+  },
+  "boundary": "invoicing_accounting_followup_only_no_payment_execution",
+  "keywords": []
+}

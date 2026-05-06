@@ -71,6 +71,27 @@ test('technician can add a catalog line item and price is snapshotted', function
         ->assertJsonPath('data.unit_price', '45.00');
 });
 
+test('add line item rejects an item from another organization', function () {
+    [$technician, $org, $customer] = lineItemSetup();
+
+    $otherOrg  = Organization::factory()->create();
+    $otherItem = Item::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/line-items", [
+            'item_id'    => $otherItem->id,
+            'name'       => 'Cross-org Item',
+            'unit_price' => 10.00,
+            'quantity'   => 1,
+        ])
+        ->assertUnprocessable();
+});
+
 test('sort_order increments for each new line item', function () {
     [$technician, , $customer] = lineItemSetup();
 

@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use Modules\BookingModule\Entities\BookingModuleSetting;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        \App\Models\Module::validateVersion(BookingModuleSetting::MODULE_NAME);
+
+        if (! Schema::hasTable('bookings')) {
+            return;
+        }
+        Schema::table('bookings', function($table) {
+            if (! Schema::hasColumn('bookings', 'category_id')) {
+                $table->foreignUuid('category_id')->nullable();
+            }
+            if (! Schema::hasColumn('bookings', 'sub_category_id')) {
+                $table->foreignUuid('sub_category_id')->nullable();
+            }
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('bookings', function($table) {
+            $table->dropColumn('category_id');
+            $table->dropColumn('sub_category_id');
+        });
+    }
+};

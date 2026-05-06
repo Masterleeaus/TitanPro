@@ -1,0 +1,10 @@
+{
+  "module": "TitanNexus",
+  "knowledge_root": "Knowledge",
+  "packs": [
+    "lead_generation",
+    "campaign_operations",
+    "lead_scoring",
+    "outreach_examples"
+  ]
+}

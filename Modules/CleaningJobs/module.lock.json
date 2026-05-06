@@ -1,0 +1,33 @@
+{
+  "module": "CleaningJobs",
+  "base": "WorksuiteWorkOrders_FIXED_PASS1",
+  "structure_version": "1.0.0",
+  "version": "0.5.0",
+  "codename": "single-module-consolidation",
+  "locked_features": [
+    "job_crud",
+    "service_requests",
+    "appointments",
+    "service_tasks",
+    "service_parts",
+    "catalog",
+    "settings",
+    "csv_import_export",
+    "permissions",
+    "webhooks",
+    "events",
+    "demo_seeders",
+    "factories",
+    "timesheets",
+    "resource_planning",
+    "capacity_planning",
+    "financial_tracking",
+    "kanban",
+    "milestones",
+    "subtasks",
+    "comments",
+    "files",
+    "activity_logs"
+  ],
+  "removed_legacy_namespaces": ["PMCore", "Taskly"]
+}

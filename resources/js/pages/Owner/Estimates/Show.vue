@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OwnerLayout from '@/layouts/OwnerLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -82,10 +83,7 @@ function copyLink() {
     navigator.clipboard.writeText(publicUrl.value);
 }
 
-function formatDate(dt: string | null): string {
-    if (!dt) return '—';
-    return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+const { formatDate } = useDate();
 
 function formatCurrency(val: string | number): string {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(val));

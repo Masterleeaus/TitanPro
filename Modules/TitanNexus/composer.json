@@ -1,0 +1,9 @@
+{
+  "name": "titan/titan-nexus",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Modules\\TitanNexus\\": ""
+    }
+  }
+}

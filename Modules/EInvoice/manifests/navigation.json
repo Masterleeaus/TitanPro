@@ -1,0 +1,20 @@
+{
+  "schema": "titan.navigation.v1",
+  "module": "money-manager",
+  "items": [
+    {
+      "label": "Money Manager",
+      "title": "Titan Money Panel",
+      "permission": "money.view",
+      "fallback_permissions": [
+        "einvoice.view",
+        "accounting.view",
+        "accountings.view"
+      ],
+      "route": "filament.admin.pages.zeropay-panel",
+      "slug": "zeropay-panel",
+      "icon": "heroicon-o-banknotes",
+      "single_sidebar_entry": true
+    }
+  ]
+}

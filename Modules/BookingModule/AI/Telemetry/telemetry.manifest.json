@@ -1,0 +1,1 @@
+{"module":"bookingmodule","events":["booking_requested","booking_completed","booking_cancelled","schedule_assigned","schedule_rescheduled","reminder_sent"],"pii_minimization":true}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OwnerLayout from '@/layouts/OwnerLayout.vue';
+import { useDate } from '@/composables/useDate';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -117,18 +118,7 @@ function deleteInvoice() {
     deleteForm.delete(`/owner/invoices/${props.invoice.id}`);
 }
 
-function formatDate(dt: string | null): string {
-    if (!dt) return '—';
-    return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function formatDateTime(dt: string | null): string {
-    if (!dt) return '—';
-    return new Date(dt).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit',
-    });
-}
+const { formatDate, formatDateTime } = useDate();
 
 function formatCurrency(val: string | number): string {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(val));

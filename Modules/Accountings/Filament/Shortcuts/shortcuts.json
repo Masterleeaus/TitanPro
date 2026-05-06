@@ -1,0 +1,29 @@
+{
+  "module": "accountings",
+  "shortcuts": [
+    {
+      "key": "create_record",
+      "label": "Create record",
+      "action": "accountings.create_record",
+      "permission": "accountings.create"
+    },
+    {
+      "key": "ask_agent",
+      "label": "Ask module agent",
+      "action": "example.agent.ask",
+      "permission": "accountings.agent.use"
+    },
+    {
+      "key": "scan_knowledge",
+      "label": "Re-scan knowledge pack",
+      "action": "example.knowledge.reindex",
+      "permission": "accountings.agent.train"
+    },
+    {
+      "key": "open_settings",
+      "label": "Module settings",
+      "action": "example.settings.open",
+      "permission": "example.settings.manage"
+    }
+  ]
+}

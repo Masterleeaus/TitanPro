@@ -1,0 +1,10 @@
+{
+  "name": "Titan Money Invoice Control UI Kit",
+  "version": "1.1.0",
+  "type": "module-ui-kit",
+  "layout": "one-page-control-panel",
+  "boundary": "invoicing_only_no_payment_execution",
+  "records": ["invoices", "drafts", "recurring_invoices", "invoice_templates", "xml_exports", "followup_queue"],
+  "metrics": ["sent_invoices", "overdue_invoices", "outstanding_receivables", "followup_queue"],
+  "sections": ["header", "metrics", "quick_actions", "workspace", "timeline", "agent", "bottom_tabs", "settings"]
+}

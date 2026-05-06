@@ -107,7 +107,7 @@ class EstimateController extends Controller
             'packages.*.line_items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'packages.*.line_items.*.quantity'   => ['required', 'numeric', 'min:0.001'],
             'packages.*.line_items.*.is_taxable' => ['boolean'],
-            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', 'exists:items,id'],
+            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', Rule::exists('items', 'id')->where('organization_id', $orgId)],
         ]);
 
         $estimate = Estimate::create([
@@ -180,7 +180,7 @@ class EstimateController extends Controller
             'packages.*.line_items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'packages.*.line_items.*.quantity'   => ['required', 'numeric', 'min:0.001'],
             'packages.*.line_items.*.is_taxable' => ['boolean'],
-            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', 'exists:items,id'],
+            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', Rule::exists('items', 'id')->where('organization_id', $orgId)],
         ]);
 
         $estimate->update([
@@ -226,10 +226,9 @@ class EstimateController extends Controller
         $estimate->load('packages.lineItems');
 
         $package = $estimate->packages
-            ->firstWhere('tier', $estimate->accepted_package)
-            ?? $estimate->packages->first();
+            ->firstWhere('tier', $estimate->accepted_package);
 
-        abort_if($package === null, 422);
+        abort_if($package === null, 422, 'Accepted package tier not found on this estimate');
 
         $job = Job::create([
             'organization_id' => $estimate->organization_id,

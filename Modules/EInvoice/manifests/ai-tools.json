@@ -1,0 +1,11 @@
+{
+  "schema": "titan.module.ai-tools.v1",
+  "module": "einvoice",
+  "boundary": "no_payment_execution",
+  "tools": [
+    {"name":"einvoice.send_invoice","description":"Send an invoice automatically or manually."},
+    {"name":"einvoice.prepare_zeropay_handoff","description":"Prepare read-only invoice payload for external ZeroPay. Does not create a payment session."},
+    {"name":"einvoice.generate_late_followup","description":"Generate human-approved overdue invoice follow-up copy."},
+    {"name":"einvoice.generate_xml","description":"Generate invoice XML/compliance artifact."}
+  ]
+}

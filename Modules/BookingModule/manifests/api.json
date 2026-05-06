@@ -1,0 +1,1 @@
+{"module":"bookingmodule","routes":["Routes/web.php","Routes/api/v1/api.php"],"tenant_key":"company_id"}

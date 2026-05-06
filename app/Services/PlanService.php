@@ -10,8 +10,6 @@ class PlanService
     const PLAN_GROWTH  = 'growth';
     const PLAN_PRO     = 'pro';
 
-    const TRIAL_DAYS = 14;
-
     // Technician seat caps. null = unlimited.
     const TECHNICIAN_LIMITS = [
         self::PLAN_STARTER => 3,

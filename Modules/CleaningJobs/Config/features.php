@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'jobs' => true,
+    'requests' => true,
+    'appointments' => true,
+    'tasks' => true,
+    'parts' => true,
+    'csv' => true,
+    'webhooks' => true,
+    'automation' => true,
+    'workflows' => true,
+    'filament' => false,
+    'ai' => false,
+    'time_tracking' => true,
+    'resource_planning' => true,
+    'financial_tracking' => true,
+    'capacity_planning' => true,
+    'kanban' => true,
+    'milestones' => true,
+    'subtasks' => true,
+    'comments' => true,
+    'files' => true,
+    'activity_logs' => true,
+];

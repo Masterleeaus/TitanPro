@@ -1,0 +1,11 @@
+{
+  "module": "TitanNexus",
+  "signals": [
+    "lead.captured",
+    "campaign.launched",
+    "invoice.overdue",
+    "payment.received",
+    "job.completed",
+    "agent.approval_required"
+  ]
+}

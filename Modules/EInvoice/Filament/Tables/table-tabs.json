@@ -1,0 +1,15 @@
+{
+  "module": "money-manager",
+  "card": "ModuleTablesCard",
+  "boundary": "invoicing_accounting_followup_only_no_payment_execution",
+  "tabs": [
+    {"key":"overview","label":"Overview","source":"money_overview","permission":"money.view","default":true},
+    {"key":"invoices","label":"Invoices","source":"invoices","permission":"einvoice.view"},
+    {"key":"followups","label":"Late Follow-Ups","source":"overdue_invoice_followups","permission":"einvoice.followup.run"},
+    {"key":"receivables","label":"Receivables","source":"receivables_ar_aging","permission":"accounting.view"},
+    {"key":"accounting","label":"Accounting","source":"journals_receivables_gst","permission":"accounting.view"},
+    {"key":"compliance","label":"Compliance","source":"gst_xml_exports_audit","permission":"accounting.view"},
+    {"key":"ai_control","label":"AI Control","source":"agent_control_logs_knowledge_tools","permission":"money.agent.use"}
+  ],
+  "actions": ["create_invoice", "send_invoice", "prepare_zeropay_handoff", "generate_late_followup", "post_journal", "ask_titanzero_money_about_selection"]
+}

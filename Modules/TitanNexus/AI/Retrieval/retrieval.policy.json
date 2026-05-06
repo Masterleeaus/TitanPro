@@ -1,0 +1,8 @@
+{
+  "schema": "titan.retrieval_policy.v1",
+  "mode": "module_scoped",
+  "allowed_roots": ["Knowledge"],
+  "fallback_to_shared_core_knowledge": false,
+  "require_source_citations": true,
+  "rerank": true
+}

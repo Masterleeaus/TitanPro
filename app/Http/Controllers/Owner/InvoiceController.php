@@ -8,6 +8,7 @@ use App\Models\Job;
 use App\Models\Payment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -103,11 +104,16 @@ class InvoiceController extends Controller
     public function send(Request $request, Invoice $invoice): RedirectResponse
     {
         abort_unless($invoice->organization_id === $request->user()->organization_id, 403);
-        abort_unless(in_array($invoice->status, [Invoice::STATUS_DRAFT, Invoice::STATUS_OVERDUE]), 422);
+        abort_unless(in_array($invoice->status, [
+            Invoice::STATUS_DRAFT,
+            Invoice::STATUS_SENT,
+            Invoice::STATUS_OVERDUE,
+        ]), 422);
 
         $invoice->update([
-            'status'  => Invoice::STATUS_SENT,
-            'sent_at' => now(),
+            'status'     => Invoice::STATUS_SENT,
+            'sent_at'    => now(),
+            'send_count' => $invoice->send_count + 1,
         ]);
 
         // TODO: dispatch InvoiceSent notification in future milestone
@@ -121,8 +127,11 @@ class InvoiceController extends Controller
     public function void(Request $request, Invoice $invoice): RedirectResponse
     {
         abort_unless($invoice->organization_id === $request->user()->organization_id, 403);
-        abort_unless($invoice->status !== Invoice::STATUS_VOID, 422);
-        abort_unless($invoice->status !== Invoice::STATUS_PAID, 422);
+        abort_if(
+            in_array($invoice->status, [Invoice::STATUS_VOID, Invoice::STATUS_PAID]),
+            422,
+            'Cannot void a paid or already-voided invoice'
+        );
 
         $invoice->update(['status' => Invoice::STATUS_VOID]);
 
@@ -150,27 +159,34 @@ class InvoiceController extends Controller
             'paid_at'   => ['required', 'date'],
         ]);
 
-        Payment::create([
-            'organization_id' => $invoice->organization_id,
-            'invoice_id'      => $invoice->id,
-            'recorded_by'     => $request->user()->id,
-            'amount'          => $data['amount'],
-            'method'          => $data['method'],
-            'reference'       => $data['reference'] ?? null,
-            'notes'           => $data['notes'] ?? null,
-            'status'          => 'completed',
-            'paid_at'         => $data['paid_at'],
-        ]);
+        DB::transaction(function () use ($invoice, $data, $request) {
+            $invoice = Invoice::lockForUpdate()->findOrFail($invoice->id);
 
-        $newAmountPaid = round((float) $invoice->amount_paid + (float) $data['amount'], 2);
-        $balanceDue    = max(0, round((float) $invoice->total - $newAmountPaid, 2));
+            abort_if((float) $data['amount'] > (float) $invoice->balance_due, 422, 'Amount exceeds balance due');
 
-        $invoice->update([
-            'amount_paid' => $newAmountPaid,
-            'balance_due' => $balanceDue,
-            'status'      => $balanceDue <= 0 ? Invoice::STATUS_PAID : Invoice::STATUS_PARTIAL,
-            'paid_at'     => $balanceDue <= 0 ? now() : $invoice->paid_at,
-        ]);
+            Payment::create([
+                'organization_id' => $invoice->organization_id,
+                'invoice_id'      => $invoice->id,
+                'recorded_by'     => $request->user()->id,
+                'amount'          => $data['amount'],
+                'method'          => $data['method'],
+                'reference'       => $data['reference'] ?? null,
+                'notes'           => $data['notes'] ?? null,
+                'status'          => 'completed',
+                'paid_at'         => $data['paid_at'],
+            ]);
+
+            $rawAmountPaid = (float) $invoice->amount_paid + (float) $data['amount'];
+            $newAmountPaid = round($rawAmountPaid, 2);
+            $balanceDue    = max(0, round((float) $invoice->total - $rawAmountPaid, 2));
+
+            $invoice->update([
+                'amount_paid' => $newAmountPaid,
+                'balance_due' => $balanceDue,
+                'status'      => $balanceDue <= 0 ? Invoice::STATUS_PAID : Invoice::STATUS_PARTIAL,
+                'paid_at'     => $balanceDue <= 0 ? now() : $invoice->paid_at,
+            ]);
+        });
 
         return redirect()->route('owner.invoices.show', $invoice)
             ->with('success', 'Payment recorded.');

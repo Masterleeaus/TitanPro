@@ -1,0 +1,13 @@
+{
+  "module": "TitanChatbot",
+  "evaluations": [
+    {
+      "name": "tool-resolution",
+      "assertion": "every declared tool maps to an existing action class"
+    },
+    {
+      "name": "tenant-safety",
+      "assertion": "operations preserve tenant context when present"
+    }
+  ]
+}

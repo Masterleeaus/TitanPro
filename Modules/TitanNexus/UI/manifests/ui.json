@@ -1,0 +1,29 @@
+{
+  "module": "TitanNexus",
+  "control_panel": "single",
+  "sections": [
+    "overview",
+    "leads",
+    "campaigns",
+    "invoices",
+    "payments",
+    "jobs",
+    "agent",
+    "automation",
+    "telemetry"
+  ],
+  "widgets": [
+    "InvoiceRecoveryWidget",
+    "PaymentAssistWidget",
+    "JobAssistWidget",
+    "MarketingAgentWidget",
+    "AutomationHealthWidget"
+  ],
+  "tables": [
+    "InvoiceTable",
+    "PaymentTable",
+    "JobTable",
+    "AgentActionTable",
+    "AutomationRunTable"
+  ]
+}

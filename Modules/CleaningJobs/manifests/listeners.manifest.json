@@ -1,0 +1,12 @@
+{
+  "enables": [
+    "webhook dispatch",
+    "activity logging",
+    "completion conversion"
+  ],
+  "listeners": [
+    "SendWorkOrderWebhook",
+    "LogWorkOrderActivity",
+    "AutoConvertOnCompletion"
+  ]
+}

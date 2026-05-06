@@ -106,6 +106,22 @@ test('upload rejects an invalid tag value', function () {
         ->assertUnprocessable();
 });
 
+test('upload rejects a zero-byte image file', function () {
+    Storage::fake(attachmentDisk());
+    [$technician, , $customer] = photoSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/photos", [
+            'photo' => UploadedFile::fake()->create('empty.jpg', 0, 'image/jpeg'),
+        ])
+        ->assertUnprocessable();
+});
+
 test('upload rejects a non-image file', function () {
     Storage::fake(attachmentDisk());
     [$technician, , $customer] = photoSetup();
@@ -228,6 +244,40 @@ test('delete returns 404 when attachment does not belong to the job', function (
     $this->actingAs($technician)
         ->deleteJson("/api/technician/jobs/{$jobA->id}/photos/{$attachmentFromB->id}")
         ->assertNotFound();
+});
+
+test('technician cannot delete a photo belonging to a different organization', function () {
+    Storage::fake(attachmentDisk());
+    [$technicianA] = photoSetup();
+
+    // Second org with its own technician and job
+    (new RolesAndPermissionsSeeder)->run();
+    $orgB        = Organization::factory()->create();
+    $technicianB = User::factory()->create(['organization_id' => $orgB->id]);
+    $technicianB->assignRole('technician');
+    $customerB   = Customer::factory()->create(['organization_id' => $orgB->id]);
+
+    $jobB = Job::factory()->forCustomer($customerB)->create([
+        'assigned_to'  => $technicianB->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $attachment = $jobB->attachments()->create([
+        'organization_id' => $orgB->id,
+        'uploaded_by'     => $technicianB->id,
+        'filename'        => 'photo.jpg',
+        'disk'            => attachmentDisk(),
+        'path'            => "jobs/{$jobB->id}/photos/x.jpg",
+        'mime_type'       => 'image/jpeg',
+        'size'            => 1000,
+    ]);
+
+    // Technician A tries to delete org B's attachment via org B's job ID
+    $this->actingAs($technicianA)
+        ->deleteJson("/api/technician/jobs/{$jobB->id}/photos/{$attachment->id}")
+        ->assertForbidden();
+
+    expect(Attachment::find($attachment->id))->not->toBeNull();
 });
 
 // ── Show includes attachments ─────────────────────────────────────────────────

@@ -1,0 +1,38 @@
+{
+  "module": "titan-nexus",
+  "card": "ModuleTablesCard",
+  "tabs": [
+    {
+      "key": "records",
+      "label": "Records",
+      "resource": "LeadRecordResource",
+      "permission": "titan_nexus.view",
+      "default": true
+    },
+    {
+      "key": "imports",
+      "label": "Imports",
+      "source": "imports",
+      "permission": "titan_nexus.import"
+    },
+    {
+      "key": "agent_logs",
+      "label": "Agent Logs",
+      "source": "agent_control_logs",
+      "permission": "titan_nexus.agent.use"
+    },
+    {
+      "key": "knowledge",
+      "label": "Knowledge",
+      "source": "knowledge_sources",
+      "permission": "titan_nexus.knowledge.manage"
+    }
+  ],
+  "actions": [
+    "create",
+    "import",
+    "export",
+    "bulk_action",
+    "ask_agent_about_selection"
+  ]
+}

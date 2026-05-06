@@ -1,0 +1,17 @@
+{
+  "module": "TitanNexus",
+  "meters": [
+    "lead_enrichment",
+    "outreach_messages",
+    "voice_minutes",
+    "ai_tool_calls",
+    "payment_followups",
+    "job_updates"
+  ],
+  "limits": [
+    "campaigns",
+    "users",
+    "monthly_ai_actions",
+    "monthly_payment_followups"
+  ]
+}

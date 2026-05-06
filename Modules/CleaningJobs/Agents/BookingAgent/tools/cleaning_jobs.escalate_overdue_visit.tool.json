@@ -1,0 +1,1 @@
+{"name":"cleaning_jobs.escalate_overdue_visit","description":"Cleaning Jobs booking agent tool: escalate_overdue_visit","input_schema":{"tenant_id":"string","payload":"object"},"tenant_scoped":true}

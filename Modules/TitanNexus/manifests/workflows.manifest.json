@@ -1,0 +1,11 @@
+{
+  "module": "TitanNexus",
+  "workflows": [
+    "LeadToDealWorkflow",
+    "CampaignLaunchWorkflow",
+    "InvoiceFollowupWorkflow",
+    "PaymentAssistWorkflow",
+    "JobAssistWorkflow",
+    "MarketingAgentApprovalWorkflow"
+  ]
+}

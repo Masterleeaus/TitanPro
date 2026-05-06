@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'money.view',
+    'money.agent.use',
+    'accounting.view',
+    'accounting.create',
+    'accounting.update',
+    'accounting.delete',
+    'accounting.export',
+    'accounting.import',
+    'accounting.reconcile',
+    'accounting.gst.view',
+    'accounting.cashflow.view',
+    'accounting.agent.use',
+    'accounting.agent.train',
+    'accounting.knowledge.manage',
+    'accountings.view',
+    'accountings.create',
+    'accountings.update',
+    'accountings.delete',
+    'accountings.export',
+    'accountings.import',
+    'accountings.approve',
+    'accountings.agent.use',
+    'accountings.agent.train',
+    'accountings.knowledge.manage',
+];

@@ -1,0 +1,8 @@
+{
+  "name": "titan_nexus.create_record",
+  "type": "write",
+  "action": "Modules\\TitanNexus\\Actions\\CreateLeadRecordAction",
+  "requires_permission": "titan_nexus.create",
+  "tenant_scoped": true,
+  "requires_confirmation": true
+}

@@ -1,0 +1,1 @@
+{"index":"cleaning_jobs_knowledge","sources":["Knowledge/guides","Knowledge/pricing","Knowledge/checklists","Knowledge/sops","Knowledge/policies","Knowledge/faqs"],"chunking":{"max_tokens":900,"overlap_tokens":120},"refresh":"on_module_upgrade_or_source_change"}

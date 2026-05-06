@@ -1,0 +1,17 @@
+{
+  "workflow": "PaymentAssistWorkflow",
+  "description": "Create link, offer methods, reconcile response, update invoice.",
+  "steps": [
+    "detect",
+    "draft",
+    "guardrail",
+    "approval",
+    "execute",
+    "record"
+  ],
+  "guards": [
+    "tenant_scope",
+    "approval_required",
+    "channel_policy"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "schema": "titan.package.v1",
+  "module": "accountings",
+  "version": "2.0.0-ai-native",
+  "build": "pass-6"
+}

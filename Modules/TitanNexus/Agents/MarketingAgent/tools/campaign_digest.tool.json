@@ -1,0 +1,12 @@
+{
+  "name": "campaign_digest",
+  "description": "Summarize lead-gen/campaign performance.",
+  "input_schema": {
+    "payload": "object"
+  },
+  "output_schema": {
+    "result": "object",
+    "approval_required": "boolean"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\CampaignDigestTool"
+}

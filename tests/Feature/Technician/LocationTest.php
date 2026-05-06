@@ -85,6 +85,27 @@ test('location update validates longitude range', function () {
         ->assertUnprocessable();
 });
 
+test('location endpoint enforces rate limit of 60 requests per minute', function () {
+    Event::fake();
+    $user = locationSetup();
+
+    for ($i = 0; $i < 60; $i++) {
+        $this->actingAs($user)
+            ->postJson('/api/technician/location', [
+                'latitude'  => 40.7128,
+                'longitude' => -74.0060,
+            ])
+            ->assertCreated();
+    }
+
+    $this->actingAs($user)
+        ->postJson('/api/technician/location', [
+            'latitude'  => 40.7128,
+            'longitude' => -74.0060,
+        ])
+        ->assertStatus(429);
+});
+
 test('location update uses current time when recorded_at omitted', function () {
     Event::fake();
     $user = locationSetup();

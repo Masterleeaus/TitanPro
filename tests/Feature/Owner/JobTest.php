@@ -2,7 +2,9 @@
 
 use App\Models\Customer;
 use App\Models\Job;
+use App\Models\JobType;
 use App\Models\Organization;
+use App\Models\Property;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
@@ -46,6 +48,22 @@ test('job list is scoped to the authenticated user\'s organization', function ()
         ->get('/owner/jobs')
         ->assertOk()
         ->assertInertia(fn ($page) => $page->has('jobs.data', 0));
+});
+
+test('job index rejects a search string longer than 100 characters', function () {
+    [$user] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->get('/owner/jobs?search=' . str_repeat('a', 101))
+        ->assertSessionHasErrors(['search']);
+});
+
+test('job index accepts a search string of exactly 100 characters', function () {
+    [$user] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->get('/owner/jobs?search=' . str_repeat('a', 100))
+        ->assertOk();
 });
 
 test('job list can be filtered by status', function () {
@@ -121,6 +139,60 @@ test('job creation requires a title and customer', function () {
         ->assertSessionHasErrors(['title', 'customer_id']);
 });
 
+test('job creation rejects a customer from another organization', function () {
+    [$user] = userOrgCustomer();
+    [, , $otherCustomer] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->post('/owner/jobs', [
+            'customer_id' => $otherCustomer->id,
+            'title'       => 'Cross-org Job',
+        ])
+        ->assertSessionHasErrors(['customer_id']);
+});
+
+test('job creation rejects a property from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $otherOrg = Organization::factory()->create();
+    $otherProperty = Property::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->post('/owner/jobs', [
+            'customer_id' => $customer->id,
+            'property_id' => $otherProperty->id,
+            'title'       => 'Cross-org Property Job',
+        ])
+        ->assertSessionHasErrors(['property_id']);
+});
+
+test('job creation rejects a job type from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $otherOrg = Organization::factory()->create();
+    $otherJobType = JobType::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->post('/owner/jobs', [
+            'customer_id' => $customer->id,
+            'job_type_id' => $otherJobType->id,
+            'title'       => 'Cross-org JobType Job',
+        ])
+        ->assertSessionHasErrors(['job_type_id']);
+});
+
+test('job creation rejects a technician from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $otherOrg = Organization::factory()->create();
+    $otherUser = User::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->post('/owner/jobs', [
+            'customer_id' => $customer->id,
+            'assigned_to' => $otherUser->id,
+            'title'       => 'Cross-org Technician Job',
+        ])
+        ->assertSessionHasErrors(['assigned_to']);
+});
+
 // ── Edit / Update ─────────────────────────────────────────────────────────────
 
 test('user can view the edit job form', function () {
@@ -161,6 +233,34 @@ test('user can update a job', function () {
         ->assertRedirect("/owner/jobs/{$job->id}");
 
     expect($job->fresh()->title)->toBe('Updated Title');
+});
+
+test('job update rejects a customer from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $job = Job::factory()->forCustomer($customer)->create();
+    [, , $otherCustomer] = userOrgCustomer();
+
+    $this->actingAs($user)
+        ->patch("/owner/jobs/{$job->id}", [
+            'customer_id' => $otherCustomer->id,
+            'title'       => 'Updated Title',
+        ])
+        ->assertSessionHasErrors(['customer_id']);
+});
+
+test('job update rejects a technician from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $job = Job::factory()->forCustomer($customer)->create();
+    $otherOrg = Organization::factory()->create();
+    $otherTechnician = User::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->patch("/owner/jobs/{$job->id}", [
+            'customer_id' => $customer->id,
+            'assigned_to' => $otherTechnician->id,
+            'title'       => 'Updated Title',
+        ])
+        ->assertSessionHasErrors(['assigned_to']);
 });
 
 // ── Status ────────────────────────────────────────────────────────────────────
@@ -271,6 +371,17 @@ test('reassign rejects a non-existent user id', function () {
 
     $this->actingAs($user)
         ->patch("/owner/jobs/{$job->id}/reassign", ['assigned_to' => 999999])
+        ->assertSessionHasErrors(['assigned_to']);
+});
+
+test('reassign rejects a technician from another organization', function () {
+    [$user, $org, $customer] = userOrgCustomer();
+    $job = Job::factory()->forCustomer($customer)->create();
+    $otherOrg = Organization::factory()->create();
+    $otherTechnician = User::factory()->create(['organization_id' => $otherOrg->id]);
+
+    $this->actingAs($user)
+        ->patch("/owner/jobs/{$job->id}/reassign", ['assigned_to' => $otherTechnician->id])
         ->assertSessionHasErrors(['assigned_to']);
 });
 

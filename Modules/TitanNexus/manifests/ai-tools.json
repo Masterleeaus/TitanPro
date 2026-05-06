@@ -1,0 +1,8 @@
+{
+  "tools": [
+    {
+      "name": "titan_nexus.search",
+      "permission": "titan_nexus.view"
+    }
+  ]
+}

@@ -36,6 +36,7 @@ class Invoice extends Model
         'issued_at',
         'due_at',
         'sent_at',
+        'send_count',
         'paid_at',
         'notes',
     ];
@@ -54,6 +55,7 @@ class Invoice extends Model
             'due_at' => 'date',
             'sent_at' => 'datetime',
             'paid_at' => 'datetime',
+            'send_count' => 'integer',
         ];
     }
 

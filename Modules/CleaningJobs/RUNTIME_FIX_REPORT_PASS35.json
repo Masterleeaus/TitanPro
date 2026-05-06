@@ -1,0 +1,6 @@
+{
+  "module": "TitanWork",
+  "pass": 35,
+  "fix": "Removed static TitanWorkControlPanel::$view redeclaration and added getView() for compatibility with installed Filament Page base class.",
+  "file": "Modules/CleaningJobs/Filament/Pages/TitanWorkControlPanel.php"
+}

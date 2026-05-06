@@ -1,0 +1,7 @@
+{
+  "module": "TitanChatbot",
+  "name": "TitanChatbot Module Agent",
+  "tools_manifest": "manifests/ai-tools.json",
+  "control_manifest": "AI/Control/control.manifest.json",
+  "guardrails": "AI/Guardrails/guardrails.json"
+}

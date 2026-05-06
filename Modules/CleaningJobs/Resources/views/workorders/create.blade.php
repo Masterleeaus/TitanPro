@@ -1,0 +1,1 @@
+<x-app-layout><h1 class='text-2xl font-bold'>Create Cleaning Job</h1><form method='POST' action='{{ route("cleaningjobs.orders.store") }}'>@csrf<input name='client_id' placeholder='Client ID' class='border p-2'><button class='btn'>Save</button></form></x-app-layout>

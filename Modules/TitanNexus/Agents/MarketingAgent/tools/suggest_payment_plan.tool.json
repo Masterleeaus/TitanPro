@@ -1,0 +1,12 @@
+{
+  "name": "suggest_payment_plan",
+  "description": "Suggest a payment plan based on invoice age and tenant policy.",
+  "input_schema": {
+    "payload": "object"
+  },
+  "output_schema": {
+    "result": "object",
+    "approval_required": "boolean"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\PaymentPlanTool"
+}

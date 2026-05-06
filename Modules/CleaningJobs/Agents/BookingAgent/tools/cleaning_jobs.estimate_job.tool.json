@@ -1,0 +1,1 @@
+{"name":"cleaning_jobs.estimate_job","description":"Cleaning Jobs booking agent tool: estimate_job","input_schema":{"tenant_id":"string","payload":"object"},"tenant_scoped":true}

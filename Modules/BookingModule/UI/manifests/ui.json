@@ -1,0 +1,1 @@
+{"module":"bookingmodule","surface":"operator","cards":["status","health","queue","tenant"],"widgets":["kpi_overview","activity_stream","module_health"]}

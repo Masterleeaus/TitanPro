@@ -1,0 +1,15 @@
+{
+  "name": "Titan Money Accounting Knowledge Pack",
+  "version": "1.1.0",
+  "boundary": "accounting_invoicing_followup_only",
+  "facts": [
+    "Titan Money owns invoice accounting, receivables, GST, reconciliation records, and late-invoice follow-up.",
+    "ZeroPay owns payment sessions, PayID QR, card processing, customer fees, webhooks, and settlements.",
+    "Do not record or process payments from this module."
+  ],
+  "tools": [
+    "accounting.lookup_ledger",
+    "accounting.post_invoice_journal",
+    "accounting.match_reconciliation_record"
+  ]
+}

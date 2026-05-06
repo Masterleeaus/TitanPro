@@ -1,0 +1,10 @@
+{
+  "name": "Titan Money Accounting Control UI Kit",
+  "version": "1.1.0",
+  "type": "module-ui-kit",
+  "layout": "one-page-control-panel",
+  "boundary": "accounting_only_no_payment_execution",
+  "records": ["journals", "receivables", "payables", "bank_reconciliations", "gst_reports", "audit_logs"],
+  "metrics": ["cash_runway", "receivables_exposure", "payables_due", "reconciliation_health", "late_followups_due"],
+  "sections": ["header", "metrics", "quick_actions", "workspace", "timeline", "agent", "bottom_tabs", "settings"]
+}

@@ -1,0 +1,1 @@
+{"name":"lead_to_deal","enables":"capture, score, qualify and convert leads into deals","steps":["capture_lead","score_lead","qualify_lead","create_deal"]}

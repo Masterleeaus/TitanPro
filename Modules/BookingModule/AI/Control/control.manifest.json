@@ -1,0 +1,21 @@
+{
+  "module": "bookingmodule",
+  "control_panel": "BookingModulePage",
+  "user_facing_ai": "TitanZero",
+  "module_agent": "BookingModuleAgent",
+  "safety": {
+    "read": "policy_check",
+    "draft": "no_persistence",
+    "write": "confirmation_required",
+    "destructive": "elevated_permission_required"
+  },
+  "actions": [
+    "booking.lookup",
+    "booking.status",
+    "booking.complete",
+    "booking.cancel",
+    "schedule.lookup",
+    "schedule.assign",
+    "schedule.reschedule"
+  ]
+}
