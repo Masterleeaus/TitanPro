@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\AgentIssueRunner;
 use App\Console\Commands\PruneDriverLocations;
 use App\Console\Commands\SendInvoiceReminders;
 use App\Console\Commands\SendJobReminders;
@@ -18,3 +19,6 @@ Schedule::command(PruneDriverLocations::class)->dailyAt('03:00');
 
 // Send trial-ending reminders 3 days before expiry, daily at 09:00
 Schedule::command(SendTrialEndingReminders::class, ['--days=3'])->dailyAt('09:00');
+
+// Agent issue runner — uncomment to enable automatic issue processing every 5 minutes
+// Schedule::command(AgentIssueRunner::class)->everyFiveMinutes()->withoutOverlapping();
