@@ -100,6 +100,7 @@ class ProviderAdaptersTest extends TestCase
         $result = $chain->chat([['role' => 'user', 'content' => 'hi']]);
 
         $this->assertFalse($result['ok']);
+        $this->assertStringContainsString('No chat providers', $result['error']);
     }
 
     public function test_failover_chain_returns_first_ok_result(): void

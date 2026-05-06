@@ -36,7 +36,7 @@ class ProviderFailoverChain implements ChatProviderContract, EmbeddingProviderCo
      */
     public function chat(array $messages, array $options = []): array
     {
-        $lastResult = ['ok' => false, 'content' => null, 'error' => 'No providers configured'];
+        $lastResult = ['ok' => false, 'content' => null, 'error' => 'No chat providers configured in failover chain'];
 
         foreach ($this->providers as $provider) {
             if (!$provider instanceof ChatProviderContract) {
@@ -78,7 +78,7 @@ class ProviderFailoverChain implements ChatProviderContract, EmbeddingProviderCo
      */
     public function embed(string|array $input, array $options = []): array
     {
-        $lastResult = ['ok' => false, 'vectors' => null, 'error' => 'No providers configured'];
+        $lastResult = ['ok' => false, 'vectors' => null, 'error' => 'No embedding providers configured in failover chain'];
 
         foreach ($this->providers as $provider) {
             if (!$provider instanceof EmbeddingProviderContract) {

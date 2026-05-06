@@ -27,17 +27,17 @@ class OpenAiEmbeddingProvider implements EmbeddingProviderContract
                 ?? config('ai.providers.openai.api_key')
                 ?? env('OPENAI_API_KEY', ''));
         }
-        if (!$this->baseUrl || $this->baseUrl === 'https://api.openai.com') {
-            $this->baseUrl = rtrim(
-                (string) (config('titan_model_runtime.providers.openai.base_url')
-                    ?? config('ai.providers.openai.base')
-                    ?? 'https://api.openai.com'),
-                '/'
-            );
+        // Always prefer config over constructor default for base URL
+        $cfgBase = (string) (config('titan_model_runtime.providers.openai.base_url')
+            ?? config('ai.providers.openai.base')
+            ?? '');
+        if ($cfgBase) {
+            $this->baseUrl = rtrim($cfgBase, '/');
         }
-        if ($this->defaultModel === 'text-embedding-3-small') {
-            $this->defaultModel = (string) (config('titan_model_runtime.providers.openai.embedding_model')
-                ?? 'text-embedding-3-small');
+        // Always prefer config over constructor default for embedding model
+        $cfgModel = (string) (config('titan_model_runtime.providers.openai.embedding_model') ?? '');
+        if ($cfgModel) {
+            $this->defaultModel = $cfgModel;
         }
         $cfgTimeout = (int) (config('titan_model_runtime.providers.openai.timeout_seconds') ?? 0);
         if ($cfgTimeout > 0) {

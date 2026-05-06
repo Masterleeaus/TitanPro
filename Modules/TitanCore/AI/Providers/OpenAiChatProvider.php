@@ -28,18 +28,19 @@ class OpenAiChatProvider implements ChatProviderContract
                 ?? config('ai.providers.openai.api_key')
                 ?? env('OPENAI_API_KEY', ''));
         }
-        if (!$this->baseUrl || $this->baseUrl === 'https://api.openai.com') {
-            $this->baseUrl = rtrim(
-                (string) (config('titan_model_runtime.providers.openai.base_url')
-                    ?? config('ai.providers.openai.base')
-                    ?? 'https://api.openai.com'),
-                '/'
-            );
+        // Always prefer config over constructor default for base URL
+        $cfgBase = (string) (config('titan_model_runtime.providers.openai.base_url')
+            ?? config('ai.providers.openai.base')
+            ?? '');
+        if ($cfgBase) {
+            $this->baseUrl = rtrim($cfgBase, '/');
         }
-        if ($this->defaultModel === 'gpt-4o-mini') {
-            $this->defaultModel = (string) (config('titan_model_runtime.providers.openai.model')
-                ?? config('ai.providers.openai.model')
-                ?? 'gpt-4o-mini');
+        // Always prefer config over constructor default for model
+        $cfgModel = (string) (config('titan_model_runtime.providers.openai.model')
+            ?? config('ai.providers.openai.model')
+            ?? '');
+        if ($cfgModel) {
+            $this->defaultModel = $cfgModel;
         }
         $cfgTimeout = (int) (config('titan_model_runtime.providers.openai.timeout_seconds') ?? 0);
         if ($cfgTimeout > 0) {

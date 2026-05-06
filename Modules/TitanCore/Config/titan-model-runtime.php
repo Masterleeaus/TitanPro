@@ -70,8 +70,8 @@ return [
     */
     'failover' => [
         'enabled'             => (bool) env('AI_FAILOVER_ENABLED', false),
-        'chat_providers'      => explode(',', env('AI_FAILOVER_CHAT_PROVIDERS', 'openai,local')),
-        'embedding_providers' => explode(',', env('AI_FAILOVER_EMBED_PROVIDERS', 'openai')),
+        'chat_providers'      => array_filter(array_map('trim', explode(',', env('AI_FAILOVER_CHAT_PROVIDERS', 'openai,local')))),
+        'embedding_providers' => array_filter(array_map('trim', explode(',', env('AI_FAILOVER_EMBED_PROVIDERS', 'openai')))),
         'on_statuses'         => [429, 500, 502, 503, 504],
     ],
 
