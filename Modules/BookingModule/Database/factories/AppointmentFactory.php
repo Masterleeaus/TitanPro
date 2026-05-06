@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\Appointment::class;
+    protected $model = \Modules\BookingModule\Entities\Appointment::class;
 
     public function definition(): array
     {

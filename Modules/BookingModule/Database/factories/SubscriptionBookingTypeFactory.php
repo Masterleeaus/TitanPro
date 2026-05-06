@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SubscriptionBookingTypeFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\SubscriptionBookingType::class;
+    protected $model = \Modules\BookingModule\Entities\SubscriptionBookingType::class;
 
     public function definition(): array
     {

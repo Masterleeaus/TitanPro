@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BookingIgnoreFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\BookingIgnore::class;
+    protected $model = \Modules\BookingModule\Entities\BookingIgnore::class;
 
     public function definition(): array
     {

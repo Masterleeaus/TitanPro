@@ -143,6 +143,7 @@ test('sort_order after deletion continues from MAX not from count', function () 
 });
 
 
+test('add line item rejects missing name', function () {
     [$technician, , $customer] = lineItemSetup();
 
     $job = Job::factory()->forCustomer($customer)->create([

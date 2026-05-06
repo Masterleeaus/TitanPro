@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BookingStatusHistoryFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\BookingStatusHistory::class;
+    protected $model = \Modules\BookingModule\Entities\BookingStatusHistory::class;
 
     public function definition(): array
     {
