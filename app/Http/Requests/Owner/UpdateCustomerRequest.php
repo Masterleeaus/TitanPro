@@ -22,10 +22,15 @@ class UpdateCustomerRequest extends FormRequest
         $orgId = $this->user()->organization_id;
         $customerId = $this->route('customer')?->id;
 
+        $uniqueRule = Rule::unique('customers', 'email')->where('organization_id', $orgId);
+        if ($customerId !== null) {
+            $uniqueRule = $uniqueRule->ignore($customerId);
+        }
+
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('customers', 'email')->where('organization_id', $orgId)->ignore($customerId)],
+            'email' => ['required', 'email', 'max:255', $uniqueRule],
             'phone' => ['nullable', 'string', 'max:50'],
             'mobile' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string'],
