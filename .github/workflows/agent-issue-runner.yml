@@ -69,7 +69,7 @@ jobs:
               --limit 200 \
               --json number,createdAt,labels \
               --jq "[.[] | select(.labels | map(.name) |
-                    (contains([\"agent-assigned\"] ) or
+                    (contains([\"agent-assigned\"]) or
                      contains([\"agent-completed\"]) or
                      contains([\"agent-failed\"])) | not)]
                    | sort_by(.createdAt) | .[:${BATCH}] | .[].number" \

@@ -100,10 +100,10 @@ jobs:
           1. Read every '## Next Steps' section in the docs above.
           2. For each next step, check if a similar issue already exists. Use fuzzy matching.
           3. For each GENUINELY NEW next step not already tracked, run:
-             gh issue create \\
-               --repo ${REPO} \\
-               --title '[FOLLOW-UP] <concise title>' \\
-               --label 'enhancement' \\
+             gh issue create \
+               --repo ${REPO} \
+               --title '[FOLLOW-UP] <concise title>' \
+               --label 'enhancement' \
                --body '<description including: what, why, source issue, acceptance criteria checklist>
 
           Source: Follows from issue-docs/issue-N.md
