@@ -152,8 +152,13 @@ test('checkout returns 422 when customer has no email', function () {
 
     $customer = Customer::factory()->create([
         'organization_id' => $org->id,
-        'email'           => null,
+        'email'           => 'placeholder@example.com',
     ]);
+
+    // Simulate edge-case of legacy/imported data with empty email bypassing the NOT NULL constraint
+    \Illuminate\Support\Facades\DB::table('customers')
+        ->where('id', $customer->id)
+        ->update(['email' => '']);
 
     $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
         'total'       => 100.00,

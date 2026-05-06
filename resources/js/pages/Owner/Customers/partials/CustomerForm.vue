@@ -47,7 +47,7 @@ defineProps<{
 
         <!-- Email -->
         <div>
-            <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+            <label for="email" class="block text-sm font-medium text-slate-700">Email <span class="text-red-500">*</span></label>
             <input
                 id="email"
                 v-model="form.email"

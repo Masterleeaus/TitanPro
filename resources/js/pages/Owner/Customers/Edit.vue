@@ -7,7 +7,7 @@ interface Customer {
     id: number;
     first_name: string;
     last_name: string;
-    email: string | null;
+    email: string;
     phone: string | null;
     mobile: string | null;
     notes: string | null;

@@ -120,6 +120,65 @@ test('customer creation requires first and last name', function () {
         ->assertSessionHasErrors(['first_name', 'last_name']);
 });
 
+test('customer creation requires email', function () {
+    $user = userWithOrg();
+
+    $this->actingAs($user)
+        ->post('/owner/customers', [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => '',
+        ])
+        ->assertSessionHasErrors(['email']);
+});
+
+test('customer creation rejects invalid email format', function () {
+    $user = userWithOrg();
+
+    $this->actingAs($user)
+        ->post('/owner/customers', [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'not-an-email',
+        ])
+        ->assertSessionHasErrors(['email']);
+});
+
+test('customer creation rejects duplicate email within same organization', function () {
+    $user = userWithOrg();
+    Customer::factory()->create([
+        'organization_id' => $user->organization_id,
+        'email'           => 'duplicate@example.com',
+    ]);
+
+    $this->actingAs($user)
+        ->post('/owner/customers', [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'duplicate@example.com',
+        ])
+        ->assertSessionHasErrors(['email']);
+});
+
+test('customer creation allows same email in different organizations', function () {
+    $user  = userWithOrg();
+    $other = userWithOrg();
+    Customer::factory()->create([
+        'organization_id' => $other->organization_id,
+        'email'           => 'shared@example.com',
+    ]);
+
+    $this->actingAs($user)
+        ->post('/owner/customers', [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'shared@example.com',
+        ])
+        ->assertRedirect();
+
+    expect(Customer::where('email', 'shared@example.com')->count())->toBe(2);
+});
+
 // ── Edit / Update ─────────────────────────────────────────────────────────────
 
 test('user can view the edit form for their customer', function () {
@@ -171,6 +230,52 @@ test('user cannot update a customer from another organization', function () {
             'last_name'  => 'Attempt',
         ])
         ->assertForbidden();
+});
+
+test('customer update requires email', function () {
+    $user = userWithOrg();
+    $customer = Customer::factory()->create(['organization_id' => $user->organization_id]);
+
+    $this->actingAs($user)
+        ->patch("/owner/customers/{$customer->id}", [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => '',
+        ])
+        ->assertSessionHasErrors(['email']);
+});
+
+test('customer update rejects duplicate email within same organization', function () {
+    $user = userWithOrg();
+    Customer::factory()->create([
+        'organization_id' => $user->organization_id,
+        'email'           => 'taken@example.com',
+    ]);
+    $customer = Customer::factory()->create(['organization_id' => $user->organization_id]);
+
+    $this->actingAs($user)
+        ->patch("/owner/customers/{$customer->id}", [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'email'      => 'taken@example.com',
+        ])
+        ->assertSessionHasErrors(['email']);
+});
+
+test('customer update allows keeping its own email', function () {
+    $user = userWithOrg();
+    $customer = Customer::factory()->create([
+        'organization_id' => $user->organization_id,
+        'email'           => 'mine@example.com',
+    ]);
+
+    $this->actingAs($user)
+        ->patch("/owner/customers/{$customer->id}", [
+            'first_name' => 'Updated',
+            'last_name'  => 'Name',
+            'email'      => 'mine@example.com',
+        ])
+        ->assertRedirect("/owner/customers/{$customer->id}");
 });
 
 // ── Destroy ───────────────────────────────────────────────────────────────────
