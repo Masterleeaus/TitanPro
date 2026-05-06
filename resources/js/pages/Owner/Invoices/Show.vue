@@ -2,7 +2,7 @@
 import OwnerLayout from '@/layouts/OwnerLayout.vue';
 import { useDate } from '@/composables/useDate';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 interface LineItem {
     id: number;
@@ -49,6 +49,7 @@ interface Invoice {
 const props = defineProps<{
     invoice: Invoice;
     statuses: Record<string, string>;
+    paymentResult?: string;
 }>();
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -98,11 +99,6 @@ function submitPayment() {
 function startCheckout() {
     checkoutForm.post(`/owner/invoices/${props.invoice.id}/checkout`);
 }
-
-const paymentResult = computed(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('payment');
-});
 
 function sendInvoice() {
     sendForm.post(`/owner/invoices/${props.invoice.id}/send`);

@@ -53,8 +53,9 @@ class InvoiceController extends Controller
         $invoice->load(['customer', 'job', 'lineItems', 'payments.recordedBy']);
 
         return inertia('Owner/Invoices/Show', [
-            'invoice'  => $invoice,
-            'statuses' => Invoice::statuses(),
+            'invoice'       => $invoice,
+            'statuses'      => Invoice::statuses(),
+            'paymentResult' => $request->query('payment'),
         ]);
     }
 
