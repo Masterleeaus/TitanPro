@@ -293,6 +293,65 @@ test('webhook partial payment sets status to partial', function () {
     expect((float) $invoice->balance_due)->toBe(200.0);
 });
 
+test('webhook accumulates multiple partial payments without floating-point drift', function () {
+    [, $org, $customer] = stripeSetup();
+
+    // $0.30 invoice paid in three Stripe payments of $0.10 each.
+    // Without rounding: stored 0.20 + 0.10/100 → 0.20 + 0.1 = 0.30000000000000004,
+    // which would never satisfy $balanceDue <= 0 if the balance were not rounded.
+    $invoice = Invoice::factory()->forCustomer($customer)->sent()->create([
+        'total'       => 0.30,
+        'balance_due' => 0.30,
+        'amount_paid' => 0.00,
+    ]);
+
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleCheckoutCompleted');
+    $method->setAccessible(true);
+
+    $makeEvent = function (string $sessionId, string $piId, int $cents) use ($invoice): object {
+        $session                 = new \stdClass();
+        $session->id             = $sessionId;
+        $session->payment_intent = $piId;
+        $session->amount_total   = $cents;
+        $metadata                = new \stdClass();
+        $metadata->invoice_id    = $invoice->id;
+        $session->metadata       = $metadata;
+        $event                   = new \stdClass();
+        $event->data             = new \stdClass();
+        $event->data->object     = $session;
+        return $event;
+    };
+
+    // First payment: $0.10 (10 cents)
+    $method->invoke($controller, $makeEvent('cs_fp1', 'pi_fp1', 10));
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(0.10);
+    expect((float) $invoice->balance_due)->toBe(0.20);
+    expect($invoice->status)->toBe(Invoice::STATUS_PARTIAL);
+
+    // Second payment: $0.10 (10 cents)
+    $method->invoke($controller, $makeEvent('cs_fp2', 'pi_fp2', 10));
+    $invoice->refresh();
+    expect((float) $invoice->amount_paid)->toBe(0.20);
+    expect((float) $invoice->balance_due)->toBe(0.10);
+    expect($invoice->status)->toBe(Invoice::STATUS_PARTIAL);
+
+    // Third payment: $0.10 — triggers the classic 0.20 + 0.10 = 0.30000000000000004 drift
+    $method->invoke($controller, $makeEvent('cs_fp3', 'pi_fp3', 10));
+    $invoice->refresh();
+
+    // With round(..., 2): amount_paid must be exactly 0.30, not 0.30000000000000004
+    expect((float) $invoice->amount_paid)->toBe(0.30);
+    // balance_due must reach exactly 0.00 and the invoice must be marked paid
+    expect((float) $invoice->balance_due)->toBe(0.00);
+    expect($invoice->status)->toBe(Invoice::STATUS_PAID);
+    expect($invoice->paid_at)->not->toBeNull();
+
+    expect(Payment::where('invoice_id', $invoice->id)->count())->toBe(3);
+});
+
 // ── Subscription webhook ───────────────────────────────────────────────────────
 
 test('subscription checkout uses stripe_customer_id as authoritative org lookup', function () {
