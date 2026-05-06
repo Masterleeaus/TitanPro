@@ -2,6 +2,14 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    // Titan platform providers — boot order matters:
+    // 1. Module layer first (registry must exist before AI / security resolve it)
+    App\Providers\TitanModuleServiceProvider::class,
+    App\Providers\TitanBlueprintServiceProvider::class,
+    // 2. AI and security layers depend on the module registry being available
+    App\Providers\TitanAiRuntimeServiceProvider::class,
+    App\Providers\TitanModelRuntimeServiceProvider::class,
+    App\Providers\TitanModuleSecurityServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\GroundZeroPanelProvider::class,
     App\Providers\Filament\TitanQuotesPanelProvider::class,
