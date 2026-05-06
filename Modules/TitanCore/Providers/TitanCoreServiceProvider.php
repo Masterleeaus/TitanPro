@@ -38,8 +38,10 @@ class TitanCoreServiceProvider extends ServiceProvider
         // Console commands
         if ($this->app->runningInConsole()) {
             $this->commands([
-            \Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand::class,
+                \Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand::class,
                 \Modules\TitanCore\Console\SyncTitanAgentsCommand::class,
+                \Modules\TitanCore\Console\Commands\ModulesUpgradeCommand::class,
+                \Modules\TitanCore\Console\Commands\ModulesHealthCommand::class,
             ]);
         }
     }
