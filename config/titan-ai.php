@@ -167,6 +167,39 @@ return [
     */
 
     'tools' => [
+
+        /*
+         | Allowlist
+         |
+         | Only tools whose slug appears in this list may be executed.
+         | Use '*' to permit every tool that is registered in the manifest
+         | (current default — maintains backward-compatibility).
+         | Supply a comma-separated value in TITAN_AI_ALLOWED_TOOLS to restrict:
+         |   TITAN_AI_ALLOWED_TOOLS=calendar.create_booking,crm.create_lead
+         */
+        'allowed_tools' => env('TITAN_AI_ALLOWED_TOOLS', '*') === '*'
+            ? '*'
+            : array_filter(array_map('trim', explode(',', env('TITAN_AI_ALLOWED_TOOLS', '')))),
+
+        /*
+         | Execution Timeout
+         |
+         | Maximum number of seconds a tool handler may run before it is
+         | terminated and logged with status "timed_out".
+         | Uses SIGALRM when the pcntl extension is available; falls back to a
+         | soft post-execution check otherwise.
+         */
+        'timeout' => (int) env('TITAN_AI_TOOL_TIMEOUT', 30),
+
+        /*
+         | Dry-run Mode
+         |
+         | When true, the executor returns a no-side-effect response without
+         | invoking the handler.  Useful for integration testing or preflight
+         | checks.  Can also be toggled per-request via the 'dry_run' context key.
+         */
+        'dry_run' => (bool) env('TITAN_AI_TOOL_DRY_RUN', false),
+
         'registry' => [
             // 'calendar.create_booking' => Modules\TitanCore\Tools\CalendarCreateBookingTool::class,
             // 'crm.create_lead'         => Modules\TitanCore\Tools\CrmCreateLeadTool::class,

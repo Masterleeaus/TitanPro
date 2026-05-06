@@ -4,13 +4,18 @@ namespace Modules\TitanCore\Tests\Unit;
 
 use Modules\TitanCore\AI\AIOrchestratorPipeline;
 use Modules\TitanCore\AI\ToolExecutor;
+use Modules\TitanCore\AI\ToolPermissionGate;
 use Modules\TitanCore\AI\ValueObjects\ToolResult;
 use Modules\TitanCore\Contracts\AI\CitationContract;
 use Modules\TitanCore\Contracts\AI\GuardrailContract;
 use Modules\TitanCore\Contracts\AI\RetrievalContract;
 use Modules\TitanCore\Contracts\AI\ToolExecutorContract;
+use Modules\TitanCore\Contracts\AI\ToolRollbackContract;
 use Modules\TitanCore\Exceptions\AI\ToolHandlerNotFoundException;
 use Modules\TitanCore\Exceptions\AI\ToolInputValidationException;
+use Modules\TitanCore\Exceptions\AI\ToolNotAllowedException;
+use Modules\TitanCore\Exceptions\AI\ToolPermissionDeniedException;
+use Modules\TitanCore\Exceptions\AI\ToolTimedOutException;
 use PHPUnit\Framework\TestCase;
 
 // ─── Inline handler stubs ─────────────────────────────────────────────────────
@@ -278,5 +283,338 @@ class ToolExecutorTest extends TestCase
         $this->assertTrue($result['ok']);
         $this->assertFalse($result['blocked']);
         $this->assertSame('complete', $result['stage']);
+    }
+
+    // ── ToolExecutor: allowlist enforcement ───────────────────────────────────
+
+    public function test_tool_not_in_allowlist_throws_tool_not_allowed_exception(): void
+    {
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            allowedTools: ['other.tool'],
+        );
+
+        $this->expectException(ToolNotAllowedException::class);
+        $this->expectExceptionMessageMatches('/echo/');
+
+        $executor->execute('echo', []);
+    }
+
+    public function test_allowlist_wildcard_permits_any_registered_tool(): void
+    {
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            allowedTools: '*',
+        );
+
+        $result = $executor->execute('echo', ['x' => 1]);
+
+        $this->assertTrue($result->ok);
+    }
+
+    public function test_allowlist_array_permits_listed_tools(): void
+    {
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            allowedTools: ['echo'],
+        );
+
+        $result = $executor->execute('echo', []);
+
+        $this->assertTrue($result->ok);
+    }
+
+    public function test_tool_not_allowed_exception_has_403_status_code(): void
+    {
+        $e = new ToolNotAllowedException('secret.tool');
+        $this->assertSame(403, $e->getStatusCode());
+    }
+
+    // ── ToolExecutor: permission gate ─────────────────────────────────────────
+
+    public function test_permission_denied_throws_tool_permission_denied_exception(): void
+    {
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            permissionChecker: fn(string $tool, array $ctx): bool => false,
+        );
+
+        $this->expectException(ToolPermissionDeniedException::class);
+        $this->expectExceptionMessageMatches('/echo/');
+
+        $executor->execute('echo', []);
+    }
+
+    public function test_permission_granted_allows_execution(): void
+    {
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            permissionChecker: fn(string $tool, array $ctx): bool => true,
+        );
+
+        $result = $executor->execute('echo', ['x' => 1]);
+
+        $this->assertTrue($result->ok);
+    }
+
+    public function test_permission_denied_exception_has_403_status_code(): void
+    {
+        $e = new ToolPermissionDeniedException('admin.tool');
+        $this->assertSame(403, $e->getStatusCode());
+    }
+
+    // ── ToolPermissionGate ────────────────────────────────────────────────────
+
+    public function test_permission_gate_allows_tool_with_no_requirement(): void
+    {
+        $gate = new ToolPermissionGate([]);
+        $this->assertTrue($gate->allows('any.tool', []));
+    }
+
+    public function test_permission_gate_denies_when_no_user_in_context(): void
+    {
+        $gate = new ToolPermissionGate(['echo' => 'use_ai_features']);
+        $this->assertFalse($gate->allows('echo', []));
+    }
+
+    public function test_permission_gate_uses_can_method_on_user(): void
+    {
+        $user = new class {
+            public function can(string $ability): bool
+            {
+                return $ability === 'use_ai_features';
+            }
+        };
+
+        $gate = new ToolPermissionGate(['echo' => 'use_ai_features']);
+        $this->assertTrue($gate->allows('echo', ['user' => $user]));
+    }
+
+    public function test_permission_gate_denies_when_user_lacks_permission(): void
+    {
+        $user = new class {
+            public function can(string $ability): bool
+            {
+                return false;
+            }
+        };
+
+        $gate = new ToolPermissionGate(['echo' => 'use_ai_features']);
+        $this->assertFalse($gate->allows('echo', ['user' => $user]));
+    }
+
+    public function test_permission_gate_is_invokable(): void
+    {
+        $gate = new ToolPermissionGate([]);
+        $this->assertTrue($gate('any.tool', []));
+    }
+
+    public function test_permission_gate_prefers_has_permission_to_over_can(): void
+    {
+        $user = new class {
+            public array $calls = [];
+
+            public function hasPermissionTo(string $perm): bool
+            {
+                $this->calls[] = 'hasPermissionTo';
+                return true;
+            }
+
+            public function can(string $perm): bool
+            {
+                $this->calls[] = 'can';
+                return false;
+            }
+        };
+
+        $gate = new ToolPermissionGate(['echo' => 'use_ai_features']);
+        $result = $gate->allows('echo', ['user' => $user]);
+
+        $this->assertTrue($result);
+        $this->assertContains('hasPermissionTo', $user->calls);
+        $this->assertNotContains('can', $user->calls);
+    }
+
+    // ── ToolExecutor: dry-run mode ────────────────────────────────────────────
+
+    public function test_dry_run_returns_result_without_invoking_handler(): void
+    {
+        $handlerCalled = false;
+
+        $executor = new ToolExecutor(
+            manifest: [
+                'echo' => ['handler' => EchoToolHandler::class],
+            ],
+        );
+
+        $result = $executor->execute('echo', ['x' => 99], ['dry_run' => true]);
+
+        $this->assertTrue($result->ok);
+        $this->assertSame('echo', $result->tool);
+        $this->assertTrue($result->data['dry_run']);
+        $this->assertSame(['x' => 99], $result->data['params']);
+        $this->assertStringContainsString('dry-run', $result->message);
+    }
+
+    // ── ToolExecutor: audit writer ────────────────────────────────────────────
+
+    public function test_audit_writer_called_on_successful_execution(): void
+    {
+        $auditEntries = [];
+
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        $executor->execute('echo', ['msg' => 'hi'], ['user_id' => 42, 'company_id' => 7]);
+
+        $this->assertCount(1, $auditEntries);
+        $this->assertSame('echo', $auditEntries[0]['tool']);
+        $this->assertSame(42, $auditEntries[0]['user_id']);
+        $this->assertSame(7, $auditEntries[0]['company_id']);
+        $this->assertSame('success', $auditEntries[0]['status']);
+        $this->assertNotNull($auditEntries[0]['input_hash']);
+        $this->assertIsInt($auditEntries[0]['duration_ms']);
+    }
+
+    public function test_audit_writer_called_with_blocked_status_on_allowlist_violation(): void
+    {
+        $auditEntries = [];
+
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            allowedTools: ['other.tool'],
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        try {
+            $executor->execute('echo', []);
+        } catch (ToolNotAllowedException) {
+        }
+
+        $this->assertCount(1, $auditEntries);
+        $this->assertSame('blocked', $auditEntries[0]['status']);
+    }
+
+    public function test_audit_writer_called_with_blocked_status_on_permission_denied(): void
+    {
+        $auditEntries = [];
+
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            permissionChecker: fn() => false,
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        try {
+            $executor->execute('echo', []);
+        } catch (ToolPermissionDeniedException) {
+        }
+
+        $this->assertCount(1, $auditEntries);
+        $this->assertSame('blocked', $auditEntries[0]['status']);
+    }
+
+    public function test_audit_writer_called_with_failed_status_on_handler_not_found(): void
+    {
+        $auditEntries = [];
+
+        $executor = new ToolExecutor(
+            manifest: ['ghost' => ['handler' => 'NonExistentClass']],
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        try {
+            $executor->execute('ghost', []);
+        } catch (ToolHandlerNotFoundException) {
+        }
+
+        $this->assertCount(1, $auditEntries);
+        $this->assertSame('failed', $auditEntries[0]['status']);
+    }
+
+    public function test_audit_writer_called_with_dry_run_status(): void
+    {
+        $auditEntries = [];
+
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        $executor->execute('echo', [], ['dry_run' => true]);
+
+        $this->assertCount(1, $auditEntries);
+        $this->assertSame('dry_run', $auditEntries[0]['status']);
+    }
+
+    public function test_audit_input_hash_is_sha256_of_json_params(): void
+    {
+        $auditEntries = [];
+        $params = ['message' => 'hello'];
+
+        $executor = new ToolExecutor(
+            manifest: ['echo' => ['handler' => EchoToolHandler::class]],
+            auditWriter: function (array $entry) use (&$auditEntries): void {
+                $auditEntries[] = $entry;
+            },
+        );
+
+        $executor->execute('echo', $params);
+
+        $expectedHash = hash('sha256', (string) json_encode($params));
+        $this->assertSame($expectedHash, $auditEntries[0]['input_hash']);
+    }
+
+    // ── ToolTimedOutException ─────────────────────────────────────────────────
+
+    public function test_timed_out_exception_message_contains_tool_name_and_timeout(): void
+    {
+        $e = new ToolTimedOutException('slow.tool', 30);
+        $this->assertStringContainsString('slow.tool', $e->getMessage());
+        $this->assertStringContainsString('30', $e->getMessage());
+    }
+
+    // ── ToolRollbackContract ──────────────────────────────────────────────────
+
+    public function test_tool_rollback_contract_is_interface(): void
+    {
+        $this->assertTrue(interface_exists(ToolRollbackContract::class));
+    }
+
+    public function test_handler_can_implement_rollback_contract(): void
+    {
+        $handler = new class implements ToolRollbackContract {
+            public array $rolledBack = [];
+
+            public function __invoke(array $params): array
+            {
+                return ['record_id' => 42];
+            }
+
+            public function rollback(array $params, array $result): void
+            {
+                $this->rolledBack = ['params' => $params, 'result' => $result];
+            }
+        };
+
+        $result = $handler([]);
+        $this->assertSame(['record_id' => 42], $result);
+        $this->assertTrue($handler instanceof ToolRollbackContract);
+
+        $handler->rollback(['x' => 1], ['record_id' => 42]);
+        $this->assertSame(['x' => 1], $handler->rolledBack['params']);
+        $this->assertSame(['record_id' => 42], $handler->rolledBack['result']);
     }
 }
