@@ -11,6 +11,7 @@ use App\Models\JobChecklistItem;
 use App\Models\JobLineItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
@@ -210,9 +211,12 @@ class JobController extends Controller
             }
         }
 
-        $data['sort_order'] = $job->lineItems()->max('sort_order') + 1;
+        $lineItem = DB::transaction(function () use ($job, $data) {
+            $maxOrder = $job->lineItems()->lockForUpdate()->max('sort_order') ?? 0;
+            $data['sort_order'] = $maxOrder + 1;
 
-        $lineItem = $job->lineItems()->create($data);
+            return $job->lineItems()->create($data);
+        });
 
         return response()->json(['status' => 'ok', 'data' => $lineItem->fresh()], 201);
     }
