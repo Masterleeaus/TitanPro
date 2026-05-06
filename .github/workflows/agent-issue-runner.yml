@@ -123,36 +123,42 @@ jobs:
             fi
 
             # Post a comment with full Copilot instructions (including issue-docs requirement)
+            # Build body via echo to avoid unindented lines that would break YAML parsing
+            BODY_FILE=$(mktemp)
+            {
+              echo "🤖 **GitHub Copilot** has been assigned to this issue."
+              echo ""
+              echo "## Instructions for Copilot"
+              echo ""
+              echo "Please implement the fix described above, then **before committing**:"
+              echo ""
+              echo "1. Create the file \`issue-docs/issue-${ISSUE_NUM}.md\` with exactly these sections:"
+              echo ""
+              printf '```markdown\n'
+              echo "## Issue Summary"
+              echo "<one paragraph describing the problem>"
+              echo ""
+              echo "## Root Cause"
+              echo "<what was causing the bug or what was missing>"
+              echo ""
+              echo "## Changes Made"
+              echo "<list every file modified with key before/after lines>"
+              echo ""
+              echo "## Tests Added or Updated"
+              echo "<list any new or changed test cases>"
+              echo ""
+              echo "## Next Steps"
+              echo "<follow-on work, known gaps, related issues, or 'None' if complete>"
+              printf '```\n'
+              echo ""
+              echo "2. Commit **all** changes (code + \`issue-docs/issue-${ISSUE_NUM}.md\`) together."
+              echo "3. Open a pull request targeting \`main\`."
+              echo ""
+              echo "> The \`issue-docs\` file is required — an automated agent reads the **Next Steps** section after merge to create follow-up issues. PRs missing this file will be flagged."
+            } > "$BODY_FILE"
             gh issue comment "$ISSUE_NUM" --repo "$REPO" \
-              --body "🤖 **GitHub Copilot** has been assigned to this issue.
-
-## Instructions for Copilot
-
-Please implement the fix described above, then **before committing**:
-
-1. Create the file \`issue-docs/issue-${ISSUE_NUM}.md\` with exactly these sections:
-
-\`\`\`markdown
-## Issue Summary
-<one paragraph describing the problem>
-
-## Root Cause
-<what was causing the bug or what was missing>
-
-## Changes Made
-<list every file modified with key before/after lines>
-
-## Tests Added or Updated
-<list any new or changed test cases>
-
-## Next Steps
-<follow-on work, known gaps, related issues, or 'None' if complete>
-\`\`\`
-
-2. Commit **all** changes (code + \`issue-docs/issue-${ISSUE_NUM}.md\`) together.
-3. Open a pull request targeting \`main\`.
-
-> The \`issue-docs\` file is required — an automated agent reads the **Next Steps** section after merge to create follow-up issues. PRs missing this file will be flagged." || true
+              --body-file "$BODY_FILE" || true
+            rm -f "$BODY_FILE"
 
           done < /tmp/issue_numbers.txt
 
