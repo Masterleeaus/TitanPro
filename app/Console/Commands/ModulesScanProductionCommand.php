@@ -75,11 +75,6 @@ class ModulesScanProductionCommand extends Command
     {
         $found = [];
 
-        $pattern = implode(',', array_map(
-            fn (string $ext) => "*.{$ext}",
-            self::BLOCKER_EXTENSIONS
-        ));
-
         // Use RecursiveDirectoryIterator for reliable deep scanning.
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)
