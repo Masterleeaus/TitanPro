@@ -107,7 +107,7 @@ class EstimateController extends Controller
             'packages.*.line_items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'packages.*.line_items.*.quantity'   => ['required', 'numeric', 'min:0.001'],
             'packages.*.line_items.*.is_taxable' => ['boolean'],
-            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', 'exists:items,id'],
+            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', Rule::exists('items', 'id')->where('organization_id', $orgId)],
         ]);
 
         $estimate = Estimate::create([
@@ -180,7 +180,7 @@ class EstimateController extends Controller
             'packages.*.line_items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'packages.*.line_items.*.quantity'   => ['required', 'numeric', 'min:0.001'],
             'packages.*.line_items.*.is_taxable' => ['boolean'],
-            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', 'exists:items,id'],
+            'packages.*.line_items.*.item_id'    => ['nullable', 'integer', Rule::exists('items', 'id')->where('organization_id', $orgId)],
         ]);
 
         $estimate->update([
