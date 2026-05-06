@@ -58,17 +58,19 @@ class DispatchController extends Controller
             ->get(['user_id', 'latitude', 'longitude', 'heading', 'speed', 'recorded_at'])
             ->keyBy('user_id');
 
-        // Active (en-route / in-progress) jobs — one query
-        $activeJobs = Job::whereIn('assigned_to', $techIds)
+        // Active (en-route / in-progress) jobs — one query, pre-keyed by technician ID.
+        // Ordered ASC so that keyBy()'s last-write-wins behaviour retains the most
+        // recently scheduled active job for each technician.
+        $activeJobsMap = Job::whereIn('assigned_to', $techIds)
             ->whereIn('status', [Job::STATUS_EN_ROUTE, Job::STATUS_IN_PROGRESS])
             ->with(['customer:id,first_name,last_name', 'property:id,address_line1,city'])
-            ->orderByDesc('scheduled_at')
+            ->orderBy('scheduled_at')
             ->get()
-            ->groupBy('assigned_to')
-            ->map(fn ($jobs) => $jobs->first()); // latest per technician
+            ->keyBy('assigned_to');
 
-        // Upcoming scheduled jobs today — one query, up to 3 per technician
-        $upcomingJobsAll = Job::whereIn('assigned_to', $techIds)
+        // Upcoming scheduled jobs today — one query, pre-keyed by technician ID,
+        // up to 3 per technician.
+        $upcomingJobsMap = Job::whereIn('assigned_to', $techIds)
             ->where('status', Job::STATUS_SCHEDULED)
             ->whereDate('scheduled_at', today())
             ->with(['customer:id,first_name,last_name', 'property:id,address_line1,city'])
@@ -77,10 +79,10 @@ class DispatchController extends Controller
             ->groupBy('assigned_to')
             ->map(fn ($jobs) => $jobs->take(3));
 
-        $data = $technicians->map(function (User $tech) use ($latestLocations, $activeJobs, $upcomingJobsAll) {
+        $data = $technicians->map(function (User $tech) use ($latestLocations, $activeJobsMap, $upcomingJobsMap) {
             $location    = $latestLocations->get($tech->id);
-            $currentJob  = $activeJobs->get($tech->id);
-            $upcomingJobs = $upcomingJobsAll->get($tech->id, collect());
+            $currentJob  = $activeJobsMap->get($tech->id);
+            $upcomingJobs = $upcomingJobsMap->get($tech->id, collect());
 
             return [
                 'id'   => $tech->id,
