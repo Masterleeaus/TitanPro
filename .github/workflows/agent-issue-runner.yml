@@ -1,166 +1,119 @@
-name: 🤖 Agent — Issue Runner
+name: 🤖 Copilot — Issue Assigner
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # every 5 minutes
+    - cron: '*/30 * * * *'   # every 30 minutes
+    # ── Batch size guide ────────────────────────────────────────────────────
+    # GitHub Copilot Pro+ coding agent handles the actual implementation.
+    # This workflow only assigns issues — no Anthropic API needed.
+    # Batch of 5 is conservative; raise to 10-20 if Copilot keeps up.
+    # ────────────────────────────────────────────────────────────────────────
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Specific issue number (blank = oldest open)'
+        description: 'Specific issue number (blank = batch of oldest open)'
         required: false
+        type: string
+      batch_size:
+        description: 'Issues to assign per run (default 5)'
+        required: false
+        default: '5'
         type: string
 
 permissions:
-  contents: write
+  contents: read
   issues: write
-  pull-requests: write
 
 concurrency:
-  group: agent-issue-runner
+  group: copilot-issue-assigner
   cancel-in-progress: false
 
 jobs:
-  run-agent:
-    name: Work on oldest open issue
+  assign-issues:
+    name: Assign ${{ github.event.inputs.batch_size || '5' }} issues to Copilot
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: claude/scan-repo-for-bugs-NPTj0
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Git identity
-        run: |
-          git config user.name  "Titan Agent"
-          git config user.email "agent@titanpro.app"
-
-      - name: Select issue
+      - name: Select issues to assign
         id: pick
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BATCH="${{ github.event.inputs.batch_size || '5' }}"
+
           if [ -n "${{ github.event.inputs.issue_number }}" ]; then
-            NUM="${{ github.event.inputs.issue_number }}"
+            echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
           else
-            NUM=$(gh issue list \
+            # Pick N oldest open issues without agent labels
+            gh issue list \
               --repo "${{ github.repository }}" \
-              --state open --limit 200 \
+              --state open \
+              --limit 200 \
               --json number,createdAt,labels \
-              --jq '[.[] | select(.labels | map(.name) |
-                    (contains(["agent-assigned"]) or
-                     contains(["agent-completed"]) or
-                     contains(["agent-failed"])) | not)]
-                   | sort_by(.createdAt) | .[0].number')
+              --jq "[.[] | select(.labels | map(.name) |
+                    (contains([\"agent-assigned\"] ) or
+                     contains([\"agent-completed\"]) or
+                     contains([\"agent-failed\"])) | not)]
+                   | sort_by(.createdAt) | .[:${BATCH}] | .[].number" \
+              > /tmp/issue_numbers.txt
           fi
-          if [ -z "$NUM" ] || [ "$NUM" = "null" ]; then
-            echo "No eligible issues found."; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          echo "number=$NUM" >> "$GITHUB_OUTPUT"
-          echo "skip=false"  >> "$GITHUB_OUTPUT"
-          gh issue view "$NUM" --repo "${{ github.repository }}" \
-            --json number,title,body,labels > /tmp/issue.json
-          echo "Issue #$NUM selected."
 
-      - name: Skip if none
+          COUNT=$(wc -l < /tmp/issue_numbers.txt | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Selected $COUNT issue(s) to assign:"
+          cat /tmp/issue_numbers.txt
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if no eligible issues
         if: steps.pick.outputs.skip == 'true'
-        run: echo "No eligible open issues." && exit 0
+        run: echo "No eligible open issues. All issues are assigned or completed."
 
-      - name: Label agent-assigned
+      - name: Assign each issue to GitHub Copilot
         if: steps.pick.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
         run: |
-          gh issue edit "${{ steps.pick.outputs.number }}" \
-            --repo "${{ github.repository }}" \
-            --add-label "agent-assigned" || true
+          while IFS= read -r ISSUE_NUM; do
+            [ -z "$ISSUE_NUM" ] && continue
 
-      - name: Setup PHP 8.2
-        if: steps.pick.outputs.skip != 'true'
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring,pdo,pdo_sqlite,xml,curl,zip
-          coverage: none
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  Assigning issue #$ISSUE_NUM to GitHub Copilot"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-      - name: Install Composer deps
-        if: steps.pick.outputs.skip != 'true'
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+            TITLE=$(gh issue view "$ISSUE_NUM" --repo "$REPO" --json title --jq '.title')
+            echo "  Title: $TITLE"
 
-      - name: Setup Node 20
-        if: steps.pick.outputs.skip != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
+            # Assign Copilot as coding agent
+            if gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+                --add-assignee "copilot" \
+                --add-label "agent-assigned" 2>/dev/null; then
+              echo "  ✓ Copilot assigned to issue #$ISSUE_NUM"
+            else
+              # Fallback: assign via API (handles orgs where @copilot syntax differs)
+              gh api "repos/$REPO/issues/$ISSUE_NUM/assignees" \
+                --method POST \
+                -f "assignees[]=copilot" || true
+              gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+                --add-label "agent-assigned" || true
+              echo "  ✓ Copilot assigned (via API) to issue #$ISSUE_NUM"
+            fi
 
-      - name: Install npm deps
-        if: steps.pick.outputs.skip != 'true'
-        run: npm ci --prefer-offline
+            # Post a comment so contributors know Copilot is on it
+            gh issue comment "$ISSUE_NUM" --repo "$REPO" \
+              --body "🤖 **GitHub Copilot** has been assigned to this issue and will open a pull request with a fix. Track progress in the Pull Requests tab.
 
-      - name: Install Claude Code CLI
-        if: steps.pick.outputs.skip != 'true'
-        run: npm install -g @anthropic-ai/claude-code
+> When the fix is merged, an agent will scan \`issue-docs/issue-${ISSUE_NUM}.md\` for any follow-on next steps and create new issues automatically." || true
 
-      - name: Ensure issue-docs directory
-        if: steps.pick.outputs.skip != 'true'
-        run: mkdir -p issue-docs
+          done < /tmp/issue_numbers.txt
 
-      - name: Run Claude agent
-        if: steps.pick.outputs.skip != 'true'
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          NUM="${{ steps.pick.outputs.number }}"
-          DATA=$(cat /tmp/issue.json)
-          claude --dangerously-skip-permissions -p "
-          You are a senior engineer on the TitanPro repo (Laravel 12, PHP 8.2, Vue 3,
-          TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
-
-          Resolve GitHub issue #${NUM}.
-
-          ISSUE DATA:
-          ${DATA}
-
-          MANDATORY:
-          1. Read and understand the issue fully.
-          2. Explore all relevant files.
-          3. Implement the complete fix.
-          4. Create issue-docs/issue-${NUM}.md with sections:
-             ## Issue Summary
-             ## Root Cause
-             ## Changes Made  (every file, key before/after lines)
-             ## Tests Added or Updated
-             ## Next Steps    (follow-on work, related issues, limitations)
-          5. Commit all changes (code + doc file):
-             'fix: resolve issue #${NUM} — <short description>'
-          6. Push to branch: claude/scan-repo-for-bugs-NPTj0
-          Do NOT push to main. Do NOT open a PR unless the issue asks for one.
-          Run vendor/bin/pint on modified PHP files.
-          Run ./vendor/bin/pest and fix any failures before committing."
-
-      - name: Label agent-completed
-        if: steps.pick.outputs.skip != 'true' && success()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          N="${{ steps.pick.outputs.number }}"
-          gh issue edit "$N" --repo "${{ github.repository }}" \
-            --add-label "agent-completed" --remove-label "agent-assigned" || true
-          gh issue comment "$N" --repo "${{ github.repository }}" \
-            --body "🤖 **Agent completed.** See \`issue-docs/issue-${N}.md\` for full change log and next steps. Changes committed to \`claude/scan-repo-for-bugs-NPTj0\`." || true
-
-      - name: Label agent-failed
-        if: steps.pick.outputs.skip != 'true' && failure()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          N="${{ steps.pick.outputs.number }}"
-          gh issue edit "$N" --repo "${{ github.repository }}" \
-            --add-label "agent-failed" --remove-label "agent-assigned" || true
-          gh issue comment "$N" --repo "${{ github.repository }}" \
-            --body "🤖 **Agent failed** on issue #${N}. Will retry next cycle. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" || true
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  Batch complete."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

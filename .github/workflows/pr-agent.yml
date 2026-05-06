@@ -1,4 +1,4 @@
-name: 🤖 Agent — PR Review & Merge
+name: 🤖 Copilot — PR Reviewer
 
 on:
   schedule:
@@ -11,54 +11,20 @@ on:
         type: string
 
 permissions:
-  contents: write
-  issues: write
+  contents: read
   pull-requests: write
 
 concurrency:
-  group: pr-agent
+  group: copilot-pr-reviewer
   cancel-in-progress: false
 
 jobs:
   review-prs:
-    name: Review and action open pull requests
+    name: Request Copilot review on open pull requests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout default branch
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Git identity
-        run: |
-          git config user.name  "Titan Agent"
-          git config user.email "agent@titanpro.app"
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring,pdo,pdo_sqlite,xml,curl,zip
-          coverage: none
-
-      - name: Install Composer deps
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
-
-      - name: Setup Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install npm deps
-        run: npm ci --prefer-offline
-
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
       - name: Fetch open PRs
         id: prs
         env:
@@ -71,82 +37,49 @@ jobs:
               --repo "${{ github.repository }}" \
               --state open \
               --limit 50 \
-              --json number \
-              --jq '[.[].number]' > /tmp/pr_numbers.json
+              --json number,reviewRequests \
+              --jq '[.[] | select(
+                      .reviewRequests | map(.login // .name) |
+                      contains(["copilot"]) | not
+                    ) | .number]' > /tmp/pr_numbers.json
           fi
-          COUNT=$(cat /tmp/pr_numbers.json | python3 -c "import sys,json; print(len(json.load(sys.stdin)))")
+
+          COUNT=$(python3 -c "import sys,json; print(len(json.load(open('/tmp/pr_numbers.json'))))")
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          echo "Found $COUNT open PR(s)."
+          echo "Found $COUNT PR(s) without Copilot review."
           cat /tmp/pr_numbers.json
 
       - name: Skip if no PRs
         if: steps.prs.outputs.count == '0'
-        run: echo "No open PRs to process." && exit 0
+        run: echo "No open PRs needing Copilot review."
 
-      - name: Process each PR with Claude agent
+      - name: Request Copilot review on each PR
         if: steps.prs.outputs.count != '0'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
-          REPO:              ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
         run: |
-          PR_NUMS=$(cat /tmp/pr_numbers.json | python3 -c "import sys,json; print(' '.join(map(str, json.load(sys.stdin))))")
+          PR_NUMS=$(python3 -c "import json; print(' '.join(map(str, json.load(open('/tmp/pr_numbers.json')))))")
 
           for PR_NUM in $PR_NUMS; do
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Processing PR #$PR_NUM"
+            echo "Requesting Copilot review on PR #$PR_NUM"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-            # Fetch PR details
-            PR_DATA=$(gh pr view "$PR_NUM" \
-              --repo "$REPO" \
-              --json number,title,body,headRefName,baseRefName,mergeable,mergeStateStatus,labels,files,additions,deletions,commits)
+            TITLE=$(gh pr view "$PR_NUM" --repo "$REPO" --json title --jq '.title')
+            echo "  Title: $TITLE"
 
-            MERGEABLE=$(echo "$PR_DATA" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('mergeable','UNKNOWN'))")
-            TITLE=$(echo "$PR_DATA" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('title',''))")
-            HEAD=$(echo "$PR_DATA" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('headRefName',''))")
-
-            echo "PR #$PR_NUM: '$TITLE' | mergeable=$MERGEABLE | branch=$HEAD"
-
-            # Run Claude agent to assess and action the PR
-            claude --dangerously-skip-permissions -p "
-          You are a senior engineer and code reviewer for the TitanPro repository
-          (Laravel 12, PHP 8.2, Vue 3, TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
-
-          Review and action pull request #${PR_NUM}.
-
-          PR DATA:
-          ${PR_DATA}
-
-          MERGEABLE STATUS: ${MERGEABLE}
-
-          YOUR JOB — do ALL of the following that apply:
-
-          1. READ the PR diff using: gh pr diff ${PR_NUM} --repo ${REPO}
-          2. ASSESS the PR:
-             - Does it look correct and complete?
-             - Are there any obvious bugs, security issues, or regressions?
-             - Does it follow the codebase patterns?
-          3. IF mergeable=MERGEABLE and the code looks good:
-             - Approve the PR: gh pr review ${PR_NUM} --repo ${REPO} --approve --body 'LGTM — approved by Titan Agent after automated review.'
-             - Merge the PR: gh pr merge ${PR_NUM} --repo ${REPO} --squash --auto
-          4. IF mergeable=CONFLICTING:
-             - Checkout the PR branch and fix merge conflicts
-             - git fetch origin
-             - git checkout ${HEAD}
-             - git merge origin/\$(base branch) and resolve conflicts
-             - Commit the resolved conflicts: 'fix: resolve merge conflicts on PR #${PR_NUM}'
-             - Push the branch back
-             - Comment on the PR: gh pr comment ${PR_NUM} --repo ${REPO} --body 'Merge conflicts resolved by Titan Agent.'
-          5. IF the code has bugs or issues:
-             - Post a detailed review comment listing the specific issues found
-             - gh pr review ${PR_NUM} --repo ${REPO} --request-changes --body '<your findings>'
-             - Do NOT merge PRs with bugs.
-          6. IF the PR is a draft or has 'do-not-merge' label:
-             - Skip it and post a comment explaining why it was skipped.
-
-          POST a summary comment on every PR you process, even if you take no action.
-          Be specific: mention file names and line numbers in your review comments."
+            # Request Copilot as reviewer
+            if gh pr edit "$PR_NUM" --repo "$REPO" \
+                --add-reviewer "copilot" 2>/dev/null; then
+              echo "  ✓ Copilot review requested on PR #$PR_NUM"
+            else
+              # Fallback via API
+              gh api "repos/$REPO/pulls/$PR_NUM/requested_reviewers" \
+                --method POST \
+                -f "reviewers[]=copilot" || true
+              echo "  ✓ Copilot review requested (via API) on PR #$PR_NUM"
+            fi
 
             echo "Finished PR #$PR_NUM"
           done
