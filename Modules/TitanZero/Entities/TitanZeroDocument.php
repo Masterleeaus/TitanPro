@@ -12,7 +12,7 @@ class TitanZeroDocument extends Model
     protected $table = 'titanzero_documents';
 
     protected $fillable = [
-        'title','source','storage_path','sha256','meta',
+        'company_id','title','source','storage_path','sha256','meta',
         'doc_type','authority_level','jurisdiction','is_superseded','preferred_weight','coach_override',
         'classification_confidence','classification_source','review_status','reviewed_by','reviewed_at',
     ];
