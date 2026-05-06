@@ -33,6 +33,11 @@ class ExecuteAutomationJob implements ShouldQueue
     public int $timeout = 120;
 
     /**
+     * Maximum retry delay cap in seconds (one hour).
+     */
+    private const MAX_RETRY_DELAY = 3600;
+
+    /**
      * Laravel will call failed() rather than auto-retrying — we handle our own
      * retry logic through explicit re-dispatch so we can persist attempt state.
      */
@@ -91,7 +96,7 @@ class ExecuteAutomationJob implements ShouldQueue
 
         // Exponential back-off: base_delay * 2^(attempt - 1), max 3600 s.
         $base  = $this->automation['retry_after'] ?? 60;
-        $delay = (int) min($base * (2 ** ($run->attempts - 1)), 3600);
+        $delay = (int) min($base * (2 ** ($run->attempts - 1)), self::MAX_RETRY_DELAY);
 
         $run->update([
             'status'    => AutomationRun::STATUS_QUEUED,

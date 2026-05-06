@@ -43,8 +43,8 @@ class SchedulerBridge
             $id        = $automation['id'];
             $companyId = $automation['company_id'] ?? null;
 
-            $event = $schedule->call(function () use ($id, $automation, $companyId) {
-                app(TriggerDispatcher::class)->dispatch($id, [], $companyId);
+            $event = $schedule->call(function () use ($id, $companyId) {
+                $this->dispatcher->dispatch($id, [], $companyId);
             })->name("automation:{$id}")->withoutOverlapping();
 
             $this->applyCadence($event, $cadence);

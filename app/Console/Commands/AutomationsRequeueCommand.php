@@ -38,7 +38,7 @@ class AutomationsRequeueCommand extends Command
         $query = AutomationRun::where('status', AutomationRun::STATUS_FAILED);
 
         if ($id = $this->option('id')) {
-            $query = AutomationRun::where('id', (int) $id);
+            $query->where('id', (int) $id);
         } elseif ($automationId = $this->option('automation')) {
             $query->where('automation_id', $automationId);
         }
