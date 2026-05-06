@@ -138,6 +138,29 @@ test('cannot decline an expired estimate', function () {
     $this->post("/estimates/{$estimate->token}/decline")->assertStatus(410);
 });
 
+// ── Deleted customer ─────────────────────────────────────────────────────────
+
+test('estimate page loads when customer has been soft-deleted', function () {
+    $org      = Organization::factory()->create();
+    $customer = Customer::factory()->create(['organization_id' => $org->id]);
+    $estimate = Estimate::factory()->forCustomer($customer)->sent()->create();
+
+    $estimate->packages()->create([
+        'tier' => 'good', 'label' => 'Basic', 'is_recommended' => false,
+        'subtotal' => 100, 'tax_amount' => 0, 'total' => 100,
+    ]);
+
+    $customer->delete(); // soft-delete: customer relationship resolves to null
+
+    $this->get("/estimates/{$estimate->token}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Public/Estimate')
+            ->where('estimate.id', $estimate->id)
+            ->where('estimate.customer', null)
+        );
+});
+
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 
 test('public estimate view is rate limited after 10 requests per minute', function () {
