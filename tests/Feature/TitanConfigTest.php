@@ -23,7 +23,9 @@ test('titan-ai config file loads and required keys are present', function () {
         ->and(config('titan-ai.agents'))->toBeArray()
         ->and(config('titan-ai.tools'))->toBeArray()
         ->and(config('titan-ai.permissions'))->toBeArray()
-        ->and(config('titan-ai.audit'))->toBeArray();
+        ->and(config('titan-ai.audit'))->toBeArray()
+        ->and(config('titan-ai.vector_store'))->toBeArray()
+        ->and(config('titan-ai.vector_store.driver'))->not->toBeEmpty();
 });
 
 test('titan-model-runtime config file loads and required keys are present', function () {

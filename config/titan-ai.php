@@ -195,6 +195,55 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Vector Store
+    |--------------------------------------------------------------------------
+    |
+    | Controls which backend is used for vector similarity search and document
+    | indexing.  Switch backends via the TITAN_VECTOR_STORE_DRIVER env var
+    | without any code changes.
+    |
+    | Supported drivers:
+    |   pgvector    – Postgres-native ANN search via the pgvector extension.
+    |                 Falls back to PHP cosine similarity on MySQL / SQLite.
+    |   qdrant      – Self-hosted or Qdrant Cloud dedicated vector DB.
+    |   pinecone    – Managed cloud vector DB (Pinecone).
+    |   meilisearch – Hybrid keyword + semantic search via Meilisearch ≥ v1.6.
+    |
+    */
+
+    'vector_store' => [
+
+        'driver' => env('TITAN_VECTOR_STORE_DRIVER', 'pgvector'),
+
+        'pgvector' => [
+            'dimensions' => (int) env('TITAN_PGVECTOR_DIMENSIONS', 1536),
+            'connection' => env('TITAN_PGVECTOR_CONNECTION', 'pgsql'),
+        ],
+
+        'qdrant' => [
+            'host'       => env('QDRANT_HOST', 'http://localhost:6333'),
+            'collection' => env('QDRANT_COLLECTION', 'titan_vectors'),
+            'api_key'    => env('QDRANT_API_KEY'),
+            'dimensions' => (int) env('QDRANT_DIMENSIONS', 1536),
+        ],
+
+        'pinecone' => [
+            'api_key'    => env('PINECONE_API_KEY'),
+            'index_host' => env('PINECONE_INDEX_HOST'),
+            'namespace'  => env('PINECONE_NAMESPACE', ''),
+        ],
+
+        'meilisearch' => [
+            'host'       => env('MEILISEARCH_HOST', 'http://localhost:7700'),
+            'api_key'    => env('MEILISEARCH_KEY'),
+            'index'      => env('MEILISEARCH_VECTOR_INDEX', 'titan_vectors'),
+            'dimensions' => (int) env('MEILISEARCH_VECTOR_DIMENSIONS', 1536),
+        ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Audit / Logging
     |--------------------------------------------------------------------------
     |

@@ -6,6 +6,8 @@ use App\Http\Middleware\SuperAdmin;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Modules\TitanCore\AI\VectorStore\VectorStoreFactory;
+use Modules\TitanCore\Contracts\AI\VectorStoreContract;
 use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
 use Modules\TitanCore\Console\Commands\ModulesDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesEnableCommand;
@@ -118,6 +120,12 @@ class TitanCoreServiceProvider extends ServiceProvider
             fn ($app) => new ModuleDependencyGraph(
                 $app['modules']
             )
+        );
+
+        // Vector store backend — resolved from config('titan-ai.vector_store.driver')
+        $this->app->singleton(
+            VectorStoreContract::class,
+            fn ($app) => VectorStoreFactory::make($app),
         );
     }
 
