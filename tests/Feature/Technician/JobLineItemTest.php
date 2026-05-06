@@ -107,7 +107,42 @@ test('sort_order increments for each new line item', function () {
     expect($orders)->toBe([1, 2]);
 });
 
-test('add line item rejects missing required fields', function () {
+test('sort_order starts at 1 when there are no existing line items', function () {
+    [$technician, , $customer] = lineItemSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    $response = $this->actingAs($technician)
+        ->postJson("/api/technician/jobs/{$job->id}/line-items", ['name' => 'First', 'unit_price' => 10, 'quantity' => 1]);
+
+    $response->assertCreated()->assertJsonPath('data.sort_order', 1);
+});
+
+test('sort_order after deletion continues from MAX not from count', function () {
+    [$technician, , $customer] = lineItemSetup();
+
+    $job = Job::factory()->forCustomer($customer)->create([
+        'assigned_to'  => $technician->id,
+        'scheduled_at' => now(),
+    ]);
+
+    // Add two items: sort_orders 1 and 2
+    $r1 = $this->actingAs($technician)->postJson("/api/technician/jobs/{$job->id}/line-items", ['name' => 'A', 'unit_price' => 10, 'quantity' => 1]);
+    $this->actingAs($technician)->postJson("/api/technician/jobs/{$job->id}/line-items", ['name' => 'B', 'unit_price' => 20, 'quantity' => 1]);
+
+    // Delete the second item
+    $secondId = $job->lineItems()->orderByDesc('sort_order')->first()->id;
+    $this->actingAs($technician)->deleteJson("/api/technician/jobs/{$job->id}/line-items/{$secondId}");
+
+    // Add a third item — sort_order should be 2 (MAX of remaining 1, plus 1)
+    $r3 = $this->actingAs($technician)->postJson("/api/technician/jobs/{$job->id}/line-items", ['name' => 'C', 'unit_price' => 30, 'quantity' => 1]);
+    $r3->assertCreated()->assertJsonPath('data.sort_order', 2);
+});
+
+
     [$technician, , $customer] = lineItemSetup();
 
     $job = Job::factory()->forCustomer($customer)->create([
