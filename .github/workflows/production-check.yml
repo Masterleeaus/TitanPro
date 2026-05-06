@@ -1,0 +1,45 @@
+name: 🔒 Production Readiness Gate
+
+on:
+  push:
+    branches: [main, master, production]
+  pull_request:
+    branches: [main, master, production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  production-check:
+    name: modules:production-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_mysql, pdo_sqlite, bcmath, json
+          coverage: none
+
+      - name: Copy .env for CI
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run production readiness gate
+        run: php artisan modules:production-check --json
+        # Exit code 1 automatically fails the CI job when blockers are found
