@@ -9,6 +9,8 @@ use Illuminate\Support\ServiceProvider;
 use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
 use Modules\TitanCore\Console\Commands\ModulesDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesEnableCommand;
+use Modules\TitanCore\Console\Commands\ModulesHealthCommand;
+use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
 use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
 use Modules\TitanCore\Console\SyncTitanAgentsCommand;
 use Modules\TitanCore\Services\Providers\TitanAiProvider;
@@ -50,6 +52,8 @@ class TitanCoreServiceProvider extends ServiceProvider
             $this->commands([
                 SyncTitanDocsKnowledgeCommand::class,
                 SyncTitanAgentsCommand::class,
+                ModulesUpgradeCommand::class,
+                ModulesHealthCommand::class,
                 ModulesDoctorCommand::class,
                 ModulesDepsCommand::class,
                 ModulesEnableCommand::class,

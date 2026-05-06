@@ -58,6 +58,31 @@ Recommended:
 - `lifecycle_support`
 - `omni_support`
 
+#### Version compatibility fields (upgrade engine)
+These fields are read by `modules:upgrade` before running any upgrade:
+
+- `requires_php` — Composer-style semver constraint for the PHP runtime (e.g. `"^8.2"`).
+- `requires_laravel` — Composer-style semver constraint for the Laravel framework version (e.g. `"^11.0"`).
+
+If either constraint is not satisfied the upgrade is blocked with a clear error message.  
+Both fields are optional; omitting them means "no constraint".
+
+#### Dependency version constraints
+The `requires` field supports two forms:
+
+```json
+// List form — presence-only check:
+"requires": ["TitanCore", "Accountings"]
+
+// Map form — version constraint per dependency:
+"requires": {
+  "TitanCore": "^1.0",
+  "Accountings": "*"
+}
+```
+
+Constraints use the same semver syntax as `requires_php` / `requires_laravel`.
+
 ### Example
 ```json
 {
@@ -65,10 +90,15 @@ Recommended:
   "alias": "promotionmanagement",
   "version": "1.0.0",
   "description": "Promotion and offer management module",
+  "requires_php": "^8.2",
+  "requires_laravel": "^11.0",
   "providers": [
-    "Modules\PromotionManagement\Providers\PromotionManagementServiceProvider"
+    "Modules\\PromotionManagement\\Providers\\PromotionManagementServiceProvider"
   ],
-  "requires": ["Cms", "Packages"],
+  "requires": {
+    "TitanCore": "^1.0",
+    "Cms": "*"
+  },
   "permissions": ["promotions.view", "promotions.create"]
 }
 ```
