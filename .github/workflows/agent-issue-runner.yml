@@ -1,0 +1,166 @@
+name: 🤖 Agent — Issue Runner
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # every 5 minutes
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Specific issue number (blank = oldest open)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: agent-issue-runner
+  cancel-in-progress: false
+
+jobs:
+  run-agent:
+    name: Work on oldest open issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: claude/scan-repo-for-bugs-NPTj0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Git identity
+        run: |
+          git config user.name  "Titan Agent"
+          git config user.email "agent@titanpro.app"
+
+      - name: Select issue
+        id: pick
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
+            NUM="${{ github.event.inputs.issue_number }}"
+          else
+            NUM=$(gh issue list \
+              --repo "${{ github.repository }}" \
+              --state open --limit 200 \
+              --json number,createdAt,labels \
+              --jq '[.[] | select(.labels | map(.name) |
+                    (contains(["agent-assigned"]) or
+                     contains(["agent-completed"]) or
+                     contains(["agent-failed"])) | not)]
+                   | sort_by(.createdAt) | .[0].number')
+          fi
+          if [ -z "$NUM" ] || [ "$NUM" = "null" ]; then
+            echo "No eligible issues found."; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "number=$NUM" >> "$GITHUB_OUTPUT"
+          echo "skip=false"  >> "$GITHUB_OUTPUT"
+          gh issue view "$NUM" --repo "${{ github.repository }}" \
+            --json number,title,body,labels > /tmp/issue.json
+          echo "Issue #$NUM selected."
+
+      - name: Skip if none
+        if: steps.pick.outputs.skip == 'true'
+        run: echo "No eligible open issues." && exit 0
+
+      - name: Label agent-assigned
+        if: steps.pick.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue edit "${{ steps.pick.outputs.number }}" \
+            --repo "${{ github.repository }}" \
+            --add-label "agent-assigned" || true
+
+      - name: Setup PHP 8.2
+        if: steps.pick.outputs.skip != 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring,pdo,pdo_sqlite,xml,curl,zip
+          coverage: none
+
+      - name: Install Composer deps
+        if: steps.pick.outputs.skip != 'true'
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Setup Node 20
+        if: steps.pick.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install npm deps
+        if: steps.pick.outputs.skip != 'true'
+        run: npm ci --prefer-offline
+
+      - name: Install Claude Code CLI
+        if: steps.pick.outputs.skip != 'true'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Ensure issue-docs directory
+        if: steps.pick.outputs.skip != 'true'
+        run: mkdir -p issue-docs
+
+      - name: Run Claude agent
+        if: steps.pick.outputs.skip != 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NUM="${{ steps.pick.outputs.number }}"
+          DATA=$(cat /tmp/issue.json)
+          claude --dangerously-skip-permissions -p "
+          You are a senior engineer on the TitanPro repo (Laravel 12, PHP 8.2, Vue 3,
+          TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
+
+          Resolve GitHub issue #${NUM}.
+
+          ISSUE DATA:
+          ${DATA}
+
+          MANDATORY:
+          1. Read and understand the issue fully.
+          2. Explore all relevant files.
+          3. Implement the complete fix.
+          4. Create issue-docs/issue-${NUM}.md with sections:
+             ## Issue Summary
+             ## Root Cause
+             ## Changes Made  (every file, key before/after lines)
+             ## Tests Added or Updated
+             ## Next Steps    (follow-on work, related issues, limitations)
+          5. Commit all changes (code + doc file):
+             'fix: resolve issue #${NUM} — <short description>'
+          6. Push to branch: claude/scan-repo-for-bugs-NPTj0
+          Do NOT push to main. Do NOT open a PR unless the issue asks for one.
+          Run vendor/bin/pint on modified PHP files.
+          Run ./vendor/bin/pest and fix any failures before committing."
+
+      - name: Label agent-completed
+        if: steps.pick.outputs.skip != 'true' && success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          N="${{ steps.pick.outputs.number }}"
+          gh issue edit "$N" --repo "${{ github.repository }}" \
+            --add-label "agent-completed" --remove-label "agent-assigned" || true
+          gh issue comment "$N" --repo "${{ github.repository }}" \
+            --body "🤖 **Agent completed.** See \`issue-docs/issue-${N}.md\` for full change log and next steps. Changes committed to \`claude/scan-repo-for-bugs-NPTj0\`." || true
+
+      - name: Label agent-failed
+        if: steps.pick.outputs.skip != 'true' && failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          N="${{ steps.pick.outputs.number }}"
+          gh issue edit "$N" --repo "${{ github.repository }}" \
+            --add-label "agent-failed" --remove-label "agent-assigned" || true
+          gh issue comment "$N" --repo "${{ github.repository }}" \
+            --body "🤖 **Agent failed** on issue #${N}. Will retry next cycle. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" || true

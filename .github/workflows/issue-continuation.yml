@@ -1,0 +1,118 @@
+name: 🤖 Agent — Issue Continuation
+
+on:
+  schedule:
+    - cron: '30 * * * *'   # every hour at :30 (offset from PR agent)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: issue-continuation
+  cancel-in-progress: false
+
+jobs:
+  continue-issues:
+    name: Read issue-docs and create follow-up issues
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: claude/scan-repo-for-bugs-NPTj0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Check for issue-docs files
+        id: check
+        run: |
+          COUNT=$(find issue-docs -name 'issue-*.md' 2>/dev/null | wc -l | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Found $COUNT issue-doc files."
+
+      - name: Skip if no docs
+        if: steps.check.outputs.count == '0'
+        run: echo "No issue-docs files yet. Nothing to continue." && exit 0
+
+      - name: Install Claude Code CLI
+        if: steps.check.outputs.count != '0'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Build issue-docs summary
+        if: steps.check.outputs.count != '0'
+        run: |
+          echo "# Issue Docs Summary" > /tmp/issue_docs_summary.md
+          for f in issue-docs/issue-*.md; do
+            ISSUE_NUM=$(basename "$f" .md | sed 's/issue-//')
+            echo "" >> /tmp/issue_docs_summary.md
+            echo "---" >> /tmp/issue_docs_summary.md
+            echo "## Source: $f (issue #$ISSUE_NUM)" >> /tmp/issue_docs_summary.md
+            cat "$f" >> /tmp/issue_docs_summary.md
+          done
+
+      - name: Fetch existing open issues (titles only)
+        if: steps.check.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --limit 200 \
+            --json number,title \
+            --jq '[.[] | "#\(.number): \(.title)"] | join("\n")' \
+            > /tmp/existing_issues.txt
+          echo "Existing open issues:"
+          cat /tmp/existing_issues.txt
+
+      - name: Run Claude agent to create follow-up issues
+        if: steps.check.outputs.count != '0'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
+          REPO:              ${{ github.repository }}
+        run: |
+          DOCS=$(cat /tmp/issue_docs_summary.md)
+          EXISTING=$(cat /tmp/existing_issues.txt)
+
+          claude --dangerously-skip-permissions -p "
+          You are a software project manager agent for the TitanPro repository.
+
+          Your job is to read completed issue documentation and create new GitHub issues
+          for any follow-on work that is not already tracked.
+
+          COMPLETED ISSUE DOCS (from issue-docs/ folder):
+          ${DOCS}
+
+          CURRENTLY OPEN ISSUES (do NOT duplicate these):
+          ${EXISTING}
+
+          INSTRUCTIONS:
+
+          1. Read every '## Next Steps' section in the issue docs above.
+          2. For each next step item, check if a similar issue already exists in the
+             open issues list. Use fuzzy matching — if the topic is the same, skip it.
+          3. For each GENUINELY NEW next step that is not already tracked, create a
+             GitHub issue using:
+             gh issue create \
+               --repo ${REPO} \
+               --title '[FOLLOW-UP] <concise title>' \
+               --label 'enhancement' \
+               --body '<full description including: what needs doing, why, which source issue it comes from, and acceptance criteria>'
+          4. Include in every issue body:
+             - A 'Source' line: 'Follows from issue-docs/issue-N.md'
+             - Clear acceptance criteria checklist
+             - The mandatory agent doc note:
+               'When an agent works this issue it must create issue-docs/issue-{N}.md listing all files changed, fixes applied, and next steps before committing.'
+          5. After creating all new issues, print a summary of:
+             - How many issue-docs were scanned
+             - How many next steps were found
+             - How many new issues were created
+             - Which next steps were skipped (already tracked)
+
+          Be conservative — only create issues for clearly actionable next steps.
+          Do not create vague or duplicate issues. Quality over quantity."
