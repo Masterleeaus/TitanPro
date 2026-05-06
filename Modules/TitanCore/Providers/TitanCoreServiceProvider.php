@@ -2,9 +2,21 @@
 
 namespace Modules\TitanCore\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\SuperAdmin;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
+use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
+use Modules\TitanCore\Console\Commands\ModulesDoctorCommand;
+use Modules\TitanCore\Console\Commands\ModulesEnableCommand;
+use Modules\TitanCore\Console\Commands\ModulesHealthCommand;
+use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
+use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
+use Modules\TitanCore\Console\SyncTitanAgentsCommand;
+use Modules\TitanCore\Services\Providers\TitanAiProvider;
+use Modules\TitanCore\Services\TitanAiClient;
+use Modules\TitanCore\Services\TitanCoreRouter;
+use Modules\TitanCore\Support\ModuleDependencyGraph;
 
 class TitanCoreServiceProvider extends ServiceProvider
 {
@@ -14,23 +26,23 @@ class TitanCoreServiceProvider extends ServiceProvider
         $this->registerViews();
 
         // Migrations
-        $migrationsPath = module_path('TitanCore') . '/Database/Migrations';
+        $migrationsPath = module_path('TitanCore').'/Database/Migrations';
         if (is_dir($migrationsPath)) {
             $this->loadMigrationsFrom($migrationsPath);
         }
 
         // Super Admin lock middleware
         $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('titancore.superadmin', \App\Http\Middleware\SuperAdmin::class);
+        $router->aliasMiddleware('titancore.superadmin', SuperAdmin::class);
 
         // Web routes
-        $web = __DIR__ . '/../Routes/web.php';
+        $web = __DIR__.'/../Routes/web.php';
         if (file_exists($web)) {
             Route::middleware('web')->group($web);
         }
 
         // API routes (mounted under /api)
-        $api = __DIR__ . '/../Routes/api.php';
+        $api = __DIR__.'/../Routes/api.php';
         if (file_exists($api)) {
             Route::middleware('api')->prefix('api')->group($api);
         }
@@ -38,48 +50,58 @@ class TitanCoreServiceProvider extends ServiceProvider
         // Console commands
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand::class,
-                \Modules\TitanCore\Console\SyncTitanAgentsCommand::class,
-                \Modules\TitanCore\Console\Commands\ModulesUpgradeCommand::class,
-                \Modules\TitanCore\Console\Commands\ModulesHealthCommand::class,
+                SyncTitanDocsKnowledgeCommand::class,
+                SyncTitanAgentsCommand::class,
+                ModulesUpgradeCommand::class,
+                ModulesHealthCommand::class,
+                ModulesDoctorCommand::class,
+                ModulesDepsCommand::class,
+                ModulesEnableCommand::class,
             ]);
         }
     }
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../Config/config.php', 'titancore');
-        $this->mergeConfigFrom(__DIR__ . '/../Config/titan_agents.php', 'titan_agents');
+        $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'titancore');
+        $this->mergeConfigFrom(__DIR__.'/../Config/titan_agents.php', 'titan_agents');
 
         // Bind Titan AI client/provider/router (lazy + safe)
-        $this->app->singleton(\Modules\TitanCore\Services\TitanAiClient::class, function () {
+        $this->app->singleton(TitanAiClient::class, function () {
             $cfg = config('titancore.providers.titanai', []);
-            return new \Modules\TitanCore\Services\TitanAiClient(
-                (string)($cfg['base_url'] ?? ''),
-                (string)($cfg['api_key'] ?? ''),
-                (int)($cfg['timeout_seconds'] ?? 60),
+
+            return new TitanAiClient(
+                (string) ($cfg['base_url'] ?? ''),
+                (string) ($cfg['api_key'] ?? ''),
+                (int) ($cfg['timeout_seconds'] ?? 60),
             );
         });
 
-        $this->app->singleton(\Modules\TitanCore\Services\Providers\TitanAiProvider::class, function ($app) {
-            return new \Modules\TitanCore\Services\Providers\TitanAiProvider(
-                $app->make(\Modules\TitanCore\Services\TitanAiClient::class)
+        $this->app->singleton(TitanAiProvider::class, function ($app) {
+            return new TitanAiProvider(
+                $app->make(TitanAiClient::class)
             );
         });
 
-        $this->app->singleton(\Modules\TitanCore\Services\TitanCoreRouter::class, function ($app) {
-            return new \Modules\TitanCore\Services\TitanCoreRouter(
-                $app->make(\Modules\TitanCore\Services\Providers\TitanAiProvider::class)
+        $this->app->singleton(TitanCoreRouter::class, function ($app) {
+            return new TitanCoreRouter(
+                $app->make(TitanAiProvider::class)
             );
         });
 
         // no bindings; keep lightweight
+        $this->app->singleton(
+            ModuleDependencyGraph::class,
+            fn ($app) => new ModuleDependencyGraph(
+                $app['modules']
+            )
+        );
     }
 
     public function registerViews(): void
     {
-        $viewPath   = resource_path('views/modules/titancore');
-        $sourcePath = module_path('TitanCore') . '/Resources/views';
+        $viewPath = resource_path('views/modules/titancore');
+        $sourcePath = module_path('TitanCore').'/Resources/views';
 
         if (is_dir($sourcePath)) {
             $this->publishes([
@@ -97,7 +119,7 @@ class TitanCoreServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'titancore');
         } else {
-            $moduleLang = module_path('TitanCore') . '/Resources/lang';
+            $moduleLang = module_path('TitanCore').'/Resources/lang';
             if (is_dir($moduleLang)) {
                 $this->loadTranslationsFrom($moduleLang, 'titancore');
             }
@@ -109,7 +131,7 @@ class TitanCoreServiceProvider extends ServiceProvider
         $paths = [];
 
         foreach (config('view.paths') as $path) {
-            $candidate = $path . '/modules/titancore';
+            $candidate = $path.'/modules/titancore';
 
             if (is_dir($candidate)) {
                 $paths[] = $candidate;
