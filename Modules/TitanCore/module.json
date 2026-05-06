@@ -2,6 +2,9 @@
     "name": "TitanCore",
     "alias": "titancore",
     "description": "Titan Core module (providers, settings, health checks, quotas, adapters).",
+    "version": "1.0.0",
+    "requires_php": "^8.2",
+    "requires_laravel": "^11.0",
     "keywords": [
         "ai",
         "titancore",
