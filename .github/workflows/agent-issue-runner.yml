@@ -35,6 +35,23 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Ensure agent labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for ENTRY in \
+            "agent-assigned|0075ca|Issue currently being worked on by an agent" \
+            "agent-completed|0e8a16|Agent successfully resolved this issue" \
+            "agent-failed|d93f0b|Agent encountered an error on this issue"; do
+            NAME=$(echo "$ENTRY"  | cut -d'|' -f1)
+            COLOR=$(echo "$ENTRY" | cut -d'|' -f2)
+            DESC=$(echo "$ENTRY"  | cut -d'|' -f3)
+            gh api "repos/${{ github.repository }}/labels" \
+              --method POST \
+              -f name="$NAME" -f color="$COLOR" -f description="$DESC" \
+              2>/dev/null || true   # silently skip if label already exists
+          done
+
       - name: Select issues to assign
         id: pick
         env:
