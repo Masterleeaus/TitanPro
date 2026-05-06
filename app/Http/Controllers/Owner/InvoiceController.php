@@ -127,8 +127,11 @@ class InvoiceController extends Controller
     public function void(Request $request, Invoice $invoice): RedirectResponse
     {
         abort_unless($invoice->organization_id === $request->user()->organization_id, 403);
-        abort_unless($invoice->status !== Invoice::STATUS_VOID, 422);
-        abort_unless($invoice->status !== Invoice::STATUS_PAID, 422);
+        abort_if(
+            in_array($invoice->status, [Invoice::STATUS_VOID, Invoice::STATUS_PAID]),
+            422,
+            'Cannot void a paid or already-voided invoice'
+        );
 
         $invoice->update(['status' => Invoice::STATUS_VOID]);
 
