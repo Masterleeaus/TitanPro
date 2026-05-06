@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuestionFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\Question::class;
+    protected $model = \Modules\BookingModule\Entities\Question::class;
 
     public function definition(): array
     {

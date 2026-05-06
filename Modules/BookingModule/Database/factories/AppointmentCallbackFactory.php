@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentCallbackFactory extends Factory
 {
-    protected $model = \Modules\\BookingModule\\Entities\\AppointmentCallback::class;
+    protected $model = \Modules\BookingModule\Entities\AppointmentCallback::class;
 
     public function definition(): array
     {
