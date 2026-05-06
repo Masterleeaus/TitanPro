@@ -8,5 +8,11 @@
     "providers": [
         "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
     ],
-    "files": []
+    "files": [],
+    "manifest": {
+        "retrieval": "AI/Retrieval/retrieval.policy.json",
+        "guardrails": "AI/Guardrails/guardrails.json",
+        "citations": "AI/Citations/citation.schema.json",
+        "ai": "manifests/ai_tools.json"
+    }
 }
