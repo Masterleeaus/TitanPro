@@ -2,12 +2,17 @@ name: 🤖 Agent — Issue Runner
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # every 5 minutes
+    - cron: '*/30 * * * *'   # every 30 minutes
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Specific issue number (blank = oldest open)'
+        description: 'Specific issue number (blank = 5 oldest open)'
         required: false
+        type: string
+      batch_size:
+        description: 'Number of issues to process (default 5)'
+        required: false
+        default: '5'
         type: string
 
 permissions:
@@ -21,9 +26,9 @@ concurrency:
 
 jobs:
   run-agent:
-    name: Work on oldest open issue
+    name: Work on ${{ github.event.inputs.batch_size || '5' }} open issues
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60   # 5 issues × up to 12 min each
 
     steps:
       - name: Checkout
@@ -38,48 +43,7 @@ jobs:
           git config user.name  "Titan Agent"
           git config user.email "agent@titanpro.app"
 
-      - name: Select issue
-        id: pick
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
-            NUM="${{ github.event.inputs.issue_number }}"
-          else
-            NUM=$(gh issue list \
-              --repo "${{ github.repository }}" \
-              --state open --limit 200 \
-              --json number,createdAt,labels \
-              --jq '[.[] | select(.labels | map(.name) |
-                    (contains(["agent-assigned"]) or
-                     contains(["agent-completed"]) or
-                     contains(["agent-failed"])) | not)]
-                   | sort_by(.createdAt) | .[0].number')
-          fi
-          if [ -z "$NUM" ] || [ "$NUM" = "null" ]; then
-            echo "No eligible issues found."; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          echo "number=$NUM" >> "$GITHUB_OUTPUT"
-          echo "skip=false"  >> "$GITHUB_OUTPUT"
-          gh issue view "$NUM" --repo "${{ github.repository }}" \
-            --json number,title,body,labels > /tmp/issue.json
-          echo "Issue #$NUM selected."
-
-      - name: Skip if none
-        if: steps.pick.outputs.skip == 'true'
-        run: echo "No eligible open issues." && exit 0
-
-      - name: Label agent-assigned
-        if: steps.pick.outputs.skip != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh issue edit "${{ steps.pick.outputs.number }}" \
-            --repo "${{ github.repository }}" \
-            --add-label "agent-assigned" || true
-
       - name: Setup PHP 8.2
-        if: steps.pick.outputs.skip != 'true'
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
@@ -87,80 +51,153 @@ jobs:
           coverage: none
 
       - name: Install Composer deps
-        if: steps.pick.outputs.skip != 'true'
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
 
       - name: Setup Node 20
-        if: steps.pick.outputs.skip != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
 
       - name: Install npm deps
-        if: steps.pick.outputs.skip != 'true'
         run: npm ci --prefer-offline
 
       - name: Install Claude Code CLI
-        if: steps.pick.outputs.skip != 'true'
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Ensure issue-docs directory
-        if: steps.pick.outputs.skip != 'true'
         run: mkdir -p issue-docs
 
-      - name: Run Claude agent
+      - name: Select issues to process
+        id: pick
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BATCH="${{ github.event.inputs.batch_size || '5' }}"
+
+          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
+            # Manual dispatch with a specific issue
+            echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
+          else
+            # Pick the N oldest open issues without agent labels
+            gh issue list \
+              --repo "${{ github.repository }}" \
+              --state open \
+              --limit 200 \
+              --json number,createdAt,labels \
+              --jq "[.[] | select(.labels | map(.name) |
+                    (contains([\"agent-assigned\"]) or
+                     contains([\"agent-completed\"]) or
+                     contains([\"agent-failed\"])) | not)]
+                   | sort_by(.createdAt) | .[:${BATCH}] | .[].number" \
+              > /tmp/issue_numbers.txt
+          fi
+
+          COUNT=$(wc -l < /tmp/issue_numbers.txt | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Selected $COUNT issue(s) to process:"
+          cat /tmp/issue_numbers.txt
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if no eligible issues
+        if: steps.pick.outputs.skip == 'true'
+        run: echo "No eligible open issues found. All issues are assigned or completed."
+
+      - name: Process each issue
         if: steps.pick.outputs.skip != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
+          REPO:              ${{ github.repository }}
         run: |
-          NUM="${{ steps.pick.outputs.number }}"
-          DATA=$(cat /tmp/issue.json)
-          claude --dangerously-skip-permissions -p "
-          You are a senior engineer on the TitanPro repo (Laravel 12, PHP 8.2, Vue 3,
-          TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
+          # Pull latest before starting to avoid conflicts
+          git pull origin claude/scan-repo-for-bugs-NPTj0 --rebase --quiet || true
 
-          Resolve GitHub issue #${NUM}.
+          while IFS= read -r ISSUE_NUM; do
+            [ -z "$ISSUE_NUM" ] && continue
+
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  Processing issue #$ISSUE_NUM"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            # Fetch issue data
+            gh issue view "$ISSUE_NUM" \
+              --repo "$REPO" \
+              --json number,title,body,labels \
+              > /tmp/issue_${ISSUE_NUM}.json
+
+            TITLE=$(cat /tmp/issue_${ISSUE_NUM}.json | python3 -c \
+              "import sys,json; print(json.load(sys.stdin)['title'])")
+            echo "  Title: $TITLE"
+
+            # Mark as assigned
+            gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+              --add-label "agent-assigned" || true
+
+            DATA=$(cat /tmp/issue_${ISSUE_NUM}.json)
+
+            # Run Claude agent on this issue
+            if claude --dangerously-skip-permissions -p "
+          You are a senior engineer on the TitanPro repo (Laravel 12, PHP 8.2,
+          Vue 3, TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
+
+          Resolve GitHub issue #${ISSUE_NUM}.
 
           ISSUE DATA:
           ${DATA}
 
-          MANDATORY:
-          1. Read and understand the issue fully.
-          2. Explore all relevant files.
-          3. Implement the complete fix.
-          4. Create issue-docs/issue-${NUM}.md with sections:
+          MANDATORY INSTRUCTIONS — follow every step:
+          1. Read and understand the issue completely before touching any files.
+          2. Explore all relevant source files using the Read and Bash tools.
+          3. Implement the complete fix or feature described in the issue.
+          4. Create the file issue-docs/issue-${ISSUE_NUM}.md with these exact sections:
              ## Issue Summary
              ## Root Cause
-             ## Changes Made  (every file, key before/after lines)
+             ## Changes Made   (list every modified file with key before/after lines)
              ## Tests Added or Updated
-             ## Next Steps    (follow-on work, related issues, limitations)
-          5. Commit all changes (code + doc file):
-             'fix: resolve issue #${NUM} — <short description>'
+             ## Next Steps     (follow-on work, known gaps, related issues)
+          5. Commit ALL changes (code + issue-docs/issue-${ISSUE_NUM}.md) with:
+             'fix: resolve issue #${ISSUE_NUM} — <short description>'
           6. Push to branch: claude/scan-repo-for-bugs-NPTj0
-          Do NOT push to main. Do NOT open a PR unless the issue asks for one.
-          Run vendor/bin/pint on modified PHP files.
-          Run ./vendor/bin/pest and fix any failures before committing."
 
-      - name: Label agent-completed
-        if: steps.pick.outputs.skip != 'true' && success()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          N="${{ steps.pick.outputs.number }}"
-          gh issue edit "$N" --repo "${{ github.repository }}" \
-            --add-label "agent-completed" --remove-label "agent-assigned" || true
-          gh issue comment "$N" --repo "${{ github.repository }}" \
-            --body "🤖 **Agent completed.** See \`issue-docs/issue-${N}.md\` for full change log and next steps. Changes committed to \`claude/scan-repo-for-bugs-NPTj0\`." || true
+          CONSTRAINTS:
+          - Do NOT push to main or master.
+          - Do NOT open a pull request unless the issue explicitly asks for one.
+          - Do NOT modify files unrelated to this issue.
+          - Run vendor/bin/pint on every PHP file you modify.
+          - Run ./vendor/bin/pest after changes and fix any test failures before committing.
+          - If the issue cannot be safely implemented, document why in the issue-docs
+            file, commit only that file, and exit cleanly."; then
 
-      - name: Label agent-failed
-        if: steps.pick.outputs.skip != 'true' && failure()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          N="${{ steps.pick.outputs.number }}"
-          gh issue edit "$N" --repo "${{ github.repository }}" \
-            --add-label "agent-failed" --remove-label "agent-assigned" || true
-          gh issue comment "$N" --repo "${{ github.repository }}" \
-            --body "🤖 **Agent failed** on issue #${N}. Will retry next cycle. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" || true
+              # Success
+              gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+                --add-label "agent-completed" \
+                --remove-label "agent-assigned" || true
+              gh issue comment "$ISSUE_NUM" --repo "$REPO" \
+                --body "🤖 **Agent completed.** See \`issue-docs/issue-${ISSUE_NUM}.md\` for full change log and next steps. Changes committed to \`claude/scan-repo-for-bugs-NPTj0\`." || true
+              echo "  ✓ Issue #$ISSUE_NUM completed."
+            else
+              # Failure
+              gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+                --add-label "agent-failed" \
+                --remove-label "agent-assigned" || true
+              gh issue comment "$ISSUE_NUM" --repo "$REPO" \
+                --body "🤖 **Agent failed** on issue #${ISSUE_NUM}. Will retry next cycle. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" || true
+              echo "  ✗ Issue #$ISSUE_NUM failed."
+            fi
+
+            # Brief pause between issues to avoid rate limits
+            sleep 5
+
+          done < /tmp/issue_numbers.txt
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  Batch complete."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
