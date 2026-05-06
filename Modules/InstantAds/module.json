@@ -30,27 +30,3 @@
     ],
     "sidebar_menu": true
 }
-    "requires": [],
-    "providers": [
-        "Modules\\InstantAds\\Providers\\InstantAdsServiceProvider",
-        "Modules\\InstantAds\\Providers\\RouteServiceProvider"
-    ],
-    "files": [],
-    "permissions": [
-        "use_instant_ads",
-        "manage_instant_ads"
-    ],
-    "roles_permissions": {
-        "admin": ["use_instant_ads", "manage_instant_ads"],
-        "employee": ["use_instant_ads"]
-    },
-    "menus": [
-        {
-            "panel": "user",
-            "label": "InstantAds",
-            "route": "instant-ads.index",
-            "sort_order": 95
-        }
-    ],
-    "sidebar_menu": true
-}
