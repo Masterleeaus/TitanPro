@@ -229,14 +229,24 @@ class WorkflowRunner
         $path = app_path("Platform/Workflows/Definitions/{$workflowId}.json");
 
         if (file_exists($path)) {
-            return json_decode(file_get_contents($path), true) ?? [];
+            $contents = file_get_contents($path);
+            if ($contents === false) {
+                throw new \RuntimeException("Workflow manifest '{$workflowId}' could not be read from: {$path}");
+            }
+
+            return json_decode($contents, true) ?? [];
         }
 
         // Module fallback
         $modulesBase = base_path('Modules');
         if (is_dir($modulesBase)) {
             foreach (glob("{$modulesBase}/*/Workflows/{$workflowId}.json") as $found) {
-                return json_decode(file_get_contents($found), true) ?? [];
+                $contents = file_get_contents($found);
+                if ($contents === false) {
+                    throw new \RuntimeException("Workflow manifest '{$workflowId}' could not be read from: {$found}");
+                }
+
+                return json_decode($contents, true) ?? [];
             }
         }
 

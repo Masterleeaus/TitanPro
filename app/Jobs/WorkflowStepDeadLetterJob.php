@@ -16,6 +16,16 @@ use Illuminate\Support\Facades\Log;
  * inspect and manually replay or dismiss failed steps.
  *
  * The job itself does not retry (it IS the dead-letter sink).
+ *
+ * ## Queue configuration
+ *
+ * Dead-letter jobs are pushed to the queue named by `config('queue.dead_letter_queue')`,
+ * which defaults to `"dead-letter"`. Configure a dedicated dead-letter queue in your
+ * queue driver (e.g., SQS, Redis) and add the following to `config/queue.php`:
+ *
+ *   'dead_letter_queue' => env('QUEUE_DEAD_LETTER', 'dead-letter'),
+ *
+ * A supervisor worker should drain this queue for manual inspection or replay.
  */
 class WorkflowStepDeadLetterJob implements ShouldQueue
 {

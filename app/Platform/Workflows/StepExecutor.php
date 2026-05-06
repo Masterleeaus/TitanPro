@@ -3,6 +3,7 @@
 namespace App\Platform\Workflows;
 
 use App\Jobs\WorkflowStepDeadLetterJob;
+use App\Jobs\WorkflowStepJob;
 use App\Models\WorkflowInstance;
 
 /**
@@ -200,7 +201,7 @@ class StepExecutor
         $childSteps = (array)  ($step['steps'] ?? []);
 
         foreach ($childSteps as $childStep) {
-            dispatch(new \App\Jobs\WorkflowStepJob($childStep, $instance->id));
+            dispatch(new WorkflowStepJob($childStep, $instance->id));
         }
 
         $this->transitionEngine->transition(
