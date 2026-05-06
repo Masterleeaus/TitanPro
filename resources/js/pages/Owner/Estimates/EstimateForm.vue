@@ -363,7 +363,7 @@ function formatCurrency(val: number): string {
                             <input
                                 v-model="li.unit_price"
                                 type="number"
-                                min="0"
+                                min="0.01"
                                 step="0.01"
                                 placeholder="Price"
                                 class="w-full rounded border border-slate-200 px-2 py-1.5 text-sm text-right focus:border-slate-400 focus:outline-none"

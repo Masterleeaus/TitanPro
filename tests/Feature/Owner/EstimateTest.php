@@ -185,6 +185,41 @@ test('estimate creation requires at least one package', function () {
         ->assertSessionHasErrors(['packages']);
 });
 
+test('estimate store rejects zero unit_price on a line item', function () {
+    [$user, , $customer] = estimateSetup();
+
+    $this->actingAs($user)
+        ->post('/owner/estimates', [
+            'customer_id' => $customer->id,
+            'title'       => 'Zero Price Test',
+            'tax_rate'    => 0,
+            'packages'    => [
+                ['tier' => 'good', 'label' => 'Basic', 'is_recommended' => false, 'line_items' => [
+                    ['name' => 'Free Item', 'unit_price' => 0, 'quantity' => 1, 'is_taxable' => true, 'item_id' => null],
+                ]],
+            ],
+        ])
+        ->assertSessionHasErrors(['packages.0.line_items.0.unit_price']);
+});
+
+test('estimate update rejects zero unit_price on a line item', function () {
+    [$user, , $customer] = estimateSetup();
+    $estimate = Estimate::factory()->forCustomer($customer)->create();
+
+    $this->actingAs($user)
+        ->patch("/owner/estimates/{$estimate->id}", [
+            'customer_id' => $customer->id,
+            'title'       => 'Zero Price Update Test',
+            'tax_rate'    => 0,
+            'packages'    => [
+                ['tier' => 'good', 'label' => 'Basic', 'is_recommended' => false, 'line_items' => [
+                    ['name' => 'Free Item', 'unit_price' => 0, 'quantity' => 1, 'is_taxable' => true, 'item_id' => null],
+                ]],
+            ],
+        ])
+        ->assertSessionHasErrors(['packages.0.line_items.0.unit_price']);
+});
+
 test('user cannot create an estimate for another org\'s customer', function () {
     [$user] = estimateSetup();
     [, , $otherCustomer] = estimateSetup();
