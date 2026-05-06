@@ -1,8 +1,8 @@
-name: 🤖 Agent — Issue Continuation
+name: 🤖 Copilot — Issue Continuation
 
 on:
   schedule:
-    - cron: '30 * * * *'   # every hour at :30 (offset from PR agent)
+    - cron: '30 * * * *'   # every hour at :30 (offset from PR reviewer)
   workflow_dispatch: {}
 
 permissions:
@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   continue-issues:
-    name: Read issue-docs and create follow-up issues
+    name: Create follow-up issues from issue-docs next steps
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
       - name: Checkout working branch
@@ -36,9 +36,15 @@ jobs:
 
       - name: Skip if no docs
         if: steps.check.outputs.count == '0'
-        run: echo "No issue-docs files yet. Nothing to continue." && exit 0
+        run: echo "No issue-docs files yet. Nothing to continue."
 
-      - name: Install Claude Code CLI
+      # ── Minimal Claude call: extract + deduplicate next steps only ──────────
+      # This is the only step that uses the Anthropic API. It reads the
+      # ## Next Steps sections from all issue-docs and filters out items that
+      # are already tracked as open issues, then creates new GitHub issues.
+      # Everything else (actual coding) is handled by GitHub Copilot agents.
+      # ────────────────────────────────────────────────────────────────────────
+      - name: Install Claude Code CLI (minimal use)
         if: steps.check.outputs.count != '0'
         run: npm install -g @anthropic-ai/claude-code
 
@@ -69,7 +75,7 @@ jobs:
           echo "Existing open issues:"
           cat /tmp/existing_issues.txt
 
-      - name: Run Claude agent to create follow-up issues
+      - name: Create follow-up issues (Claude deduplication only)
         if: steps.check.outputs.count != '0'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -80,39 +86,32 @@ jobs:
           EXISTING=$(cat /tmp/existing_issues.txt)
 
           claude --dangerously-skip-permissions -p "
-          You are a software project manager agent for the TitanPro repository.
+          You are a project manager reading completed issue documentation.
+          Your ONLY job: extract next steps and create GitHub issues for ones not already tracked.
+          Do NOT write any code. Do NOT modify any files.
 
-          Your job is to read completed issue documentation and create new GitHub issues
-          for any follow-on work that is not already tracked.
-
-          COMPLETED ISSUE DOCS (from issue-docs/ folder):
+          COMPLETED ISSUE DOCS:
           ${DOCS}
 
-          CURRENTLY OPEN ISSUES (do NOT duplicate these):
+          CURRENTLY OPEN ISSUES (do NOT duplicate):
           ${EXISTING}
 
           INSTRUCTIONS:
-
-          1. Read every '## Next Steps' section in the issue docs above.
-          2. For each next step item, check if a similar issue already exists in the
-             open issues list. Use fuzzy matching — if the topic is the same, skip it.
-          3. For each GENUINELY NEW next step that is not already tracked, create a
-             GitHub issue using:
+          1. Read every '## Next Steps' section in the docs above.
+          2. For each next step, check if a similar issue already exists. Use fuzzy matching.
+          3. For each GENUINELY NEW next step not already tracked, run:
              gh issue create \
                --repo ${REPO} \
                --title '[FOLLOW-UP] <concise title>' \
                --label 'enhancement' \
-               --body '<full description including: what needs doing, why, which source issue it comes from, and acceptance criteria>'
-          4. Include in every issue body:
-             - A 'Source' line: 'Follows from issue-docs/issue-N.md'
-             - Clear acceptance criteria checklist
-             - The mandatory agent doc note:
-               'When an agent works this issue it must create issue-docs/issue-{N}.md listing all files changed, fixes applied, and next steps before committing.'
-          5. After creating all new issues, print a summary of:
-             - How many issue-docs were scanned
-             - How many next steps were found
-             - How many new issues were created
-             - Which next steps were skipped (already tracked)
+               --body '<description including: what, why, source issue, acceptance criteria checklist>
 
-          Be conservative — only create issues for clearly actionable next steps.
-          Do not create vague or duplicate issues. Quality over quantity."
+          Source: Follows from issue-docs/issue-N.md
+
+          **Acceptance criteria:**
+          - [ ] ...
+
+          > When an agent works this issue it must create issue-docs/issue-{N}.md listing all files changed, fixes applied, and next steps before committing.'
+          4. Print a summary: docs scanned, next steps found, issues created, items skipped.
+
+          Be conservative — only create clearly actionable, non-duplicate issues."

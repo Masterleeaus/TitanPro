@@ -1,16 +1,12 @@
-name: 🤖 Agent — Issue Runner
+name: 🤖 Copilot — Issue Assigner
 
 on:
   schedule:
     - cron: '*/30 * * * *'   # every 30 minutes
     # ── Batch size guide ────────────────────────────────────────────────────
-    # Anthropic API Tier 1 (<$100 spent): recommended batch = 5
-    #   50 req/min, 10k req/day → ~50 calls/issue → ~200 issues/day max
-    #   48 batches/day × 5 = 240 → safe with some headroom
-    # Anthropic API Tier 2 ($100–$500 spent): safe to raise batch to 10–12
-    #   1k req/min, no daily cap → time is the only limit (~15 min/issue)
-    # Anthropic API Tier 3 ($500+ spent): batch 15–20 comfortably
-    # GitHub Actions: unlimited minutes on public repos — not a constraint
+    # GitHub Copilot Pro+ coding agent handles the actual implementation.
+    # This workflow only assigns issues — no Anthropic API needed.
+    # Batch of 5 is conservative; raise to 10-20 if Copilot keeps up.
     # ────────────────────────────────────────────────────────────────────────
   workflow_dispatch:
     inputs:
@@ -19,65 +15,27 @@ on:
         required: false
         type: string
       batch_size:
-        description: 'Issues per run — Tier1=5, Tier2=10, Tier3=15 (default 5)'
+        description: 'Issues to assign per run (default 5)'
         required: false
         default: '5'
         type: string
 
 permissions:
-  contents: write
+  contents: read
   issues: write
-  pull-requests: write
 
 concurrency:
-  group: agent-issue-runner
+  group: copilot-issue-assigner
   cancel-in-progress: false
 
 jobs:
-  run-agent:
-    name: Work on ${{ github.event.inputs.batch_size || '5' }} open issues
+  assign-issues:
+    name: Assign ${{ github.event.inputs.batch_size || '5' }} issues to Copilot
     runs-on: ubuntu-latest
-    timeout-minutes: 120   # 5 issues × up to 24 min each — raise to 240 at Tier 2+
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: claude/scan-repo-for-bugs-NPTj0
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Git identity
-        run: |
-          git config user.name  "Titan Agent"
-          git config user.email "agent@titanpro.app"
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring,pdo,pdo_sqlite,xml,curl,zip
-          coverage: none
-
-      - name: Install Composer deps
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
-
-      - name: Setup Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install npm deps
-        run: npm ci --prefer-offline
-
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Ensure issue-docs directory
-        run: mkdir -p issue-docs
-
-      - name: Select issues to process
+      - name: Select issues to assign
         id: pick
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,10 +43,9 @@ jobs:
           BATCH="${{ github.event.inputs.batch_size || '5' }}"
 
           if [ -n "${{ github.event.inputs.issue_number }}" ]; then
-            # Manual dispatch with a specific issue
             echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
           else
-            # Pick the N oldest open issues without agent labels
+            # Pick N oldest open issues without agent labels
             gh issue list \
               --repo "${{ github.repository }}" \
               --state open \
@@ -104,7 +61,7 @@ jobs:
 
           COUNT=$(wc -l < /tmp/issue_numbers.txt | tr -d ' ')
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          echo "Selected $COUNT issue(s) to process:"
+          echo "Selected $COUNT issue(s) to assign:"
           cat /tmp/issue_numbers.txt
 
           if [ "$COUNT" -eq 0 ]; then
@@ -115,94 +72,44 @@ jobs:
 
       - name: Skip if no eligible issues
         if: steps.pick.outputs.skip == 'true'
-        run: echo "No eligible open issues found. All issues are assigned or completed."
+        run: echo "No eligible open issues. All issues are assigned or completed."
 
-      - name: Process each issue
+      - name: Assign each issue to GitHub Copilot
         if: steps.pick.outputs.skip != 'true'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GH_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
-          REPO:              ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
         run: |
-          # Pull latest before starting to avoid conflicts
-          git pull origin claude/scan-repo-for-bugs-NPTj0 --rebase --quiet || true
-
           while IFS= read -r ISSUE_NUM; do
             [ -z "$ISSUE_NUM" ] && continue
 
-            echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "  Processing issue #$ISSUE_NUM"
+            echo "  Assigning issue #$ISSUE_NUM to GitHub Copilot"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-            # Fetch issue data
-            gh issue view "$ISSUE_NUM" \
-              --repo "$REPO" \
-              --json number,title,body,labels \
-              > /tmp/issue_${ISSUE_NUM}.json
-
-            TITLE=$(cat /tmp/issue_${ISSUE_NUM}.json | python3 -c \
-              "import sys,json; print(json.load(sys.stdin)['title'])")
+            TITLE=$(gh issue view "$ISSUE_NUM" --repo "$REPO" --json title --jq '.title')
             echo "  Title: $TITLE"
 
-            # Mark as assigned
-            gh issue edit "$ISSUE_NUM" --repo "$REPO" \
-              --add-label "agent-assigned" || true
-
-            DATA=$(cat /tmp/issue_${ISSUE_NUM}.json)
-
-            # Run Claude agent on this issue
-            if claude --dangerously-skip-permissions -p "
-          You are a senior engineer on the TitanPro repo (Laravel 12, PHP 8.2,
-          Vue 3, TypeScript, Filament v3, Inertia.js, Tailwind CSS v4).
-
-          Resolve GitHub issue #${ISSUE_NUM}.
-
-          ISSUE DATA:
-          ${DATA}
-
-          MANDATORY INSTRUCTIONS — follow every step:
-          1. Read and understand the issue completely before touching any files.
-          2. Explore all relevant source files using the Read and Bash tools.
-          3. Implement the complete fix or feature described in the issue.
-          4. Create the file issue-docs/issue-${ISSUE_NUM}.md with these exact sections:
-             ## Issue Summary
-             ## Root Cause
-             ## Changes Made   (list every modified file with key before/after lines)
-             ## Tests Added or Updated
-             ## Next Steps     (follow-on work, known gaps, related issues)
-          5. Commit ALL changes (code + issue-docs/issue-${ISSUE_NUM}.md) with:
-             'fix: resolve issue #${ISSUE_NUM} — <short description>'
-          6. Push to branch: claude/scan-repo-for-bugs-NPTj0
-
-          CONSTRAINTS:
-          - Do NOT push to main or master.
-          - Do NOT open a pull request unless the issue explicitly asks for one.
-          - Do NOT modify files unrelated to this issue.
-          - Run vendor/bin/pint on every PHP file you modify.
-          - Run ./vendor/bin/pest after changes and fix any test failures before committing.
-          - If the issue cannot be safely implemented, document why in the issue-docs
-            file, commit only that file, and exit cleanly."; then
-
-              # Success
-              gh issue edit "$ISSUE_NUM" --repo "$REPO" \
-                --add-label "agent-completed" \
-                --remove-label "agent-assigned" || true
-              gh issue comment "$ISSUE_NUM" --repo "$REPO" \
-                --body "🤖 **Agent completed.** See \`issue-docs/issue-${ISSUE_NUM}.md\` for full change log and next steps. Changes committed to \`claude/scan-repo-for-bugs-NPTj0\`." || true
-              echo "  ✓ Issue #$ISSUE_NUM completed."
+            # Assign Copilot as coding agent
+            if gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+                --add-assignee "copilot" \
+                --add-label "agent-assigned" 2>/dev/null; then
+              echo "  ✓ Copilot assigned to issue #$ISSUE_NUM"
             else
-              # Failure
+              # Fallback: assign via API (handles orgs where @copilot syntax differs)
+              gh api "repos/$REPO/issues/$ISSUE_NUM/assignees" \
+                --method POST \
+                -f "assignees[]=copilot" || true
               gh issue edit "$ISSUE_NUM" --repo "$REPO" \
-                --add-label "agent-failed" \
-                --remove-label "agent-assigned" || true
-              gh issue comment "$ISSUE_NUM" --repo "$REPO" \
-                --body "🤖 **Agent failed** on issue #${ISSUE_NUM}. Will retry next cycle. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" || true
-              echo "  ✗ Issue #$ISSUE_NUM failed."
+                --add-label "agent-assigned" || true
+              echo "  ✓ Copilot assigned (via API) to issue #$ISSUE_NUM"
             fi
 
-            # Brief pause between issues to avoid rate limits
-            sleep 5
+            # Post a comment so contributors know Copilot is on it
+            gh issue comment "$ISSUE_NUM" --repo "$REPO" \
+              --body "🤖 **GitHub Copilot** has been assigned to this issue and will open a pull request with a fix. Track progress in the Pull Requests tab.
+
+> When the fix is merged, an agent will scan \`issue-docs/issue-${ISSUE_NUM}.md\` for any follow-on next steps and create new issues automatically." || true
 
           done < /tmp/issue_numbers.txt
 
