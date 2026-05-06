@@ -21,6 +21,9 @@ use Nwidart\Modules\Contracts\RepositoryInterface;
  */
 class ModuleDependencyGraph
 {
+    /** Placeholder version used when a module declares no version. */
+    public const DEFAULT_VERSION = '0.0.0';
+
     /**
      * @var array<string, array{
      *     name: string,
@@ -49,7 +52,7 @@ class ModuleDependencyGraph
             $name = $module->getName();
             $this->nodes[$name] = [
                 'name' => $name,
-                'version' => (string) ($module->get('version') ?: '0.0.0'),
+                'version' => (string) ($module->get('version') ?: self::DEFAULT_VERSION),
                 'requires' => $this->parseRequires((array) ($module->get('requires') ?? [])),
                 'conflicts' => $this->normaliseList((array) ($module->get('conflicts') ?? [])),
                 'suggests' => $this->normaliseList((array) ($module->get('suggests') ?? [])),
@@ -73,7 +76,7 @@ class ModuleDependencyGraph
         foreach ($nodes as $name => $data) {
             $this->nodes[$name] = [
                 'name' => $name,
-                'version' => (string) ($data['version'] ?? '0.0.0'),
+                'version' => (string) ($data['version'] ?? self::DEFAULT_VERSION),
                 'requires' => $this->parseRequires((array) ($data['requires'] ?? [])),
                 'conflicts' => $this->normaliseList((array) ($data['conflicts'] ?? [])),
                 'suggests' => $this->normaliseList((array) ($data['suggests'] ?? [])),
@@ -263,7 +266,7 @@ class ModuleDependencyGraph
             // Version constraint
             if ($req['constraint'] !== null) {
                 $depVersion = $this->nodes[$dep]['version'];
-                if ($depVersion === '0.0.0' || $depVersion === '') {
+                if ($depVersion === self::DEFAULT_VERSION || $depVersion === '') {
                     $warnings[] = "Module '{$dep}' has no declared version; cannot validate constraint '{$req['constraint']}'.";
                 } else {
                     try {

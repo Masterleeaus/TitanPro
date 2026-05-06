@@ -72,7 +72,7 @@ class ModulesDepsCommand extends Command
         $childPfx = $isLast ? '    ' : '│   ';
 
         $name = $node['name'];
-        $version = $node['version'] !== '0.0.0' ? " <fg=gray>v{$node['version']}</>" : '';
+        $version = $node['version'] !== ModuleDependencyGraph::DEFAULT_VERSION ? " <fg=gray>v{$node['version']}</>" : '';
         $enabled = ($node['enabled'] ?? false) ? '<fg=green>✓</>' : '<fg=red>✗</>';
         $extra = '';
 
