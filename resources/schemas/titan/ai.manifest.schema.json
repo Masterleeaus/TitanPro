@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://titan.local/schemas/ai.manifest/v1.0.0",
+  "title": "Titan AI Manifest",
+  "description": "Declares AI capabilities: agents, tools, knowledge sources, memory namespaces, guardrails, and retrieval configuration.",
+  "type": "object",
+  "required": ["module"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version this manifest conforms to.",
+      "enum": ["1.0.0"]
+    },
+    "module": {
+      "type": "string",
+      "description": "Name of the owning module.",
+      "minLength": 1
+    },
+    "primary_agent": {
+      "type": "string",
+      "description": "Identifier of the primary AI agent for this module."
+    },
+    "tools_path": {
+      "type": "string",
+      "description": "Path (relative to module root) where AI tool definitions live."
+    },
+    "knowledge_path": {
+      "type": "string",
+      "description": "Path (relative to module root) to the knowledge base directory."
+    },
+    "guardrails": {
+      "type": "string",
+      "description": "Path (relative to module root) to the guardrails configuration."
+    },
+    "retrieval": {
+      "type": "string",
+      "description": "Path (relative to module root) to the retrieval policy."
+    },
+    "memory": {
+      "type": "array",
+      "description": "Named memory namespaces this module uses.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "agents": {
+      "type": "array",
+      "description": "Agent definition identifiers registered by this module.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "description": "AI tool identifiers exposed by this module.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

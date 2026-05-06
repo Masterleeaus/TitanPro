@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://titan.local/schemas/workflow.manifest/v1.0.0",
+  "title": "Titan Workflow Manifest",
+  "description": "Declares workflow definitions and automation sequences provided by a module.",
+  "type": "object",
+  "required": ["module"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version this manifest conforms to.",
+      "enum": ["1.0.0"]
+    },
+    "module": {
+      "type": "string",
+      "description": "Name of the owning module.",
+      "minLength": 1
+    },
+    "workflows": {
+      "type": "array",
+      "description": "Workflow class names or identifiers provided by this module.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "triggers": {
+      "type": "array",
+      "description": "Automation trigger identifiers this module emits.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "description": "Automation action identifiers this module provides.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

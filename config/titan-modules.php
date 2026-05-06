@@ -77,4 +77,24 @@ return [
         'cache_manifests'  => env('TITAN_MODULES_CACHE_MANIFESTS', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Manifest Schema Validation
+    |--------------------------------------------------------------------------
+    |
+    | strict_manifest_validation
+    |   When true, any manifest that fails JSON Schema validation will prevent
+    |   the full sync/boot from completing (throws ManifestValidationException).
+    |   Set to false (warning mode) to log warnings but continue booting.
+    |
+    | schema_docs_output_path
+    |   Directory where `modules:schema-docs` writes Markdown documentation
+    |   generated from the JSON Schema files.
+    |
+    */
+
+    'strict_manifest_validation' => env('TITAN_STRICT_MANIFEST_VALIDATION', false),
+
+    'schema_docs_output_path' => env('TITAN_SCHEMA_DOCS_PATH', 'docs/schemas'),
+
 ];
