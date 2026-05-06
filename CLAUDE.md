@@ -2,6 +2,41 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Documentation
+
+**All agents must read the relevant docs before implementing any feature or making architectural decisions.** The `docs/` directory contains the canonical Titan platform documentation, organised as follows:
+
+| Folder | Contents |
+|--------|----------|
+| `docs/01-PWA/` | System doctrine, reference architecture, PWA model, AI governance, module/API contract, node runtime, build roadmap |
+| `docs/02-Signals/` | Signals engine, AI core, automation, workflow, scheduling, communications, CMS manifests, sync/offline, security, observability, module blueprints |
+| `docs/03-modules/` | Module UI integration, lifecycle, theming, testing, APIs |
+| `docs/04-AI/` | AI orchestration, memory, model routing, Titan Zero, AEGIS core, specialist cores, context packs, evaluation |
+| `docs/05-Node:PWA/` | Node architecture, service workers, sync engine, IndexedDB schema, push subscriptions, edge AI runtime |
+| `docs/06-automation/` | Automation engines, trigger evaluation, lifecycle, outbox/inbox relays, idempotency, dead-letter queues, escalation, approval runtime |
+| `docs/07-workflows/` | Workflow definitions, state machines, transitions, guards, approvals, templates, metrics |
+| `docs/08-interfaces/` | Filament admin/user panels, dashboard system, widget architecture, navigation shell, voice interface |
+| `docs/09-communications/` | Omni-bridge, email/SMS/WhatsApp/Telegram/push engines, unified inbox, channel permissions, delivery tracking |
+| `docs/Titan_Blueprints/` | Canonical numbered blueprints (platform, modules, AI, Filament, testing, security, routing, DB naming, worked examples) — start with `00-INDEX.md` |
+| `docs/architecture/` | Engine-level architecture references (AI tools, automation, manifest system, signals, workflow) |
+| `docs/laravel_actual_page_extracts_micro/` | Laravel reference PDFs (routing, Eloquent, auth, queues, testing, service container) |
+
+### Reading order for new agents
+1. `docs/01-PWA/01-system-doctrine.md` — design laws and non-negotiables
+2. `docs/01-PWA/02-reference-architecture.md` — target technical architecture
+3. `docs/Titan_Blueprints/00-INDEX.md` — full blueprint index
+4. `docs/Titan_Blueprints/02-PLATFORM-BLUEPRINT.md` — platform overview
+5. `docs/Titan_Blueprints/05-MODULE-BLUEPRINT.md` — module development rules
+6. Any domain-specific folder relevant to the current task
+
+### Key invariants (from docs)
+- `company_id` is always the tenant boundary — enforce at queries, events, signals, and snapshots.
+- Platform engines provide shared runtime; modules own domain data and actions.
+- Filament is an operator shell — no business rules live there.
+- AI uses declared tools and manifests only — never arbitrary internal method calls.
+- All state-changing flows must be auditable, retry-aware, and approval-capable where risk requires.
+- Modules communicate via signals, not direct service calls.
+
 ## Stack
 
 Laravel 12 (PHP 8.2+) backend + Vue 3 + TypeScript frontend, connected via Inertia.js. Authentication is handled by Laravel Fortify (with 2FA support). UI components come from a Reka UI / shadcn-style library with Tailwind CSS v4.
