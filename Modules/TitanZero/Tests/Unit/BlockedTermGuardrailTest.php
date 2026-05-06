@@ -216,7 +216,7 @@ class BlockedTermGuardrailTest extends TestCase
 
     public function test_load_manifest_reads_titanzero_guardrails_json(): void
     {
-        $path = __DIR__ . '/../../AI/Guardrails/guardrails.json';
+        $path = module_path('TitanZero', 'AI/Guardrails/guardrails.json');
 
         $manifest = BlockedTermGuardrailService::loadManifest($path);
 
@@ -242,7 +242,7 @@ class BlockedTermGuardrailTest extends TestCase
 /**
  * Always trips the guardrail, regardless of the input text.
  */
-class StubAlwaysTripHandler
+class StubAlwaysTripHandler implements \Modules\TitanZero\Contracts\Guardrails\GuardrailHandlerInterface
 {
     public function check(string $text, string $context): ?GuardrailTripped
     {
@@ -257,7 +257,7 @@ class StubAlwaysTripHandler
 /**
  * Always passes (never blocks), regardless of the input text.
  */
-class StubAlwaysPassHandler
+class StubAlwaysPassHandler implements \Modules\TitanZero\Contracts\Guardrails\GuardrailHandlerInterface
 {
     public function check(string $text, string $context): ?GuardrailTripped
     {

@@ -111,7 +111,7 @@ class CitationResolver
         $sourceUrl       = null;
         $moduleReference = null;
 
-        if (str_starts_with((string) $source, 'http://') || str_starts_with((string) $source, 'https://')) {
+        if ($this->isUrl($source)) {
             $sourceUrl = $source;
         } elseif ($source !== '') {
             $moduleReference = $source;
@@ -144,5 +144,13 @@ class CitationResolver
         }
 
         return [(int) $parts[0], (int) $parts[1]];
+    }
+
+    /**
+     * Determine whether a source string is a web URL.
+     */
+    private function isUrl(string $source): bool
+    {
+        return (bool) preg_match('/^https?:\/\//i', $source);
     }
 }

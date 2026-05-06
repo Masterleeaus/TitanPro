@@ -14,7 +14,7 @@ class Citation
      * @param  int          $document_id       Primary key of the source document
      * @param  string       $title             Human-readable document title
      * @param  int          $chunk_index       Zero-based chunk position within the document
-     * @param  string       $content_hash      SHA-256 fingerprint of the chunk content
+     * @param  string       $content_hash      Content fingerprint of the chunk (algorithm determined by indexer)
      * @param  string|null  $source_url        Public URL to the source (if web-accessible)
      * @param  string|null  $module_reference  Module-scoped path (e.g. "TitanZero/policies/example")
      * @param  string       $excerpt           Short text excerpt from the chunk for inline display

@@ -28,6 +28,12 @@ class ManifestDrivenRetrievalService
     private const MAX_PREFERENCE_BOOST = 5;
 
     /**
+     * Over-fetch multiplier: we retrieve this many times more candidates than
+     * `top_k` so we can score and re-rank them before trimming to the final limit.
+     */
+    private const OVERFETCH_MULTIPLIER = 3;
+
+    /**
      * Retrieve chunks that are relevant to $query, scoped to the given tenant.
      *
      * @param  array       $policy      Decoded contents of `retrieval.policy.json`.
@@ -80,7 +86,7 @@ class ManifestDrivenRetrievalService
         });
 
         // Over-fetch so we can score and trim to topK.
-        $chunks = $builder->orderByDesc('id')->limit($topK * 3)->get();
+        $chunks = $builder->orderByDesc('id')->limit($topK * self::OVERFETCH_MULTIPLIER)->get();
 
         if ($chunks->isEmpty()) {
             return [];
@@ -135,7 +141,7 @@ class ManifestDrivenRetrievalService
      * Load a retrieval policy from a JSON file on disk.
      *
      * @param  string  $path  Absolute path to `retrieval.policy.json`.
-     * @return array          Decoded policy, or an empty array when the file is missing.
+     * @return array          Decoded policy, or an empty array when the file is missing or malformed.
      */
     public static function loadPolicy(string $path): array
     {
@@ -144,6 +150,14 @@ class ManifestDrivenRetrievalService
         }
 
         $decoded = json_decode(file_get_contents($path), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            \Illuminate\Support\Facades\Log::warning('[ManifestDrivenRetrievalService] Failed to parse policy JSON', [
+                'path'  => $path,
+                'error' => json_last_error_msg(),
+            ]);
+            return [];
+        }
 
         return is_array($decoded) ? $decoded : [];
     }

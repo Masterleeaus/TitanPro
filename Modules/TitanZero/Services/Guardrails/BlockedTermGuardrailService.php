@@ -103,7 +103,7 @@ class BlockedTermGuardrailService
      * Load a guardrails manifest from a JSON file on disk.
      *
      * @param  string  $path  Absolute path to `guardrails.json`.
-     * @return array          Decoded manifest, or an empty array when the file is missing.
+     * @return array          Decoded manifest, or an empty array when the file is missing or malformed.
      */
     public static function loadManifest(string $path): array
     {
@@ -112,6 +112,14 @@ class BlockedTermGuardrailService
         }
 
         $decoded = json_decode(file_get_contents($path), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            \Illuminate\Support\Facades\Log::warning('[BlockedTermGuardrailService] Failed to parse guardrails JSON', [
+                'path'  => $path,
+                'error' => json_last_error_msg(),
+            ]);
+            return [];
+        }
 
         return is_array($decoded) ? $decoded : [];
     }
@@ -164,8 +172,9 @@ class BlockedTermGuardrailService
     /**
      * Instantiate and invoke a custom handler class declared in the manifest.
      *
-     * The class must be auto-loadable and implement:
-     *   `check(string $text, string $context): ?GuardrailTripped`
+     * The class must be auto-loadable and implement GuardrailHandlerInterface.
+     * Handlers that do not implement the interface are rejected to prevent
+     * arbitrary class instantiation via manifest manipulation.
      *
      * @return GuardrailTripped|null
      */
@@ -179,7 +188,8 @@ class BlockedTermGuardrailService
 
         $handler = new $handlerClass();
 
-        if (!method_exists($handler, 'check')) {
+        // Require the handler to implement the declared interface.
+        if (!($handler instanceof \Modules\TitanZero\Contracts\Guardrails\GuardrailHandlerInterface)) {
             return null;
         }
 
