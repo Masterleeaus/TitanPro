@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MessageTemplate extends Model
+class MessageTemplate extends Model implements TenantAware
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'organization_id',
         'event',
@@ -35,8 +39,8 @@ class MessageTemplate extends Model
     {
         return [
             'job_scheduled' => 'Job Scheduled',
-            'job_reminder'  => 'Job Reminder (24h before)',
-            'en_route'      => 'Technician En Route',
+            'job_reminder' => 'Job Reminder (24h before)',
+            'en_route' => 'Technician En Route',
             'job_completed' => 'Job Completed',
         ];
     }
@@ -47,11 +51,11 @@ class MessageTemplate extends Model
     public static function variables(): array
     {
         return [
-            '{{customer_name}}'  => 'Customer full name',
-            '{{job_title}}'      => 'Job title',
-            '{{job_date}}'       => 'Scheduled date & time',
+            '{{customer_name}}' => 'Customer full name',
+            '{{job_title}}' => 'Job title',
+            '{{job_date}}' => 'Scheduled date & time',
             '{{technician_name}}' => 'Assigned technician name',
-            '{{company_name}}'   => 'Your company name',
+            '{{company_name}}' => 'Your company name',
         ];
     }
 

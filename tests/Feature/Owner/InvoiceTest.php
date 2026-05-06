@@ -81,7 +81,7 @@ test('user cannot view another org\'s invoice', function () {
 
     $this->actingAs($user)
         ->get("/owner/invoices/{$invoice->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Generate from Job ──────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ test('user cannot generate invoice for another org\'s job', function () {
 
     $this->actingAs($user)
         ->post("/owner/jobs/{$job->id}/invoice")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Send ───────────────────────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ test('user cannot send another org\'s invoice', function () {
 
     $this->actingAs($user)
         ->post("/owner/invoices/{$invoice->id}/send")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Void ───────────────────────────────────────────────────────────────────────
@@ -291,7 +291,7 @@ test('user cannot delete another org\'s invoice', function () {
 
     $this->actingAs($user)
         ->delete("/owner/invoices/{$invoice->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Record Manual Payment ──────────────────────────────────────────────────────
@@ -422,7 +422,7 @@ test('user cannot record payment for another org\'s invoice', function () {
             'method'  => 'cash',
             'paid_at' => today()->toDateString(),
         ])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('payment is rejected inside transaction when amount exceeds locked balance_due', function () {

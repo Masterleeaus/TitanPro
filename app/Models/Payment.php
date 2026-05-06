@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Payment extends Model
+class Payment extends Model implements TenantAware
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     const METHOD_CASH = 'cash';
+
     const METHOD_CHECK = 'check';
+
     const METHOD_CARD = 'card';
+
     const METHOD_BANK_TRANSFER = 'bank_transfer';
+
     const METHOD_STRIPE = 'stripe';
 
     protected $fillable = [

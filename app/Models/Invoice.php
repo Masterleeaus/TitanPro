@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,15 +11,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Invoice extends Model
+class Invoice extends Model implements TenantAware
 {
-    use HasFactory, SoftDeletes;
+    use BelongsToTenant, HasFactory, SoftDeletes;
 
     const STATUS_DRAFT = 'draft';
+
     const STATUS_SENT = 'sent';
+
     const STATUS_PAID = 'paid';
+
     const STATUS_PARTIAL = 'partial';
+
     const STATUS_OVERDUE = 'overdue';
+
     const STATUS_VOID = 'void';
 
     protected $fillable = [
@@ -103,14 +110,14 @@ class Invoice extends Model
             ->selectRaw('SUM(unit_price * quantity) as total')
             ->value('total') ?? 0;
 
-        $taxAmount   = round($taxableSubtotal * (float) $this->tax_rate, 2);
-        $total       = round($subtotal + $taxAmount - (float) $this->discount_amount, 2);
-        $balanceDue  = round($total - (float) $this->amount_paid, 2);
+        $taxAmount = round($taxableSubtotal * (float) $this->tax_rate, 2);
+        $total = round($subtotal + $taxAmount - (float) $this->discount_amount, 2);
+        $balanceDue = round($total - (float) $this->amount_paid, 2);
 
         $this->update([
-            'subtotal'    => $subtotal,
-            'tax_amount'  => $taxAmount,
-            'total'       => $total,
+            'subtotal' => $subtotal,
+            'tax_amount' => $taxAmount,
+            'total' => $total,
             'balance_due' => $balanceDue,
         ]);
     }
@@ -118,12 +125,12 @@ class Invoice extends Model
     public static function statuses(): array
     {
         return [
-            self::STATUS_DRAFT   => 'Draft',
-            self::STATUS_SENT    => 'Sent',
-            self::STATUS_PAID    => 'Paid',
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_SENT => 'Sent',
+            self::STATUS_PAID => 'Paid',
             self::STATUS_PARTIAL => 'Partial',
             self::STATUS_OVERDUE => 'Overdue',
-            self::STATUS_VOID    => 'Void',
+            self::STATUS_VOID => 'Void',
         ];
     }
 }

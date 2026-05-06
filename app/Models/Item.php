@@ -2,21 +2,26 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Item extends Model
+class Item extends Model implements TenantAware
 {
-    use HasFactory, SoftDeletes;
+    use BelongsToTenant, HasFactory, SoftDeletes;
 
-    protected $fillable = ['organization_id','name','sku','description','unit_price','unit','is_taxable','is_active','category','pricing_type','estimated_minutes','is_upsell','injects_checklist_tasks'];
+    protected $fillable = ['organization_id', 'name', 'sku', 'description', 'unit_price', 'unit', 'is_taxable', 'is_active', 'category', 'pricing_type', 'estimated_minutes', 'is_upsell', 'injects_checklist_tasks'];
 
     protected function casts(): array
     {
-        return ['unit_price' => 'decimal:2','is_taxable' => 'boolean','is_active' => 'boolean','estimated_minutes' => 'integer','is_upsell' => 'boolean','injects_checklist_tasks' => 'boolean'];
+        return ['unit_price' => 'decimal:2', 'is_taxable' => 'boolean', 'is_active' => 'boolean', 'estimated_minutes' => 'integer', 'is_upsell' => 'boolean', 'injects_checklist_tasks' => 'boolean'];
     }
 
-    public function organization(): BelongsTo { return $this->belongsTo(Organization::class); }
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }

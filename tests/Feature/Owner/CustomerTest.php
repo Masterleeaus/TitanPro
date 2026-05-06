@@ -2,6 +2,7 @@
 
 use App\Models\Customer;
 use App\Models\Organization;
+use App\Models\Scopes\TenantScope;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
@@ -78,7 +79,7 @@ test('user cannot view a customer from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/customers/{$customer->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Create / Store ────────────────────────────────────────────────────────────
@@ -176,7 +177,7 @@ test('customer creation allows same email in different organizations', function 
         ])
         ->assertRedirect();
 
-    expect(Customer::where('email', 'shared@example.com')->count())->toBe(2);
+    expect(Customer::withoutGlobalScope(TenantScope::class)->where('email', 'shared@example.com')->count())->toBe(2);
 });
 
 // ── Edit / Update ─────────────────────────────────────────────────────────────
@@ -198,7 +199,7 @@ test('user cannot edit a customer from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/customers/{$customer->id}/edit")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('user can update their customer', function () {
@@ -229,7 +230,7 @@ test('user cannot update a customer from another organization', function () {
             'first_name' => 'Hack',
             'last_name'  => 'Attempt',
         ])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('customer update requires email', function () {
@@ -301,7 +302,7 @@ test('user cannot archive a customer from another organization', function () {
 
     $this->actingAs($user)
         ->delete("/owner/customers/{$customer->id}")
-        ->assertForbidden();
+        ->assertDenied();
 
-    expect($customer->fresh())->not->toBeNull();
+    expect(Customer::withoutGlobalScope(TenantScope::class)->find($customer->id))->not->toBeNull();
 });

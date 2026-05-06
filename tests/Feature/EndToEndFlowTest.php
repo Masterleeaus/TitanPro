@@ -255,10 +255,10 @@ test('users from different orgs cannot cross-access jobs, invoices, or payments'
     test()->actingAs($owner2)->post("/owner/invoices/{$invoice->id}/send")->assertRedirect();
 
     // Owner1 cannot see job, invoice, or record payment
-    test()->actingAs($owner1)->get("/owner/jobs/{$job->id}")->assertForbidden();
-    test()->actingAs($owner1)->get("/owner/invoices/{$invoice->id}")->assertForbidden();
+    test()->actingAs($owner1)->get("/owner/jobs/{$job->id}")->assertDenied();
+    test()->actingAs($owner1)->get("/owner/invoices/{$invoice->id}")->assertDenied();
     test()->actingAs($owner1)->post("/owner/invoices/{$invoice->id}/payments", [
         'amount' => 100,
         'method' => 'cash',
-    ])->assertForbidden();
+    ])->assertDenied();
 });

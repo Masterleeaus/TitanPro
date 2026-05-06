@@ -96,7 +96,7 @@ test('user cannot view a job from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/jobs/{$job->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Create / Store ────────────────────────────────────────────────────────────
@@ -212,7 +212,7 @@ test('user cannot edit a job from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/jobs/{$job->id}/edit")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('user can update a job', function () {
@@ -295,7 +295,7 @@ test('user cannot update status on another org\'s job', function () {
 
     $this->actingAs($user)
         ->patch("/owner/jobs/{$job->id}/status", ['status' => 'completed'])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Reschedule ────────────────────────────────────────────────────────────────
@@ -336,7 +336,7 @@ test('user cannot reschedule a job from another organization', function () {
 
     $this->actingAs($user)
         ->patch("/owner/jobs/{$job->id}/reschedule", ['scheduled_at' => '2026-06-15T10:30'])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Reassign ──────────────────────────────────────────────────────────────────
@@ -392,7 +392,7 @@ test('user cannot reassign a job from another organization', function () {
 
     $this->actingAs($user)
         ->patch("/owner/jobs/{$job->id}/reassign", ['assigned_to' => null])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Destroy ───────────────────────────────────────────────────────────────────
@@ -416,5 +416,5 @@ test('user cannot delete a job from another organization', function () {
 
     $this->actingAs($user)
         ->delete("/owner/jobs/{$job->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });

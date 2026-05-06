@@ -126,7 +126,7 @@ test('user cannot initiate checkout for another org invoice', function () {
 
     $this->actingAs($user)
         ->post("/owner/invoices/{$invoice->id}/checkout")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('checkout returns 422 when invoice has no customer', function () {
