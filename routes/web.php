@@ -61,6 +61,12 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
         Route::patch('/organizations/{organization}/subscription', [PlatformDashboardController::class, 'updateSubscription'])->name('organizations.subscription.update');
         Route::post('/organizations/{organization}/extend-trial', [PlatformDashboardController::class, 'extendTrial'])->name('organizations.extend-trial');
         Route::post('/organizations/{organization}/activate', [PlatformDashboardController::class, 'activate'])->name('organizations.activate');
+
+        // Module administration — protected by titan.admin gate via module.admin middleware
+        Route::middleware('module.admin')->group(function () {
+            Route::get('/modules/audit-log', [\App\Http\Controllers\Platform\ModuleAuditLogController::class, 'index'])
+                ->name('modules.audit-log');
+        });
     });
 // ── Subscription routes — outside subscription middleware so expired users can reach them ──
 Route::middleware(['auth', 'role:owner|admin'])
