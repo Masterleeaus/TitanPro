@@ -15,7 +15,10 @@ use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
 use Modules\TitanCore\Console\SyncTitanAgentsCommand;
 use Modules\TitanCore\Services\Providers\TitanAiProvider;
 use Modules\TitanCore\Services\TitanAiClient;
+use Modules\TitanCore\Services\TitanCoreModelGateway;
 use Modules\TitanCore\Services\TitanCoreRouter;
+use Modules\TitanCore\Services\UsageCostLogger;
+use Modules\TitanCore\Services\UsageCostService;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 
 class TitanCoreServiceProvider extends ServiceProvider
@@ -65,6 +68,7 @@ class TitanCoreServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/config.php', 'titancore');
         $this->mergeConfigFrom(__DIR__.'/../Config/titan_agents.php', 'titan_agents');
+        $this->mergeConfigFrom(__DIR__.'/../Config/titan-model-runtime.php', 'titan_model_runtime');
 
         // Bind Titan AI client/provider/router (lazy + safe)
         $this->app->singleton(TitanAiClient::class, function () {
@@ -87,6 +91,17 @@ class TitanCoreServiceProvider extends ServiceProvider
             return new TitanCoreRouter(
                 $app->make(TitanAiProvider::class)
             );
+        });
+
+        // Model runtime gateway + failover chain
+        $this->app->singleton(TitanCoreModelGateway::class, function ($app) {
+            $costLogger = null;
+            try {
+                $costLogger = $app->make(UsageCostLogger::class);
+            } catch (\Throwable $e) {
+                // not available; gateway still works without it
+            }
+            return new TitanCoreModelGateway($costLogger);
         });
 
         // no bindings; keep lightweight
