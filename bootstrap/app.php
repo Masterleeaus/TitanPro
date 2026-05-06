@@ -40,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'subscription'          => \App\Http\Middleware\CheckSubscription::class,
             'technician.limit'      => \App\Http\Middleware\CheckTechnicianLimit::class,
             'module.admin'          => \App\Http\Middleware\EnsureModuleAdmin::class,
+            'titan.billing.limit'   => \App\Http\Middleware\LimitCheckerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
