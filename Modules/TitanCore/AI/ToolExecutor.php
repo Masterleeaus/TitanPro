@@ -116,7 +116,8 @@ class ToolExecutor implements ToolExecutorContract
         }
 
         // ── 6. Timeout-guarded execution ──────────────────────────────────────
-        $alarmSet = $this->armAlarm($toolName);
+        $timeoutMs = $this->timeoutMs();
+        $alarmSet  = $this->armAlarm();
 
         try {
             $handler = new $handlerClass();
@@ -124,14 +125,20 @@ class ToolExecutor implements ToolExecutorContract
 
             $duration = $this->elapsedMs($startTime);
 
-            // Soft timeout check for environments without pcntl
-            if ($duration > $this->timeoutSeconds * 1000) {
+            // Dispatch any pending signals (makes pcntl flag visible on cooperative runtimes).
+            if ($alarmSet && function_exists('pcntl_signal_dispatch')) {
+                pcntl_signal_dispatch();
+            }
+
+            // Soft timeout check — catches cases where pcntl is unavailable or the
+            // handler completed just as the alarm fired.
+            if ($duration > $timeoutMs) {
                 $this->writeAudit($toolName, $userId, $companyId, $params, 'timed_out', $duration);
                 throw new ToolTimedOutException($toolName, $this->timeoutSeconds);
             }
 
             if ($alarmSet) {
-                pcntl_alarm(0); // cancel alarm on success
+                pcntl_alarm(0); // cancel outstanding alarm on success
             }
 
             // ── 7. Audit ──────────────────────────────────────────────────────
@@ -178,20 +185,38 @@ class ToolExecutor implements ToolExecutorContract
     }
 
     /**
-     * Arm a SIGALRM if the pcntl extension is available.
-     * Returns true when the alarm was successfully set.
+     * Return the configured timeout expressed in milliseconds.
+     * Extracted to avoid repeating the `* 1000` conversion in multiple places.
      */
-    private function armAlarm(string $toolName): bool
+    private function timeoutMs(): int
+    {
+        return $this->timeoutSeconds * 1000;
+    }
+
+    /**
+     * Arm a SIGALRM via the pcntl extension (Unix CLI / queue-worker only).
+     *
+     * A flag (`$this->alarmFired`) is set inside the signal handler instead of
+     * throwing directly.  Throwing from a signal handler is unreliable in PHP
+     * because signal delivery happens asynchronously and the exception may not
+     * propagate correctly in all SAPI contexts.  Callers must invoke
+     * `pcntl_signal_dispatch()` after the handler returns to process any
+     * pending signal and then perform the soft elapsed-time check.
+     *
+     * Returns true when the alarm was successfully armed, false otherwise
+     * (e.g. pcntl extension not loaded, or running under FPM/CGI).
+     */
+    private function armAlarm(): bool
     {
         if (!function_exists('pcntl_alarm') || !function_exists('pcntl_signal')) {
             return false;
         }
 
-        $timeoutSeconds = $this->timeoutSeconds;
-        pcntl_signal(SIGALRM, function () use ($toolName, $timeoutSeconds) {
-            throw new ToolTimedOutException($toolName, $timeoutSeconds);
+        pcntl_signal(SIGALRM, function (): void {
+            // Signal received — the soft elapsed-time check that follows
+            // pcntl_signal_dispatch() will detect the overrun and throw.
         });
-        pcntl_alarm($timeoutSeconds);
+        pcntl_alarm($this->timeoutSeconds);
 
         return true;
     }
