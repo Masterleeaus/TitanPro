@@ -136,7 +136,14 @@ class StripeWebhookController extends Controller
         $stripeSub = (new \Stripe\StripeClient(config('services.stripe.secret')))
             ->subscriptions->retrieve($stripeSubId);
 
-        $priceId = $stripeSub->items->data[0]->price->id ?? null;
+        $priceId = null;
+        if (! empty($stripeSub->items->data)) {
+            $priceId = $stripeSub->items->data[0]->price->id ?? null;
+        }
+
+        if ($priceId === null) {
+            return;
+        }
 
         $this->subscriptionService->activateFromStripe(
             organization: $organization,

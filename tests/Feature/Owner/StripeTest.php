@@ -377,6 +377,52 @@ test('subscription checkout is ignored when stripe_customer_id has no matching o
     // Mockery assertion: shouldNotReceive is verified on teardown
 });
 
+test('subscription checkout is ignored when subscription has no items', function () {
+    [, $org] = stripeSetup();
+
+    $org->update(['stripe_customer_id' => 'cus_test_noitems']);
+
+    $controller = app(\App\Http\Controllers\StripeWebhookController::class);
+    $ref        = new \ReflectionClass($controller);
+    $method     = $ref->getMethod('handleSubscriptionCheckoutCompleted');
+    $method->setAccessible(true);
+
+    // Build a mock Stripe subscription with an empty items array
+    $stripeSub                       = new \stdClass();
+    $stripeSub->current_period_start = now()->timestamp;
+    $stripeSub->current_period_end   = now()->addMonth()->timestamp;
+    $stripeSub->items                = new \stdClass();
+    $stripeSub->items->data          = [];
+
+    $subscriptionsMock = Mockery::mock();
+    $subscriptionsMock->shouldReceive('retrieve')->andReturn($stripeSub);
+
+    $stripeClientMock              = Mockery::mock(\Stripe\StripeClient::class);
+    $stripeClientMock->subscriptions = $subscriptionsMock;
+
+    $this->instance(\Stripe\StripeClient::class, $stripeClientMock);
+
+    $session               = new \stdClass();
+    $session->customer     = 'cus_test_noitems';
+    $session->subscription = 'sub_test_noitems';
+    $meta                  = new \stdClass();
+    $meta->plan            = 'pro';
+    $meta->interval        = 'monthly';
+    $session->metadata     = $meta;
+
+    // activateFromStripe must NOT be called when items are empty
+    $serviceMock = Mockery::mock(\App\Services\SubscriptionService::class);
+    $serviceMock->shouldNotReceive('activateFromStripe');
+
+    $refProp = $ref->getProperty('subscriptionService');
+    $refProp->setAccessible(true);
+    $refProp->setValue($controller, $serviceMock);
+
+    $method->invoke($controller, $session);
+
+    // Mockery assertion: shouldNotReceive is verified on teardown
+});
+
 test('subscription checkout is ignored when session has no customer field', function () {
     $controller = app(\App\Http\Controllers\StripeWebhookController::class);
     $ref        = new \ReflectionClass($controller);
