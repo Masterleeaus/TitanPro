@@ -204,13 +204,13 @@ class ModulesSchemaDocs extends Command
         $type = $propSchema['type'] ?? null;
 
         if (is_array($type)) {
-            return implode('\\|', $type);
+            return implode('\|', $type);
         }
 
         if ($type === 'array') {
             $itemType = $propSchema['items']['type'] ?? 'mixed';
 
-            return "array\\<{$itemType}\\>";
+            return "`array<{$itemType}>`";
         }
 
         return $type ?? 'mixed';

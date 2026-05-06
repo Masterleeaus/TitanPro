@@ -193,11 +193,6 @@ class ManifestSchemaValidator
             if ($base === $type || str_ends_with($base, '.' . $type)) {
                 return $type;
             }
-
-            // e.g. billing.manifest.json → billing.manifest
-            if ($base === $type) {
-                return $type;
-            }
         }
 
         // Fall back to the last two dot-segments (e.g. "ai.manifest")
