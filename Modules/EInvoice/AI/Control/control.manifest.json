@@ -1,0 +1,18 @@
+{
+  "module": "einvoice",
+  "agent": "titanzero.money",
+  "display_name": "TitanZero Money",
+  "panel": "Titan Money Panel",
+  "sidebar_label": "Money Manager",
+  "boundary": "invoicing_only_no_payment_execution",
+  "control_modes": ["read", "suggest", "draft", "execute_with_confirmation", "execute_auto_safe_actions"],
+  "commands": [
+    {"intent":"invoice.create","action":"Modules\\EInvoice\\Actions\\CreateInvoiceAction","mode":"write","confirmation":"required"},
+    {"intent":"invoice.send","action":"Modules\\EInvoice\\Actions\\SendInvoiceAction","mode":"write","confirmation":"required"},
+    {"intent":"invoice.prepare_zeropay_handoff","action":"Modules\\EInvoice\\Actions\\PrepareZeroPayHandoffAction","mode":"read","confirmation":"none"},
+    {"intent":"invoice.generate_late_followup","action":"Modules\\EInvoice\\Actions\\GenerateLateInvoiceFollowupAction","mode":"draft","confirmation":"required"},
+    {"intent":"invoice.generate_xml","action":"Modules\\EInvoice\\Actions\\GenerateInvoiceXmlAction","mode":"read","confirmation":"none"}
+  ],
+  "payment_execution": "external_zeropay_only",
+  "security": {"tenant_scoped": true, "policy_checked": true, "audit_all_actions": true, "human_confirmation_for_writes": true}
+}

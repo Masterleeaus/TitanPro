@@ -1,0 +1,6 @@
+{
+  "module": "TitanChatbot",
+  "controller": "Modules\\TitanChatbot\\Http\\Controllers\\Api\\ModuleAgentController",
+  "binding_service": "Modules\\TitanChatbot\\Services\\ModuleAgentBindingService",
+  "control_service": "Modules\\TitanChatbot\\Services\\ModuleAgentControlService"
+}

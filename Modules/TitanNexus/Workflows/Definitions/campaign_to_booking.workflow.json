@@ -1,0 +1,1 @@
+{"name":"campaign_to_booking","enables":"campaign outreach to reply classification, follow-up and booking handoff","steps":["launch_campaign","deliver_message","classify_reply","create_booking_handoff"]}

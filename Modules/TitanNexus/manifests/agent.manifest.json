@@ -1,0 +1,7 @@
+{
+  "module": "TitanNexus",
+  "agents": [
+    "Agents/MarketingAgent/agent.manifest.json"
+  ],
+  "primary_agent": "titan-nexus.marketing-agent"
+}

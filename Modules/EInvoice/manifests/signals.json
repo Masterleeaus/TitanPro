@@ -1,0 +1,16 @@
+{
+  "schema": "titan.signals.v1",
+  "module": "einvoice",
+  "consumes": [
+    "job.completed",
+    "zeropay.payment.completed",
+    "zeropay.session.expiring"
+  ],
+  "emits": [
+    "einvoice.created",
+    "einvoice.issued",
+    "einvoice.sent",
+    "einvoice.overdue",
+    "einvoice.paid"
+  ]
+}

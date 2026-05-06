@@ -1,0 +1,9 @@
+{
+  "actions": {
+    "discover_targets": "AI/Tools/ScrapeTargetsTool.php",
+    "score_lead": "AI/Tools/LeadScoringTool.php",
+    "generate_outreach": "AI/Tools/OutreachGeneratorTool.php",
+    "optimize_campaign": "AI/Agents/CampaignStrategistAgent.php",
+    "push_booking": "Actions/PushLeadToGroundZeroAction.php"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "module": "TitanNexus",
+  "single_control_panel": true,
+  "ui_root": "UI",
+  "control_panel": "UI/ControlPanel",
+  "filament_root": "Filament",
+  "tables": "UI/Tables",
+  "widgets": "UI/Widgets",
+  "cards": "UI/Cards"
+}

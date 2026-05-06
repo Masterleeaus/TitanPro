@@ -1,0 +1,17 @@
+{
+  "workflow": "InvoiceFollowupWorkflow",
+  "description": "Detect overdue invoice, draft reminder, wait for approval, send, track outcome.",
+  "steps": [
+    "detect",
+    "draft",
+    "guardrail",
+    "approval",
+    "execute",
+    "record"
+  ],
+  "guards": [
+    "tenant_scope",
+    "approval_required",
+    "channel_policy"
+  ]
+}

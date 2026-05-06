@@ -1,0 +1,1 @@
+{"name":"voice_to_followup","enables":"call recording and voicemail into AI summary and callback follow-up","steps":["record_call","summarize_recording","schedule_callback"]}

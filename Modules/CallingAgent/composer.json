@@ -1,0 +1,13 @@
+{
+    "name": "callingagent/module",
+    "description": "Calling Agent Module",
+    "type": "laravel-module",
+    "autoload": {
+        "psr-4": {
+            "Modules\\CallingAgent\\": ""
+        },
+        "files": [
+            "Support/helpers.php"
+        ]
+    }
+}

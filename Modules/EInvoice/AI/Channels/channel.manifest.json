@@ -1,0 +1,33 @@
+{
+  "module": "einvoice",
+  "agent": "einvoice.collections.agent",
+  "supported_channels": [
+    "pwa",
+    "web_chat",
+    "sms",
+    "whatsapp",
+    "email",
+    "voice",
+    "api"
+  ],
+  "routing": {
+    "system_ai": "TitanZero",
+    "module_ai": "TitanAgents",
+    "handoff_rules": [
+      "system_intents_to_zero",
+      "module_intents_to_agent",
+      "uncertain_intents_confirm_scope"
+    ]
+  },
+  "messages": {
+    "supports_streaming": true,
+    "supports_attachments": true,
+    "supports_voice_notes": true,
+    "requires_tenant_context": true
+  },
+  "commands": {
+    "allow_read": true,
+    "allow_write_with_confirmation": true,
+    "allow_destructive": false
+  }
+}

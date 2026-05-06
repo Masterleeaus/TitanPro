@@ -1,0 +1,15 @@
+{
+  "name": "score_lead",
+  "description": "Score a lead using fit, intent, channel quality, and campaign history.",
+  "input_schema": {
+    "lead": "object",
+    "campaign": "object"
+  },
+  "output_schema": {
+    "score": "number",
+    "grade": "string",
+    "reasons": "array",
+    "next_action": "string"
+  },
+  "handler": "Modules\\TitanNexus\\AI\\Tools\\LeadScoringTool"
+}

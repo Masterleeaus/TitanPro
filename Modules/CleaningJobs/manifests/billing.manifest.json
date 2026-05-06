@@ -1,0 +1,7 @@
+{
+  "enables": [
+    "plan limits",
+    "usage metering",
+    "feature gating"
+  ]
+}

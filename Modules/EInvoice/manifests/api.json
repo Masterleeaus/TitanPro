@@ -1,0 +1,12 @@
+{
+  "schema": "titan.module.api.v1",
+  "module": "einvoice",
+  "boundary": "invoicing_only_no_payment_execution",
+  "routes": [
+    {"method":"POST","path":"/api/einvoice/invoices","permission":"einvoice.create"},
+    {"method":"POST","path":"/api/einvoice/invoices/{id}/send","permission":"einvoice.send"},
+    {"method":"POST","path":"/api/einvoice/invoices/{id}/zeropay-handoff","permission":"einvoice.send","note":"Read-only invoice payload for external ZeroPay; no payment session created."},
+    {"method":"POST","path":"/api/einvoice/invoices/{id}/xml","permission":"einvoice.xml.generate"},
+    {"method":"POST","path":"/api/einvoice/followups/run","permission":"einvoice.followup.run"}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "enables": [
+    "authorization boundaries"
+  ],
+  "policies": {
+    "WorkOrder": "WorkOrderPolicy"
+  }
+}

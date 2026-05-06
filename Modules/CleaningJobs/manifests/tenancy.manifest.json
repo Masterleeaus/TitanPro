@@ -1,0 +1,7 @@
+{
+  "enables": [
+    "tenant scoping",
+    "company isolation",
+    "tenant route surface"
+  ]
+}

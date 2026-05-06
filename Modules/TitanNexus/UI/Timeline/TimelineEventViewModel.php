@@ -1,0 +1,13 @@
+<?php
+
+namespace Modules\TitanNexus\UI\Timeline;
+
+
+final class TimelineEventViewModel
+{
+    public static function make(): array
+    {
+        return [];
+    }
+
+}

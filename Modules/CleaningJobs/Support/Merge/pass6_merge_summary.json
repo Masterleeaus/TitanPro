@@ -1,0 +1,11 @@
+{
+  "pass": 6,
+  "module": "CleaningJobs",
+  "action": "Merged mapped PlanningCore and JobBoard features into one CleaningJobs module, removed Support/VendorFeatures vendor bundle, deleted JobBoard marketplace payload.",
+  "removed": ["JobBoard marketplace folder", "JobBoard marketplace views", "JobBoard marketplace seeders", "Support/VendorFeatures"],
+  "enabled_feature_groups": {
+    "work_orders": ["jobs", "appointments", "service tasks", "parts/materials", "requests", "settings", "webhooks", "CSV"],
+    "planning": ["projects/contracts", "statuses", "members", "timesheets", "budgets", "resource allocations", "capacity", "reports"],
+    "jobboard": ["kanban stages", "tasks", "subtasks", "milestones", "comments", "files", "activity logs", "quality bugs", "client/vendor links"]
+  }
+}

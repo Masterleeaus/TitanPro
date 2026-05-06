@@ -1,0 +1,16 @@
+{
+  "module": "accountings",
+  "agent": "titanzero.money",
+  "display_name": "TitanZero Money",
+  "panel": "Titan Money Panel",
+  "sidebar_label": "Money Manager",
+  "boundary": "accounting_only_no_payment_execution",
+  "control_modes": ["read", "suggest", "draft", "execute_with_confirmation"],
+  "commands": [
+    {"intent":"accounting.lookup_ledger","action":"Modules\\Accountings\\Actions\\LookupLedgerAction","mode":"read","confirmation":"none"},
+    {"intent":"accounting.match_reconciliation_record","action":"Modules\\Accountings\\Actions\\MatchBankDepositAction","mode":"suggest","confirmation":"required"},
+    {"intent":"accounting.post_invoice_journal","action":"Modules\\Accountings\\Actions\\PostInvoiceJournalAction","mode":"write","confirmation":"required"}
+  ],
+  "payment_execution": "external_zeropay_only",
+  "security": {"tenant_scoped": true, "policy_checked": true, "audit_all_actions": true, "human_confirmation_for_writes": true}
+}

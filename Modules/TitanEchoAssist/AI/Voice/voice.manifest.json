@@ -1,0 +1,6 @@
+{
+  "module": "TitanChatbot",
+  "enabled": true,
+  "channel": "Modules\\TitanChatbot\\Services\\VoiceChannel",
+  "agent": "Modules\\TitanChatbot\\AI\\Agents\\VoiceAgent"
+}

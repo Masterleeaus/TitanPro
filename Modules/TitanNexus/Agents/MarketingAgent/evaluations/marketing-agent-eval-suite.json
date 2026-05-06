@@ -1,0 +1,10 @@
+{
+  "suite": "titan_nexus_marketing_agent",
+  "checks": [
+    "uses tenant-safe data only",
+    "does not auto-send without approval",
+    "generates vertical-specific copy",
+    "returns structured lead scores",
+    "routes booking handoff through approval"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "TitanHello": [
+    "Http/Controllers/LegacyHello/TitanHello/AvatarController.php",
+    "Http/Controllers/LegacyHello/TitanHello/ChatbotVoiceController.php",
+    "Http/Controllers/LegacyHello/TitanHello/ChatbotVoiceEmbbedController.php",
+    "Http/Controllers/LegacyHello/TitanHello/ChatbotVoiceHistoryController.php",
+    "Http/Controllers/LegacyHello/TitanHello/ChatbotVoiceTrainController.php",
+    "Http/Controllers/LegacyHello/TitanHello/InternalEventsController.php",
+    "Http/Controllers/LegacyHello/TitanHello/SettingsController.php",
+    "Http/Controllers/LegacyHello/TitanHello/TwilioWebhookController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/AvatarController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/ChatbotVoiceController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/ChatbotVoiceEmbbedController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/ChatbotVoiceHistoryController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/ChatbotVoiceTrainController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/InternalEventsController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/SettingsController.php",
+    "Http/Controllers/LegacyHello/TitanHelloBase/TwilioWebhookController.php",
+    "Http/Middleware/LegacyHello/TitanHello/VerifyTwilioSignature.php",
+    "Http/Middleware/LegacyHello/TitanHelloBase/VerifyTwilioSignature.php"
+  ],
+  "ExampleRecord": [
+    "Filament/Resources/ExampleRecordResource/Pages/CreateLeadRecord.php",
+    "Filament/Resources/ExampleRecordResource/Pages/EditLeadRecord.php",
+    "Filament/Resources/ExampleRecordResource/Pages/ListLeadRecords.php"
+  ],
+  "Support/ExtractedCode": [
+    "Support/IntegrationMaps/MERGE_PASS_15.md",
+    "Support/IntegrationMaps/TitanNexus_v6_integration_map.md",
+    "Support/IntegrationMaps/imported-source-index.json",
+    "Support/MERGE_MAP.md",
+    "UPGRADE_PASS_15.md",
+    "manifests/upgrade.manifest.json"
+  ],
+  "SourceArchives": [
+    "Support/IntegrationMaps/MERGE_PASS_15.md",
+    "UPGRADE_PASS_15.md",
+    "manifests/upgrade.manifest.json"
+  ],
+  "marketplace": [
+    "Support/IntegrationMaps/MERGE_PASS_15.md",
+    "Support/IntegrationMaps/imported-source-index.json",
+    "UPGRADE_PASS_15.md"
+  ]
+}

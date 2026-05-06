@@ -1,0 +1,18 @@
+{
+  "name": "Lead to Deal Workflow",
+  "version": "1.0.0",
+  "enables": [
+    "legacy lead stage conversion",
+    "deal creation",
+    "campaign attribution",
+    "booking handoff"
+  ],
+  "steps": [
+    "ingest_lead",
+    "score_lead",
+    "assign_stage",
+    "create_deal",
+    "queue_outreach",
+    "handoff_when_booked"
+  ]
+}

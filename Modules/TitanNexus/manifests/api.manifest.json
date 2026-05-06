@@ -1,0 +1,9 @@
+{
+  "module": "TitanNexus",
+  "routes": [
+    "agent/run",
+    "invoices/followup",
+    "payments/link",
+    "jobs/assist"
+  ]
+}

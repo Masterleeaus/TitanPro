@@ -1,0 +1,27 @@
+{
+  "id": "titan-nexus.marketing-agent",
+  "name": "Titan Nexus Marketing Agent",
+  "type": "lead_generation_orchestration_agent",
+  "version": "0.13.0",
+  "purpose": "AI-native lead generation and campaign orchestration agent embedded directly inside Titan Nexus.",
+  "owns": [
+    "target discovery",
+    "lead enrichment",
+    "campaign strategy",
+    "outreach copy generation",
+    "follow-up sequencing",
+    "lead qualification",
+    "booking handoff"
+  ],
+  "knowledge_pack": "Modules/TitanNexus/Knowledge",
+  "tools_path": "Modules/TitanNexus/Agents/MarketingAgent/tools",
+  "memory_path": "Modules/TitanNexus/Agents/MarketingAgent/memory",
+  "control_panel": "Modules/TitanNexus/UI/ControlPanel",
+  "default_model_profile": "marketing_agent",
+  "human_approval_required_for": [
+    "send_email",
+    "send_sms",
+    "launch_campaign",
+    "push_booking_to_ground_zero"
+  ]
+}

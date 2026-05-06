@@ -1,0 +1,15 @@
+{
+  "name": "Titan Money Invoice Collections Knowledge Pack",
+  "version": "1.1.0",
+  "boundary": "late_invoice_followup_only_no_payment_execution",
+  "facts": [
+    "Titan Money sends invoices automatically when configured.",
+    "Titan Money generates human-approved late-invoice follow-up copy.",
+    "Payment execution is owned by external ZeroPay."
+  ],
+  "tools": [
+    "einvoice.send_invoice",
+    "einvoice.generate_late_followup",
+    "einvoice.prepare_zeropay_handoff"
+  ]
+}

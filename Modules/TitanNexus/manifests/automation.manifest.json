@@ -1,0 +1,14 @@
+{
+  "module": "TitanNexus",
+  "pipelines": [
+    "LeadNurturePipeline",
+    "InvoiceFollowupPipeline",
+    "PaymentRecoveryPipeline",
+    "JobCommunicationPipeline"
+  ],
+  "schedulers": [
+    "InvoiceFollowupScheduler",
+    "CampaignDigestScheduler"
+  ],
+  "approval_required_default": true
+}

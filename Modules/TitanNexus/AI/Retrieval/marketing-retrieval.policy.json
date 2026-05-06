@@ -1,0 +1,17 @@
+{
+  "knowledge_roots": [
+    "Knowledge/guides",
+    "Knowledge/sops",
+    "Knowledge/policies",
+    "Knowledge/examples",
+    "Knowledge/faqs"
+  ],
+  "must_retrieve_for": [
+    "campaign launch",
+    "compliance",
+    "lead scoring",
+    "outreach generation"
+  ],
+  "citation_required": true,
+  "tenant_isolation": true
+}

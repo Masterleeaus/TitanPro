@@ -1,0 +1,43 @@
+{
+  "module": "TitanNexus",
+  "from": "v15",
+  "to": "v19",
+  "removed_legacy_dirs": [
+    "Support/ExtractedCode",
+    "Support/SourceArchives",
+    "Resources/views/legacy-lead",
+    "Resources/views/legacy-marketing",
+    "Jobs/LegacyHello",
+    "Models/LegacyHello",
+    "Providers/LegacyHello",
+    "Routes/LegacyHello",
+    "Services/LegacyHello",
+    "Traits/LegacyHello",
+    "Helpers/LegacyHello",
+    "Config/legacy_hello",
+    "Database/legacy_hello",
+    "Http/LegacyHello",
+    "Routes/LegacyMarketing",
+    "Services/LegacyMarketing",
+    "Models/LegacyMarketing",
+    "Policies/LegacyMarketing",
+    "Http/Controllers/LegacyMarketing",
+    "Automation/ExampleAutomationTrigger.php",
+    "Events/ExampleCreated.php",
+    "Listeners/SendExampleCreatedNotification.php",
+    "Filament/Widgets/ExampleStatsWidget.php",
+    "Filament/Pages/ExampleDashboard.php",
+    "Http/Controllers/ExampleController.php",
+    "Http/Controllers/Api/ExampleApiController.php",
+    "Http/Controllers/Admin/ExampleAdminController.php",
+    "ValueObjects/ExampleStatus.php",
+    "Workflows/ExampleApprovalWorkflow.php",
+    "test_write.txt"
+  ],
+  "passes": [
+    "structural_integrity",
+    "ai_agent_nativeization",
+    "control_panel_convergence",
+    "production_hardening"
+  ]
+}

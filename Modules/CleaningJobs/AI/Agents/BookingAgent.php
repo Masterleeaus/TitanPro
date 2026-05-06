@@ -1,0 +1,1 @@
+<?php namespace Modules\CleaningJobs\AI\Agents; use Modules\CleaningJobs\Services\AI\BookingAgentRuntime; class BookingAgent { public function __construct(private readonly BookingAgentRuntime $runtime) {} public function handle(array $message, array $context = []): array { return $this->runtime->respond($message, $context); } }

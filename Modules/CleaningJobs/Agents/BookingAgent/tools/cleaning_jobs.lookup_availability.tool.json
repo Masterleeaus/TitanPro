@@ -1,0 +1,1 @@
+{"name":"cleaning_jobs.lookup_availability","description":"Cleaning Jobs booking agent tool: lookup_availability","input_schema":{"tenant_id":"string","payload":"object"},"tenant_scoped":true}

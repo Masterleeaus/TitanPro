@@ -1,0 +1,7 @@
+{
+  "name": "titan_nexus.lookup_record",
+  "type": "query",
+  "action": "Modules\\TitanNexus\\Actions\\LookupLeadRecordAction",
+  "requires_permission": "titan_nexus.view",
+  "tenant_scoped": true
+}

@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "name": "titan_nexus_knowledge",
+      "path": "Knowledge"
+    },
+    {
+      "name": "titan_nexus_campaign_lessons",
+      "path": "Agents/MarketingAgent/memory"
+    },
+    {
+      "name": "titan_nexus_leads",
+      "source": "Models/Lead.php"
+    }
+  ],
+  "embeddings": {
+    "provider": "configured",
+    "chunk_size": 900,
+    "overlap": 120
+  }
+}

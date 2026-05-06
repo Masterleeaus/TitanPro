@@ -1,0 +1,1 @@
+{"module":"bookingmodule","guardrails":["never_cross_company_boundary","never_modify_booking_without_policy","cite_booking_record_when_answering_status","do_not_quote_private_customer_notes_without_permission"]}

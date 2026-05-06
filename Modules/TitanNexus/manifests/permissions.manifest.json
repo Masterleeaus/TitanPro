@@ -1,0 +1,10 @@
+{
+  "enables": "role/tenant gated access",
+  "permissions": [
+    "titanhello.view",
+    "titanhello.manage_campaigns",
+    "titanhello.manage_targets",
+    "titanhello.run_ai",
+    "titanhello.export"
+  ]
+}

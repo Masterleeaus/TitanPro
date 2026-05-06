@@ -1,0 +1,19 @@
+{
+  "module": "TitanNexus",
+  "agent": "MarketingAgent",
+  "control_modes": [
+    "draft_only",
+    "approval_required",
+    "supervised_automation"
+  ],
+  "default_mode": "approval_required",
+  "control_panel": "UI/ControlPanel/control-panel.blade.php",
+  "operator_actions": [
+    "discover_targets",
+    "generate_outreach",
+    "score_leads",
+    "optimize_campaign",
+    "approve_followups",
+    "push_booking"
+  ]
+}

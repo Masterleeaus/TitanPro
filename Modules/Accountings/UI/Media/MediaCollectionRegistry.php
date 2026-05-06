@@ -1,0 +1,13 @@
+<?php
+
+namespace Modules\Accountings\UI\Media;
+
+
+final class MediaCollectionRegistry
+{
+    public static function make(): array
+    {
+        return [];
+    }
+
+}

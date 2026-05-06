@@ -1,0 +1,8 @@
+{
+  "enables": [
+    "view namespace",
+    "asset publishing",
+    "component registry"
+  ],
+  "namespace": "titanwork"
+}

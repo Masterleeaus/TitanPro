@@ -1,0 +1,12 @@
+{
+  "enables": "drag-drop campaign workflow persistence",
+  "steps": [
+    "target",
+    "template",
+    "send",
+    "wait",
+    "followup",
+    "qualify",
+    "booking"
+  ]
+}

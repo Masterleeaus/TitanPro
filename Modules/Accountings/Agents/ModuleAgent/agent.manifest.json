@@ -1,0 +1,22 @@
+{
+  "schema": "titan.agent.module.v1",
+  "agent": "titanzero.money",
+  "display_name": "TitanZero Money",
+  "module": "money-manager",
+  "owner": "TitanAgents",
+  "runtime": "TitanCore.ProviderRouter",
+  "system_supervisor": "TitanZero",
+  "answer_mode": "grounded_with_citations",
+  "boundary": "accounting_only_no_payment_execution",
+  "knowledge_scope": ["Knowledge/checklists", "Knowledge/compliance", "Knowledge/guides", "Knowledge/packs", "Knowledge/policies", "Knowledge/sops"],
+  "tools": ["accounting.lookup_ledger", "accounting.post_invoice_journal", "accounting.match_reconciliation_record", "accounting.explain_cashflow", "invoice.generate_followup"],
+  "permissions": ["accounting.create", "accounting.reconcile", "accounting.view", "money.agent.use", "money.view"],
+  "guardrails": {
+    "tenant_scoped": true,
+    "require_citations_for_knowledge_answers": true,
+    "deny_cross_company_data": true,
+    "human_confirm_for_write_actions": true,
+    "forbid_payment_execution": true
+  },
+  "training": {"dataset_manifest": "Agents/ModuleAgent/training/dataset-manifest.json", "evaluation_suite": "Agents/ModuleAgent/evaluations/eval-suite.json"}
+}

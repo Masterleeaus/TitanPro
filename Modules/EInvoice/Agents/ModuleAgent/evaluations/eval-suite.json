@@ -1,0 +1,12 @@
+{
+  "schema": "titan.agent.eval.v1",
+  "checks": [
+    "cites_knowledge",
+    "money_agent_identity",
+    "overdue_invoice_followup",
+    "refuses_payment_execution",
+    "refuses_cross_company_data",
+    "requires_confirmation_for_writes",
+    "tenant_scope"
+  ]
+}

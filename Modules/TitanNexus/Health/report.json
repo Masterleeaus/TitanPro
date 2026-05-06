@@ -1,0 +1,277 @@
+{
+    "name": "TitanNexus",
+    "studlyName": "TitanNexus",
+    "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus",
+    "enabled": true,
+    "namespace": "Modules\\TitanNexus\\",
+    "panels": [
+        "*"
+    ],
+    "dependencies": [],
+    "optionalDependencies": [],
+    "priority": 0,
+    "manifestPath": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/manifests/module.manifest.json",
+    "manifestFiles": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/manifests/module.manifest.json"
+    ],
+    "plugins": [
+        "Modules\\TitanNexus\\Filament\\Plugin\\TitanNexusPlugin"
+    ],
+    "resources": [
+        "Modules\\TitanNexus\\Filament\\Resources\\CampaignResource",
+        "Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource\\Pages\\CreateLeadRecord",
+        "Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource\\Pages\\EditLeadRecord",
+        "Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource\\Pages\\ListLeadRecords",
+        "Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource",
+        "Modules\\TitanNexus\\Filament\\Resources\\NexusAutomationRunResource",
+        "Modules\\TitanNexus\\Filament\\Resources\\NexusInvoiceResource",
+        "Modules\\TitanNexus\\Filament\\Resources\\NexusJobResource",
+        "Modules\\TitanNexus\\Filament\\Resources\\NexusPaymentResource",
+        "Modules\\TitanNexus\\Resources\\lang\\en\\messages",
+        "Modules\\TitanNexus\\Resources\\lang\\en\\module",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ar\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ar\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ar\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ar\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ar\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\da\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\da\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\da\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\da\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\da\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\de\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\de\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\de\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\de\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\de\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\en\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\en\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\en\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\en\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\en\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\es\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\es\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\es\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\es\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\es\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\fr\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\fr\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\fr\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\fr\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\fr\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\it\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\it\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\it\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\it\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\it\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ja\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ja\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ja\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ja\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ja\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\nl\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\nl\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\nl\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\nl\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\nl\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pl\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pl\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pl\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pl\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pl\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pt\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pt\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pt\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pt\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\pt\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ru\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ru\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ru\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ru\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\ru\\validation",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\tr\\auth",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\tr\\installer_messages",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\tr\\pagination",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\tr\\passwords",
+        "Modules\\TitanNexus\\Resources\\lang\\legacy-lead\\tr\\validation"
+    ],
+    "pages": [
+        "Modules\\TitanNexus\\Filament\\Pages\\JobAssistPage",
+        "Modules\\TitanNexus\\Filament\\Pages\\MarketingAgentConsolePage",
+        "Modules\\TitanNexus\\Filament\\Pages\\NexusControlPanelPage",
+        "Modules\\TitanNexus\\Filament\\Pages\\NexusDashboard",
+        "Modules\\TitanNexus\\Filament\\Pages\\PaymentRecoveryPage",
+        "Modules\\TitanNexus\\Filament\\Pages\\TitanNexusPage"
+    ],
+    "widgets": [
+        "Modules\\TitanNexus\\Filament\\Widgets\\CampaignPerformanceWidget",
+        "Modules\\TitanNexus\\Filament\\Widgets\\LeadQualityWidget",
+        "Modules\\TitanNexus\\Filament\\Widgets\\OverdueFollowupsWidget"
+    ],
+    "clusters": [],
+    "providers": [
+        "Modules\\TitanNexus\\Providers\\AuthServiceProvider",
+        "Modules\\TitanNexus\\Providers\\AutomationServiceProvider",
+        "Modules\\TitanNexus\\Providers\\BillingServiceProvider",
+        "Modules\\TitanNexus\\Providers\\EventServiceProvider",
+        "Modules\\TitanNexus\\Providers\\FilamentServiceProvider",
+        "Workdo\\Lead\\Providers\\EventServiceProvider",
+        "Workdo\\Lead\\Providers\\LeadServiceProvider",
+        "Workdo\\Lead\\Providers\\RouteServiceProvider",
+        "Workdo\\Lead\\Providers\\ViewComposer",
+        "Modules\\TitanNexus\\Providers\\ModuleBootServiceProvider",
+        "Modules\\TitanNexus\\Providers\\ModuleServiceProvider",
+        "Modules\\TitanNexus\\Providers\\PolicyServiceProvider",
+        "Modules\\TitanNexus\\Providers\\RepositoryServiceProvider",
+        "Modules\\TitanNexus\\Providers\\RouteServiceProvider",
+        "Modules\\TitanNexus\\Providers\\SearchServiceProvider",
+        "Modules\\TitanNexus\\Providers\\TenancyServiceProvider",
+        "Modules\\TitanNexus\\Providers\\TitanNexusServiceProvider",
+        "Modules\\TitanNexus\\Providers\\WorkflowServiceProvider"
+    ],
+    "migrations": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Database/Migrations/2026_01_01_000000_create_example_records_table.php"
+    ],
+    "views": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Resources/views",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/resources/views"
+    ],
+    "translations": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Resources/lang"
+    ],
+    "routes": [
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/admin.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/api.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/channels.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/console.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/internal.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/tenant.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/voice.php",
+        "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Routes/web.php"
+    ],
+    "issues": [
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource\\Pages\\CreateLeadRecord",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Modules\\TitanNexus\\Filament\\Resources\\LeadRecordResource\\Pages\\EditLeadRecord",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Workdo\\Lead\\Providers\\EventServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Workdo\\Lead\\Providers\\LeadServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Workdo\\Lead\\Providers\\RouteServiceProvider",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "class_file_missing",
+            "message": "Class was declared in manifest/discovery but no local file was found: Workdo\\Lead\\Providers\\ViewComposer",
+            "repairable": true,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Filament/Resources/ExampleRecordResource/Pages/CreateLeadRecord.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Filament/Resources/ExampleRecordResource/Pages/EditLeadRecord.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Filament/Resources/ExampleRecordResource/Pages/ListLeadRecords.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Filament/Resources/LeadRecordResource.php"
+        },
+        {
+            "level": "warning",
+            "code": "possible_filament_api_drift",
+            "message": "Possible old Filament API/reference to review: getPages()",
+            "repairable": false,
+            "path": "/home/saassmar/domains/titanzero.pro/public_html/Modules/TitanNexus/Filament/Resources/LeadRecordResource/Pages/ListLeadRecords.php"
+        }
+    ],
+    "repairs": [],
+    "manifest": {
+        "name": "TitanNexus",
+        "slug": "titan-hello",
+        "type": "spa-control-panel",
+        "version": "0.7.0",
+        "converted_from": [
+            "MarketingBot.zip",
+            "TitanNexusBase.zip"
+        ],
+        "enables": [
+            "lead acquisition SPA",
+            "campaign automation",
+            "AI cards",
+            "target discovery",
+            "vertical templates",
+            "follow-up sequencing",
+            "lead tracking",
+            "Ground Zero booking handoff",
+            "tenancy",
+            "billing",
+            "search"
+        ],
+        "merge_status": "legacy-code-merge-started",
+        "capability_groups": [
+            "campaigns",
+            "leads",
+            "deals",
+            "channels",
+            "voice_ai",
+            "inbox",
+            "outbox",
+            "ai_knowledge",
+            "booking_handoff"
+        ]
+    },
+    "health": {
+        "checked_at": "2026-04-29T03:58:42+00:00",
+        "checks_file": null,
+        "repair_file": null,
+        "contracts_file": null,
+        "checks": [],
+        "repair_actions": []
+    },
+    "fingerprint": "e44c8ad6b2dd69835e331785f6d5f43534a7b72a",
+    "healthy": true
+}

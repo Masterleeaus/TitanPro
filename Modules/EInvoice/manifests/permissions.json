@@ -1,0 +1,19 @@
+{
+  "schema": "titan.module.permissions.v1",
+  "module": "einvoice",
+  "permissions": [
+    "money.agent.use",
+    "money.view",
+    "einvoice.view",
+    "einvoice.create",
+    "einvoice.update",
+    "einvoice.delete",
+    "einvoice.export",
+    "einvoice.send",
+    "einvoice.xml.generate",
+    "einvoice.followup.run",
+    "einvoice.agent.use",
+    "einvoice.agent.train",
+    "einvoice.knowledge.manage"
+  ]
+}

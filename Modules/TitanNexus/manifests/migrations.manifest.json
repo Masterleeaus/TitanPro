@@ -1,0 +1,14 @@
+{
+  "enables": "installable/upgradable schema",
+  "tables": [
+    "contacts",
+    "segments",
+    "contact_lists",
+    "marketing_campaigns",
+    "message_histories",
+    "conversations",
+    "targets",
+    "ai_runs",
+    "bookings"
+  ]
+}

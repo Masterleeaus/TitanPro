@@ -1,0 +1,8 @@
+{
+  "enables": [
+    "AI intake",
+    "schedule assistance",
+    "material suggestion",
+    "job memory"
+  ]
+}

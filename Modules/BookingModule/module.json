@@ -1,0 +1,95 @@
+{
+  "name": "BookingModule",
+  "alias": "bookingmodule",
+  "description": "Booking, scheduling, dispatch, reminders and lifecycle automation module aligned to the Titan AI-native module blueprint.",
+  "keywords": [
+    "booking",
+    "service",
+    "scheduling",
+    "dispatch",
+    "automation",
+    "ai-native"
+  ],
+  "priority": 0,
+  "providers": [
+    "Modules\\BookingModule\\Providers\\BookingModuleServiceProvider"
+  ],
+  "aliases": {},
+  "files": [
+    "start.php"
+  ],
+  "requires": [
+    "ServiceManagement"
+  ],
+  "active": 1,
+  "order": 0,
+  "blueprint": {
+    "standard": "titan-ai-native-module",
+    "version": "master-aligned-v9",
+    "engine": true,
+    "filament_operator_surface": "optional",
+    "module_agent": "Agents/ModuleAgent/agent.manifest.json",
+    "knowledge_root": "Knowledge",
+    "manifests_root": "manifests",
+    "health_command": "bookingmodule:health"
+  },
+  "permissions": [
+    "add_booking",
+    "view_booking",
+    "edit_booking",
+    "delete_booking",
+    "view_booking_pages",
+    "manage_booking_pages",
+    "view_booking_page_requests",
+    "manage_dispatch_board",
+    "appointment dashboard manage",
+    "appointment manage",
+    "appointments show",
+    "question manage",
+    "schedule manage",
+    "appointments assign",
+    "schedule bulk assign",
+    "appointment settings manage",
+    "appointment dispatch",
+    "view_bookings",
+    "create_bookings",
+    "assign_cleaners",
+    "complete_booking",
+    "cancel_booking"
+  ],
+  "roles_permissions": {
+    "admin": [
+      "add_booking",
+      "view_booking",
+      "edit_booking",
+      "delete_booking",
+      "view_booking_pages",
+      "manage_booking_pages",
+      "view_booking_page_requests",
+      "manage_dispatch_board",
+      "view_bookings",
+      "create_bookings",
+      "assign_cleaners",
+      "complete_booking",
+      "cancel_booking"
+    ],
+    "manager": [
+      "view_booking",
+      "edit_booking",
+      "view_booking_pages",
+      "view_booking_page_requests",
+      "view_bookings",
+      "assign_cleaners",
+      "complete_booking"
+    ]
+  },
+  "menus": [],
+  "sidebar_menu": true,
+  "navigation_source": "Config/navigation.php",
+  "ai": {
+    "indexing": "AI/Indexing/indexing.manifest.json",
+    "retrieval": "AI/Retrieval/retrieval.policy.json",
+    "actions": "AI/Actions/action-map.json",
+    "guardrails": "AI/Guardrails/guardrails.json"
+  }
+}

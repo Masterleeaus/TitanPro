@@ -1,0 +1,20 @@
+{
+  "schema": "titan.module.lifecycle.v1",
+  "module": "einvoice",
+  "install": [
+    "migrate",
+    "seed_permissions",
+    "index_knowledge"
+  ],
+  "enable": [
+    "register_routes",
+    "register_events",
+    "register_ai_tools"
+  ],
+  "disable": [
+    "unregister_ai_tools"
+  ],
+  "uninstall": [
+    "archive_module_data"
+  ]
+}

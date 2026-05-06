@@ -1,0 +1,24 @@
+{
+  "collections": {
+    "invoice_outcomes": [
+      "tenant_id",
+      "invoice_id",
+      "stage",
+      "channel",
+      "outcome",
+      "days_to_pay"
+    ],
+    "payment_preferences": [
+      "tenant_id",
+      "customer_id",
+      "preferred_method",
+      "last_successful_tone"
+    ],
+    "job_update_patterns": [
+      "tenant_id",
+      "job_type",
+      "message_type",
+      "customer_response"
+    ]
+  }
+}

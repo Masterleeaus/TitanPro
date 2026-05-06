@@ -1,0 +1,10 @@
+{
+  "sync": [
+    "invoice_sent_journal",
+    "gst_posting",
+    "receivable_aging",
+    "write_off_journal",
+    "accountant_export_pack"
+  ],
+  "payment_status_source": "ZeroPay signals only"
+}

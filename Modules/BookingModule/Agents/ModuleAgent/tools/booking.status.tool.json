@@ -1,0 +1,15 @@
+{
+  "name": "booking.status",
+  "module": "bookingmodule",
+  "description": "Read a booking status with tenant-safe context.",
+  "risk": "read",
+  "requires_policy": "view_booking",
+  "input_schema": {
+    "type": "object",
+    "required": ["booking_id"],
+    "properties": {
+      "booking_id": {"type": "integer"},
+      "company_id": {"type": "integer"}
+    }
+  }
+}

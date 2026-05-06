@@ -1,0 +1,16 @@
+{
+  "datasets": [
+    {
+      "name": "vertical_outreach_examples",
+      "path": "Knowledge/examples/outreach-examples.md"
+    },
+    {
+      "name": "lead_scoring_rules",
+      "path": "Knowledge/policies/lead-scoring-policy.md"
+    },
+    {
+      "name": "campaign_sops",
+      "path": "Knowledge/sops/campaign-operations.md"
+    }
+  ]
+}

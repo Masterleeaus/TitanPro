@@ -1,0 +1,4 @@
+{
+  "enables": "company isolation",
+  "scope": "company_id"
+}
