@@ -31,6 +31,9 @@ class ModulesStatusCommand extends Command
 
     protected $description = 'Display enabled / disabled / installed status for all modules.';
 
+    /** Maximum description length before truncation. */
+    private const DESCRIPTION_MAX_LENGTH = 60;
+
     public function handle(): int
     {
         $modulesBase = base_path(config('titan-modules.path', 'Modules'));
@@ -156,8 +159,8 @@ class ModulesStatusCommand extends Command
                 : '<fg=red>NO</>';
 
             // Truncate long descriptions
-            $desc = mb_strlen($row['description']) > 60
-                ? mb_substr($row['description'], 0, 57) . '...'
+            $desc = mb_strlen($row['description']) > self::DESCRIPTION_MAX_LENGTH
+                ? mb_substr($row['description'], 0, self::DESCRIPTION_MAX_LENGTH - 3) . '...'
                 : $row['description'];
 
             return [

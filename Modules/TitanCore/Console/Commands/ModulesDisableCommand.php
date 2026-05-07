@@ -76,7 +76,7 @@ class ModulesDisableCommand extends Command
 
             if (! empty($dependants)) {
                 $this->components->error(
-                    "Cannot disable '{$moduleName}' — the following enabled module(s) depend on it:"
+                    "Cannot disable '{$moduleName}' -- the following enabled module(s) depend on it:"
                 );
 
                 foreach ($dependants as $dep) {
@@ -84,7 +84,7 @@ class ModulesDisableCommand extends Command
                 }
 
                 $this->line(
-                    "  <fg=gray>Tip: disable dependant modules first, or run with --force to override.</>"
+                    "  <fg=gray>Tip: disable dependent modules first, or run with --force to override.</>"
                 );
 
                 return self::FAILURE;
