@@ -2,11 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\ZeroFuss\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -28,14 +28,14 @@ class ZeroFussPanelProvider extends PanelProvider
         return $panel
             ->id('zerofuss')
             ->path('zerofuss')
-            ->brandName('ZeroFuss — Customer Portal')
+            ->brandName('ZeroFuss')
             ->colors([
                 'primary' => Color::Teal,
             ])
             ->discoverResources(in: app_path('Filament/ZeroFuss/Resources'), for: 'App\\Filament\\ZeroFuss\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroFuss/Pages'), for: 'App\\Filament\\ZeroFuss\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/ZeroFuss/Widgets'), for: 'App\\Filament\\ZeroFuss\\Widgets')
             ->widgets([

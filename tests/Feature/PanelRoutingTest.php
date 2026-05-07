@@ -20,7 +20,7 @@ dataset('canonical_panel_paths_with_roles', [
     ['/titanquotes', 'owner'],
     ['/zeropay', 'owner'],
     ['/titango', 'owner'],
-    ['/zerofuss', 'owner'],
+    ['/zerofuss', 'customer'],
     ['/titansolo', 'owner'],
     ['/titanstudio', 'owner'],
     ['/titannexus', 'owner'],

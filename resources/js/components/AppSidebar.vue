@@ -20,6 +20,7 @@ import AppLogo from './AppLogo.vue';
 const page = usePage<AppPageProps>();
 const roles = page.props.auth?.roles ?? [];
 const canAccessTitanGo = roles.some((role) => ['owner', 'admin', 'super_admin'].includes(role));
+const canAccessZeroFuss = roles.includes('customer');
 
 const mainNavItems: NavItem[] = [
     {
@@ -32,6 +33,15 @@ const mainNavItems: NavItem[] = [
               {
                   title: 'TitanGo Panel',
                   href: '/titango',
+                  icon: Smartphone,
+              },
+          ]
+        : []),
+    ...(canAccessZeroFuss
+        ? [
+              {
+                  title: 'ZeroFuss Portal',
+                  href: '/zerofuss',
                   icon: Smartphone,
               },
           ]
