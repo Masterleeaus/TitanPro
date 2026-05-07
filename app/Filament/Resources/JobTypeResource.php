@@ -49,8 +49,8 @@ class JobTypeResource extends Resource
                 Toggle::make('allows_recurring')->label('Can Be Recurring')->default(true),
                 Toggle::make('requires_quality_check')->label('Quality Check by Default')->default(false),
                 Textarea::make('required_equipment')->label('Required Equipment')->rows(3)->columnSpanFull(),
-                Select::make('checklist_task_ids')
-                    ->label('Service Checklists')
+                Select::make('task_library_item_ids')
+                    ->label('Task Library Bindings')
                     ->multiple()
                     ->dehydrated(false)
                     ->searchable()
@@ -108,11 +108,16 @@ class JobTypeResource extends Resource
     {
         $taskIds = array_values(array_unique(array_map('intval', $taskIds)));
 
-        $jobType->checklistItems()
-            ->whereNotNull('task_library_item_id')
-            ->when($taskIds !== [], fn (Builder $query) => $query->whereNotIn('task_library_item_id', $taskIds))
-            ->when($taskIds === [], fn (Builder $query) => $query)
-            ->delete();
+        if ($taskIds === []) {
+            $jobType->checklistItems()
+                ->whereNotNull('task_library_item_id')
+                ->delete();
+        } else {
+            $jobType->checklistItems()
+                ->whereNotNull('task_library_item_id')
+                ->whereNotIn('task_library_item_id', $taskIds)
+                ->delete();
+        }
 
         $tasks = JobChecklistItem::query()
             ->where('organization_id', $jobType->organization_id)

@@ -30,4 +30,32 @@ class Item extends Model implements TenantAware
     {
         return $this->belongsToMany(JobType::class, 'item_job_type')->withTimestamps();
     }
+
+    public static function pricingTypeLabels(): array
+    {
+        return [
+            'flat' => 'Flat',
+            'per_m2' => 'Per m²',
+            'per_unit' => 'Per unit',
+            'fixed' => 'Fixed price (legacy)',
+            'per_sqm' => 'Per m² (legacy)',
+            'quantity' => 'Per unit (legacy)',
+            'per_room' => 'Per room (legacy)',
+            'per_bathroom' => 'Per bathroom (legacy)',
+            'per_hour' => 'Per hour (legacy)',
+        ];
+    }
+
+    public static function pricingTypeLabel(?string $pricingType): string
+    {
+        return match ($pricingType) {
+            'flat', 'fixed' => 'Flat',
+            'per_m2', 'per_sqm' => 'Per m²',
+            'per_unit', 'quantity' => 'Per unit',
+            'per_room' => 'Per room',
+            'per_bathroom' => 'Per bathroom',
+            'per_hour' => 'Per hour',
+            default => (string) $pricingType,
+        };
+    }
 }

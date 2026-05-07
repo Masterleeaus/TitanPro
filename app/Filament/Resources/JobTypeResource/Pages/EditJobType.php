@@ -19,7 +19,7 @@ class EditJobType extends EditRecord
     {
         JobTypeResource::syncChecklistBindings(
             $this->record,
-            $this->data['checklist_task_ids'] ?? [],
+            $this->data['task_library_item_ids'] ?? [],
         );
     }
 }

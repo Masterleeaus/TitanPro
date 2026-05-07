@@ -43,15 +43,7 @@ class ItemResource extends Resource
                     'cleaning' => 'Cleaning', 'supplies' => 'Supplies', 'equipment' => 'Equipment', 'fee' => 'Fee', 'discount' => 'Discount', 'other' => 'Other',
                 ])->default('cleaning'),
                 Select::make('pricing_type')->label('Pricing Type')->options([
-                    'flat' => 'Flat',
-                    'per_m2' => 'Per m²',
-                    'per_unit' => 'Per unit',
-                    'fixed' => 'Fixed price (legacy)',
-                    'per_sqm' => 'Per m² (legacy)',
-                    'quantity' => 'Per unit (legacy)',
-                    'per_room' => 'Per room (legacy)',
-                    'per_bathroom' => 'Per bathroom (legacy)',
-                    'per_hour' => 'Per hour (legacy)',
+                    ...Item::pricingTypeLabels(),
                 ])->default('flat')->required(),
                 TextInput::make('unit_price')->label('Base Price')->numeric()->prefix('$')->minValue(0)->step(0.01)->required(),
                 Select::make('unit')->options([
@@ -85,15 +77,7 @@ class ItemResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Add-on')->searchable()->sortable(),
                 TextColumn::make('category')->badge()->sortable(),
-                TextColumn::make('pricing_type')->label('Pricing')->badge()->formatStateUsing(fn (?string $state): string => match ($state) {
-                    'flat', 'fixed' => 'Flat',
-                    'per_m2', 'per_sqm' => 'Per m²',
-                    'per_unit', 'quantity' => 'Per unit',
-                    'per_room' => 'Per room',
-                    'per_bathroom' => 'Per bathroom',
-                    'per_hour' => 'Per hour',
-                    default => (string) $state,
-                }),
+                TextColumn::make('pricing_type')->label('Pricing')->badge()->formatStateUsing(fn (?string $state): string => Item::pricingTypeLabel($state)),
                 TextColumn::make('unit_price')->label('Price')->money('USD')->sortable(),
                 TextColumn::make('unit')->sortable(),
                 TextColumn::make('attachable_services_count')->label('Services')->counts('attachableServices'),

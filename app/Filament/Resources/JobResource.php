@@ -7,7 +7,6 @@ use App\Models\Job;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -73,8 +72,6 @@ class JobResource extends Resource
                             ? $record->scheduled_at->diffInMinutes($record->scheduled_end_at)
                             : null)
                         ->required(),
-                    DateTimePicker::make('scheduled_at')->label('Scheduled Start')->disabled()->dehydrated(false),
-                    DateTimePicker::make('scheduled_end_at')->label('Scheduled End')->disabled()->dehydrated(false),
                     Select::make('assigned_to')->label('Assigned Cleaner')->relationship('assignedTechnician', 'name', fn (Builder $query) => $query
                         ->where('organization_id', auth()->user()?->organization_id)
                         ->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->where('name', 'technician')))->searchable()->preload(),
@@ -176,13 +173,21 @@ class JobResource extends Resource
     public static function prepareFormData(array $data): array
     {
         if (
-            ! empty($data['scheduled_date']) &&
-            ! empty($data['scheduled_start_time'])
+            array_key_exists('scheduled_date', $data) &&
+            array_key_exists('scheduled_start_time', $data) &&
+            $data['scheduled_date'] !== null &&
+            $data['scheduled_start_time'] !== null &&
+            $data['scheduled_date'] !== '' &&
+            $data['scheduled_start_time'] !== ''
         ) {
             $scheduledAt = Carbon::parse("{$data['scheduled_date']} {$data['scheduled_start_time']}");
             $data['scheduled_at'] = $scheduledAt;
 
-            if (! empty($data['estimated_duration_minutes'])) {
+            if (
+                array_key_exists('estimated_duration_minutes', $data) &&
+                $data['estimated_duration_minutes'] !== null &&
+                $data['estimated_duration_minutes'] !== ''
+            ) {
                 $data['scheduled_end_at'] = (clone $scheduledAt)->addMinutes((int) $data['estimated_duration_minutes']);
             }
         }

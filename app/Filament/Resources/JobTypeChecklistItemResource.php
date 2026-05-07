@@ -34,7 +34,16 @@ class JobTypeChecklistItemResource extends Resource
         return $schema->components([
             Section::make('Service Checklist Task')->columnSpanFull()->columns(1)->schema([
                 Select::make('job_type_id')->label('Service')->relationship('jobType', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->searchable()->preload()->required(),
-                Select::make('task_library_item_id')->label('Task Library Item')->options(fn () => JobChecklistItem::query()->where('organization_id', auth()->user()?->organization_id)->whereNull('job_id')->orderBy('label')->pluck('label', 'id'))->searchable()->preload()->required(fn (string $operation): bool => $operation === 'create'),
+                Select::make('task_library_item_id')
+                    ->label('Task Library Item')
+                    ->options(fn () => JobChecklistItem::query()
+                        ->where('organization_id', auth()->user()?->organization_id)
+                        ->whereNull('job_id')
+                        ->orderBy('label')
+                        ->pluck('label', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 TextInput::make('label')->label('Checklist Task')->required()->maxLength(200)->columnSpanFull(),
                 Textarea::make('instructions')->label('Cleaner Instructions')->rows(3)->columnSpanFull(),
                 TextInput::make('sort_order')->label('Task Order')->numeric()->default(0),
