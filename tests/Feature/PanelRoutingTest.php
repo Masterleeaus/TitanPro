@@ -4,15 +4,15 @@ use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 dataset('canonical_panel_paths', [
-    '/groundzero',
-    '/titanquotes',
-    '/zeropay',
-    '/titango',
-    '/zerofuss',
-    '/titansolo',
-    '/titanstudio',
-    '/titannexus',
-    '/titanpro',
+    ['/groundzero', 'owner'],
+    ['/titanquotes', 'owner'],
+    ['/zeropay', 'owner'],
+    ['/titango', 'owner'],
+    ['/zerofuss', 'owner'],
+    ['/titansolo', 'owner'],
+    ['/titanstudio', 'owner'],
+    ['/titannexus', 'owner'],
+    ['/titanpro', 'super_admin'],
 ]);
 
 dataset('legacy_panel_aliases', [
@@ -23,19 +23,20 @@ dataset('legacy_panel_aliases', [
     ['/admin', '/titanpro'],
 ]);
 
-test('canonical panel routes redirect guests to a login page', function (string $path) {
+test('canonical panel routes redirect guests to a login page', function (string $path, string $_role) {
     $response = $this->get($path);
     $location = $response->headers->get('Location');
 
+    $response->assertStatus(302);
     expect($response->isRedirect())->toBeTrue();
     expect(parse_url((string) $location, PHP_URL_PATH))->toEndWith('/login');
 })->with('canonical_panel_paths');
 
-test('canonical panel routes render for authenticated users', function (string $path) {
+test('canonical panel routes render for authenticated users', function (string $path, string $role) {
     $this->seed(RolesAndPermissionsSeeder::class);
 
     $user = User::factory()->create();
-    $user->assignRole('owner');
+    $user->assignRole($role);
 
     $this->actingAs($user)
         ->followingRedirects()
