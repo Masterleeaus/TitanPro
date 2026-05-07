@@ -3,6 +3,7 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Modules\TitanCore\Support\ManifestSchemaValidator;
@@ -75,7 +76,32 @@ class ModulesDoctorCommand extends Command
             $this->components->twoColumnDetail('<fg=green>✓ All dependency constraints satisfied</>', '');
         }
 
-        // ── 3. Manifest schema validation ─────────────────────────────────────
+        // ── 3. Safe-boot provider failures ────────────────────────────────────
+        $bootFailures = app()->bound('titan.module_boot_failures')
+            ? app('titan.module_boot_failures')
+            : [];
+        if ($bootFailures instanceof Collection) {
+            $bootFailures = $bootFailures->all();
+        }
+
+        if (is_array($bootFailures) && ! empty($bootFailures)) {
+            $hasProblems = true;
+            $this->components->warn('Safe-boot provider failures detected:');
+
+            foreach ($bootFailures as $failure) {
+                $module = $failure['module'] ?? 'unknown-module';
+                $provider = $failure['provider'] ?? 'unknown-provider';
+                $error = $failure['error'] ?? 'unknown error';
+
+                $this->line("  <fg=yellow>⚠</> <fg=cyan>{$module}</>: {$provider} — {$error}");
+            }
+
+            $this->newLine();
+        } else {
+            $this->components->twoColumnDetail('<fg=green>✓ No safe-boot provider failures</>', '');
+        }
+
+        // ── 4. Manifest schema validation ─────────────────────────────────────
         if (! $this->option('skip-schema')) {
             $schemaProblems = $this->runSchemaValidation();
             if ($schemaProblems) {
@@ -88,12 +114,17 @@ class ModulesDoctorCommand extends Command
             $hasProblems = true;
         }
 
-        // ── 5. Tenant boundary diagnostics ─────────────────────────────────────
+        // ── 5. AI manifest class checks ───────────────────────────────────────
+        if ($this->runAIManifestValidation()) {
+            $hasProblems = true;
+        }
+
+        // ── 6. Tenant boundary diagnostics ─────────────────────────────────────
         if ($this->runTenantBoundaryValidation()) {
             $hasProblems = true;
         }
 
-        // ── 6. Load order ─────────────────────────────────────────────────────
+        // ── 7. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();
@@ -261,6 +292,99 @@ class ModulesDoctorCommand extends Command
         $this->line('  <fg=red>✗</> <fg=cyan>driver_locations</>: missing organization_id column required for org-scoped technician location queries');
 
         return true;
+    }
+
+    /**
+     * Validate that agent and tool handler classes declared in AI manifests exist.
+     *
+     * Checks:
+     *  - `manifests/ai.manifest.json` → agents[] and tools[] class references
+     *  - Agent manifests under Agents/ → agent_class references
+     *
+     * Returns true if any missing classes were found.
+     */
+    private function runAIManifestValidation(): bool
+    {
+        $this->newLine();
+        $this->components->info('AI Manifest Class Validation:');
+
+        $modulesBase = base_path(config('titan-modules.path', 'Modules'));
+        if (! is_dir($modulesBase)) {
+            $this->components->warn('Modules directory not found. Skipping AI manifest validation.');
+
+            return false;
+        }
+
+        $statusMap   = $this->moduleStatusMap($modulesBase);
+        $hasFailures = false;
+
+        foreach (File::directories($modulesBase) as $moduleDir) {
+            $moduleName = basename($moduleDir);
+
+            if (! $this->isModuleEnabled($moduleDir, $moduleName, $statusMap)) {
+                continue;
+            }
+
+            // ── Check manifests/ai.manifest.json ──────────────────────────────
+            $aiManifestPath = $moduleDir.'/manifests/ai.manifest.json';
+            if (is_file($aiManifestPath)) {
+                $aiManifest = $this->decodeJsonFile($aiManifestPath);
+
+                if (is_array($aiManifest) && ($aiManifest['enabled'] ?? true) !== false) {
+                    foreach ((array) ($aiManifest['agents'] ?? []) as $index => $agent) {
+                        $class = is_string($agent)
+                            ? $agent
+                            : (is_array($agent) ? ($agent['agent_class'] ?? $agent['class'] ?? null) : null);
+
+                        if (is_string($class) && $class !== '' && ! class_exists($class)) {
+                            $hasFailures = true;
+                            $entryLabel  = "agents[{$index}]";
+                            $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/manifests/ai.manifest.json ({$entryLabel})</>: missing agent class {$class}");
+                        }
+                    }
+
+                    foreach ((array) ($aiManifest['tools'] ?? []) as $index => $tool) {
+                        $class = null;
+
+                        if (is_string($tool)) {
+                            $class = $tool;
+                        } elseif (is_array($tool)) {
+                            $class = $tool['class'] ?? $tool['handler'] ?? null;
+                        }
+
+                        if (is_string($class) && $class !== '' && str_contains($class, '\\') && ! class_exists($class)) {
+                            $hasFailures = true;
+                            $entryLabel  = "tools[{$index}]";
+                            $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/manifests/ai.manifest.json ({$entryLabel})</>: missing tool class {$class}");
+                        }
+                    }
+                }
+            }
+
+            // ── Check Agents/*/agent.manifest.json agent_class references ─────
+            $agentsDir = $moduleDir.'/Agents';
+            if (is_dir($agentsDir)) {
+                foreach (glob($agentsDir.'/*/agent.manifest.json') ?: [] as $agentManifestPath) {
+                    $agentManifest = $this->decodeJsonFile($agentManifestPath);
+                    if (! is_array($agentManifest)) {
+                        continue;
+                    }
+
+                    $agentClass = $agentManifest['agent_class'] ?? null;
+                    if (is_string($agentClass) && $agentClass !== '' && ! class_exists($agentClass)) {
+                        $hasFailures = true;
+                        $relPath     = str_replace($moduleDir.'/', '', $agentManifestPath);
+                        $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/{$relPath} (agent_class)</>: missing agent class {$agentClass}");
+                    }
+                }
+            }
+        }
+
+        if (! $hasFailures) {
+            $this->components->twoColumnDetail('<fg=green>✓ All declared AI agent and tool classes resolve</>', '');
+        }
+
+        return $hasFailures;
     }
 
     /**

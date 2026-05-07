@@ -2,20 +2,22 @@
 
 namespace App\Providers;
 
-use App\Platform\Modules\BlueprintManifestLoader;
-use App\Platform\Modules\ManifestLoader;
-use App\Platform\Modules\ModuleKernel;
-use App\Platform\Modules\ModuleMetadataReader;
+use App\Platform\AI\AIManifestRegistry;
+use App\Platform\AI\BlueprintAIManifestRegistry;
 use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Billing\BillingRegistry;
+use App\Platform\Filament\FilamentRegistry;
+use App\Platform\Modules\BlueprintManifestLoader;
 use App\Platform\Search\SearchRegistry;
 use App\Platform\Tenancy\TenancyRegistry;
 use App\Platform\Verticals\VerticalPackRegistry;
 use App\Platform\Verticals\VerticalResolver;
 use App\Platform\Modules\ChannelManifestRegistry;
 use App\Platform\Modules\DashboardRegistry;
-use App\Platform\Filament\FilamentRegistry;
+use App\Platform\Modules\ManifestLoader;
+use App\Platform\Modules\ModuleKernel;
 use App\Platform\Modules\ModuleManifestRegistryLoader;
+use App\Platform\Modules\ModuleMetadataReader;
 use App\Platform\Modules\OmniManifestRegistry;
 use App\Platform\Modules\PwaManifestRegistry;
 use App\Platform\Modules\SettingsRegistry;
@@ -24,12 +26,16 @@ use App\Platform\Modules\TableRegistry;
 use App\Platform\Modules\UiKitRegistry;
 use App\Platform\Modules\VoiceManifestRegistry;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
+use App\Support\FeatureRegistry;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Nwidart\Modules\Facades\Module as ModuleFacade;
 use Nwidart\Modules\Module;
 
 /**
@@ -62,6 +68,8 @@ class TitanModuleServiceProvider extends ServiceProvider
 
             return $app->make(ModuleKernel::class)->discover($paths);
         });
+        $this->app->singletonIf('titan.features', fn () => new FeatureRegistry());
+        $this->app->singletonIf('titan.module_boot_failures', fn () => collect());
 
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
@@ -75,6 +83,8 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->singleton(VerticalPackRegistry::class);
         $this->app->singleton(VerticalResolver::class);
         $this->app->singleton(WorkflowDefinitionRegistry::class);
+        $this->app->singleton(AIManifestRegistry::class);
+        $this->app->singleton(BlueprintAIManifestRegistry::class);
         $this->app->singleton(PwaManifestRegistry::class);
         $this->app->singleton(ChannelManifestRegistry::class);
         $this->app->singleton(OmniManifestRegistry::class);
@@ -93,6 +103,10 @@ class TitanModuleServiceProvider extends ServiceProvider
         $registryLoader = $this->app->make(ModuleManifestRegistryLoader::class);
         $registryLoader->load(base_path(config('titan-modules.path', 'Modules')));
 
+        if (class_exists(Module::class) && class_exists(ModuleFacade::class)) {
+            $this->discoverAndBootEnabledModules();
+        }
+
         // Guard: only inject when both Filament and nwidart/laravel-modules are present.
         if (! class_exists(PanelRegistry::class) || ! class_exists(Module::class)) {
             return;
@@ -105,6 +119,132 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->resolving(PanelRegistry::class, function (PanelRegistry $registry): void {
             $this->injectModuleFilamentPlugins($registry);
         });
+    }
+
+    protected function discoverAndBootEnabledModules(): void
+    {
+        // Controlled by config/titan-modules.php ('discovery.enabled').
+        if (! config('titan-modules.discovery.enabled', true)) {
+            return;
+        }
+
+        /** @var array<string, Module> $enabledModules */
+        $enabledModules = ModuleFacade::allEnabled();
+        // Replace the bootstrap-time empty default with the discovered enabled modules.
+        $this->app->instance('titan.modules', $enabledModules);
+
+        foreach ($enabledModules as $module) {
+            if (! $module instanceof Module) {
+                continue;
+            }
+
+            $this->registerDeclaredModuleProviders($module);
+            $this->registerDeclaredModuleFeatures($module);
+        }
+    }
+
+    protected function registerDeclaredModuleProviders(Module $module): void
+    {
+        $providers = $module->get('providers') ?? [];
+
+        if (! is_array($providers)) {
+            return;
+        }
+
+        foreach ($providers as $providerClass) {
+            if (! is_string($providerClass) || trim($providerClass) === '') {
+                Log::warning('Skipping invalid module provider entry in manifest.', [
+                    'module' => $module->getName(),
+                    'provider' => $providerClass,
+                ]);
+                continue;
+            }
+
+            try {
+                $this->app->register($providerClass);
+            } catch (\Throwable $e) {
+                $this->handleModuleProviderBootFailure($module->getName(), $providerClass, $e);
+            }
+        }
+    }
+
+    protected function registerDeclaredModuleFeatures(Module $module): void
+    {
+        /** @var FeatureRegistry $registry */
+        $registry = $this->app->make('titan.features');
+        $moduleName = $module->getName();
+
+        foreach ($this->normalizeFeatureEntries($module->get('capabilities') ?? []) as $key => $value) {
+            $registry->register($key, $value, $moduleName);
+        }
+
+        foreach ($this->normalizeFeatureEntries($module->get('features') ?? []) as $key => $value) {
+            $registry->register($key, $value, $moduleName);
+        }
+    }
+
+    /**
+     * @param  mixed  $entries
+     * @return array<string, mixed>
+     */
+    protected function normalizeFeatureEntries(mixed $entries): array
+    {
+        if (! is_array($entries)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($entries as $key => $value) {
+            if (is_int($key)) {
+                if (is_string($value) && trim($value) !== '') {
+                    $normalized[$value] = true;
+                }
+
+                continue;
+            }
+
+            if (is_string($key) && trim($key) !== '') {
+                $normalized[$key] = $value;
+            }
+        }
+
+        return $normalized;
+    }
+
+    protected function handleModuleProviderBootFailure(string $moduleName, string $providerClass, \Throwable $exception): void
+    {
+        // Controlled by config/titan-modules.php ('safe_boot').
+        if (! config('titan-modules.safe_boot', true)) {
+            throw $exception;
+        }
+
+        $message = "Skipping module provider [{$providerClass}] for module [{$moduleName}] due to boot failure.";
+        Log::warning($message, [
+            'module' => $moduleName,
+            'provider' => $providerClass,
+            'exception' => $exception::class,
+            'error' => $exception->getMessage(),
+        ]);
+
+        $failure = [
+            'module' => $moduleName,
+            'provider' => $providerClass,
+            'error' => $exception->getMessage(),
+        ];
+
+        $failures = $this->app->make('titan.module_boot_failures');
+        if (! $failures instanceof Collection) {
+            Log::warning('Unable to record module boot failure: invalid failure registry binding.', [
+                'module' => $moduleName,
+                'provider' => $providerClass,
+                'registry_type' => get_debug_type($failures),
+            ]);
+
+            return;
+        }
+
+        $failures->push($failure);
     }
 
     // ─── Plugin injection ─────────────────────────────────────────────────────

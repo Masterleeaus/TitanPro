@@ -69,6 +69,7 @@ test('TitanModuleServiceProvider boots before AI and security providers', functi
 
 test('Titan provider singletons are bound to the container', function () {
     expect($this->app->bound('titan.modules'))->toBeTrue();
+    expect($this->app->bound('titan.features'))->toBeTrue();
     expect($this->app->bound('titan.blueprints'))->toBeTrue();
     expect($this->app->bound('titan.ai.tools'))->toBeTrue();
     expect($this->app->bound('titan.model.router'))->toBeTrue();

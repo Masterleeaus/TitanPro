@@ -2,6 +2,8 @@
 
 namespace App\Platform\Modules;
 
+use App\Platform\AI\AIManifestRegistry;
+use App\Platform\AI\BlueprintAIManifestRegistry;
 use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Billing\BillingRegistry;
 use App\Platform\Filament\FilamentRegistry;
@@ -9,6 +11,15 @@ use App\Platform\Search\SearchRegistry;
 use App\Platform\Tenancy\TenancyRegistry;
 use App\Platform\Verticals\VerticalPackRegistry;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
+use App\Platform\Modules\ChannelManifestRegistry;
+use App\Platform\Modules\DashboardRegistry;
+use App\Platform\Modules\OmniManifestRegistry;
+use App\Platform\Modules\PwaManifestRegistry;
+use App\Platform\Modules\SettingsRegistry;
+use App\Platform\Modules\ShortcutRegistry;
+use App\Platform\Modules\TableRegistry;
+use App\Platform\Modules\UiKitRegistry;
+use App\Platform\Modules\VoiceManifestRegistry;
 
 class ModuleManifestRegistryLoader
 {
@@ -25,6 +36,8 @@ class ModuleManifestRegistryLoader
         private readonly BillingRegistry $billingRegistry,
         private readonly SearchRegistry $searchRegistry,
         private readonly TenancyRegistry $tenancyRegistry,
+        private readonly AIManifestRegistry $aiRegistry,
+        private readonly BlueprintAIManifestRegistry $blueprintAIRegistry,
         private readonly PwaManifestRegistry $pwaManifestRegistry,
         private readonly ChannelManifestRegistry $channelManifestRegistry,
         private readonly OmniManifestRegistry $omniManifestRegistry,
@@ -63,6 +76,8 @@ class ModuleManifestRegistryLoader
             $this->loadBillingManifest($moduleDir, $module);
             $this->loadSearchManifest($moduleDir, $module);
             $this->loadTenancyManifest($moduleDir, $module);
+            $this->loadAIManifest($moduleDir, $module);
+            $this->loadBlueprintAIManifest($moduleDir, $module);
             $this->loadPwaManifest($moduleDir, $module);
             $this->loadChannelManifest($moduleDir, $module);
             $this->loadOmniManifest($moduleDir, $module);
@@ -239,6 +254,66 @@ class ModuleManifestRegistryLoader
         }
 
         $this->tenancyRegistry->registerManifest($module, $tenancyManifest);
+    }
+
+    private function loadAIManifest(string $moduleDir, string $module): void
+    {
+        $aiManifest = $this->readJson($moduleDir.'/manifests/ai.manifest.json');
+
+        if (! is_array($aiManifest) || ($aiManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->aiRegistry->registerManifest($module, $aiManifest);
+    }
+
+    private function loadBlueprintAIManifest(string $moduleDir, string $module): void
+    {
+        $aiDir = $moduleDir.'/AI';
+
+        $blueprint = [
+            'agents'     => $this->discoverAgentManifests($moduleDir),
+            'indexing'   => $this->readJson($aiDir.'/Indexing/indexing.manifest.json'),
+            'retrieval'  => $this->readJson($aiDir.'/Retrieval/retrieval.policy.json'),
+            'citations'  => $this->readJson($aiDir.'/Citations/citation.schema.json'),
+            'guardrails' => $this->readJson($aiDir.'/Guardrails/guardrails.json'),
+            'actions'    => $this->readJson($aiDir.'/Actions/action-map.json'),
+            'telemetry'  => $this->readJson($aiDir.'/Telemetry/telemetry.manifest.json'),
+            'control'    => $this->readJson($aiDir.'/Control/control.manifest.json'),
+        ];
+
+        // Only register if at least one blueprint section has data.
+        $hasData = ! empty(array_filter($blueprint));
+
+        if (! $hasData) {
+            return;
+        }
+
+        $this->blueprintAIRegistry->registerManifest($module, $blueprint);
+    }
+
+    /**
+     * Discover all agent.manifest.json files under each Agents/ subdirectory.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function discoverAgentManifests(string $moduleDir): array
+    {
+        $agentsDir = $moduleDir.'/Agents';
+        $agents    = [];
+
+        if (! is_dir($agentsDir)) {
+            return $agents;
+        }
+
+        foreach (glob($agentsDir.'/*/agent.manifest.json') ?: [] as $manifestPath) {
+            $data = $this->readJson($manifestPath);
+            if (is_array($data)) {
+                $agents[] = $data;
+            }
+        }
+
+        return $agents;
     }
 
     private function loadPwaManifest(string $moduleDir, string $module): void
