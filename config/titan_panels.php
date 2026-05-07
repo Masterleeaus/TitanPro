@@ -31,12 +31,12 @@ return [
         ],
 
         'groundzero' => [
-            'label'       => 'Ground Zero',
-            'description' => 'Dispatch SPA — live job board and route management',
+            'label'       => 'GroundZero',
+            'description' => 'Primary owner/admin panel for day-to-day cleaning business operations',
             'path'        => 'groundzero',
             'color'       => 'cyan',
             'icon'        => 'heroicon-o-map',
-            'roles'       => ['owner', 'admin', 'dispatcher'],
+            'roles'       => ['owner', 'admin', 'dispatcher', 'bookkeeper'],
         ],
 
         'titanquotes' => [
