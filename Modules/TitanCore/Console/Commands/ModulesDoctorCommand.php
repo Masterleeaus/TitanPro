@@ -278,7 +278,9 @@ class ModulesDoctorCommand extends Command
 
                 if (is_array($aiManifest) && ($aiManifest['enabled'] ?? true) !== false) {
                     foreach ((array) ($aiManifest['agents'] ?? []) as $index => $agent) {
-                        $class = is_string($agent) ? $agent : (is_array($agent) ? ($agent['class'] ?? null) : null);
+                        $class = is_string($agent)
+                            ? $agent
+                            : (is_array($agent) ? ($agent['agent_class'] ?? $agent['class'] ?? null) : null);
 
                         if (is_string($class) && $class !== '' && ! class_exists($class)) {
                             $hasFailures = true;

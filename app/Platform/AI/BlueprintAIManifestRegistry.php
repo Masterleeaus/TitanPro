@@ -131,7 +131,9 @@ class BlueprintAIManifestRegistry
     }
 
     /**
-     * Normalize agent entries to a consistent array-of-arrays shape.
+     * Normalize agent entries: only arrays are accepted (representing parsed
+     * agent.manifest.json files). String references are skipped since they
+     * lack the required schema fields.
      *
      * @param  array<int, mixed>  $agents
      * @return array<int, array<string, mixed>>
@@ -143,8 +145,6 @@ class BlueprintAIManifestRegistry
         foreach ($agents as $agent) {
             if (is_array($agent) && ! empty($agent)) {
                 $normalized[] = $agent;
-            } elseif (is_string($agent) && $agent !== '') {
-                $normalized[] = ['agent_id' => $agent];
             }
         }
 

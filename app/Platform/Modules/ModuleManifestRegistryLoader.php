@@ -186,10 +186,7 @@ class ModuleManifestRegistryLoader
         ];
 
         // Only register if at least one blueprint section has data.
-        $hasData = ! empty(array_filter(
-            $blueprint,
-            fn (mixed $v): bool => ! empty($v)
-        ));
+        $hasData = ! empty(array_filter($blueprint));
 
         if (! $hasData) {
             return;
