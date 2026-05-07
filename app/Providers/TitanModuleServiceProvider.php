@@ -5,8 +5,13 @@ namespace App\Providers;
 use App\Platform\AI\AIManifestRegistry;
 use App\Platform\AI\BlueprintAIManifestRegistry;
 use App\Platform\Automation\AutomationRegistry;
+use App\Platform\Billing\BillingRegistry;
 use App\Platform\Filament\FilamentRegistry;
 use App\Platform\Modules\BlueprintManifestLoader;
+use App\Platform\Search\SearchRegistry;
+use App\Platform\Tenancy\TenancyRegistry;
+use App\Platform\Verticals\VerticalPackRegistry;
+use App\Platform\Verticals\VerticalResolver;
 use App\Platform\Modules\ChannelManifestRegistry;
 use App\Platform\Modules\DashboardRegistry;
 use App\Platform\Modules\ManifestLoader;
@@ -71,7 +76,12 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->singleton(CurrentTenant::class);
 
         $this->app->singletonIf(AutomationRegistry::class);
+        $this->app->singleton(BillingRegistry::class);
         $this->app->singleton(FilamentRegistry::class);
+        $this->app->singleton(SearchRegistry::class);
+        $this->app->singleton(TenancyRegistry::class);
+        $this->app->singleton(VerticalPackRegistry::class);
+        $this->app->singleton(VerticalResolver::class);
         $this->app->singleton(WorkflowDefinitionRegistry::class);
         $this->app->singleton(AIManifestRegistry::class);
         $this->app->singleton(BlueprintAIManifestRegistry::class);
