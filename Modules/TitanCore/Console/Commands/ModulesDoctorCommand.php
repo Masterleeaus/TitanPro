@@ -223,7 +223,7 @@ class ModulesDoctorCommand extends Command
                 }
 
                 $hasFailures = true;
-                $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/automation.manifest</>: missing handler class {$class}");
+                $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/manifests/automation.manifest.json</>: missing handler class {$class}");
             }
         }
 

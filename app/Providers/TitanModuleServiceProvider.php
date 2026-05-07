@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Filament\FilamentRegistry;
 use App\Platform\Modules\ModuleManifestRegistryLoader;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
@@ -34,6 +35,7 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->singleton(TenantResolver::class);
         $this->app->singleton(CurrentTenant::class);
 
+        $this->app->singletonIf(AutomationRegistry::class);
         $this->app->singleton(FilamentRegistry::class);
         $this->app->singleton(WorkflowDefinitionRegistry::class);
         $this->app->singleton(ModuleManifestRegistryLoader::class);

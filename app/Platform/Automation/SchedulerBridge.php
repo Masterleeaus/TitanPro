@@ -66,6 +66,11 @@ class SchedulerBridge
                         'scheduler_hook' => $id,
                         'cadence' => $cadence,
                     ]);
+                } else {
+                    logger()->warning('Automation scheduler hook class is missing handle() method.', [
+                        'class' => $class,
+                        'hook' => $id,
+                    ]);
                 }
             })->name("automation:scheduler-hook:{$id}")->withoutOverlapping();
 
