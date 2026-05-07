@@ -79,6 +79,7 @@ test('modules permissions sync command creates crmcore permissions idempotently'
 
     expect(Permission::where('name', 'crmcore.view')->where('guard_name', 'web')->exists())->toBeTrue();
     $firstCount = Permission::where('name', 'like', 'crmcore.%')->count();
+    expect($firstCount)->toBeGreaterThan(0);
 
     $this->artisan('modules:permissions-sync', ['--module' => ['CRMCore']])->assertExitCode(0);
 

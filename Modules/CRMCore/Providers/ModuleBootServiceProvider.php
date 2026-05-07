@@ -23,7 +23,13 @@ class ModuleBootServiceProvider extends ServiceProvider
             return;
         }
 
-        $decoded = json_decode((string) file_get_contents($manifestPath), true);
+        $raw = file_get_contents($manifestPath);
+        if ($raw === false) {
+            return;
+        }
+
+        $decoded = json_decode($raw, true);
+        $decoded = is_array($decoded) ? $decoded : [];
         $groups = is_array($decoded['groups'] ?? null) ? $decoded['groups'] : [];
 
         if ($groups === []) {

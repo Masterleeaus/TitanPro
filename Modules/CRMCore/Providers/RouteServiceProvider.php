@@ -8,6 +8,8 @@ use Nwidart\Modules\Facades\Module;
 
 class RouteServiceProvider extends ServiceProvider
 {
+    private const DEFAULT_SURFACES = ['web', 'api', 'internal', 'tenant'];
+
     public function map(): void
     {
         if ($this->moduleIsDisabled()) {
@@ -47,13 +49,20 @@ class RouteServiceProvider extends ServiceProvider
     {
         $manifestPath = __DIR__ . '/../manifests/routes.manifest.json';
         if (! file_exists($manifestPath)) {
-            return ['web', 'api', 'internal', 'tenant'];
+            return self::DEFAULT_SURFACES;
         }
 
-        $decoded = json_decode((string) file_get_contents($manifestPath), true);
+        $raw = file_get_contents($manifestPath);
+        if ($raw === false) {
+            return self::DEFAULT_SURFACES;
+        }
+
+        $decoded = json_decode($raw, true);
+        $decoded = is_array($decoded) ? $decoded : [];
         $routes = is_array($decoded['routes'] ?? null) ? $decoded['routes'] : [];
 
-        return array_values(array_filter($routes, static fn ($route) => is_string($route) && $route !== ''));
+        return array_values(array_filter($routes, static fn ($route) => is_string($route) && $route !== ''))
+            ?: self::DEFAULT_SURFACES;
     }
 
     private function moduleIsDisabled(): bool

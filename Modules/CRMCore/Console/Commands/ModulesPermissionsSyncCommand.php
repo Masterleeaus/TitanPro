@@ -37,7 +37,13 @@ class ModulesPermissionsSyncCommand extends Command
                 continue;
             }
 
-            $decoded = json_decode((string) file_get_contents($permissionsPath), true);
+            $raw = file_get_contents($permissionsPath);
+            if ($raw === false) {
+                continue;
+            }
+
+            $decoded = json_decode($raw, true);
+            $decoded = is_array($decoded) ? $decoded : [];
             $permissions = is_array($decoded['permissions'] ?? null) ? $decoded['permissions'] : [];
 
             $scanned++;
@@ -72,7 +78,13 @@ class ModulesPermissionsSyncCommand extends Command
             return null;
         }
 
-        $decoded = json_decode((string) file_get_contents($moduleJson), true);
+        $raw = file_get_contents($moduleJson);
+        if ($raw === false) {
+            return null;
+        }
+
+        $decoded = json_decode($raw, true);
+        $decoded = is_array($decoded) ? $decoded : [];
 
         return is_string($decoded['name'] ?? null) ? $decoded['name'] : null;
     }
@@ -84,7 +96,7 @@ class ModulesPermissionsSyncCommand extends Command
         }
 
         foreach (array_unique([$manifestName, $dirName]) as $candidate) {
-            if (! is_string($candidate) || $candidate === '') {
+            if ($candidate === '') {
                 continue;
             }
 
