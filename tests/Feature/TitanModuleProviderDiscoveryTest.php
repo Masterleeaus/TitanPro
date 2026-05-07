@@ -5,25 +5,16 @@ use App\Support\FeatureRegistry;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Modules\TitanCore\Support\ModuleDependencyGraph;
 use Nwidart\Modules\Module;
 
-if (! class_exists('TitanTestDiscoveredProvider')) {
-    class TitanTestDiscoveredProvider extends ServiceProvider
-    {
-        public function register(): void
-        {
-            app()->instance('titan.test.discovered_provider_loaded', true);
-        }
-    }
-}
-
-function titanMakeModuleStub(string $name, array $manifest = []): Module
+function makeModuleStub(string $name, array $manifest = []): Module
 {
     $stub = Mockery::mock(Module::class);
     $stub->allows('getName')->andReturn($name);
-    $stub->allows('get')->with(Mockery::any())->andReturnUsing(function (string $key) use ($manifest) {
+    $stub->allows('get')->with(Mockery::any())->andReturnUsing(function (string $lookupKey) use ($manifest) {
         $value = $manifest;
-        foreach (explode('.', $key) as $segment) {
+        foreach (explode('.', $lookupKey) as $segment) {
             if (! is_array($value) || ! array_key_exists($segment, $value)) {
                 return null;
             }
@@ -36,7 +27,7 @@ function titanMakeModuleStub(string $name, array $manifest = []): Module
     return $stub;
 }
 
-function titanMakeDiscoveryProvider(): TitanModuleServiceProvider
+function makeDiscoveryProvider(): TitanModuleServiceProvider
 {
     return new class(app()) extends TitanModuleServiceProvider
     {
@@ -54,7 +45,15 @@ function titanMakeDiscoveryProvider(): TitanModuleServiceProvider
 
 beforeEach(function () {
     app()->instance('titan.features', new FeatureRegistry());
-    app()->instance('titan.module_boot_failures', []);
+    app()->instance('titan.module_boot_failures', collect());
+
+    $graph = Mockery::mock(ModuleDependencyGraph::class);
+    $graph->allows('build');
+    $graph->allows('detectCycles')->andReturn([]);
+    $graph->allows('getAllIssues')->andReturn([]);
+    $graph->allows('resolveLoadOrder')->andReturn([]);
+    $graph->allows('getNodes')->andReturn([]);
+    app()->instance(ModuleDependencyGraph::class, $graph);
 });
 
 test('feature registry is accessible from the container', function () {
@@ -64,10 +63,17 @@ test('feature registry is accessible from the container', function () {
 
 test('auto-discovery registers providers declared in module manifests', function () {
     app()->forgetInstance('titan.test.discovered_provider_loaded');
+    $discoveredProviderClass = new class extends ServiceProvider
+    {
+        public function register(): void
+        {
+            app()->instance('titan.test.discovered_provider_loaded', true);
+        }
+    };
 
-    $provider = titanMakeDiscoveryProvider();
+    $provider = makeDiscoveryProvider();
     $provider->testRegisterDeclaredModuleProviders(
-        titanMakeModuleStub('DemoModule', ['providers' => [TitanTestDiscoveredProvider::class]])
+        makeModuleStub('DemoModule', ['providers' => [$discoveredProviderClass::class]])
     );
 
     expect(app()->bound('titan.test.discovered_provider_loaded'))->toBeTrue();
@@ -77,12 +83,12 @@ test('auto-discovery registers providers declared in module manifests', function
 test('broken module providers are skipped and logged in safe-boot mode', function () {
     Log::spy();
 
-    $provider = titanMakeDiscoveryProvider();
+    $provider = makeDiscoveryProvider();
     $provider->testRegisterDeclaredModuleProviders(
-        titanMakeModuleStub('BrokenModule', ['providers' => ['Modules\\Broken\\Providers\\MissingProvider']])
+        makeModuleStub('BrokenModule', ['providers' => ['Modules\\Broken\\Providers\\MissingProvider']])
     );
 
-    $failures = app('titan.module_boot_failures');
+    $failures = app('titan.module_boot_failures')->all();
 
     expect($failures)->toBeArray()
         ->and($failures)->toHaveCount(1)
@@ -93,16 +99,16 @@ test('broken module providers are skipped and logged in safe-boot mode', functio
 });
 
 test('feature registry stores and retrieves features across modules', function () {
-    $provider = titanMakeDiscoveryProvider();
+    $provider = makeDiscoveryProvider();
 
     $provider->testRegisterDeclaredModuleFeatures(
-        titanMakeModuleStub('ModuleOne', [
+        makeModuleStub('ModuleOne', [
             'capabilities' => ['capability.alpha', 'capability.beta'],
         ])
     );
 
     $provider->testRegisterDeclaredModuleFeatures(
-        titanMakeModuleStub('ModuleTwo', [
+        makeModuleStub('ModuleTwo', [
             'features' => [
                 'feature.gamma' => ['enabled' => true],
                 'feature.delta',
@@ -121,13 +127,13 @@ test('feature registry stores and retrieves features across modules', function (
 
 test('duplicate feature keys log warnings instead of crashing', function () {
     Log::spy();
-    $provider = titanMakeDiscoveryProvider();
+    $provider = makeDiscoveryProvider();
 
     $provider->testRegisterDeclaredModuleFeatures(
-        titanMakeModuleStub('ModuleOne', ['capabilities' => ['feature.duplicate']])
+        makeModuleStub('ModuleOne', ['capabilities' => ['feature.duplicate']])
     );
     $provider->testRegisterDeclaredModuleFeatures(
-        titanMakeModuleStub('ModuleTwo', ['features' => ['feature.duplicate']])
+        makeModuleStub('ModuleTwo', ['features' => ['feature.duplicate']])
     );
 
     /** @var FeatureRegistry $features */
@@ -140,16 +146,27 @@ test('duplicate feature keys log warnings instead of crashing', function () {
 });
 
 test('safe-boot failures appear in modules doctor output', function () {
-    app()->instance('titan.module_boot_failures', [[
+    app()->instance('titan.module_boot_failures', collect([[
         'module' => 'BrokenModule',
         'provider' => 'Modules\\Broken\\Providers\\MissingProvider',
         'error' => 'Class not found',
-    ]]);
+    ]]));
 
-    Artisan::call('modules:doctor', ['--skip-schema' => true]);
+    $exitCode = Artisan::call('modules:doctor --skip-schema');
     $output = Artisan::output();
 
+    expect($exitCode)->toBe(1);
     expect($output)->toContain('Safe-boot provider failures detected')
         ->toContain('BrokenModule')
         ->toContain('Modules\\Broken\\Providers\\MissingProvider');
+});
+
+test('modules doctor succeeds when no safe-boot failures are recorded', function () {
+    app()->instance('titan.module_boot_failures', collect());
+
+    $exitCode = Artisan::call('modules:doctor --skip-schema');
+    $output = Artisan::output();
+
+    expect($exitCode)->toBe(0);
+    expect($output)->toContain('No safe-boot provider failures');
 });

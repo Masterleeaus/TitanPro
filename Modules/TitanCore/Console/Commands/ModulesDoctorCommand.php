@@ -3,6 +3,7 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Modules\TitanCore\Support\ManifestSchemaValidator;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
@@ -78,6 +79,9 @@ class ModulesDoctorCommand extends Command
         $bootFailures = app()->bound('titan.module_boot_failures')
             ? app('titan.module_boot_failures')
             : [];
+        if ($bootFailures instanceof Collection) {
+            $bootFailures = $bootFailures->all();
+        }
 
         if (is_array($bootFailures) && ! empty($bootFailures)) {
             $hasProblems = true;

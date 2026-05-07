@@ -8,6 +8,7 @@ use App\Tenancy\TenantResolver;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Facades\Module as ModuleFacade;
@@ -30,7 +31,7 @@ class TitanModuleServiceProvider extends ServiceProvider
         // the enabled-module list without circular boot-order issues.
         $this->app->singletonIf('titan.modules', fn () => []);
         $this->app->singletonIf('titan.features', fn () => new FeatureRegistry());
-        $this->app->singletonIf('titan.module_boot_failures', fn () => []);
+        $this->app->singletonIf('titan.module_boot_failures', fn () => collect());
 
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
@@ -58,12 +59,14 @@ class TitanModuleServiceProvider extends ServiceProvider
 
     protected function discoverAndBootEnabledModules(): void
     {
+        // Controlled by config/titan-modules.php ('discovery.enabled').
         if (! config('titan-modules.discovery.enabled', true)) {
             return;
         }
 
         /** @var array<string, Module> $enabledModules */
         $enabledModules = ModuleFacade::allEnabled();
+        // Replace the bootstrap-time empty default with the discovered enabled modules.
         $this->app->instance('titan.modules', $enabledModules);
 
         foreach ($enabledModules as $module) {
@@ -86,6 +89,10 @@ class TitanModuleServiceProvider extends ServiceProvider
 
         foreach ($providers as $providerClass) {
             if (! is_string($providerClass) || trim($providerClass) === '') {
+                Log::warning('Skipping invalid module provider entry in manifest.', [
+                    'module' => $module->getName(),
+                    'provider' => $providerClass,
+                ]);
                 continue;
             }
 
@@ -143,6 +150,11 @@ class TitanModuleServiceProvider extends ServiceProvider
 
     protected function handleModuleProviderBootFailure(string $moduleName, string $providerClass, \Throwable $exception): void
     {
+        // Controlled by config/titan-modules.php ('safe_boot').
+        if (! config('titan-modules.safe_boot', true)) {
+            throw $exception;
+        }
+
         $message = "Skipping module provider [{$providerClass}] for module [{$moduleName}] due to boot failure.";
         Log::warning($message, [
             'module' => $moduleName,
@@ -151,21 +163,24 @@ class TitanModuleServiceProvider extends ServiceProvider
             'error' => $exception->getMessage(),
         ]);
 
-        $failures = $this->app->make('titan.module_boot_failures');
-        if (! is_array($failures)) {
-            $failures = [];
-        }
-
-        $failures[] = [
+        $failure = [
             'module' => $moduleName,
             'provider' => $providerClass,
             'error' => $exception->getMessage(),
         ];
-        $this->app->instance('titan.module_boot_failures', $failures);
 
-        if (! config('titan-modules.safe_boot', true)) {
-            throw $exception;
+        $failures = $this->app->make('titan.module_boot_failures');
+        if (! $failures instanceof Collection) {
+            Log::warning('Unable to record module boot failure: invalid failure registry binding.', [
+                'module' => $moduleName,
+                'provider' => $providerClass,
+                'registry_type' => get_debug_type($failures),
+            ]);
+
+            return;
         }
+
+        $failures->push($failure);
     }
 
     // ─── Plugin injection ─────────────────────────────────────────────────────
