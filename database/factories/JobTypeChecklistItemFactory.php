@@ -28,6 +28,7 @@ class JobTypeChecklistItemFactory extends Factory
             ]),
             'sort_order' => 0,
             'is_required' => false,
+            'required_override' => false,
         ];
     }
 

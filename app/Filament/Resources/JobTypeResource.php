@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\JobTypeResource\Pages;
+use App\Models\JobChecklistItem;
 use App\Models\JobType;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
@@ -42,12 +43,29 @@ class JobTypeResource extends Resource
                     'residential' => 'Residential', 'commercial' => 'Commercial', 'deep_clean' => 'Deep Clean', 'move_out' => 'Move-out / End-of-lease', 'airbnb' => 'Airbnb / Turnover', 'specialty' => 'Specialty',
                 ])->default('residential'),
                 TextInput::make('default_price')->label('Default Price')->numeric()->prefix('$')->minValue(0)->step(0.01),
-                TextInput::make('default_duration_minutes')->label('Default Duration Minutes')->numeric()->minValue(0),
+                TextInput::make('default_duration_minutes')->label('Default Duration (minutes)')->numeric()->minValue(0),
                 TextInput::make('recommended_team_size')->label('Recommended Team Size')->numeric()->minValue(1)->default(1),
                 ColorPicker::make('color')->required()->default('#6366f1')->rules(['regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/']),
                 Toggle::make('allows_recurring')->label('Can Be Recurring')->default(true),
                 Toggle::make('requires_quality_check')->label('Quality Check by Default')->default(false),
                 Textarea::make('required_equipment')->label('Required Equipment')->rows(3)->columnSpanFull(),
+                Select::make('checklist_task_ids')
+                    ->label('Service Checklists')
+                    ->multiple()
+                    ->dehydrated(false)
+                    ->searchable()
+                    ->preload()
+                    ->options(fn (): array => JobChecklistItem::query()
+                        ->where('organization_id', auth()->user()?->organization_id)
+                        ->whereNull('job_id')
+                        ->orderBy('sort_order')
+                        ->orderBy('label')
+                        ->pluck('label', 'id')
+                        ->all())
+                    ->default(fn (?JobType $record): array => $record?->checklistItems()
+                        ->whereNotNull('task_library_item_id')
+                        ->pluck('task_library_item_id')
+                        ->all() ?? []),
                 Textarea::make('description')->label('Service Scope')->rows(3)->columnSpanFull(),
                 Toggle::make('is_active')->label('Active')->default(true),
             ]),
@@ -84,5 +102,43 @@ class JobTypeResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('organization_id', auth()->user()?->organization_id);
+    }
+
+    public static function syncChecklistBindings(JobType $jobType, array $taskIds): void
+    {
+        $taskIds = array_values(array_unique(array_map('intval', $taskIds)));
+
+        $jobType->checklistItems()
+            ->whereNotNull('task_library_item_id')
+            ->when($taskIds !== [], fn (Builder $query) => $query->whereNotIn('task_library_item_id', $taskIds))
+            ->when($taskIds === [], fn (Builder $query) => $query)
+            ->delete();
+
+        $tasks = JobChecklistItem::query()
+            ->where('organization_id', $jobType->organization_id)
+            ->whereNull('job_id')
+            ->whereIn('id', $taskIds)
+            ->get()
+            ->keyBy('id');
+
+        foreach ($taskIds as $index => $taskId) {
+            $task = $tasks->get($taskId);
+
+            if (! $task) {
+                continue;
+            }
+
+            $jobType->checklistItems()->updateOrCreate(
+                ['task_library_item_id' => $task->id],
+                [
+                    'label' => $task->label,
+                    'instructions' => $task->instructions,
+                    'sort_order' => $index + 1,
+                    'is_required' => $task->is_required,
+                    'required_override' => false,
+                    'requires_photo' => $task->requires_photo,
+                ],
+            );
+        }
     }
 }

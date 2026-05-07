@@ -5,10 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\JobResource\Pages;
 use App\Models\Job;
 use App\Models\User;
+use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -44,13 +47,37 @@ class JobResource extends Resource
                 ->columns(1)
                 ->schema([
                     TextInput::make('title')->required()->maxLength(255)->columnSpanFull(),
-                    Select::make('status')->options(Job::statuses())->default(Job::STATUS_SCHEDULED)->required(),
+                    Select::make('status')
+                        ->options(fn (?Job $record): array => $record
+                            ? Job::adminTransitionOptions($record->status)
+                            : Job::adminWorkflowStatuses())
+                        ->default(Job::STATUS_SCHEDULED)
+                        ->required(),
                     Select::make('customer_id')->label('Customer')->relationship('customer', 'last_name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name)->searchable()->preload()->required(),
                     Select::make('property_id')->label('Property')->relationship('property', 'address_line1', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->searchable()->preload(),
                     Select::make('job_type_id')->label('Service')->relationship('jobType', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id)->where('is_active', true))->searchable()->preload(),
-                    DateTimePicker::make('scheduled_at')->label('Scheduled Start'),
-                    DateTimePicker::make('scheduled_end_at')->label('Scheduled End'),
-                    Select::make('assigned_to')->label('Cleaner / Crew Lead')->relationship('assignedTechnician', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->searchable()->preload(),
+                    DatePicker::make('scheduled_date')
+                        ->label('Scheduled Date')
+                        ->default(fn (?Job $record): ?string => $record?->scheduled_at?->toDateString())
+                        ->required(),
+                    TimePicker::make('scheduled_start_time')
+                        ->label('Start Time')
+                        ->seconds(false)
+                        ->default(fn (?Job $record): ?string => $record?->scheduled_at?->format('H:i'))
+                        ->required(),
+                    TextInput::make('estimated_duration_minutes')
+                        ->label('Estimated Duration (minutes)')
+                        ->numeric()
+                        ->minValue(1)
+                        ->default(fn (?Job $record): ?int => ($record?->scheduled_at && $record?->scheduled_end_at)
+                            ? $record->scheduled_at->diffInMinutes($record->scheduled_end_at)
+                            : null)
+                        ->required(),
+                    DateTimePicker::make('scheduled_at')->label('Scheduled Start')->disabled()->dehydrated(false),
+                    DateTimePicker::make('scheduled_end_at')->label('Scheduled End')->disabled()->dehydrated(false),
+                    Select::make('assigned_to')->label('Assigned Cleaner')->relationship('assignedTechnician', 'name', fn (Builder $query) => $query
+                        ->where('organization_id', auth()->user()?->organization_id)
+                        ->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->where('name', 'technician')))->searchable()->preload(),
                 ]),
             FormSection::make('Cleaning Details')
                 ->columnSpanFull()
@@ -65,9 +92,9 @@ class JobResource extends Resource
                     Toggle::make('requires_quality_check')->label('Quality Check Required')->default(false),
                     TextInput::make('quality_score')->label('Quality Score')->numeric()->minValue(0)->maxValue(100),
                     Textarea::make('access_instructions')->label('Access Instructions')->rows(3)->columnSpanFull(),
-                    Textarea::make('description')->label('Job Scope')->rows(3)->columnSpanFull(),
-                    Textarea::make('customer_notes')->label('Customer Notes')->rows(3),
-                    Textarea::make('office_notes')->label('Office Notes')->rows(3),
+                    Textarea::make('description')->label('Notes')->rows(3)->columnSpanFull(),
+                    Textarea::make('customer_notes')->label('Customer-facing Notes')->rows(3),
+                    Textarea::make('office_notes')->label('Internal Notes')->rows(3),
                     Textarea::make('technician_notes')->label('Cleaner Notes')->rows(3),
                 ]),
         ]);
@@ -121,7 +148,9 @@ class JobResource extends Resource
             ->filters([
                 SelectFilter::make('status')->options(Job::statuses()),
                 SelectFilter::make('job_type_id')->label('Service')->relationship('jobType', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id)),
-                SelectFilter::make('assigned_to')->label('Cleaner')->relationship('assignedTechnician', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->placeholder('All cleaners'),
+                SelectFilter::make('assigned_to')->label('Cleaner')->relationship('assignedTechnician', 'name', fn (Builder $query) => $query
+                    ->where('organization_id', auth()->user()?->organization_id)
+                    ->whereHas('roles', fn (Builder $roleQuery) => $roleQuery->where('name', 'technician')))->placeholder('All cleaners'),
             ])
             ->defaultSort('scheduled_at', 'desc');
     }
@@ -142,5 +171,24 @@ class JobResource extends Resource
             ->withoutGlobalScopes([SoftDeletingScope::class])
             ->where('organization_id', auth()->user()?->organization_id)
             ->with(['customer', 'assignedTechnician', 'jobType']);
+    }
+
+    public static function prepareFormData(array $data): array
+    {
+        if (
+            ! empty($data['scheduled_date']) &&
+            ! empty($data['scheduled_start_time'])
+        ) {
+            $scheduledAt = Carbon::parse("{$data['scheduled_date']} {$data['scheduled_start_time']}");
+            $data['scheduled_at'] = $scheduledAt;
+
+            if (! empty($data['estimated_duration_minutes'])) {
+                $data['scheduled_end_at'] = (clone $scheduledAt)->addMinutes((int) $data['estimated_duration_minutes']);
+            }
+        }
+
+        unset($data['scheduled_date'], $data['scheduled_start_time'], $data['estimated_duration_minutes']);
+
+        return $data;
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Item extends Model implements TenantAware
@@ -23,5 +24,10 @@ class Item extends Model implements TenantAware
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function attachableServices(): BelongsToMany
+    {
+        return $this->belongsToMany(JobType::class, 'item_job_type')->withTimestamps();
     }
 }
