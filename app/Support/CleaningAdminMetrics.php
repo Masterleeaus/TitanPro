@@ -87,6 +87,8 @@ class CleaningAdminMetrics
     {
         $todayStart = now()->startOfDay();
         $todayEnd = now()->endOfDay();
+        $weekStart = now()->startOfWeek();
+        $weekEnd = now()->endOfWeek();
         $monthStart = now()->startOfMonth();
         $monthEnd = now()->endOfMonth();
 
@@ -111,8 +113,24 @@ class CleaningAdminMetrics
             'payments_this_month' => (float) (clone $payments)
                 ->whereBetween('paid_at', [$monthStart, $monthEnd])
                 ->sum('amount'),
+            'revenue_this_week' => (float) (clone $payments)
+                ->whereBetween('paid_at', [$weekStart, $weekEnd])
+                ->sum('amount'),
+            'revenue_this_month' => (float) (clone $payments)
+                ->whereBetween('paid_at', [$monthStart, $monthEnd])
+                ->sum('amount'),
+            'average_job_value' => (float) (clone $invoices)
+                ->whereNotIn('status', [Invoice::STATUS_DRAFT, Invoice::STATUS_VOID])
+                ->avg('total'),
             'jobs_today' => (clone $jobs)
                 ->whereBetween('scheduled_at', [$todayStart, $todayEnd])
+                ->count(),
+            'scheduled_jobs_today' => (clone $jobs)
+                ->whereBetween('scheduled_at', [$todayStart, $todayEnd])
+                ->whereIn('status', [Job::STATUS_SCHEDULED, Job::STATUS_ASSIGNED, Job::STATUS_EN_ROUTE, Job::STATUS_ARRIVED, Job::STATUS_IN_PROGRESS, Job::STATUS_QUALITY_CHECK])
+                ->count(),
+            'completed_jobs_today' => (clone $jobs)
+                ->whereBetween('completed_at', [$todayStart, $todayEnd])
                 ->count(),
             'unassigned_jobs' => (clone $jobs)
                 ->whereNull('assigned_to')
@@ -120,6 +138,10 @@ class CleaningAdminMetrics
                 ->count(),
             'active_jobs' => (clone $jobs)
                 ->whereIn('status', [Job::STATUS_EN_ROUTE, Job::STATUS_IN_PROGRESS])
+                ->count(),
+            'active_technicians' => self::activeTechnicians(),
+            'draft_invoices' => (clone $invoices)
+                ->where('status', Invoice::STATUS_DRAFT)
                 ->count(),
             'quotes_open' => (clone $estimates)
                 ->whereIn('status', [Estimate::STATUS_DRAFT, Estimate::STATUS_SENT])
@@ -204,6 +226,39 @@ class CleaningAdminMetrics
             ->select('status', DB::raw('COUNT(*) as total'), DB::raw('SUM(balance_due) as balance_due'), DB::raw('SUM(total) as invoice_total'))
             ->groupBy('status')
             ->orderByDesc('total')
+            ->get();
+    }
+
+    public static function activeTechnicians(): int
+    {
+        return self::cleaners()
+            ->whereHas('roles', fn (Builder $query) => $query->whereIn('name', ['technician', 'cleaner', 'dispatcher']))
+            ->count();
+    }
+
+    public static function dispatchStatusCounts(): array
+    {
+        $jobs = self::jobs();
+
+        return [
+            'scheduled' => (clone $jobs)->where('status', Job::STATUS_SCHEDULED)->count(),
+            'assigned' => (clone $jobs)->where('status', Job::STATUS_ASSIGNED)->count(),
+            'en_route' => (clone $jobs)->where('status', Job::STATUS_EN_ROUTE)->count(),
+            'in_progress' => (clone $jobs)->where('status', Job::STATUS_IN_PROGRESS)->count(),
+            'unassigned' => (clone $jobs)
+                ->whereNull('assigned_to')
+                ->whereNotIn('status', [Job::STATUS_COMPLETED, Job::STATUS_CANCELLED])
+                ->count(),
+        ];
+    }
+
+    public static function recentPayments(int $limit = 5): Collection
+    {
+        return self::payments()
+            ->with(['invoice:id,invoice_number,customer_id', 'invoice.customer:id,first_name,last_name,business_name'])
+            ->whereNotNull('paid_at')
+            ->orderByDesc('paid_at')
+            ->limit($limit)
             ->get();
     }
 
