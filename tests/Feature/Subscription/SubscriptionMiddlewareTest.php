@@ -64,6 +64,30 @@ test('owner with canceled subscription is redirected to expired page', function 
         ->assertRedirect(route('owner.subscription.expired'));
 });
 
+test('owner with expired trial is redirected from legacy dispatch path to titango panel', function () {
+    $org  = Organization::factory()->trialExpired()->create();
+    $user = User::factory()->owner($org)->create();
+
+    Subscription::factory()->trialExpired($org)->create();
+
+    $this->actingAs($user)
+        ->get('/owner/dispatch')
+        ->assertStatus(301)
+        ->assertRedirect('/titango');
+});
+
+test('owner with expired trial is redirected from legacy billing path to zeropay panel', function () {
+    $org  = Organization::factory()->trialExpired()->create();
+    $user = User::factory()->owner($org)->create();
+
+    Subscription::factory()->trialExpired($org)->create();
+
+    $this->actingAs($user)
+        ->get('/owner/billing')
+        ->assertStatus(301)
+        ->assertRedirect('/zeropay');
+});
+
 // ── Non-owner roles bypass subscription check ─────────────────────────────────
 
 test('technician is not subject to subscription check', function () {

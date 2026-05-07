@@ -53,6 +53,13 @@ Route::get('/dashboard', function () {
     return redirect()->route('owner.dashboard');
 })->middleware('auth')->name('dashboard');
 
+// Legacy owner panel entry paths must bypass subscription middleware and
+// permanently redirect to canonical Titan panel paths.
+Route::redirect('/owner/dispatch', '/titango', 301)->name('owner.dispatch.alias');
+Route::redirect('/owner/billing', '/zeropay', 301)->name('owner.billing.alias');
+Route::redirect('/owner/estimates', '/titanquotes', 301)->name('owner.estimates.alias');
+Route::redirect('/owner/marketing', '/titannexus', 301)->name('owner.marketing.alias');
+
 // ── Platform SaaS admin — cross-tenant controls for self-hosted operators ──
 Route::middleware(['auth', 'verified', 'role:super_admin'])
     ->prefix('platform')
