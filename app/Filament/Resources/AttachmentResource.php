@@ -30,7 +30,7 @@ class AttachmentResource extends Resource
     {
         return $schema->components([
             Section::make('Attachment')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('filename')->label('Filename')->maxLength(200),
                     TextInput::make('disk')->label('Disk')->maxLength(80),

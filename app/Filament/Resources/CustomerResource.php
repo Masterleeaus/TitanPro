@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Actions;
 use Filament\Schemas;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -36,13 +37,17 @@ class CustomerResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('first_name')->required()->maxLength(255),
-            TextInput::make('last_name')->required()->maxLength(255),
-            TextInput::make('email')->email()->maxLength(255),
-            TextInput::make('phone')->tel()->maxLength(50),
-            TextInput::make('mobile')->tel()->maxLength(50),
-            Textarea::make('notes')->rows(3)->columnSpanFull(),
-        ])->columns(2);
+            Section::make('Customer Details')
+                ->columns(['sm' => 1, 'lg' => 2])
+                ->schema([
+                    TextInput::make('first_name')->required()->maxLength(255),
+                    TextInput::make('last_name')->required()->maxLength(255),
+                    TextInput::make('email')->email()->maxLength(255),
+                    TextInput::make('phone')->tel()->maxLength(50),
+                    TextInput::make('mobile')->tel()->maxLength(50),
+                    Textarea::make('notes')->rows(3)->columnSpanFull(),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
