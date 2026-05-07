@@ -41,7 +41,7 @@ function deleteDirectory(string $dir): void
     rmdir($dir);
 }
 
-function writePhpConfig(string $path, array $data): void
+function writePhpArrayFile(string $path, array $data): void
 {
     if (! is_dir(dirname($path))) {
         mkdir(dirname($path), 0755, true);
@@ -112,7 +112,7 @@ test('manifest loader populates registries and excludes disabled modules idempot
         'source' => 'Config/verticals.php',
         'default' => 'field-service',
     ]);
-    writePhpConfig($modulesPath.'/RegistryTestModule/Config/verticals.php', [
+    writePhpArrayFile($modulesPath.'/RegistryTestModule/Config/verticals.php', [
         'default' => 'field-service',
         'supported' => [
             'field-service' => ['label' => 'Field Service'],

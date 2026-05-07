@@ -13,7 +13,7 @@ class VerticalResolver
         $resolved = $this->extractVertical($context);
 
         if ($resolved !== null) {
-            return $this->registry->find($resolved)['key'] ?? null;
+            return $this->resolveRegisteredVertical($resolved);
         }
 
         if ($module === null) {
@@ -26,7 +26,7 @@ class VerticalResolver
             return null;
         }
 
-        return $this->registry->find($default)['key'] ?? null;
+        return $this->resolveRegisteredVertical($default);
     }
 
     private function extractVertical(mixed $context): ?string
@@ -73,5 +73,10 @@ class VerticalResolver
         }
 
         return null;
+    }
+
+    private function resolveRegisteredVertical(string $vertical): ?string
+    {
+        return $this->registry->find($vertical)['key'] ?? null;
     }
 }

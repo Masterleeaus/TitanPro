@@ -119,12 +119,17 @@ class BillingRegistry
 
         foreach ($entries as $entryKey => $entry) {
             if (is_string($entry) && $entry !== '') {
-                $normalized[] = [
+                $normalizedEntry = [
                     'module' => $module,
                     'type' => $type,
                     'key' => $entry,
-                    'class' => $entry,
                 ];
+
+                if ($type === 'meter') {
+                    $normalizedEntry['class'] = $entry;
+                }
+
+                $normalized[] = $normalizedEntry;
 
                 continue;
             }
