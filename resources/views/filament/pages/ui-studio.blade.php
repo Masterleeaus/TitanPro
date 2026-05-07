@@ -438,24 +438,33 @@
                                 <p class="text-[10px] text-gray-400 -mt-2">Leave blank to inherit the platform default.</p>
 
                                 {{-- Color overrides --}}
+                                @php
+                                    $colorDefaults = [
+                                        'primary_color'   => '#2563eb',
+                                        'secondary_color' => '#0f172a',
+                                        'accent_color'    => '#14b8a6',
+                                        'surface_color'   => '#f8fafc',
+                                    ];
+                                @endphp
                                 @foreach ([
                                     'primary_color'   => 'Primary',
                                     'secondary_color' => 'Secondary',
                                     'accent_color'    => 'Accent',
                                     'surface_color'   => 'Surface',
                                 ] as $colorField => $colorLabel)
+                                    @php $colorVal = $profile[$colorField] ?? ''; @endphp
                                     <div class="flex items-center justify-between gap-2">
                                         <label class="text-xs text-gray-600 dark:text-gray-400 flex-1">{{ $colorLabel }}</label>
                                         <input
                                             type="color"
-                                            value="{{ $profile[$colorField] ?? '#ffffff' }}"
+                                            value="{{ $colorVal ?: $colorDefaults[$colorField] }}"
                                             wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
-                                            class="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-white/10 p-0.5"
+                                            class="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-white/10 p-0.5 {{ $colorVal ? '' : 'opacity-50' }}"
                                             title="{{ $colorLabel }} override for {{ $selectedRole }}"
                                         />
                                         <input
                                             type="text"
-                                            value="{{ $profile[$colorField] ?? '' }}"
+                                            value="{{ $colorVal }}"
                                             wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
                                             maxlength="7"
                                             placeholder="#inherit"
