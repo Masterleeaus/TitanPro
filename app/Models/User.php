@@ -57,6 +57,10 @@ class User extends Authenticatable implements FilamentUser
             return $this->hasRole(['super_admin', 'admin', 'owner', 'bookkeeper']);
         }
 
+        if ($panel->getId() === 'titannexus') {
+            return $this->hasRole(['admin', 'owner']);
+        }
+
         return $this->hasRole(['super_admin', 'admin', 'owner']);
     }
 }
