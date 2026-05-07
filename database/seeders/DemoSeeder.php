@@ -72,7 +72,7 @@ class DemoSeeder extends Seeder
         $tech1 = $usersByEmail['tech@demo.test'];
         $tech2 = $usersByEmail['tech2@demo.test'];
 
-        // ── Job Types ────────────────────────────────────────────────────────────
+        // ── Services ─────────────────────────────────────────────────────────────
         $jobTypeDefs = [
             ['name' => 'HVAC Service',        'color' => '#3b82f6'],
             ['name' => 'Plumbing',            'color' => '#10b981'],
