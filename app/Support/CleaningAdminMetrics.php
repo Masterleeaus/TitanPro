@@ -15,6 +15,16 @@ use Illuminate\Support\Facades\DB;
 
 class CleaningAdminMetrics
 {
+    public const DEFAULT_CLEANER_MAP_LATITUDE = -33.8688;
+
+    public const DEFAULT_CLEANER_MAP_LONGITUDE = 151.2093;
+
+    public const CLEANER_MAP_ZOOM_NONE = 4;
+
+    public const CLEANER_MAP_ZOOM_SINGLE = 13;
+
+    public const CLEANER_MAP_ZOOM_MULTIPLE = 11;
+
     public static function organizationId(): ?int
     {
         return auth()->user()?->organization_id;
@@ -145,6 +155,47 @@ class CleaningAdminMetrics
             ->orderByDesc('recorded_at')
             ->limit($limit)
             ->get();
+    }
+
+    public static function cleanerMapRoster(): Collection
+    {
+        $organizationId = self::organizationId();
+
+        if (! $organizationId) {
+            return collect();
+        }
+
+        $technicians = User::role('technician')
+            ->where('organization_id', $organizationId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        if ($technicians->isEmpty()) {
+            return collect();
+        }
+
+        $technicianIds = $technicians->pluck('id');
+
+        $latestLocations = DriverLocation::query()
+            ->whereIn('id', function ($sub) use ($organizationId, $technicianIds) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('driver_locations')
+                    ->where('organization_id', $organizationId)
+                    ->whereIn('user_id', $technicianIds)
+                    ->groupBy('user_id');
+            })
+            ->get(['user_id', 'latitude', 'longitude', 'recorded_at'])
+            ->keyBy('user_id');
+
+        return $technicians->map(function (User $technician) use ($latestLocations): array {
+            $location = $latestLocations->get($technician->id);
+
+            return [
+                'id' => $technician->id,
+                'name' => $technician->name,
+                'location' => $location,
+            ];
+        });
     }
 
     public static function invoiceStatusBreakdown(): Collection
