@@ -15,6 +15,16 @@ use Illuminate\Support\Facades\DB;
 
 class CleaningAdminMetrics
 {
+    public const DEFAULT_CLEANER_MAP_LATITUDE = -33.8688;
+
+    public const DEFAULT_CLEANER_MAP_LONGITUDE = 151.2093;
+
+    public const CLEANER_MAP_ZOOM_NONE = 4;
+
+    public const CLEANER_MAP_ZOOM_SINGLE = 13;
+
+    public const CLEANER_MAP_ZOOM_MULTIPLE = 11;
+
     public static function organizationId(): ?int
     {
         return auth()->user()?->organization_id;
@@ -167,8 +177,6 @@ class CleaningAdminMetrics
         $technicianIds = $technicians->pluck('id');
 
         $latestLocations = DriverLocation::query()
-            ->forOrganization($organizationId)
-            ->whereIn('user_id', $technicianIds)
             ->whereIn('id', function ($sub) use ($organizationId, $technicianIds) {
                 $sub->selectRaw('MAX(id)')
                     ->from('driver_locations')

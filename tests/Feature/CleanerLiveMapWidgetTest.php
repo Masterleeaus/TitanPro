@@ -59,9 +59,22 @@ test('cleaner map roster reads latest technician location from driver_locations'
 });
 
 test('cleaner live map widget includes a refresh button and unknown-location state copy', function () {
-    $blade = file_get_contents(resource_path('views/filament/widgets/cleaner-live-map.blade.php'));
+    (new RolesAndPermissionsSeeder)->run();
 
-    expect($blade)->toContain('Refresh Locations')
-        ->and($blade)->toContain('Location unknown')
-        ->and($blade)->toContain('const first = points[0] ?? { lat: -33.8688, lng: 151.2093 }');
+    $organization = Organization::factory()->create();
+    $owner = User::factory()->create(['organization_id' => $organization->id]);
+    $owner->assignRole('owner');
+
+    $technician = User::factory()->create(['organization_id' => $organization->id]);
+    $technician->assignRole('technician');
+
+    $this->actingAs($owner, 'web');
+    $html = view('filament.widgets.cleaner-live-map')->render();
+
+    expect($html)->toContain('Refresh Locations')
+        ->and($html)->toContain('Location unknown')
+        ->and($html)->toContain($technician->name)
+        ->and($html)->toContain('mapZoom')
+        ->and($html)->toContain((string) CleaningAdminMetrics::DEFAULT_CLEANER_MAP_LATITUDE)
+        ->and($html)->toContain((string) CleaningAdminMetrics::DEFAULT_CLEANER_MAP_LONGITUDE);
 });

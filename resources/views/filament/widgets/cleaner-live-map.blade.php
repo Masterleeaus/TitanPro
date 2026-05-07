@@ -1,5 +1,16 @@
 @php
     use App\Support\CleaningAdminMetrics;
+
+    $defaultMapCenter = [
+        'lat' => CleaningAdminMetrics::DEFAULT_CLEANER_MAP_LATITUDE,
+        'lng' => CleaningAdminMetrics::DEFAULT_CLEANER_MAP_LONGITUDE,
+    ];
+    $mapZoom = [
+        'none' => CleaningAdminMetrics::CLEANER_MAP_ZOOM_NONE,
+        'single' => CleaningAdminMetrics::CLEANER_MAP_ZOOM_SINGLE,
+        'multiple' => CleaningAdminMetrics::CLEANER_MAP_ZOOM_MULTIPLE,
+    ];
+
     $technicians = CleaningAdminMetrics::cleanerMapRoster();
     $points = $technicians
         ->filter(fn (array $technician) => $technician['location'] !== null)
@@ -8,10 +19,6 @@
         'lat' => (float) $technician['location']->latitude,
         'lng' => (float) $technician['location']->longitude,
         'recorded' => optional($technician['location']->recorded_at)->diffForHumans(),
-        'is_stale' => $technician['location']->recorded_at
-            ? $technician['location']->recorded_at->lt(CleaningAdminMetrics::staleCleanerThreshold())
-            : true,
-        'maps_url' => 'https://www.google.com/maps/search/?api=1&query=' . urlencode($technician['location']->latitude . ',' . $technician['location']->longitude),
     ])->values();
     $mapId = 'cleaner-live-map-' . uniqid();
 @endphp
@@ -22,7 +29,7 @@
         <x-slot name="description">Latest technician PWA location pings linked into the admin dashboard.</x-slot>
 
         <div class="mb-4 flex flex-wrap gap-2">
-            <x-filament::button wire:click="$refresh" icon="heroicon-o-arrow-path">
+            <x-filament::button x-on:click="window.location.reload()" icon="heroicon-o-arrow-path">
                 Refresh Locations
             </x-filament::button>
             <x-filament::button tag="a" href="{{ url('/titango') }}" target="_blank" color="gray" icon="heroicon-o-device-phone-mobile">
@@ -79,10 +86,17 @@
             (function () {
                 const points = @json($points);
                 const mapId = @json($mapId);
+                const mapZoom = @json($mapZoom);
+                const resolveZoom = function (count) {
+                    if (count > 1) return mapZoom.multiple;
+                    if (count === 1) return mapZoom.single;
+
+                    return mapZoom.none;
+                };
                 const init = function () {
                     if (!window.L || !document.getElementById(mapId)) return;
-                    const first = points[0] ?? { lat: -33.8688, lng: 151.2093 };
-                    const zoom = points.length > 1 ? 11 : (points.length === 1 ? 13 : 4);
+                    const first = points[0] ?? @json($defaultMapCenter);
+                    const zoom = resolveZoom(points.length);
                     const map = L.map(mapId).setView([first.lat, first.lng], zoom);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom: 19,
