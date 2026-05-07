@@ -2,8 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -22,6 +23,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         $crmCoreAutoloaderPath = base_path('Modules/CRMCore/Support/CRMCoreAutoloader.php');
@@ -103,7 +106,6 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-
     /**
      * Use a Filament-native palette to avoid invisible button text caused by
      * third-party theme foreground-token conflicts.
@@ -112,53 +114,4 @@ class AdminPanelProvider extends PanelProvider
     {
         return Color::Blue;
     }
-
-    /**
-     * Register optional Composer-installed Filament plugins without breaking the panel
-     * if a package is removed, renamed, or only provides component classes.
-     *
-     * @param  array<int, class-string>  $pluginClasses
-     * @return array<int, object>
-     */
-    private function availablePlugins(array $pluginClasses): array
-    {
-        $plugins = [];
-
-        foreach ($pluginClasses as $pluginClass) {
-            if (! class_exists($pluginClass) || ! method_exists($pluginClass, 'make')) {
-                continue;
-            }
-
-            $plugins[] = $pluginClass::make();
-        }
-
-        return $plugins;
-    }
-
-    /**
-     * Return a configured BreezyCore plugin array (empty array when package is absent).
-     *
-     * Enables the my-profile page and integrates Breezy's two-factor authentication
-     * UI, which complements the existing Fortify 2FA backend.
-     *
-     * @return array<int, object>
-     */
-    private function breezyPlugin(): array
-    {
-        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
-            return [];
-        }
-
-        return [
-            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
-                ->myProfile(
-                    shouldRegisterUserMenu: true,
-                    shouldRegisterNavigation: false,
-                    hasAvatars: false,
-                    slug: 'my-profile',
-                )
-                ->enableTwoFactorAuthentication(),
-        ];
-    }
-
 }

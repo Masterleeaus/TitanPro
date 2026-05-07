@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,6 +24,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class ZeroFussPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -58,29 +61,5 @@ class ZeroFussPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    /**
-     * Return a configured BreezyCore plugin array (empty array when package is absent).
-     *
-     * Customers can manage their profile and password via the self-service portal.
-     *
-     * @return array<int, object>
-     */
-    private function breezyPlugin(): array
-    {
-        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
-            return [];
-        }
-
-        return [
-            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
-                ->myProfile(
-                    shouldRegisterUserMenu: true,
-                    shouldRegisterNavigation: false,
-                    hasAvatars: false,
-                    slug: 'my-profile',
-                ),
-        ];
     }
 }
