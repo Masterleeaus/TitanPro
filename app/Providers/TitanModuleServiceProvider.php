@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Platform\AI\AIManifestRegistry;
+use App\Platform\AI\BlueprintAIManifestRegistry;
 use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Filament\FilamentRegistry;
 use App\Platform\Modules\ModuleManifestRegistryLoader;
@@ -38,6 +40,8 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->singletonIf(AutomationRegistry::class);
         $this->app->singleton(FilamentRegistry::class);
         $this->app->singleton(WorkflowDefinitionRegistry::class);
+        $this->app->singleton(AIManifestRegistry::class);
+        $this->app->singleton(BlueprintAIManifestRegistry::class);
         $this->app->singleton(ModuleManifestRegistryLoader::class);
     }
 
