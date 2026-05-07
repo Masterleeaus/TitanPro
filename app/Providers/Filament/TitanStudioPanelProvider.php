@@ -2,11 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Contracts\Plugin;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -24,6 +24,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanStudioPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -33,9 +35,13 @@ class TitanStudioPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Pink,
             ])
-            ->plugins($this->availablePlugins([
-                'Relaticle\\Flowforge\\FlowforgePlugin',
-            ]))
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Relaticle\\Flowforge\\FlowforgePlugin',
+                ]),
+            ])
             ->resources([
                 \App\Filament\Resources\MessageTemplateResource::class,
                 \App\Filament\Resources\CmsPageResource::class,
@@ -65,26 +71,5 @@ class TitanStudioPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    /**
-     * @param  list<class-string>  $pluginClasses
-     * @return list<Plugin>
-     */
-    private function availablePlugins(array $pluginClasses): array
-    {
-        $plugins = [];
-
-        foreach ($pluginClasses as $pluginClass) {
-            if (! class_exists($pluginClass)
-                || ! is_subclass_of($pluginClass, Plugin::class)
-                || ! method_exists($pluginClass, 'make')) {
-                continue;
-            }
-
-            $plugins[] = $pluginClass::make();
-        }
-
-        return $plugins;
     }
 }

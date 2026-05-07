@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,6 +21,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class TitanQuotesPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -28,6 +31,12 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->brandName('TitanQuotes — Estimating')
             ->colors([
                 'primary' => Color::Emerald,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanQuotes/Resources'), for: 'App\\Filament\\TitanQuotes\\Resources')
             ->discoverPages(in: app_path('Filament/TitanQuotes/Pages'), for: 'App\\Filament\\TitanQuotes\\Pages')

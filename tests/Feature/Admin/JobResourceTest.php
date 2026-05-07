@@ -51,18 +51,25 @@ test('owner sees floor area in square metres on a job detail page', function () 
         ->assertDontSee('sqft');
 });
 
-// ── No create/edit routes ──────────────────────────────────────────────────────
+// ── Create/edit routes ──────────────────────────────────────────────────────
 
-test('job create route does not exist in admin panel', function () {
-    $this->actingAs(adminOwnerUser())->get('/admin/jobs/create')->assertNotFound();
+test('job create route exists in admin panel', function () {
+    $this->actingAs(adminOwnerUser())->get('/admin/jobs/create')->assertOk();
 });
 
-test('job edit route does not exist in admin panel', function () {
+test('job edit route exists in admin panel', function () {
     $user     = adminOwnerUser();
     $customer = Customer::factory()->create(['organization_id' => $user->organization_id]);
     $job      = Job::factory()->forCustomer($customer)->create();
 
-    $this->actingAs($user)->get("/admin/jobs/{$job->id}/edit")->assertNotFound();
+    $this->actingAs($user)->get("/admin/jobs/{$job->id}/edit")->assertOk();
+});
+
+test('jobs list shows create job action', function () {
+    $this->actingAs(adminOwnerUser())
+        ->get('/admin/jobs')
+        ->assertOk()
+        ->assertSee('Create Job');
 });
 
 // ── Org scoping ───────────────────────────────────────────────────────────────

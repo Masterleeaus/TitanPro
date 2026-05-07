@@ -128,7 +128,9 @@ class Job extends Model implements TenantAware
                     'category' => $template->taskLibraryItem?->category ?? 'general',
                     'estimated_minutes' => $template->taskLibraryItem?->estimated_minutes,
                     'sort_order' => $template->sort_order,
-                    'is_required' => $template->is_required,
+                    'is_required' => $template->required_override
+                        ? $template->is_required
+                        : ($template->taskLibraryItem?->is_required ?? $template->is_required),
                     'requires_photo' => $template->requires_photo,
                 ]);
             }
@@ -150,6 +152,47 @@ class Job extends Model implements TenantAware
         return [
             self::STATUS_SCHEDULED => 'Scheduled', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_EN_ROUTE => 'En Route', self::STATUS_ARRIVED => 'Arrived', self::STATUS_IN_PROGRESS => 'In Progress', self::STATUS_QUALITY_CHECK => 'Quality Check', self::STATUS_COMPLETED => 'Completed', self::STATUS_INVOICED => 'Invoiced', self::STATUS_PAID => 'Paid', self::STATUS_CANCELLED => 'Cancelled', self::STATUS_ON_HOLD => 'On Hold',
         ];
+    }
+
+    public static function adminWorkflowStatuses(): array
+    {
+        return [
+            self::STATUS_SCHEDULED => 'Scheduled',
+            self::STATUS_IN_PROGRESS => 'In Progress',
+            self::STATUS_COMPLETED => 'Completed',
+        ];
+    }
+
+    public static function adminAllowedTransitions(string $status): array
+    {
+        return match ($status) {
+            self::STATUS_SCHEDULED => [self::STATUS_IN_PROGRESS],
+            self::STATUS_IN_PROGRESS => [self::STATUS_COMPLETED],
+            self::STATUS_COMPLETED => [],
+            default => [],
+        };
+    }
+
+    public static function adminTransitionOptions(string $status): array
+    {
+        $allowed = self::adminAllowedTransitions($status);
+        $available = array_merge([$status], $allowed);
+        $options = self::adminWorkflowStatuses();
+
+        if (! array_key_exists($status, $options)) {
+            $options[$status] = self::statuses()[$status] ?? ucfirst(str_replace('_', ' ', $status));
+        }
+
+        return array_intersect_key($options, array_flip($available));
+    }
+
+    public static function canTransitionInAdminWorkflow(string $from, string $to): bool
+    {
+        if ($from === $to) {
+            return true;
+        }
+
+        return in_array($to, self::adminAllowedTransitions($from), true);
     }
 
     /**
