@@ -23,10 +23,11 @@ dataset('legacy_panel_aliases', [
     ['/admin', '/titanpro'],
 ]);
 
-test('canonical panel routes redirect guests to a login page', function (string $path, string $_role) {
+test('canonical panel routes redirect guests to a login page', function (string $path, string $requiredRole) {
     $response = $this->get($path);
     $location = $response->headers->get('Location');
 
+    expect($requiredRole)->not->toBe('');
     $response->assertStatus(302);
     expect($response->isRedirect())->toBeTrue();
     expect(parse_url((string) $location, PHP_URL_PATH))->toEndWith('/login');
