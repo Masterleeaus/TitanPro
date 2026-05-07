@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Platform\Automation\AutomationRegistry;
+use App\Platform\Filament\FilamentRegistry;
+use App\Platform\Modules\ModuleManifestRegistryLoader;
+use App\Platform\Workflows\WorkflowDefinitionRegistry;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
 use Filament\Contracts\Plugin;
@@ -30,10 +34,19 @@ class TitanModuleServiceProvider extends ServiceProvider
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
         $this->app->singleton(CurrentTenant::class);
+
+        $this->app->singletonIf(AutomationRegistry::class);
+        $this->app->singleton(FilamentRegistry::class);
+        $this->app->singleton(WorkflowDefinitionRegistry::class);
+        $this->app->singleton(ModuleManifestRegistryLoader::class);
     }
 
     public function boot(): void
     {
+        /** @var ModuleManifestRegistryLoader $registryLoader */
+        $registryLoader = $this->app->make(ModuleManifestRegistryLoader::class);
+        $registryLoader->load(base_path(config('titan-modules.path', 'Modules')));
+
         // Guard: only inject when both Filament and nwidart/laravel-modules are present.
         if (! class_exists(PanelRegistry::class) || ! class_exists(Module::class)) {
             return;
