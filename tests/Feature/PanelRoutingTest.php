@@ -21,7 +21,6 @@ dataset('canonical_panel_paths_with_roles', [
     ['/zeropay', 'owner'],
     ['/titango', 'owner'],
     ['/zerofuss', 'owner'],
-    ['/titansolo', 'owner'],
     ['/titanstudio', 'owner'],
     ['/titannexus', 'owner'],
     ['/titanpro', 'super_admin'],
@@ -97,7 +96,57 @@ test('owner can access TitanNexus verticals and training content pages', functio
         ->get('/titannexus/training-content')
         ->assertOk();
 });
+test('titansolo panel is accessible to owner on starter plan', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
 
+    $organization = \App\Models\Organization::factory()
+        ->onPlan(\App\Services\PlanService::PLAN_STARTER)
+        ->create();
+
+    $user = User::factory()->create([
+        'organization_id' => $organization->id,
+    ]);
+    $user->assignRole('owner');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/titansolo')
+        ->assertOk();
+});
+
+test('titansolo panel is forbidden for owners not on single-operator plan', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $organization = \App\Models\Organization::factory()
+        ->onPlan(\App\Services\PlanService::PLAN_GROWTH)
+        ->create();
+
+    $user = User::factory()->create([
+        'organization_id' => $organization->id,
+    ]);
+    $user->assignRole('owner');
+
+    $this->actingAs($user)
+        ->get('/titansolo')
+        ->assertForbidden();
+});
+
+test('titansolo panel is forbidden for non-owner roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $organization = \App\Models\Organization::factory()
+        ->onPlan(\App\Services\PlanService::PLAN_STARTER)
+        ->create();
+
+    $user = User::factory()->create([
+        'organization_id' => $organization->id,
+    ]);
+    $user->assignRole('admin');
+
+    $this->actingAs($user)
+        ->get('/titansolo')
+        ->assertForbidden();
+});
 test('legacy panel aliases permanently redirect to canonical routes', function (string $alias, string $canonical) {
     $response = $this->get($alias);
 

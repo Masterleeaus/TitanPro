@@ -2,8 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
+use App\Http\Middleware\CheckSubscription;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -20,6 +21,12 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+/**
+ * GroundZero — Primary owner/admin panel for day-to-day cleaning business operations.
+ *
+ * Accessible to: owner, admin, dispatcher, bookkeeper.
+ * Subscription-gated: CheckSubscription middleware enforces active subscription for owners/admins.
+ */
 class GroundZeroPanelProvider extends PanelProvider
 {
     use RegistersFilamentPlugins;
@@ -29,7 +36,7 @@ class GroundZeroPanelProvider extends PanelProvider
         return $panel
             ->id('groundzero')
             ->path('groundzero')
-            ->brandName('Ground Zero — Dispatch')
+            ->brandName('GroundZero')
             ->colors([
                 'primary' => Color::Cyan,
             ])
@@ -64,7 +71,7 @@ class GroundZeroPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                CheckSubscription::class,
             ]);
     }
 }
-
