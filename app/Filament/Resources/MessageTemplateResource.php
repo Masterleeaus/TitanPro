@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Actions;
 use Filament\Schemas;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -36,31 +37,35 @@ class MessageTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('event')
-                ->label('Trigger Event')
-                ->options(MessageTemplate::events())
-                ->required(),
+            Section::make('Message Template')
+                ->columns(['sm' => 1, 'lg' => 2])
+                ->schema([
+                    Select::make('event')
+                        ->label('Trigger Event')
+                        ->options(MessageTemplate::events())
+                        ->required(),
 
-            Select::make('channel')
-                ->label('Channel')
-                ->options(['email' => 'Email', 'sms' => 'SMS'])
-                ->required(),
+                    Select::make('channel')
+                        ->label('Channel')
+                        ->options(['email' => 'Email', 'sms' => 'SMS'])
+                        ->required(),
 
-            TextInput::make('subject')
-                ->label('Email Subject')
-                ->maxLength(255)
-                ->helperText('Email only. Leave blank for SMS.')
-                ->columnSpanFull(),
+                    TextInput::make('subject')
+                        ->label('Email Subject')
+                        ->maxLength(255)
+                        ->helperText('Email only. Leave blank for SMS.')
+                        ->columnSpanFull(),
 
-            Textarea::make('body')
-                ->label('Message Body')
-                ->required()
-                ->rows(8)
-                ->helperText('Available variables: {{customer_name}}, {{job_title}}, {{job_date}}, {{technician_name}}, {{company_name}}')
-                ->columnSpanFull(),
+                    Textarea::make('body')
+                        ->label('Message Body')
+                        ->required()
+                        ->rows(8)
+                        ->helperText('Available variables: {{customer_name}}, {{job_title}}, {{job_date}}, {{technician_name}}, {{company_name}}')
+                        ->columnSpanFull(),
 
-            Toggle::make('is_active')->label('Active')->default(true),
-        ])->columns(2);
+                    Toggle::make('is_active')->label('Active')->default(true),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
