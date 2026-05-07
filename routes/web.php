@@ -170,11 +170,31 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::post('/estimates/{token}/decline', [PublicEstimateController::class, 'decline'])->name('estimates.decline');
 });
 
+Route::middleware(['auth'])
+    ->prefix('technician')
+    ->name('technician.')
+    ->group(function () {
+        Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])
+            ->middleware(function ($request, $next) {
+                $user = $request->user();
+
+                if ($user?->hasRole('technician')) {
+                    return $next($request);
+                }
+
+                if ($request->boolean('admin_preview') && $user?->hasRole(['owner', 'admin', 'super_admin'])) {
+                    return $next($request);
+                }
+
+                abort(403);
+            })
+            ->name('dashboard');
+    });
+
 Route::middleware(['auth', 'role:technician'])
     ->prefix('technician')
     ->name('technician.')
     ->group(function () {
-        Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])->name('dashboard');
         Route::get('/jobs', [TechnicianJobController::class, 'index'])->name('jobs.index');
         Route::get('/jobs/{job}', [TechnicianJobController::class, 'show'])->name('jobs.show');
     });

@@ -12,10 +12,14 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { type AppPageProps, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid, Smartphone } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
+
+const page = usePage<AppPageProps>();
+const roles = page.props.auth?.roles ?? [];
+const canAccessTitanGo = roles.some((role) => ['owner', 'admin', 'super_admin'].includes(role));
 
 const mainNavItems: NavItem[] = [
     {
@@ -23,6 +27,15 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    ...(canAccessTitanGo
+        ? [
+              {
+                  title: 'TitanGo Panel',
+                  href: '/titango',
+                  icon: Smartphone,
+              },
+          ]
+        : []),
 ];
 
 const footerNavItems: NavItem[] = [

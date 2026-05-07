@@ -2,11 +2,17 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanGo\Pages\Dashboard;
+use App\Filament\TitanGo\Widgets\ActiveJobsWidget;
+use App\Filament\TitanGo\Widgets\PwaPreviewBridgeWidget;
+use App\Filament\TitanGo\Widgets\SyncHealthWidget;
+use App\Filament\TitanGo\Widgets\TechnicianActivityWidget;
+use App\Filament\TitanGo\Widgets\TitanGoDashboardWidget;
+use App\Filament\Widgets\CleanerLiveMap;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -38,11 +44,17 @@ class TitanGoPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/TitanGo/Resources'), for: 'App\\Filament\\TitanGo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanGo/Pages'), for: 'App\\Filament\\TitanGo\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanGo/Widgets'), for: 'App\\Filament\\TitanGo\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                TitanGoDashboardWidget::class,
+                TechnicianActivityWidget::class,
+                ActiveJobsWidget::class,
+                CleanerLiveMap::class,
+                SyncHealthWidget::class,
+                PwaPreviewBridgeWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
