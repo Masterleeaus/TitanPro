@@ -172,7 +172,7 @@
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10">
-                @foreach (['theme' => 'Theme', 'layout' => 'Layout', 'menu' => 'Menu'] as $tab => $tabLabel)
+                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
@@ -188,8 +188,34 @@
 
             <div class="flex-1 overflow-y-auto px-4 py-4 space-y-5">
 
-                {{-- ── Theme tab ──────────────────────────────────────── --}}
-                @if ($activeTab === 'theme')
+                {{-- ── Branding tab ───────────────────────────────────── --}}
+                @if ($activeTab === 'branding')
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Identity</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Panel name</label>
+                                <input type="text" wire:model.live="panelName" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="Your panel name" />
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Logo</label>
+                                <input type="file" wire:model="logoUpload" accept="image/*" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" />
+                                @error('logoUpload') <p class="mt-1 text-[11px] text-red-500">{{ $message }}</p> @enderror
+                                @if ($logoPath)
+                                    <p class="mt-1 text-[11px] text-gray-400">Current: {{ $logoPath }}</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Favicon</label>
+                                <input type="file" wire:model="faviconUpload" accept="image/*" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" />
+                                @error('faviconUpload') <p class="mt-1 text-[11px] text-red-500">{{ $message }}</p> @enderror
+                                @if ($faviconPath)
+                                    <p class="mt-1 text-[11px] text-gray-400">Current: {{ $faviconPath }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </section>
+
                     <section>
                         <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Colors</h4>
                         <div class="space-y-3">
@@ -222,12 +248,26 @@
                         <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Typography</h4>
                         <div class="space-y-3">
                             <div>
-                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Heading font</label>
-                                <input type="text" wire:model.live="fontHeading" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="Figtree" />
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Font family</label>
+                                <input type="text" wire:model.live="fontFamily" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="Figtree" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Background</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Background type</label>
+                                <select wire:model.live="backgroundType" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300">
+                                    <option value="none">None</option>
+                                    <option value="gradient">Gradient CSS</option>
+                                    <option value="image">Image URL</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Body font</label>
-                                <input type="text" wire:model.live="fontBody" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="Figtree" />
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Background value</label>
+                                <input type="text" wire:model.live="backgroundValue" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="linear-gradient(...)" />
                             </div>
                         </div>
                     </section>
@@ -249,18 +289,21 @@
                             <div class="flex gap-2 items-center">
                                 <div class="h-8 w-8 rounded-md flex-shrink-0" style="background: {{ e($this->safeColor($primaryColor)) }}"></div>
                                 <div>
-                                    <p class="font-semibold" style="color: {{ e($this->safeColor($primaryColor)) }}">{{ e($this->safeFont($fontHeading)) }}</p>
-                                    <p class="text-gray-400">Heading · {{ e($primaryColor) }}</p>
+                                    <p class="font-semibold" style="color: {{ e($this->safeColor($primaryColor)) }}">{{ e($panelName) }}</p>
+                                    <p class="text-gray-400">Panel · {{ e($primaryColor) }}</p>
                                 </div>
                             </div>
                             <div class="flex gap-2 items-center">
                                 <div class="h-8 w-8 rounded-md flex-shrink-0" style="background: {{ e($this->safeColor($accentColor)) }}"></div>
                                 <div>
-                                    <p class="text-gray-500" style="font-family: {{ e($this->safeFont($fontBody)) }}">{{ e($fontBody) }}</p>
+                                    <p class="text-gray-500" style="font-family: {{ e($this->safeFont($fontFamily)) }}">{{ e($fontFamily) }}</p>
                                     <p class="text-gray-400">Body · {{ e($accentColor) }}</p>
                                 </div>
                             </div>
                             <div class="h-8 rounded-md border border-dashed border-gray-200" style="background: {{ e($this->safeColor($surfaceColor)) }}"></div>
+                            @if (! empty($backgroundValue))
+                                <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ $backgroundType === 'gradient' ? 'background: '.e($backgroundValue) : 'background-image:url('.e($backgroundValue).');background-size:cover;background-position:center;' }}"></div>
+                            @endif
                         </div>
                     </section>
                 @endif

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,9 +32,11 @@ class TitanNexusPanelProvider extends PanelProvider
         return $panel
             ->id('titannexus')
             ->path('titannexus')
-            ->brandName('TitanNexus')
-            ->colors([
-                'primary' => Color::Indigo,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanNexus'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#6366f1'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),

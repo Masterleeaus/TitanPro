@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\TitanSolo\Pages\Dashboard;
 use App\Filament\TitanSolo\Widgets\SoloOverviewWidget;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -32,9 +33,11 @@ class TitanSoloPanelProvider extends PanelProvider
         return $panel
             ->id('titansolo')
             ->path('titansolo')
-            ->brandName('TitanSolo')
-            ->colors([
-                'primary' => Color::Sky,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanSolo'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#0ea5e9'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),

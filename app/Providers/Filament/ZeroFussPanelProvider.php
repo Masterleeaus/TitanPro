@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,9 +32,11 @@ class ZeroFussPanelProvider extends PanelProvider
         return $panel
             ->id('zerofuss')
             ->path('zerofuss')
-            ->brandName('ZeroFuss — Customer Portal')
-            ->colors([
-                'primary' => Color::Teal,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('ZeroFuss — Customer Portal'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#14b8a6'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
