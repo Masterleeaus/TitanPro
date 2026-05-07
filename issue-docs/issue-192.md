@@ -1,12 +1,12 @@
-# Issue 192 — [PANEL] Install TitanQuotes Filament panel at /titanquotes
+# Issue 192 — Panel updates (TitanQuotes + TitanSolo)
 
-## Summary of Fixes Applied
+## TitanQuotes Summary
 - Completed TitanQuotes panel wiring updates for required branding and access rules.
 - Added TitanQuotes-specific Filament resources for quote operations (quotes, cleaning packages, customers read-only, and add-ons).
 - Added a quote pipeline dashboard page with draft/sent/accepted/converted counts.
 - Added/updated tests for TitanQuotes access rules and panel quote workflows.
 
-## Files Changed
+## TitanQuotes Files Changed
 - `app/Providers/Filament/TitanQuotesPanelProvider.php`
   - Set brand name to `TitanQuotes`.
   - Registered `QuotePipelineDashboard` page.
@@ -41,13 +41,42 @@
 - `tests/Feature/TitanQuotesPanelTest.php`
   - Added TitanQuotes panel workflow tests (estimate list/create/send surfaces, pipeline page, read-only customers).
 
+## TitanSolo Summary
+- Installed and completed the TitanSolo Filament panel at `/titansolo` for single-operator cleaning businesses.
+- Added a streamlined solo dashboard, solo-scoped resources, role/plan access enforcement, and product switcher link support.
+
+## TitanSolo Root Cause
+- TitanSolo panel plumbing was only partially present: provider/config registration existed, but there were no TitanSolo resources/pages/widgets to deliver the required workflow.
+- Panel access rules did not distinguish TitanSolo from broader owner/admin panels, so single-operator gating was missing.
+
+## TitanSolo Changes Made
+- Updated `app/Providers/Filament/TitanSoloPanelProvider.php`:
+  - brand name set to `TitanSolo`
+  - uses dedicated TitanSolo dashboard page
+  - registers solo overview widget
+- Added TitanSolo dashboard + widget implementation:
+  - `app/Filament/TitanSolo/Pages/Dashboard.php`
+  - `app/Filament/TitanSolo/Widgets/SoloOverviewWidget.php`
+  - `resources/views/filament/titansolo/widgets/solo-overview-widget.blade.php`
+- Added simplified TitanSolo resource set (no team/dispatch resources):
+  - Jobs: `app/Filament/TitanSolo/Resources/JobResource.php` + pages
+  - Customers: `app/Filament/TitanSolo/Resources/CustomerResource.php` + pages
+  - Invoices: `app/Filament/TitanSolo/Resources/InvoiceResource.php` + pages
+  - Included invoice record action to mark invoice paid.
+- Enforced TitanSolo access in `app/Models/User.php`:
+  - only `owner` role
+  - only single-operator plan keys (`starter`, `solo`, `single_operator`)
+- Added TitanSolo product switcher entry in `resources/js/components/AppSidebar.vue` with plan/role gating.
+- Updated routing/access tests and added TitanSolo-focused tests:
+  - `tests/Feature/PanelRoutingTest.php`
+  - `tests/Feature/TitanSoloPanelTest.php`
+
 ## Validation Notes
-- `php -l` passed for all changed/new PHP files.
-- Full/targeted Pest tests could not run in this environment because `vendor/` dependencies are not installed (`./vendor/bin/pest` missing).
-- Frontend/backend baseline tooling was unavailable in this environment (`eslint` not installed; artisan/composer test command blocked by missing `vendor/autoload.php`).
+- `php -l` passed for changed/new PHP files.
+- Full/targeted Pest tests could not run in this environment because dependencies are unavailable under current PHP runtime.
 
 ## Next Steps
-1. Install project dependencies (`composer install`, `npm install`) in a PHP-compatible environment.
+1. Install project dependencies in a PHP-compatible environment.
 2. Run targeted tests:
-   - `./vendor/bin/pest tests/Feature/PanelRoutingTest.php tests/Feature/TitanQuotesPanelTest.php`
+   - `./vendor/bin/pest tests/Feature/PanelRoutingTest.php tests/Feature/TitanQuotesPanelTest.php tests/Feature/TitanSoloPanelTest.php`
 3. Run full suite and linters before merge.
