@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EstimatePackageResource extends Resource
 {
@@ -72,5 +73,17 @@ class EstimatePackageResource extends Resource
             'create' => Pages\CreateEstimatePackage::route('/create'),
             'edit' => Pages\EditEstimatePackage::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->whereHas('estimate', fn (Builder $q) => $q->where('organization_id', $organizationId));
     }
 }
