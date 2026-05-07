@@ -95,7 +95,7 @@ return [
 
         'titannexus' => [
             'label'       => 'TitanNexus',
-            'description' => 'Growth intelligence (formerly TitanGrow)',
+            'description' => 'Growth intelligence',
             'path'        => 'titannexus',
             'color'       => 'indigo',
             'icon'        => 'heroicon-o-arrow-trending-up',

@@ -22,3 +22,9 @@ test('root redirects authenticated technician to technician dashboard', function
 
     $this->actingAs($user)->get('/')->assertRedirect(route('technician.dashboard'));
 });
+
+test('titan grow alias permanently redirects to titannexus panel path', function () {
+    $this->get('/titan-grow')
+        ->assertRedirect('/titannexus')
+        ->assertStatus(301);
+});
