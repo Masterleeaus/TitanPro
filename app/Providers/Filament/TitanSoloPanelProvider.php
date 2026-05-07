@@ -66,6 +66,7 @@ class TitanSoloPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }
