@@ -13,7 +13,7 @@ class ListJobs extends ListRecords
     protected function getHeaderActions(): array
     {
         $actions = [
-            CreateAction::make()->label('New Job'),
+            CreateAction::make()->label('Create Job'),
         ];
 
         if (class_exists(\pxlrbt\FilamentExcel\Actions\Pages\ExportAction::class)) {
