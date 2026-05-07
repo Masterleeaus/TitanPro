@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     // Navigation / panel shell
                     'Andreia\\FilamentUiSwitcher\\FilamentUiSwitcherPlugin',
                     'Biostate\\FilamentMenuBuilder\\FilamentMenuBuilderPlugin',
-                    'Notebrainslab\\FilamentMenuManager\\FilamentMenuManagerPlugin',
+                    'NoteBrainsLab\\FilamentMenuManager\\FilamentMenuManagerPlugin',
                     'BezhanSalleh\\PanelSwitch\\PanelSwitchPlugin',
                     'JeffersonGoncalves\\FilamentTopbar\\FilamentTopbarPlugin',
                     'OsamaAtef\\FilamentDrilldownSidebar\\FilamentDrilldownSidebarPlugin',
