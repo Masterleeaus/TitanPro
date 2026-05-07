@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,6 +30,14 @@ class GroundZeroPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Cyan,
             ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
+            ])
             ->discoverResources(in: app_path('Filament/GroundZero/Resources'), for: 'App\\Filament\\GroundZero\\Resources')
             ->discoverPages(in: app_path('Filament/GroundZero/Pages'), for: 'App\\Filament\\GroundZero\\Pages')
             ->pages([
@@ -37,6 +46,7 @@ class GroundZeroPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/GroundZero/Widgets'), for: 'App\\Filament\\GroundZero\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                JobsByStatusChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -52,5 +62,49 @@ class GroundZeroPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /**
+     * Return a configured BreezyCore plugin array (empty array when package is absent).
+     *
+     * @return array<int, object>
+     */
+    private function breezyPlugin(): array
+    {
+        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
+            return [];
+        }
+
+        return [
+            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
+                ->myProfile(
+                    shouldRegisterUserMenu: true,
+                    shouldRegisterNavigation: false,
+                    hasAvatars: false,
+                    slug: 'my-profile',
+                )
+                ->enableTwoFactorAuthentication(),
+        ];
+    }
+
+    /**
+     * Register optional plugins without breaking the panel if a package is absent.
+     *
+     * @param  array<int, class-string>  $pluginClasses
+     * @return array<int, object>
+     */
+    private function availablePlugins(array $pluginClasses): array
+    {
+        $plugins = [];
+
+        foreach ($pluginClasses as $pluginClass) {
+            if (! class_exists($pluginClass) || ! method_exists($pluginClass, 'make')) {
+                continue;
+            }
+
+            $plugins[] = $pluginClass::make();
+        }
+
+        return $plugins;
     }
 }

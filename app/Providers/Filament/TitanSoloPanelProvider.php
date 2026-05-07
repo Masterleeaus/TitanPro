@@ -32,6 +32,13 @@ class TitanSoloPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Sky,
             ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
+            ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanSolo/Pages'), for: 'App\\Filament\\TitanSolo\\Pages')
             ->pages([
@@ -55,5 +62,49 @@ class TitanSoloPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /**
+     * Return a configured BreezyCore plugin array (empty array when package is absent).
+     *
+     * @return array<int, object>
+     */
+    private function breezyPlugin(): array
+    {
+        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
+            return [];
+        }
+
+        return [
+            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
+                ->myProfile(
+                    shouldRegisterUserMenu: true,
+                    shouldRegisterNavigation: false,
+                    hasAvatars: false,
+                    slug: 'my-profile',
+                )
+                ->enableTwoFactorAuthentication(),
+        ];
+    }
+
+    /**
+     * Register optional plugins without breaking the panel if a package is absent.
+     *
+     * @param  array<int, class-string>  $pluginClasses
+     * @return array<int, object>
+     */
+    private function availablePlugins(array $pluginClasses): array
+    {
+        $plugins = [];
+
+        foreach ($pluginClasses as $pluginClass) {
+            if (! class_exists($pluginClass) || ! method_exists($pluginClass, 'make')) {
+                continue;
+            }
+
+            $plugins[] = $pluginClass::make();
+        }
+
+        return $plugins;
     }
 }

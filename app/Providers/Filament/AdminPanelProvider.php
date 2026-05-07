@@ -44,11 +44,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
                 CRMCorePlugin::make(),
+                ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    // Account / auth / security
-                    'Jeffgreco13\\FilamentBreezy\\BreezyCore',
-                    'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
-
                     // Media / activity / dashboard surfaces
                     'Awcodes\\Curator\\CuratorPlugin',
                     'Alizharb\\FilamentActivitylog\\FilamentActivitylogPlugin',
@@ -58,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                     'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
 
                     // Navigation / panel shell
+                    'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
                     'Andreia\\FilamentUiSwitcher\\FilamentUiSwitcherPlugin',
                     'Biostate\\FilamentMenuBuilder\\FilamentMenuBuilderPlugin',
                     'NoteBrainsLab\\FilamentMenuManager\\FilamentMenuManagerPlugin',
@@ -87,6 +85,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\InvoiceVisibilityWidget::class,
                 \App\Filament\Widgets\PwaLaunchWidget::class,
                 \App\Filament\Widgets\CleanerLiveMap::class,
+                \App\Filament\Widgets\RevenueChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -134,6 +133,32 @@ class AdminPanelProvider extends PanelProvider
         }
 
         return $plugins;
+    }
+
+    /**
+     * Return a configured BreezyCore plugin array (empty array when package is absent).
+     *
+     * Enables the my-profile page and integrates Breezy's two-factor authentication
+     * UI, which complements the existing Fortify 2FA backend.
+     *
+     * @return array<int, object>
+     */
+    private function breezyPlugin(): array
+    {
+        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
+            return [];
+        }
+
+        return [
+            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
+                ->myProfile(
+                    shouldRegisterUserMenu: true,
+                    shouldRegisterNavigation: false,
+                    hasAvatars: false,
+                    slug: 'my-profile',
+                )
+                ->enableTwoFactorAuthentication(),
+        ];
     }
 
 }

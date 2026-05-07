@@ -32,6 +32,9 @@ class ZeroFussPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Teal,
             ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+            ])
             ->discoverResources(in: app_path('Filament/ZeroFuss/Resources'), for: 'App\\Filament\\ZeroFuss\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroFuss/Pages'), for: 'App\\Filament\\ZeroFuss\\Pages')
             ->pages([
@@ -55,5 +58,29 @@ class ZeroFussPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    /**
+     * Return a configured BreezyCore plugin array (empty array when package is absent).
+     *
+     * Customers can manage their profile and password via the self-service portal.
+     *
+     * @return array<int, object>
+     */
+    private function breezyPlugin(): array
+    {
+        if (! class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
+            return [];
+        }
+
+        return [
+            \Jeffgreco13\FilamentBreezy\BreezyCore::make()
+                ->myProfile(
+                    shouldRegisterUserMenu: true,
+                    shouldRegisterNavigation: false,
+                    hasAvatars: false,
+                    slug: 'my-profile',
+                ),
+        ];
     }
 }
