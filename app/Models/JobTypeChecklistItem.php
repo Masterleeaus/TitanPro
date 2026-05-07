@@ -10,11 +10,11 @@ class JobTypeChecklistItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['job_type_id','task_library_item_id','label','instructions','sort_order','is_required','requires_photo','condition_type','condition_value'];
+    protected $fillable = ['job_type_id','task_library_item_id','label','instructions','sort_order','is_required','required_override','requires_photo','condition_type','condition_value'];
 
     protected function casts(): array
     {
-        return ['is_required' => 'boolean','requires_photo' => 'boolean','sort_order' => 'integer'];
+        return ['is_required' => 'boolean','required_override' => 'boolean','requires_photo' => 'boolean','sort_order' => 'integer'];
     }
 
     public function jobType(): BelongsTo { return $this->belongsTo(JobType::class); }

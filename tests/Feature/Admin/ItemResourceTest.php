@@ -16,11 +16,15 @@ function itemOwnerUser(): User
     return $user;
 }
 
-test('owner sees metric add-on pricing options on the create form', function () {
+test('owner sees expanded add-on pricing and visibility options on the create form', function () {
     $this->actingAs(itemOwnerUser())
         ->get('/admin/items/create')
         ->assertOk()
+        ->assertSee('Flat')
         ->assertSee('Per m²')
+        ->assertSee('Per unit')
+        ->assertSee('Attachable Services')
+        ->assertSee('Upsell Visibility')
         ->assertSee('m²')
         ->assertDontSee('sq ft')
         ->assertDontSee('sqft')
