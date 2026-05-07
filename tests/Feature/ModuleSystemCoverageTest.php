@@ -7,7 +7,7 @@ use Modules\CallingAgent\Providers\ModuleServiceProvider as CallingAgentModuleSe
 use Modules\TitanCore\Services\Upgrade\UpgradeEngine;
 
 test('module discovery finds temporary module and parses manifest via modules health command', function () {
-    $moduleDir = base_path('Modules/_TestDiscovery_'.uniqid());
+    $moduleDir = base_path('Modules/TestDiscoveryModule_'.uniqid());
     mkdir($moduleDir, 0755, true);
 
     file_put_contents($moduleDir.'/module.json', json_encode([
@@ -30,15 +30,12 @@ test('module discovery finds temporary module and parses manifest via modules he
 });
 
 test('calling agent provider boots and loads web api internal and tenant route files', function () {
-    $loaded = [];
-
-    $provider = new class(app(), $loaded) extends CallingAgentModuleServiceProvider
+    $provider = new class(app()) extends CallingAgentModuleServiceProvider
     {
-        private array $loaded;
+        public array $loaded = [];
 
-        public function __construct($app, array &$loaded)
+        public function __construct($app)
         {
-            $this->loaded = &$loaded;
             parent::__construct($app);
         }
 
@@ -54,14 +51,14 @@ test('calling agent provider boots and loads web api internal and tenant route f
 
     $provider->boot();
 
-    expect($loaded)->toContain('web.php');
-    expect($loaded)->toContain('api.php');
-    expect($loaded)->toContain('internal.php');
-    expect($loaded)->toContain('tenant.php');
+    expect($provider->loaded)->toContain('web.php');
+    expect($provider->loaded)->toContain('api.php');
+    expect($provider->loaded)->toContain('internal.php');
+    expect($provider->loaded)->toContain('tenant.php');
 });
 
 test('upgrade engine executes upgrade files in order and persists upgrade history', function () {
-    $moduleName = '_TestUpgrade_'.uniqid();
+    $moduleName = 'TestUpgradeModule_'.uniqid();
     $moduleDir = base_path('Modules/'.$moduleName);
     $orderFile = sys_get_temp_dir().'/'.$moduleName.'_order.log';
     @unlink($orderFile);

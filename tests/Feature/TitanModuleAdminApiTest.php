@@ -104,8 +104,6 @@ test('GET health endpoint returns module health payload for super_admin', functi
 
     Module::shouldReceive('find')->with('TitanCore')->once()->andReturn(fakeModule('TitanCore', true));
 
-    $this->artisan('modules:health', ['--module' => 'TitanCore', '--json' => true]);
-
     $this->actingAs($user)
         ->getJson('/admin/titan/modules/TitanCore/health')
         ->assertOk()

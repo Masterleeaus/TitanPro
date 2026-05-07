@@ -8,6 +8,8 @@ use Modules\TitanCore\Jobs\ReindexModuleJob;
 use Modules\TitanCore\Services\EmbeddingService;
 use Modules\TitanCore\Services\TitanAIRunLogService;
 
+const VECTOR_RUNTIME_COMPANY_ID = 7;
+
 beforeEach(function () {
     if (! Schema::hasTable('titan_module_vectors')) {
         Schema::create('titan_module_vectors', function ($table) {
@@ -40,6 +42,12 @@ beforeEach(function () {
     }
 });
 
+afterEach(function () {
+    Schema::dropIfExists('ai_kb_chunks');
+    Schema::dropIfExists('ai_kb_documents');
+    Schema::dropIfExists('titan_module_vectors');
+});
+
 test('DB vector store stores and retrieves vectors ranked by similarity and tenant scope', function () {
     $embedding = Mockery::mock(EmbeddingService::class);
     $embedding->shouldReceive('embedText')->andReturnUsing(function (string $text) {
@@ -64,25 +72,41 @@ test('DB vector store stores and retrieves vectors ranked by similarity and tena
     expect($results[0]['score'])->toBeGreaterThan($results[1]['score']);
 });
 
+test('DB vector store respects maxResults when retrieving', function () {
+    $embedding = Mockery::mock(EmbeddingService::class);
+    $embedding->shouldReceive('embedText')->andReturnUsing(function (string $text) {
+        return match ($text) {
+            'doc-a' => ['vector' => [1.0, 0.0, 0.0]],
+            'doc-b' => ['vector' => [0.9, 0.0, 0.0]],
+            'doc-c' => ['vector' => [0.8, 0.0, 0.0]],
+            'query' => ['vector' => [1.0, 0.0, 0.0]],
+            default => ['vector' => [0.0, 1.0, 0.0]],
+        };
+    });
+
+    $store = new PgvectorStore($embedding, 3);
+    $store->index('doc-a', 'doc-a', ['company_id' => 9, 'module' => 'TitanCore']);
+    $store->index('doc-b', 'doc-b', ['company_id' => 9, 'module' => 'TitanCore']);
+    $store->index('doc-c', 'doc-c', ['company_id' => 9, 'module' => 'TitanCore']);
+
+    $results = $store->retrieve('query', ['company_id' => 9, 'module' => 'TitanCore'], 2);
+
+    expect($results)->toHaveCount(2);
+});
+
 test('reindex job processes module documents and updates vector store', function () {
-    $docId = DB::table('ai_kb_documents')->insertGetId(['company_id' => 7, 'created_at' => now(), 'updated_at' => now()]);
+    $docId = DB::table('ai_kb_documents')->insertGetId(['company_id' => VECTOR_RUNTIME_COMPANY_ID, 'created_at' => now(), 'updated_at' => now()]);
     DB::table('ai_kb_chunks')->insert([
         ['document_id' => $docId, 'content' => 'alpha chunk', 'created_at' => now(), 'updated_at' => now()],
         ['document_id' => $docId, 'content' => 'beta chunk', 'created_at' => now(), 'updated_at' => now()],
     ]);
 
-    $indexed = [];
-    $store = new class($indexed) implements VectorStoreContract
+    $store = new class implements VectorStoreContract
     {
-        private array $indexed;
-
-        public function __construct(array &$indexed)
-        {
-            $this->indexed = &$indexed;
-        }
+        public array $indexedRecords = [];
         public function index(string $id, string $content, array $metadata = []): array
         {
-            $this->indexed[] = compact('id', 'content', 'metadata');
+            $this->indexedRecords[] = compact('id', 'content', 'metadata');
 
             return ['ok' => true];
         }
@@ -101,9 +125,9 @@ test('reindex job processes module documents and updates vector store', function
     $log->shouldReceive('start')->once()->with(123);
     $log->shouldReceive('success')->once();
 
-    (new ReindexModuleJob('TitanCore', companyId: 7, chunkLimit: 50))->handle($store, $log);
+    (new ReindexModuleJob('TitanCore', companyId: VECTOR_RUNTIME_COMPANY_ID, chunkLimit: 50))->handle($store, $log);
 
-    expect($indexed)->toHaveCount(2);
-    expect($indexed[0]['metadata']['company_id'])->toBe(7);
-    expect($indexed[0]['metadata']['module'])->toBe('TitanCore');
+    expect($store->indexedRecords)->toHaveCount(2);
+    expect($store->indexedRecords[0]['metadata']['company_id'])->toBe(VECTOR_RUNTIME_COMPANY_ID);
+    expect($store->indexedRecords[0]['metadata']['module'])->toBe('TitanCore');
 });
