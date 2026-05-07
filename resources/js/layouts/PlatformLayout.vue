@@ -42,6 +42,10 @@ function navClass(href: string): string {
                 <a href="#organizations" class="block rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">Organizations</a>
                 <a href="#subscriptions" class="block rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">Subscriptions</a>
 
+                <div class="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Modules</div>
+                <Link href="/platform/modules" :class="navClass('/platform/modules')">Module Admin</Link>
+                <Link href="/platform/modules/audit-log" :class="navClass('/platform/modules/audit-log')">Audit Log</Link>
+
                 <div class="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-slate-500">App</div>
                 <Link href="/owner/dashboard" class="block rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">Owner dashboard</Link>
             </nav>

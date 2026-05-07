@@ -19,6 +19,7 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\CmsPageController;
 use App\Http\Controllers\Platform\TitanModuleAdminApiController;
 use App\Http\Controllers\Platform\DashboardController as PlatformDashboardController;
+use App\Http\Controllers\Platform\ModuleAdminDashboardController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\PublicEstimateController;
 use App\Http\Controllers\Technician\DashboardController as TechnicianDashboardController;
@@ -65,6 +66,8 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
 
         // Module administration — protected by titan.admin gate via module.admin middleware
         Route::middleware('module.admin')->group(function () {
+            Route::get('/modules', [ModuleAdminDashboardController::class, 'index'])
+                ->name('modules.index');
             Route::get('/modules/audit-log', [\App\Http\Controllers\Platform\ModuleAuditLogController::class, 'index'])
                 ->name('modules.audit-log');
         });
@@ -73,10 +76,12 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
 Route::prefix('admin/titan/modules')
     ->middleware(['auth', 'module.admin'])
     ->group(function () {
+        Route::post('/sync', [TitanModuleAdminApiController::class, 'sync']);
         Route::get('/', [TitanModuleAdminApiController::class, 'index']);
         Route::post('/{module}/enable', [TitanModuleAdminApiController::class, 'enable']);
         Route::post('/{module}/disable', [TitanModuleAdminApiController::class, 'disable']);
         Route::get('/{module}/health', [TitanModuleAdminApiController::class, 'health']);
+        Route::get('/{module}/manifests', [TitanModuleAdminApiController::class, 'manifests']);
     });
 
 Route::middleware(['auth', 'role:owner|admin'])
