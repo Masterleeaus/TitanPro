@@ -63,7 +63,7 @@ return [
             'path'        => 'titango',
             'color'       => 'orange',
             'icon'        => 'heroicon-o-device-phone-mobile',
-            'roles'       => ['technician', 'owner', 'admin'],
+            'roles'       => ['owner', 'admin', 'super_admin'],
         ],
 
         'zerofuss' => [
