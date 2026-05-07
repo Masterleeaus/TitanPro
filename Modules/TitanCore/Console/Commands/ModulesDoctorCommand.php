@@ -3,6 +3,7 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Modules\TitanCore\Support\ManifestSchemaValidator;
@@ -75,7 +76,32 @@ class ModulesDoctorCommand extends Command
             $this->components->twoColumnDetail('<fg=green>✓ All dependency constraints satisfied</>', '');
         }
 
-        // ── 3. Manifest schema validation ─────────────────────────────────────
+        // ── 3. Safe-boot provider failures ────────────────────────────────────
+        $bootFailures = app()->bound('titan.module_boot_failures')
+            ? app('titan.module_boot_failures')
+            : [];
+        if ($bootFailures instanceof Collection) {
+            $bootFailures = $bootFailures->all();
+        }
+
+        if (is_array($bootFailures) && ! empty($bootFailures)) {
+            $hasProblems = true;
+            $this->components->warn('Safe-boot provider failures detected:');
+
+            foreach ($bootFailures as $failure) {
+                $module = $failure['module'] ?? 'unknown-module';
+                $provider = $failure['provider'] ?? 'unknown-provider';
+                $error = $failure['error'] ?? 'unknown error';
+
+                $this->line("  <fg=yellow>⚠</> <fg=cyan>{$module}</>: {$provider} — {$error}");
+            }
+
+            $this->newLine();
+        } else {
+            $this->components->twoColumnDetail('<fg=green>✓ No safe-boot provider failures</>', '');
+        }
+
+        // ── 4. Manifest schema validation ─────────────────────────────────────
         if (! $this->option('skip-schema')) {
             $schemaProblems = $this->runSchemaValidation();
             if ($schemaProblems) {
