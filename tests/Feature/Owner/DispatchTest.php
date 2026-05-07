@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\DriverLocation;
 use App\Models\Job;
 use App\Models\Organization;
 use App\Models\Property;
@@ -149,4 +150,39 @@ test('technician locations returns null location when no driver location exists'
 
     $techData = collect($response->json('data'))->firstWhere('id', $tech->id);
     expect($techData['location'])->toBeNull();
+});
+
+test('technician locations do not leak another organization location data', function () {
+    [$owner, $tech, $org] = dispatchSetup();
+
+    DriverLocation::create([
+        'organization_id' => $org->id,
+        'user_id' => $tech->id,
+        'latitude' => 40.7128,
+        'longitude' => -74.0060,
+        'recorded_at' => now(),
+    ]);
+
+    $otherOrg = Organization::factory()->create();
+    $otherOwner = User::factory()->create(['organization_id' => $otherOrg->id]);
+    $otherOwner->assignRole('owner');
+    $otherTech = User::factory()->create(['organization_id' => $otherOrg->id]);
+    $otherTech->assignRole('technician');
+
+    DriverLocation::create([
+        'organization_id' => $otherOrg->id,
+        'user_id' => $otherTech->id,
+        'latitude' => 34.0522,
+        'longitude' => -118.2437,
+        'recorded_at' => now(),
+    ]);
+
+    $response = $this->actingAs($otherOwner)
+        ->getJson('/owner/dispatch/technicians')
+        ->assertOk();
+
+    expect($response->json('data'))->toHaveCount(1)
+        ->and($response->json('data.0.id'))->toBe($otherTech->id)
+        ->and($response->json('data.0.location.latitude'))->toBe(34.0522)
+        ->and(collect($response->json('data'))->pluck('id'))->not->toContain($tech->id);
 });
