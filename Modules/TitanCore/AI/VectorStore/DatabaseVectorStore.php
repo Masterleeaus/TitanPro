@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\DB;
  *
  * All operations are automatically scoped to the module name supplied at
  * construction time, preventing cross-module data leakage.
+ *
+ * When $companyId is provided every read and write is additionally scoped to
+ * that tenant, enforcing the platform's company_id tenant boundary.  Pass null
+ * only for system-level (non-tenant) operations where tenant isolation is not
+ * required.
+ *
+ * Performance note: search() loads up to 200 candidate rows and ranks them in
+ * PHP via cosine similarity.  For high-volume production workloads consider
+ * using PgvectorStore (native vector ANN) or another backend.
  */
 class DatabaseVectorStore
 {
@@ -102,15 +111,23 @@ class DatabaseVectorStore
     /**
      * Remove a previously stored chunk by its identifier.
      *
+     * The delete is scoped to the module (and company when set) to prevent
+     * cross-tenant deletion of vectors belonging to a different tenant.
+     *
      * @param  string  $chunkId  The identifier used when calling store().
      * @return array{ok: bool}
      */
     public function delete(string $chunkId): array
     {
-        DB::table('titan_module_vectors')
+        $query = DB::table('titan_module_vectors')
             ->where('external_id', $chunkId)
-            ->where('module', $this->module)
-            ->delete();
+            ->where('module', $this->module);
+
+        if ($this->companyId !== null) {
+            $query->where('company_id', $this->companyId);
+        }
+
+        $query->delete();
 
         return ['ok' => true];
     }

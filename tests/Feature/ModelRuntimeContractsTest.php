@@ -232,6 +232,23 @@ test('DatabaseVectorStore delete removes the correct row', function () {
     expect($row)->toBeNull();
 });
 
+test('DatabaseVectorStore delete is scoped to the current module and company', function () {
+    // Store a chunk under company 10
+    $store10 = new DatabaseVectorStore(module: 'TestModule', companyId: 10);
+    $store10->store('chunk-shared', 'Shared chunk', [1.0, 0.0]);
+
+    // Attempt to delete using a different company — row must NOT be removed
+    $store11 = new DatabaseVectorStore(module: 'TestModule', companyId: 11);
+    $store11->delete('chunk-shared');
+
+    $row = \Illuminate\Support\Facades\DB::table('titan_module_vectors')
+        ->where('external_id', 'chunk-shared')
+        ->where('company_id', 10)
+        ->first();
+
+    expect($row)->not->toBeNull();
+});
+
 test('DatabaseVectorStore store persists metadata as JSON', function () {
     $store = new DatabaseVectorStore(module: 'TestModule', companyId: 5);
     $store->store('chunk-meta', 'With metadata', [1.0, 0.0], ['source' => 'doc.pdf', 'page' => 3]);
