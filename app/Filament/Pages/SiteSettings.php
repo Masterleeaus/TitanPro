@@ -3,17 +3,33 @@
 namespace App\Filament\Pages;
 
 use App\Models\PlatformSetting;
+use App\Support\BrandThemeGenerator;
 use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Actions\Action;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\Section;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 
 class SiteSettings extends Page implements HasSchemas
 {
     use InteractsWithSchemas;
+
+    private const FONT_UPLOAD_MIME_TYPES = [
+        'font/ttf',
+        'font/otf',
+        'font/woff',
+        'font/woff2',
+        'application/x-font-ttf',
+        'application/font-sfnt',
+    ];
+
+    private const MAX_THEME_SNAPSHOTS = 20;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
@@ -24,6 +40,8 @@ class SiteSettings extends Page implements HasSchemas
     protected string $view = 'filament.pages.site-settings';
 
     public ?array $data = [];
+    public ?array $generatedThemePreview = null;
+    public ?string $generatedThemeName = null;
 
     public function mount(): void
     {
@@ -49,6 +67,12 @@ class SiteSettings extends Page implements HasSchemas
             'enable_registration' => $settings->enable_registration,
             'maintenance_message' => $settings->maintenance_message,
             'custom_css' => $settings->custom_css,
+            'font_heading' => $settings->font_heading,
+            'font_body' => $settings->font_body,
+            'font_source_url' => $settings->font_source_url,
+            'font_path' => $settings->font_path,
+            'bg_image_path' => $settings->bg_image_path,
+            'surface_color' => $settings->surface_color,
         ]);
     }
 
@@ -64,6 +88,42 @@ class SiteSettings extends Page implements HasSchemas
                 Forms\Components\ColorPicker::make('secondary_color')->label('Secondary color'),
                 Forms\Components\ColorPicker::make('accent_color')->label('Accent color'),
             ])->columns(2),
+            Section::make('Brand Engine')
+                ->description('Upload logo/font/wallpaper, then generate a complete design system from your brand assets.')
+                ->schema([
+                    Forms\Components\FileUpload::make('font_path')
+                        ->label('Brand font file')
+                        ->disk('public')
+                        ->directory('platform/fonts')
+                        ->acceptedFileTypes(self::FONT_UPLOAD_MIME_TYPES)
+                        ->preserveFilenames()
+                        ->downloadable()
+                        ->openable(),
+                    Forms\Components\TextInput::make('font_source_url')
+                        ->label('Google Fonts URL')
+                        ->placeholder('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap')
+                        ->maxLength(2048)
+                        ->url(),
+                    Forms\Components\FileUpload::make('bg_image_path')
+                        ->label('Wallpaper / background')
+                        ->disk('public')
+                        ->directory('platform/backgrounds')
+                        ->image()
+                        ->imageEditor()
+                        ->preserveFilenames()
+                        ->downloadable()
+                        ->openable(),
+                    Forms\Components\TextInput::make('font_heading')->label('Heading font')->maxLength(120),
+                    Forms\Components\TextInput::make('font_body')->label('Body font')->maxLength(120),
+                    Forms\Components\ColorPicker::make('surface_color')->label('Surface color'),
+                    Actions::make([
+                        Action::make('generateFromBrand')
+                            ->label('Generate from brand')
+                            ->icon('heroicon-m-sparkles')
+                            ->action('generateFromBrand')
+                            ->color('primary'),
+                    ]),
+                ])->columns(2),
             Section::make('Contact & support')->description('Shown in public pages, billing flows, emails, and footer areas.')->schema([
                 Forms\Components\TextInput::make('support_email')->label('Support email')->email()->maxLength(120),
                 Forms\Components\TextInput::make('billing_email')->label('Billing email')->email()->maxLength(120),
@@ -86,12 +146,84 @@ class SiteSettings extends Page implements HasSchemas
         ])->statePath('data');
     }
 
+    public function generateFromBrand(BrandThemeGenerator $generator): void
+    {
+        $state = $this->form->getState();
+        $disk = Storage::disk('public');
+
+        $generated = $generator->generate([
+            'logo_absolute_path' => $this->resolveStorageAbsolutePath($disk, $state['logo_path'] ?? null),
+            'wallpaper_absolute_path' => $this->resolveStorageAbsolutePath($disk, $state['bg_image_path'] ?? null),
+            'accent_color' => $state['accent_color'] ?? null,
+            'font_source_url' => $state['font_source_url'] ?? null,
+            'font_file_path' => $state['font_path'] ?? null,
+        ]);
+
+        $state['primary_color'] = $generated['primary_color'];
+        $state['secondary_color'] = $generated['secondary_color'];
+        $state['surface_color'] = $generated['surface_color'];
+        $state['font_heading'] = $generated['font_heading'];
+        $state['font_body'] = $generated['font_body'];
+        $state['font_source_url'] = $generator->sanitizeGoogleFontsUrl($state['font_source_url'] ?? null);
+        $this->form->fill($state);
+
+        $orgName = $state['site_name'] ?: ($state['app_name'] ?? 'Org');
+        $this->generatedThemeName = "Brand: {$orgName} — auto";
+        $this->generatedThemePreview = [
+            'primary_color' => $generated['primary_color'],
+            'secondary_color' => $generated['secondary_color'],
+            'surface_color' => $generated['surface_color'],
+            'font_heading' => $generated['font_heading'],
+            'font_body' => $generated['font_body'],
+            'wcag_warning' => $generated['wcag_warning'],
+            'contrast_ratio' => $generated['contrast_ratio'],
+            'text_color' => $generated['text_color'],
+            'name' => $this->generatedThemeName,
+            'bg_image_url' => ! empty($state['bg_image_path']) ? $disk->url($state['bg_image_path']) : null,
+        ];
+
+        $settings = PlatformSetting::current();
+        $snapshots = $settings->theme_snapshots ?? [];
+        array_unshift($snapshots, [
+            'name' => $this->generatedThemeName,
+            'generated_at' => now()->toIso8601String(),
+            'theme' => [
+                'primary_color' => $state['primary_color'],
+                'secondary_color' => $state['secondary_color'],
+                'surface_color' => $state['surface_color'],
+                'font_heading' => $state['font_heading'],
+                'font_body' => $state['font_body'],
+                'font_source_url' => $state['font_source_url'],
+                'bg_image_path' => $state['bg_image_path'] ?? null,
+            ],
+            'wcag_warning' => $generated['wcag_warning'],
+        ]);
+        $settings->update(['theme_snapshots' => array_slice($snapshots, 0, self::MAX_THEME_SNAPSHOTS)]);
+        cache()->forget('platform_settings');
+
+        Notification::make()->title('Theme generated from brand assets')->success()->send();
+    }
+
+    private function resolveStorageAbsolutePath(FilesystemAdapter $disk, ?string $path): ?string
+    {
+        $normalizedPath = is_string($path) ? urldecode($path) : null;
+
+        if (! is_string($normalizedPath) || $normalizedPath === '' || str_contains($normalizedPath, '..') || str_starts_with($normalizedPath, '/') || ! $disk->exists($normalizedPath)) {
+            return null;
+        }
+
+        return $disk->path($normalizedPath);
+    }
+
     public function save(): void
     {
         $state = $this->form->getState();
         $state['logo'] = $state['logo_path'] ?? null;
         $state['favicon'] = $state['favicon_path'] ?? null;
         $state['site_name'] = $state['site_name'] ?: ($state['app_name'] ?? 'TITAN ZERO');
+
+        $generator = app(BrandThemeGenerator::class);
+        $state['font_source_url'] = $generator->sanitizeGoogleFontsUrl($state['font_source_url'] ?? null);
 
         PlatformSetting::current()->update($state);
         cache()->forget('platform_settings');

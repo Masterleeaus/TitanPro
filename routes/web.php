@@ -17,6 +17,7 @@ use App\Http\Controllers\Owner\TeamController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\CmsPageController;
+use App\Http\Controllers\Platform\TitanModuleAdminApiController;
 use App\Http\Controllers\Platform\DashboardController as PlatformDashboardController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\PublicEstimateController;
@@ -69,6 +70,15 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
         });
     });
 // ── Subscription routes — outside subscription middleware so expired users can reach them ──
+Route::prefix('admin/titan/modules')
+    ->middleware(['auth', 'module.admin'])
+    ->group(function () {
+        Route::get('/', [TitanModuleAdminApiController::class, 'index']);
+        Route::post('/{module}/enable', [TitanModuleAdminApiController::class, 'enable']);
+        Route::post('/{module}/disable', [TitanModuleAdminApiController::class, 'disable']);
+        Route::get('/{module}/health', [TitanModuleAdminApiController::class, 'health']);
+    });
+
 Route::middleware(['auth', 'role:owner|admin'])
     ->prefix('owner')
     ->name('owner.')

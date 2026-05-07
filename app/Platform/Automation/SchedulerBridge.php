@@ -49,6 +49,41 @@ class SchedulerBridge
 
             $this->applyCadence($event, $cadence);
         }
+
+        foreach ($this->registry->schedulerHooks() as $hook) {
+            $class = $hook['class'] ?? null;
+            if (! is_string($class) || $class === '' || ! class_exists($class)) {
+                continue;
+            }
+
+            $id = (string) ($hook['key'] ?? $class);
+            $cadence = (string) ($hook['schedule'] ?? 'daily');
+
+            $event = $schedule->call(function () use ($class, $id, $cadence) {
+                try {
+                    $instance = app()->make($class);
+                    if (method_exists($instance, 'handle')) {
+                        $instance->handle([
+                            'scheduler_hook' => $id,
+                            'cadence' => $cadence,
+                        ]);
+                    } else {
+                        logger()->warning('Automation scheduler hook class is missing handle() method.', [
+                            'class' => $class,
+                            'hook' => $id,
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    report($e);
+                    logger()->error('Automation scheduler hook execution failed.', [
+                        'class' => $class,
+                        'hook' => $id,
+                    ]);
+                }
+            })->name("automation:scheduler-hook:{$id}")->withoutOverlapping();
+
+            $this->applyCadence($event, $cadence);
+        }
     }
 
     /**

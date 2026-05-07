@@ -2,6 +2,23 @@
 
 namespace App\Providers;
 
+use App\Platform\Automation\AutomationRegistry;
+use App\Platform\Filament\FilamentRegistry;
+use App\Platform\Modules\BlueprintManifestLoader;
+use App\Platform\Modules\ChannelManifestRegistry;
+use App\Platform\Modules\DashboardRegistry;
+use App\Platform\Modules\ManifestLoader;
+use App\Platform\Modules\ModuleKernel;
+use App\Platform\Modules\ModuleManifestRegistryLoader;
+use App\Platform\Modules\ModuleMetadataReader;
+use App\Platform\Modules\OmniManifestRegistry;
+use App\Platform\Modules\PwaManifestRegistry;
+use App\Platform\Modules\SettingsRegistry;
+use App\Platform\Modules\ShortcutRegistry;
+use App\Platform\Modules\TableRegistry;
+use App\Platform\Modules\UiKitRegistry;
+use App\Platform\Modules\VoiceManifestRegistry;
+use App\Platform\Workflows\WorkflowDefinitionRegistry;
 use App\Support\FeatureRegistry;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
@@ -27,23 +44,56 @@ class TitanModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(ModuleMetadataReader::class, fn ($app) => new ModuleMetadataReader($app['log']));
+        $this->app->singleton(ManifestLoader::class, fn ($app) => new ManifestLoader($app['log']));
+        $this->app->singleton(BlueprintManifestLoader::class, fn ($app) => new BlueprintManifestLoader($app['log']));
+        $this->app->singleton(ModuleKernel::class, fn ($app) => new ModuleKernel(
+            $app->make(ModuleMetadataReader::class),
+            $app->make(ManifestLoader::class),
+            $app->make(BlueprintManifestLoader::class),
+            $app['log'],
+        ));
+
         // Bind a module-registry singleton so dependent providers can resolve
         // the enabled-module list without circular boot-order issues.
-        $this->app->singletonIf('titan.modules', fn () => []);
+        $this->app->singletonIf('titan.modules', function ($app) {
+            $paths = config('titan-modules.path', 'Modules');
+
+            return $app->make(ModuleKernel::class)->discover($paths);
+        });
         $this->app->singletonIf('titan.features', fn () => new FeatureRegistry());
         $this->app->singletonIf('titan.module_boot_failures', fn () => collect());
 
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
         $this->app->singleton(CurrentTenant::class);
+
+        $this->app->singletonIf(AutomationRegistry::class);
+        $this->app->singleton(FilamentRegistry::class);
+        $this->app->singleton(WorkflowDefinitionRegistry::class);
+        $this->app->singleton(PwaManifestRegistry::class);
+        $this->app->singleton(ChannelManifestRegistry::class);
+        $this->app->singleton(OmniManifestRegistry::class);
+        $this->app->singleton(VoiceManifestRegistry::class);
+        $this->app->singleton(UiKitRegistry::class);
+        $this->app->singleton(DashboardRegistry::class);
+        $this->app->singleton(TableRegistry::class);
+        $this->app->singleton(ShortcutRegistry::class);
+        $this->app->singleton(SettingsRegistry::class);
+        $this->app->singleton(ModuleManifestRegistryLoader::class);
     }
 
     public function boot(): void
     {
+        /** @var ModuleManifestRegistryLoader $registryLoader */
+        $registryLoader = $this->app->make(ModuleManifestRegistryLoader::class);
+        $registryLoader->load(base_path(config('titan-modules.path', 'Modules')));
+
         if (class_exists(Module::class) && class_exists(ModuleFacade::class)) {
             $this->discoverAndBootEnabledModules();
         }
 
+        // Guard: only inject when both Filament and nwidart/laravel-modules are present.
         if (! class_exists(PanelRegistry::class) || ! class_exists(Module::class)) {
             return;
         }
