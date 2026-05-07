@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanQuotes\Pages\QuotePipelineDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,7 +26,7 @@ class TitanQuotesPanelProvider extends PanelProvider
         return $panel
             ->id('titanquotes')
             ->path('titanquotes')
-            ->brandName('TitanQuotes — Estimating')
+            ->brandName('TitanQuotes')
             ->colors([
                 'primary' => Color::Emerald,
             ])
@@ -33,6 +34,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/TitanQuotes/Pages'), for: 'App\\Filament\\TitanQuotes\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                QuotePipelineDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanQuotes/Widgets'), for: 'App\\Filament\\TitanQuotes\\Widgets')
             ->widgets([

@@ -71,6 +71,30 @@ test('zeropay panel is accessible to bookkeeper role', function () {
         ->assertOk();
 });
 
+test('titanquotes panel is accessible to bookkeeper role', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $user = User::factory()->create();
+    $user->assignRole('bookkeeper');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/titanquotes')
+        ->assertOk();
+});
+
+test('titanquotes panel is not accessible to dispatcher role', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $user = User::factory()->create();
+    $user->assignRole('dispatcher');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/titanquotes')
+        ->assertForbidden();
+});
+
 test('legacy panel aliases permanently redirect to canonical routes', function (string $alias, string $canonical) {
     $response = $this->get($alias);
 
