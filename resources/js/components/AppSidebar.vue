@@ -14,7 +14,6 @@ import {
 import { dashboard } from '@/routes';
 import { type AppPageProps, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Smartphone, TrendingUp } from 'lucide-vue-next';
 import { BookOpen, Folder, LayoutGrid, Smartphone, TrendingUp, UserRound } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
