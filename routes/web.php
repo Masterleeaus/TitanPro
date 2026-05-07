@@ -207,7 +207,11 @@ Route::get('/features', fn () => app(CmsPageController::class)->show('features')
 Route::get('/faq', fn () => app(CmsPageController::class)->show('faq'))->name('faq');
 Route::get('/about', fn () => app(CmsPageController::class)->show('about'))->name('about');
 Route::get('/contact', fn () => app(CmsPageController::class)->show('contact'))->name('contact');
-Route::get('/zeropay', fn () => app(CmsPageController::class)->show('zeropay'))->name('zeropay');
+Route::redirect('/admin', '/titanpro', 301)->name('titanpro.legacy-admin');
+Route::redirect('/ground-zero', '/groundzero', 301)->name('groundzero.alias');
+Route::redirect('/titan-go', '/titango', 301)->name('titango.alias');
+Route::redirect('/titan-quotes', '/titanquotes', 301)->name('titanquotes.alias');
+Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
 Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.index');
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');

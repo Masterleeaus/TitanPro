@@ -24,7 +24,7 @@ return [
         'titanpro' => [
             'label'       => 'TitanPro',
             'description' => 'Super-admin SaaS control panel',
-            'path'        => 'admin',
+            'path'        => 'titanpro',
             'color'       => 'blue',
             'icon'        => 'heroicon-o-shield-check',
             'roles'       => ['super_admin'],
