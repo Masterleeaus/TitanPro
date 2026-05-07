@@ -4,12 +4,18 @@ namespace App\Notifications;
 
 use App\Models\Organization;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TrialEndingNotification extends Notification
+class TrialEndingNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue   = 'mail';
+    public int    $tries   = 3;
+    public int    $timeout = 60;
+    public array  $backoff = [30, 60, 120];
 
     public function __construct(
         private readonly Organization $organization,
