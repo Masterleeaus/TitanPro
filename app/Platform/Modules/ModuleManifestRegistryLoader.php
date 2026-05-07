@@ -3,7 +3,11 @@
 namespace App\Platform\Modules;
 
 use App\Platform\Automation\AutomationRegistry;
+use App\Platform\Billing\BillingRegistry;
 use App\Platform\Filament\FilamentRegistry;
+use App\Platform\Search\SearchRegistry;
+use App\Platform\Tenancy\TenancyRegistry;
+use App\Platform\Verticals\VerticalPackRegistry;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
 
 class ModuleManifestRegistryLoader
@@ -17,6 +21,10 @@ class ModuleManifestRegistryLoader
         private readonly FilamentRegistry $filamentRegistry,
         private readonly WorkflowDefinitionRegistry $workflowRegistry,
         private readonly AutomationRegistry $automationRegistry,
+        private readonly VerticalPackRegistry $verticalPackRegistry,
+        private readonly BillingRegistry $billingRegistry,
+        private readonly SearchRegistry $searchRegistry,
+        private readonly TenancyRegistry $tenancyRegistry,
     ) {}
 
     public function load(string $modulesPath): void
@@ -42,6 +50,10 @@ class ModuleManifestRegistryLoader
             $this->loadFilamentManifest($moduleDir, $module);
             $this->loadWorkflowManifest($moduleDir, $module);
             $this->loadAutomationManifest($moduleDir, $module);
+            $this->loadVerticalManifest($moduleDir, $module);
+            $this->loadBillingManifest($moduleDir, $module);
+            $this->loadSearchManifest($moduleDir, $module);
+            $this->loadTenancyManifest($moduleDir, $module);
 
             $this->loadedModules[$module] = true;
         }
@@ -151,6 +163,64 @@ class ModuleManifestRegistryLoader
         }
 
         $this->automationRegistry->registerManifest($module, $automationManifest);
+    }
+
+    private function loadVerticalManifest(string $moduleDir, string $module): void
+    {
+        $verticalManifest = $this->readJson($moduleDir.'/manifests/verticals.json');
+
+        if (! is_array($verticalManifest) || ($verticalManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $sourcePath = $verticalManifest['source'] ?? null;
+        if (is_string($sourcePath) && $sourcePath !== '') {
+            $configPath = $moduleDir.'/'.$sourcePath;
+
+            if (is_file($configPath)) {
+                $config = require $configPath;
+
+                if (is_array($config)) {
+                    $verticalManifest['supported'] = $verticalManifest['supported'] ?? ($config['supported'] ?? []);
+                    $verticalManifest['default'] = $verticalManifest['default'] ?? ($config['default'] ?? null);
+                }
+            }
+        }
+
+        $this->verticalPackRegistry->registerManifest($module, $verticalManifest);
+    }
+
+    private function loadBillingManifest(string $moduleDir, string $module): void
+    {
+        $billingManifest = $this->readJson($moduleDir.'/manifests/billing.manifest.json');
+
+        if (! is_array($billingManifest) || ($billingManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->billingRegistry->registerManifest($module, $billingManifest);
+    }
+
+    private function loadSearchManifest(string $moduleDir, string $module): void
+    {
+        $searchManifest = $this->readJson($moduleDir.'/manifests/search.manifest.json');
+
+        if (! is_array($searchManifest) || ($searchManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->searchRegistry->registerManifest($module, $searchManifest);
+    }
+
+    private function loadTenancyManifest(string $moduleDir, string $module): void
+    {
+        $tenancyManifest = $this->readJson($moduleDir.'/manifests/tenancy.manifest.json');
+
+        if (! is_array($tenancyManifest) || ($tenancyManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->tenancyRegistry->registerManifest($module, $tenancyManifest);
     }
 
     /**
