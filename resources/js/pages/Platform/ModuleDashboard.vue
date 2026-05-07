@@ -114,8 +114,8 @@ function statusClass(enabled: boolean): string {
 
         <div class="mb-6 flex items-center justify-between">
             <div>
-                <h1 class="text-xl font-bold text-slate-900">Installed Modules</h1>
-                <p class="mt-1 text-sm text-slate-500">View, enable, disable and sync platform modules.</p>
+                <h1 class="text-xl font-bold text-slate-900">Module Admin</h1>
+                <p class="mt-1 text-sm text-slate-500">View, enable, disable, and sync platform modules.</p>
             </div>
             <div class="flex gap-3">
                 <a href="/platform/modules/audit-log" class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
