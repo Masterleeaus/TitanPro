@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Tenancy\CurrentTenant;
+use App\Tenancy\TenantResolver;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\PanelRegistry;
@@ -24,6 +26,10 @@ class TitanModuleServiceProvider extends ServiceProvider
         // Bind a module-registry singleton so dependent providers can resolve
         // the enabled-module list without circular boot-order issues.
         $this->app->singletonIf('titan.modules', fn () => []);
+
+        // Tenancy layer — available throughout the container.
+        $this->app->singleton(TenantResolver::class);
+        $this->app->singleton(CurrentTenant::class);
     }
 
     public function boot(): void

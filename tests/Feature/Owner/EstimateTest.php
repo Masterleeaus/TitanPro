@@ -256,7 +256,7 @@ test('user cannot view an estimate from another org', function () {
 
     $this->actingAs($user)
         ->get("/owner/estimates/{$estimate->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Edit / Update ─────────────────────────────────────────────────────────────
@@ -287,7 +287,7 @@ test('user cannot update an estimate from another org', function () {
             'customer_id' => $otherCustomer->id,
             'title'       => 'Hack',
         ])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Send ──────────────────────────────────────────────────────────────────────
@@ -311,7 +311,7 @@ test('user cannot send another org\'s estimate', function () {
 
     $this->actingAs($user)
         ->post("/owner/estimates/{$estimate->id}/send")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Destroy ───────────────────────────────────────────────────────────────────
@@ -335,7 +335,7 @@ test('user cannot delete another org\'s estimate', function () {
 
     $this->actingAs($user)
         ->delete("/owner/estimates/{$estimate->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Convert to Job ─────────────────────────────────────────────────────────────
@@ -425,7 +425,7 @@ test('user cannot convert another org\'s estimate', function () {
 
     $this->actingAs($user)
         ->post("/owner/estimates/{$estimate->id}/convert")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('recalculate does nothing when parent estimate is null', function () {

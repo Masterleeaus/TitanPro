@@ -152,7 +152,7 @@ test('technician cannot upload a photo to another technician\'s job', function (
         ->postJson("/api/technician/jobs/{$job->id}/photos", [
             'photo' => UploadedFile::fake()->image('x.jpg'),
         ])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Delete ───────────────────────────────────────────────────────────────────
@@ -215,7 +215,7 @@ test('technician cannot delete a photo from another technician\'s job', function
 
     $this->actingAs($technician)
         ->deleteJson("/api/technician/jobs/{$job->id}/photos/{$attachment->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('delete returns 404 when attachment does not belong to the job', function () {
@@ -275,7 +275,7 @@ test('technician cannot delete a photo belonging to a different organization', f
     // Technician A tries to delete org B's attachment via org B's job ID
     $this->actingAs($technicianA)
         ->deleteJson("/api/technician/jobs/{$jobB->id}/photos/{$attachment->id}")
-        ->assertForbidden();
+        ->assertDenied();
 
     expect(Attachment::find($attachment->id))->not->toBeNull();
 });

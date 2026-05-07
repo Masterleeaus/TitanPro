@@ -40,7 +40,7 @@ test('user cannot add a property to another org\'s customer', function () {
 
     $this->actingAs($user)
         ->get("/owner/customers/{$otherCustomer->id}/properties/create")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('user can store a property for their customer', function () {
@@ -85,7 +85,7 @@ test('user cannot edit a property from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/properties/{$property->id}/edit")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('user can update a property', function () {
@@ -155,7 +155,7 @@ test('user cannot remove a property from another organization', function () {
 
     $this->actingAs($user)
         ->delete("/owner/properties/{$property->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 // ── Customer show includes properties ────────────────────────────────────────

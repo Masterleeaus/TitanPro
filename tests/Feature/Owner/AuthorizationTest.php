@@ -82,7 +82,7 @@ test('owner cannot view a customer from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/customers/{$customer->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('owner cannot edit a customer from another organization', function () {
@@ -92,7 +92,7 @@ test('owner cannot edit a customer from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/customers/{$customer->id}/edit")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('owner cannot delete a customer from another organization', function () {
@@ -102,7 +102,7 @@ test('owner cannot delete a customer from another organization', function () {
 
     $this->actingAs($user)
         ->delete("/owner/customers/{$customer->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('owner cannot view a job from another organization', function () {
@@ -113,7 +113,7 @@ test('owner cannot view a job from another organization', function () {
 
     $this->actingAs($user)
         ->get("/owner/jobs/{$job->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('owner cannot update a job from another organization', function () {
@@ -124,7 +124,7 @@ test('owner cannot update a job from another organization', function () {
 
     $this->actingAs($user)
         ->patch("/owner/jobs/{$job->id}/status", ['status' => 'completed'])
-        ->assertForbidden();
+        ->assertDenied();
 });
 
 test('owner cannot delete a job from another organization', function () {
@@ -135,5 +135,5 @@ test('owner cannot delete a job from another organization', function () {
 
     $this->actingAs($user)
         ->delete("/owner/jobs/{$job->id}")
-        ->assertForbidden();
+        ->assertDenied();
 });

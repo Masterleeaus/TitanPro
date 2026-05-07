@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,15 +12,19 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Estimate extends Model
+class Estimate extends Model implements TenantAware
 {
-    use HasFactory, SoftDeletes;
+    use BelongsToTenant, HasFactory, SoftDeletes;
 
-    const STATUS_DRAFT    = 'draft';
-    const STATUS_SENT     = 'sent';
+    const STATUS_DRAFT = 'draft';
+
+    const STATUS_SENT = 'sent';
+
     const STATUS_ACCEPTED = 'accepted';
+
     const STATUS_DECLINED = 'declined';
-    const STATUS_EXPIRED  = 'expired';
+
+    const STATUS_EXPIRED = 'expired';
 
     const TIERS = ['good', 'better', 'best'];
 
@@ -43,9 +49,9 @@ class Estimate extends Model
     protected function casts(): array
     {
         return [
-            'tax_rate'    => 'decimal:4',
-            'expires_at'  => 'date',
-            'sent_at'     => 'datetime',
+            'tax_rate' => 'decimal:4',
+            'expires_at' => 'date',
+            'sent_at' => 'datetime',
             'accepted_at' => 'datetime',
             'declined_at' => 'datetime',
         ];
@@ -93,11 +99,11 @@ class Estimate extends Model
     public static function statuses(): array
     {
         return [
-            self::STATUS_DRAFT    => 'Draft',
-            self::STATUS_SENT     => 'Sent',
+            self::STATUS_DRAFT => 'Draft',
+            self::STATUS_SENT => 'Sent',
             self::STATUS_ACCEPTED => 'Accepted',
             self::STATUS_DECLINED => 'Declined',
-            self::STATUS_EXPIRED  => 'Expired',
+            self::STATUS_EXPIRED => 'Expired',
         ];
     }
 }
