@@ -25,10 +25,10 @@ class DriverLocation extends Model
                 return;
             }
 
-            $driverLocation->organization_id = User::query()
-                ->whereKey($driverLocation->user_id)
-                ->value('organization_id')
-                ?? auth()->user()?->organization_id;
+            $driverLocation->organization_id = auth()->user()?->organization_id
+                ?? User::query()
+                    ->whereKey($driverLocation->user_id)
+                    ->value('organization_id');
         });
     }
 
