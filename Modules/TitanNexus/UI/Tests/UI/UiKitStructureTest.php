@@ -39,14 +39,30 @@ final class UiKitStructureTest extends TestCase
     public function test_module_settings_form_contains_motion_tab_and_live_preview(): void
     {
         $schema = ModuleSettingsForm::schema();
-        $motionTab = $schema['tabs'][0];
+        $motionTab = $this->findTabById($schema, 'motion');
 
+        $this->assertNotNull($motionTab);
         $this->assertSame('motion', $motionTab['id']);
         $this->assertSame('Motion', $motionTab['label']);
         $this->assertTrue($motionTab['live_preview']);
         $this->assertSame('live', $motionTab['preview']['mode']);
 
-        $fieldNames = array_map(static fn (array $field): string => $field['name'], $motionTab['fields']);
+        $fieldNames = [];
+        foreach ($motionTab['fields'] as $field) {
+            $fieldNames[] = $field['name'];
+        }
+
         $this->assertSame(['motion_preset', 'motion_speed', 'motion_ease'], $fieldNames);
+    }
+
+    private function findTabById(array $schema, string $tabId): ?array
+    {
+        foreach ($schema['tabs'] ?? [] as $tab) {
+            if (($tab['id'] ?? null) === $tabId) {
+                return $tab;
+            }
+        }
+
+        return null;
     }
 }

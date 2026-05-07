@@ -25,7 +25,7 @@ final class ModuleSettingsForm
                             'label' => 'Motion Preset',
                             'token' => '--motion-preset',
                             'default' => $uiTokens['tokens']['--motion-preset'],
-                            'options' => $uiTokens['presets'],
+                            'options' => $uiTokens['preset_options'],
                         ],
                         [
                             'type' => 'select',
@@ -33,7 +33,7 @@ final class ModuleSettingsForm
                             'label' => 'Motion Speed',
                             'token' => '--motion-speed',
                             'default' => $uiTokens['tokens']['--motion-speed'],
-                            'options' => $uiTokens['speed'],
+                            'options' => $uiTokens['speed_options'],
                         ],
                         [
                             'type' => 'select',
@@ -41,7 +41,7 @@ final class ModuleSettingsForm
                             'label' => 'Motion Easing',
                             'token' => '--motion-ease',
                             'default' => $uiTokens['tokens']['--motion-ease'],
-                            'options' => $uiTokens['easing'],
+                            'options' => $uiTokens['easing_options'],
                         ],
                     ],
                     'preview' => [
