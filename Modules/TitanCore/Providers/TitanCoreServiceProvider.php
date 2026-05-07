@@ -8,11 +8,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Modules\TitanCore\AI\VectorStore\VectorStoreFactory;
 use Modules\TitanCore\Contracts\AI\VectorStoreContract;
+use Modules\TitanCore\Console\Commands\ModulesBlueprintDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
+use Modules\TitanCore\Console\Commands\ModulesDisableCommand;
 use Modules\TitanCore\Console\Commands\ModulesDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesEnableCommand;
 use Modules\TitanCore\Console\Commands\ModulesHealthCommand;
+use Modules\TitanCore\Console\Commands\ModulesManifestCacheCommand;
 use Modules\TitanCore\Console\Commands\ModulesSchemaDocs;
+use Modules\TitanCore\Console\Commands\ModulesStatusCommand;
 use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
 use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
 use Modules\TitanCore\Console\SyncTitanAgentsCommand;
@@ -63,8 +67,12 @@ class TitanCoreServiceProvider extends ServiceProvider
                 ModulesUpgradeCommand::class,
                 ModulesHealthCommand::class,
                 ModulesDoctorCommand::class,
+                ModulesBlueprintDoctorCommand::class,
+                ModulesManifestCacheCommand::class,
+                ModulesStatusCommand::class,
                 ModulesDepsCommand::class,
                 ModulesEnableCommand::class,
+                ModulesDisableCommand::class,
                 ModulesSchemaDocs::class,
             ]);
         }
