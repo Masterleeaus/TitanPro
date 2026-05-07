@@ -77,7 +77,7 @@
             <div class="rounded-xl border border-dashed border-gray-300 p-8 text-center dark:border-gray-700">
                 <div class="text-lg font-semibold text-gray-950 dark:text-white">No cleaner location pings yet</div>
                 <p class="mt-2 text-sm text-gray-500">Open the cleaner PWA, enable location sharing, and the latest cleaner positions will appear here.</p>
-                <a href="/technician/dashboard" target="_blank" class="mt-4 inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-500">Open Cleaner PWA</a>
+                <a href="/titango" target="_blank" class="mt-4 inline-flex rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-500">Open TitanGo</a>
             </div>
         @endif
     </x-filament::section>

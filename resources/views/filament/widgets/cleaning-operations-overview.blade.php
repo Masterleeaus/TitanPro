@@ -65,8 +65,8 @@
                         <div class="font-semibold text-gray-950 dark:text-white">Reports</div>
                         <div class="text-sm text-gray-500">Revenue, quotes, workload, services.</div>
                     </a>
-                    <a href="/technician/dashboard" target="_blank" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-                        <div class="font-semibold text-gray-950 dark:text-white">Open Cleaner PWA</div>
+                    <a href="/titango" target="_blank" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
+                        <div class="font-semibold text-gray-950 dark:text-white">TitanGo</div>
                         <div class="text-sm text-gray-500">Launch the installable field app.</div>
                     </a>
                     <a href="/admin/driver-locations" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
