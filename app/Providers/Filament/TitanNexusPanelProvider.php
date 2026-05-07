@@ -19,7 +19,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * TitanNexus — Growth and expansion intelligence panel (formerly TitanGrow).
+ * TitanNexus — Growth and expansion intelligence panel.
  */
 class TitanNexusPanelProvider extends PanelProvider
 {
@@ -28,7 +28,7 @@ class TitanNexusPanelProvider extends PanelProvider
         return $panel
             ->id('titannexus')
             ->path('titannexus')
-            ->brandName('TitanNexus — Growth Intel')
+            ->brandName('TitanNexus')
             ->colors([
                 'primary' => Color::Indigo,
             ])
