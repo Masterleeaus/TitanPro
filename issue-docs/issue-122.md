@@ -28,7 +28,7 @@ Although a `ZeroFussPanelProvider` file already existed, implementation details 
 - `resources/js/components/AppSidebar.vue`
   - Added ZeroFuss product-switcher style nav entry (`/zerofuss`) for `customer` role users.
 - `tests/Feature/ZeroFussNavLinkTest.php`
-  - Added checks for ZeroFuss panel registration metadata and sidebar link presence.
+  - Added checks for ZeroFuss panel registration metadata (id/path/label/roles).
 
 ## Tests Added or Updated
 - Added `tests/Feature/Admin/ZeroFussPanelAccessTest.php`.

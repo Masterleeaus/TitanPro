@@ -16,7 +16,7 @@ class BookingResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'My Account';
+    protected static ?string $navigationGroup = 'My Account';
 
     protected static ?string $navigationLabel = 'Bookings';
 
@@ -45,9 +45,10 @@ class BookingResource extends Resource
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Job::statuses()[$state] ?? $state),
+                    ->formatStateUsing(fn (string $state): string => (Job::statuses() ?? [])[$state] ?? $state),
                 TextColumn::make('property.address_line1')
                     ->label('Property')
+                    ->placeholder('—')
                     ->toggleable(),
             ])
             ->defaultSort('scheduled_at', 'desc');

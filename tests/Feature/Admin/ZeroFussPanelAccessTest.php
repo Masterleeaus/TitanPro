@@ -4,25 +4,32 @@ use App\Models\Organization;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
-function zeroFussUser(string $role): User
-{
+test('customer can access the ZeroFuss panel', function () {
     (new RolesAndPermissionsSeeder)->run();
 
     $org = Organization::factory()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
-    $user->assignRole($role);
+    $user->assignRole('customer');
 
-    return $user;
-}
-
-test('customer can access the ZeroFuss panel', function () {
-    $this->actingAs(zeroFussUser('customer'))->get('/zerofuss')->assertOk();
+    $this->actingAs($user)->get('/zerofuss')->assertOk();
 });
 
 test('owner cannot access the ZeroFuss panel', function () {
-    $this->actingAs(zeroFussUser('owner'))->get('/zerofuss')->assertForbidden();
+    (new RolesAndPermissionsSeeder)->run();
+
+    $org = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $org->id]);
+    $user->assignRole('owner');
+
+    $this->actingAs($user)->get('/zerofuss')->assertForbidden();
 });
 
 test('admin cannot access the ZeroFuss panel', function () {
-    $this->actingAs(zeroFussUser('admin'))->get('/zerofuss')->assertForbidden();
+    (new RolesAndPermissionsSeeder)->run();
+
+    $org = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $org->id]);
+    $user->assignRole('admin');
+
+    $this->actingAs($user)->get('/zerofuss')->assertForbidden();
 });
