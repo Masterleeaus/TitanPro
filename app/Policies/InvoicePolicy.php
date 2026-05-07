@@ -19,6 +19,10 @@ class InvoicePolicy
 
     public function view(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Invoice');
     }
 
@@ -29,11 +33,19 @@ class InvoicePolicy
 
     public function update(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Invoice');
     }
 
     public function delete(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Invoice');
     }
 
@@ -44,11 +56,19 @@ class InvoicePolicy
 
     public function restore(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Invoice');
     }
 
     public function forceDelete(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Invoice');
     }
 
@@ -64,6 +84,10 @@ class InvoicePolicy
 
     public function replicate(AuthUser $authUser, Invoice $invoice): bool
     {
+        if ((int) $invoice->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Invoice');
     }
 

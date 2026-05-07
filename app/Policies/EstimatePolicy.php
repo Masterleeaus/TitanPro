@@ -19,6 +19,10 @@ class EstimatePolicy
 
     public function view(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Estimate');
     }
 
@@ -29,11 +33,19 @@ class EstimatePolicy
 
     public function update(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Estimate');
     }
 
     public function delete(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Estimate');
     }
 
@@ -44,11 +56,19 @@ class EstimatePolicy
 
     public function restore(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Estimate');
     }
 
     public function forceDelete(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Estimate');
     }
 
@@ -64,6 +84,10 @@ class EstimatePolicy
 
     public function replicate(AuthUser $authUser, Estimate $estimate): bool
     {
+        if ((int) $estimate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Estimate');
     }
 

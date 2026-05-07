@@ -19,6 +19,10 @@ class DriverLocationPolicy
 
     public function view(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:DriverLocation');
     }
 
@@ -29,11 +33,19 @@ class DriverLocationPolicy
 
     public function update(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:DriverLocation');
     }
 
     public function delete(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:DriverLocation');
     }
 
@@ -44,11 +56,19 @@ class DriverLocationPolicy
 
     public function restore(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:DriverLocation');
     }
 
     public function forceDelete(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:DriverLocation');
     }
 
@@ -64,6 +84,10 @@ class DriverLocationPolicy
 
     public function replicate(AuthUser $authUser, DriverLocation $driverLocation): bool
     {
+        if ((int) $driverLocation->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:DriverLocation');
     }
 

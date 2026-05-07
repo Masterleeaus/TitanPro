@@ -19,6 +19,10 @@ class OrganizationSettingPolicy
 
     public function view(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:OrganizationSetting');
     }
 
@@ -29,11 +33,19 @@ class OrganizationSettingPolicy
 
     public function update(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:OrganizationSetting');
     }
 
     public function delete(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:OrganizationSetting');
     }
 
@@ -44,11 +56,19 @@ class OrganizationSettingPolicy
 
     public function restore(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:OrganizationSetting');
     }
 
     public function forceDelete(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:OrganizationSetting');
     }
 
@@ -64,6 +84,10 @@ class OrganizationSettingPolicy
 
     public function replicate(AuthUser $authUser, OrganizationSetting $organizationSetting): bool
     {
+        if ((int) $organizationSetting->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:OrganizationSetting');
     }
 

@@ -19,6 +19,10 @@ class JobChecklistItemPolicy
 
     public function view(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:JobChecklistItem');
     }
 
@@ -29,11 +33,19 @@ class JobChecklistItemPolicy
 
     public function update(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:JobChecklistItem');
     }
 
     public function delete(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:JobChecklistItem');
     }
 
@@ -44,11 +56,19 @@ class JobChecklistItemPolicy
 
     public function restore(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:JobChecklistItem');
     }
 
     public function forceDelete(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:JobChecklistItem');
     }
 
@@ -64,6 +84,10 @@ class JobChecklistItemPolicy
 
     public function replicate(AuthUser $authUser, JobChecklistItem $jobChecklistItem): bool
     {
+        if ((int) $jobChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:JobChecklistItem');
     }
 
