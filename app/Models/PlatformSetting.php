@@ -9,13 +9,17 @@ class PlatformSetting extends Model
 {
     protected $fillable = [
         'app_name', 'site_name', 'logo', 'logo_path', 'favicon', 'favicon_path',
-        'primary_color', 'secondary_color', 'accent_color',
+        'primary_color', 'secondary_color', 'accent_color', 'surface_color',
+        'font_heading', 'font_body', 'font_source_url', 'font_path', 'bg_image_path',
         'support_email', 'billing_email', 'contact_phone', 'footer_text',
-        'meta_title', 'meta_description', 'landing_headline', 'landing_subheadline',
+        'meta_title', 'meta_description', 'landing_headline', 'landing_subheadline', 'theme_snapshots',
         'cta_label', 'cta_url', 'enable_registration', 'maintenance_message', 'custom_css',
     ];
 
-    protected $casts = ['enable_registration' => 'boolean'];
+    protected $casts = [
+        'enable_registration' => 'boolean',
+        'theme_snapshots' => 'array',
+    ];
 
     public static function defaults(): array
     {
@@ -26,6 +30,9 @@ class PlatformSetting extends Model
             'primary_color' => '#2563eb',
             'secondary_color' => '#0f172a',
             'accent_color' => '#14b8a6',
+            'surface_color' => '#f8fafc',
+            'font_heading' => 'Figtree',
+            'font_body' => 'Figtree',
             'support_email' => 'support@titanzero.pro',
             'footer_text' => 'Powered by Titan Zero.',
             'meta_title' => 'TITAN ZERO',
@@ -46,6 +53,9 @@ class PlatformSetting extends Model
             'primary_color' => '#2563eb',
             'secondary_color' => '#0f172a',
             'accent_color' => '#14b8a6',
+            'surface_color' => '#f8fafc',
+            'font_heading' => 'Figtree',
+            'font_body' => 'Figtree',
             'support_email' => 'support@titanzero.pro',
             'footer_text' => 'Powered by Titan Zero.',
             'meta_title' => 'TITAN ZERO',
