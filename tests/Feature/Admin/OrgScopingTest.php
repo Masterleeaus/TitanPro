@@ -64,3 +64,10 @@ test('jobs view page 404s for other-org record', function () {
 
     $this->actingAs($user)->get("/admin/jobs/{$record->id}")->assertNotFound();
 });
+
+test('organization-settings edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $record = \App\Models\OrganizationSetting::factory()->create(['organization_id' => $other->id]);
+
+    $this->actingAs($user)->get("/admin/organization-settings/{$record->id}/edit")->assertNotFound();
+});
