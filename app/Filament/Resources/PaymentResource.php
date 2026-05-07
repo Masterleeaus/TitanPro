@@ -33,7 +33,7 @@ class PaymentResource extends Resource
     {
         return $schema->components([
             Section::make('Payment')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('invoice_id')->label('Invoice ID')->numeric(),
                     TextInput::make('amount')->label('Amount')->required()->numeric(),

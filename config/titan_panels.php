@@ -24,7 +24,7 @@ return [
         'titanpro' => [
             'label'       => 'TitanPro',
             'description' => 'Super-admin SaaS control panel',
-            'path'        => 'admin',
+            'path'        => 'titanpro',
             'color'       => 'blue',
             'icon'        => 'heroicon-o-shield-check',
             'roles'       => ['super_admin'],
@@ -63,7 +63,7 @@ return [
             'path'        => 'titango',
             'color'       => 'orange',
             'icon'        => 'heroicon-o-device-phone-mobile',
-            'roles'       => ['technician', 'owner', 'admin'],
+            'roles'       => ['owner', 'admin', 'super_admin'],
         ],
 
         'zerofuss' => [
@@ -95,7 +95,7 @@ return [
 
         'titannexus' => [
             'label'       => 'TitanNexus',
-            'description' => 'Growth intelligence (formerly TitanGrow)',
+            'description' => 'Growth intelligence',
             'path'        => 'titannexus',
             'color'       => 'indigo',
             'icon'        => 'heroicon-o-arrow-trending-up',

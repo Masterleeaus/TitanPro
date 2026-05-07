@@ -5,6 +5,7 @@ namespace Modules\TitanCore\Services\Upgrade;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Modules\TitanCore\Services\ModulePersistence\TitanModuleUpgradeTrackingStore;
 
 /**
  * Core upgrade execution pipeline.
@@ -25,6 +26,7 @@ class UpgradeEngine
     private DependencyChecker $dependencyChecker;
     private PreUpgradeBackupJob $backup;
     private UpgradeRollbackRunner $rollback;
+    private TitanModuleUpgradeTrackingStore $upgradeTracking;
 
     /** When true every step is reported but no writes occur. */
     private bool $dryRun = false;
@@ -36,12 +38,14 @@ class UpgradeEngine
         ?VersionCompatibilityChecker $versionChecker = null,
         ?DependencyChecker           $dependencyChecker = null,
         ?PreUpgradeBackupJob         $backup = null,
-        ?UpgradeRollbackRunner       $rollback = null
+        ?UpgradeRollbackRunner       $rollback = null,
+        ?TitanModuleUpgradeTrackingStore $upgradeTracking = null,
     ) {
         $this->versionChecker    = $versionChecker    ?? new VersionCompatibilityChecker();
         $this->dependencyChecker = $dependencyChecker ?? new DependencyChecker();
         $this->backup            = $backup            ?? new PreUpgradeBackupJob();
         $this->rollback          = $rollback          ?? new UpgradeRollbackRunner();
+        $this->upgradeTracking   = $upgradeTracking   ?? new TitanModuleUpgradeTrackingStore();
     }
 
     public function setDryRun(bool $dryRun): static
@@ -180,6 +184,12 @@ class UpgradeEngine
      */
     private function executeUpgradeFile(string $filePath, string $moduleName): array
     {
+        $upgradeFile = basename($filePath);
+
+        if ($this->upgradeTracking->hasSuccessfulRun($moduleName, $upgradeFile)) {
+            return ['skipped', 'Already executed in a prior successful run.'];
+        }
+
         try {
             DB::transaction(function () use ($filePath, $moduleName) {
                 $result = require $filePath;
@@ -194,8 +204,12 @@ class UpgradeEngine
                 }
             });
 
+            $this->upgradeTracking->markSuccess($moduleName, $upgradeFile);
+
             return ['applied', 'OK'];
         } catch (\Throwable $e) {
+            $this->upgradeTracking->markFailed($moduleName, $upgradeFile, $e->getMessage());
+
             return ['failed', $e->getMessage()];
         }
     }

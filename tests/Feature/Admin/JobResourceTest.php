@@ -35,6 +35,22 @@ test('owner can view a job detail page', function () {
     $this->actingAs($user)->get("/admin/jobs/{$job->id}")->assertOk();
 });
 
+test('owner sees floor area in square metres on a job detail page', function () {
+    $user     = adminOwnerUser();
+    $customer = Customer::factory()->create(['organization_id' => $user->organization_id]);
+    $job      = Job::factory()->forCustomer($customer)->create([
+        'square_metres' => 125.5,
+    ]);
+
+    $this->actingAs($user)
+        ->get("/admin/jobs/{$job->id}")
+        ->assertOk()
+        ->assertSee('Floor Area (m²)')
+        ->assertDontSee('Square Feet')
+        ->assertDontSee('sq ft')
+        ->assertDontSee('sqft');
+});
+
 // ── No create/edit routes ──────────────────────────────────────────────────────
 
 test('job create route does not exist in admin panel', function () {

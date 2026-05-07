@@ -18,7 +18,7 @@ class ItemFactory extends Factory
             'sku'             => fake()->optional(0.6)->bothify('SKU-###??'),
             'description'     => fake()->optional(0.4)->sentence(),
             'unit_price'      => fake()->randomFloat(2, 5, 500),
-            'unit'            => fake()->randomElement(['each', 'hr', 'ft', 'sqft']),
+            'unit'            => fake()->randomElement(['each', 'room', 'bathroom', 'hr', 'sqm', 'visit']),
             'is_taxable'      => true,
             'is_active'       => true,
         ];

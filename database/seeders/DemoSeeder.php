@@ -103,7 +103,7 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        // ── Job Types ────────────────────────────────────────────────────────────
+        // ── Services ─────────────────────────────────────────────────────────────
         $jobTypeDefs = [
             ['name' => 'HVAC Service',        'color' => '#3b82f6'],
             ['name' => 'Plumbing',            'color' => '#10b981'],

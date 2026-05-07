@@ -39,6 +39,11 @@ test('owner role cannot access technician dashboard', function () {
     $this->actingAs($user)->get('/technician/dashboard')->assertForbidden();
 });
 
+test('owner role can access technician dashboard in admin preview mode', function () {
+    [$user] = techUser('owner');
+    $this->actingAs($user)->get('/technician/dashboard?admin_preview=1')->assertOk();
+});
+
 test('dispatcher role cannot access technician dashboard', function () {
     [$user] = techUser('dispatcher');
     $this->actingAs($user)->get('/technician/dashboard')->assertForbidden();
