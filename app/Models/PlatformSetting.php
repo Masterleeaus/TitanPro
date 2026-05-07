@@ -3,19 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class PlatformSetting extends Model
 {
     protected $fillable = [
         'app_name', 'site_name', 'logo', 'logo_path', 'favicon', 'favicon_path',
-        'primary_color', 'secondary_color', 'accent_color',
+        'primary_color', 'secondary_color', 'accent_color', 'background_color',
+        'button_text_color', 'focus_ring_color', 'font_scale', 'accessibility_dismissals',
         'support_email', 'billing_email', 'contact_phone', 'footer_text',
         'meta_title', 'meta_description', 'landing_headline', 'landing_subheadline',
         'cta_label', 'cta_url', 'enable_registration', 'maintenance_message', 'custom_css',
     ];
 
-    protected $casts = ['enable_registration' => 'boolean'];
+    protected $casts = [
+        'enable_registration' => 'boolean',
+        'font_scale' => 'float',
+        'accessibility_dismissals' => 'array',
+    ];
 
     public static function defaults(): array
     {
@@ -64,6 +70,20 @@ class PlatformSetting extends Model
                 $dirty = true;
             }
         }
+
+        foreach ([
+            'background_color' => '#ffffff',
+            'button_text_color' => '#ffffff',
+            'focus_ring_color' => '#2563eb',
+            'font_scale' => 1.0,
+            'accessibility_dismissals' => [],
+        ] as $column => $value) {
+            if (Schema::hasColumn('platform_settings', $column) && blank($settings->{$column} ?? null)) {
+                $settings->{$column} = $value;
+                $dirty = true;
+            }
+        }
+
         if ($dirty) {
             $settings->save();
         }

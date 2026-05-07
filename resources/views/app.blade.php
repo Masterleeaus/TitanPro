@@ -36,6 +36,8 @@
         <meta name="apple-mobile-web-app-title" content="{{ $brand['app_name'] ?? 'TITAN ZERO' }}">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+        @include('partials.accessibility-theme-styles')
+
         @if (! empty($brand['custom_css']))
             <style>{!! $brand['custom_css'] !!}</style>
         @endif

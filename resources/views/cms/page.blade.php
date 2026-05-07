@@ -34,6 +34,7 @@
             .border-cyan-300 { border-color: var(--tz-primary) !important; }
         </style>
     @endif
+    @include('partials.accessibility-theme-styles', ['accessibilitySettings' => $settings])
 </head>
 <body class="bg-slate-950 text-white antialiased">
     <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur">

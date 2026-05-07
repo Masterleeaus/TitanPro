@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\PlatformSetting;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -11,6 +12,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Modules\CRMCore\Filament\Plugin\CRMCorePlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -18,6 +20,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -40,6 +43,12 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => $this->primaryColor(),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('partials.accessibility-theme-styles', [
+                    'accessibilitySettings' => Schema::hasTable('platform_settings') ? PlatformSetting::current() : null,
+                ])
+            )
             ->login()
             ->plugins([
                 FilamentShieldPlugin::make(),
