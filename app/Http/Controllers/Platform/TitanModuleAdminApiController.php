@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Platform;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Platform\Concerns\ParsesModuleManifest;
 use App\Services\ModuleAuditLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
@@ -11,6 +12,8 @@ use Nwidart\Modules\Module;
 
 class TitanModuleAdminApiController extends Controller
 {
+    use ParsesModuleManifest;
+
     public function index(): JsonResponse
     {
         $modules = collect(ModulesFacade::all())->map(function ($module): array {
@@ -111,10 +114,6 @@ class TitanModuleAdminApiController extends Controller
         ]);
     }
 
-    /**
-     * Resolve a module identifier by exact module name first, then by manifest
-     * alias and case-insensitive module name fallback.
-     */
     private function resolveModule(string $identifier): ?Module
     {
         $found = ModulesFacade::find($identifier);
@@ -132,12 +131,5 @@ class TitanModuleAdminApiController extends Controller
         }
 
         return null;
-    }
-
-    private function manifestFor(Module $module): array
-    {
-        $manifest = $module->json()->toArray();
-
-        return is_array($manifest) ? $manifest : [];
     }
 }
