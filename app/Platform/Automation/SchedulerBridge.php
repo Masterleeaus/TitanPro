@@ -60,14 +60,22 @@ class SchedulerBridge
             $cadence = (string) ($hook['schedule'] ?? 'daily');
 
             $event = $schedule->call(function () use ($class, $id, $cadence) {
-                $instance = app()->make($class);
-                if (method_exists($instance, 'handle')) {
-                    $instance->handle([
-                        'scheduler_hook' => $id,
-                        'cadence' => $cadence,
-                    ]);
-                } else {
-                    logger()->warning('Automation scheduler hook class is missing handle() method.', [
+                try {
+                    $instance = app()->make($class);
+                    if (method_exists($instance, 'handle')) {
+                        $instance->handle([
+                            'scheduler_hook' => $id,
+                            'cadence' => $cadence,
+                        ]);
+                    } else {
+                        logger()->warning('Automation scheduler hook class is missing handle() method.', [
+                            'class' => $class,
+                            'hook' => $id,
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    report($e);
+                    logger()->error('Automation scheduler hook execution failed.', [
                         'class' => $class,
                         'hook' => $id,
                     ]);

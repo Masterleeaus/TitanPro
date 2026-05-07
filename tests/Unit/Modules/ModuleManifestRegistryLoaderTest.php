@@ -37,7 +37,7 @@ function deleteDirectory(string $dir): void
 }
 
 test('manifest loader populates registries and excludes disabled modules idempotently', function () {
-    $base = sys_get_temp_dir().'/titan_registry_loader_'.uniqid();
+    $base = sys_get_temp_dir().'/titan_registry_loader_'.uniqid('', true);
     $modulesPath = $base.'/Modules';
 
     mkdir($modulesPath, 0755, true);

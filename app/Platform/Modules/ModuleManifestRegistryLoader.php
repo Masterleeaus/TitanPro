@@ -85,6 +85,13 @@ class ModuleManifestRegistryLoader
 
         $moduleJson = $this->readJson($moduleDir.'/module.json');
         if (! is_array($moduleJson)) {
+            if (is_file($moduleDir.'/module.json')) {
+                logger()->warning('Unable to parse module.json while loading manifest registries.', [
+                    'module' => $module,
+                    'path' => $moduleDir.'/module.json',
+                ]);
+            }
+
             return true;
         }
 
