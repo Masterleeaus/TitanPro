@@ -22,6 +22,7 @@ The `driver_locations` table stored only `user_id`, so location queries and admi
 - Updated `tests/Feature/Technician/LocationTest.php` to assert stored locations include `organization_id`.
 - Updated `tests/Feature/Owner/DispatchTest.php` to verify one organization’s admin map does not include another organization’s technician location.
 - Added `tests/Feature/ModulesDoctorDriverLocationsTest.php` to verify `modules:doctor` flags a missing `organization_id` column on `driver_locations`.
+- Updated `tests/Feature/Admin/OrgScopingTest.php` to verify the Filament admin driver-locations edit page returns 404 when the record belongs to a different organization.
 
 ## Next Steps
 

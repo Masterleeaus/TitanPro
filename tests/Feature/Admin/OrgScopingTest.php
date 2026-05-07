@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\DriverLocation;
 use App\Models\Item;
 use App\Models\Job;
 use App\Models\JobType;
@@ -63,4 +64,18 @@ test('jobs view page 404s for other-org record', function () {
     $record   = Job::factory()->forCustomer($customer)->create();
 
     $this->actingAs($user)->get("/admin/jobs/{$record->id}")->assertNotFound();
+});
+
+test('driver-locations edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $otherUser = User::factory()->create(['organization_id' => $other->id]);
+    $record    = DriverLocation::create([
+        'organization_id' => $other->id,
+        'user_id'         => $otherUser->id,
+        'latitude'        => 40.7128,
+        'longitude'       => -74.0060,
+        'recorded_at'     => now(),
+    ]);
+
+    $this->actingAs($user)->get("/admin/driver-locations/{$record->id}/edit")->assertNotFound();
 });
