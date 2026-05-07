@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
+use App\Models\DriverLocation;
 use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
 use App\Models\Job;
@@ -65,12 +66,42 @@ class DemoSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
+
+            if (! $user->wasRecentlyCreated) {
+                $user->forceFill([
+                    'name' => $data['name'],
+                    'organization_id' => $org->id,
+                    'email_verified_at' => $user->email_verified_at ?? now(),
+                ])->save();
+            }
+
             $user->syncRoles([$data['role']]);
             $usersByEmail[$data['email']] = $user;
         }
 
         $tech1 = $usersByEmail['tech@demo.test'];
         $tech2 = $usersByEmail['tech2@demo.test'];
+
+        DriverLocation::updateOrCreate(
+            ['organization_id' => $org->id, 'user_id' => $tech1->id],
+            [
+                'latitude' => 39.8017,
+                'longitude' => -89.6436,
+                'heading' => 90,
+                'speed' => 22,
+                'recorded_at' => now()->subMinutes(8),
+            ]
+        );
+        DriverLocation::updateOrCreate(
+            ['organization_id' => $org->id, 'user_id' => $tech2->id],
+            [
+                'latitude' => 39.7921,
+                'longitude' => -89.6502,
+                'heading' => 210,
+                'speed' => 18,
+                'recorded_at' => now()->subMinutes(4),
+            ]
+        );
 
         // ── Job Types ────────────────────────────────────────────────────────────
         $jobTypeDefs = [
