@@ -3,8 +3,17 @@
 namespace App\Providers;
 
 use App\Platform\Automation\AutomationRegistry;
+use App\Platform\Modules\ChannelManifestRegistry;
+use App\Platform\Modules\DashboardRegistry;
 use App\Platform\Filament\FilamentRegistry;
 use App\Platform\Modules\ModuleManifestRegistryLoader;
+use App\Platform\Modules\OmniManifestRegistry;
+use App\Platform\Modules\PwaManifestRegistry;
+use App\Platform\Modules\SettingsRegistry;
+use App\Platform\Modules\ShortcutRegistry;
+use App\Platform\Modules\TableRegistry;
+use App\Platform\Modules\UiKitRegistry;
+use App\Platform\Modules\VoiceManifestRegistry;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
@@ -38,6 +47,15 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->singletonIf(AutomationRegistry::class);
         $this->app->singleton(FilamentRegistry::class);
         $this->app->singleton(WorkflowDefinitionRegistry::class);
+        $this->app->singleton(PwaManifestRegistry::class);
+        $this->app->singleton(ChannelManifestRegistry::class);
+        $this->app->singleton(OmniManifestRegistry::class);
+        $this->app->singleton(VoiceManifestRegistry::class);
+        $this->app->singleton(UiKitRegistry::class);
+        $this->app->singleton(DashboardRegistry::class);
+        $this->app->singleton(TableRegistry::class);
+        $this->app->singleton(ShortcutRegistry::class);
+        $this->app->singleton(SettingsRegistry::class);
         $this->app->singleton(ModuleManifestRegistryLoader::class);
     }
 
