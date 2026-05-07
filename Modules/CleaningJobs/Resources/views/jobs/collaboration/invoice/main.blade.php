@@ -19,7 +19,7 @@
                 <table class="table  mb-0 table-custom-style" data-repeater-list="items" id="sortable-table">
                     <thead>
                         <tr>
-                            <th>{{ __('Items') }}</th>
+                            <th>{{ __('Add-ons') }}</th>
                             <th>{{ __('Price') }} </th>
                             <th>{{ __('Discount') }}</th>
                             <th width="200px">{{ __('Tax') }} (%)</th>
