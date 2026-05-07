@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\ZeroPay\Pages\Dashboard;
 use App\Filament\ZeroPay\Pages\StripeSettings;
 use App\Filament\ZeroPay\Widgets\FinanceOverviewWidget;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,6 +29,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class ZeroPayPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -36,6 +39,12 @@ class ZeroPayPanelProvider extends PanelProvider
             ->brandName('ZeroPay')
             ->colors([
                 'primary' => Color::Violet,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroPay/Resources'), for: 'App\\Filament\\ZeroPay\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroPay/Pages'), for: 'App\\Filament\\ZeroPay\\Pages')
