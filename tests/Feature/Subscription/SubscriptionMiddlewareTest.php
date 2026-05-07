@@ -64,29 +64,24 @@ test('owner with canceled subscription is redirected to expired page', function 
         ->assertRedirect(route('owner.subscription.expired'));
 });
 
-test('owner with expired trial is redirected from legacy dispatch path to titango panel', function () {
+dataset('legacy_owner_panel_redirects', [
+    ['/owner/dispatch', '/titango'],
+    ['/owner/billing', '/zeropay'],
+    ['/owner/estimates', '/titanquotes'],
+    ['/owner/marketing', '/titannexus'],
+]);
+
+test('owner with expired trial is redirected from legacy owner panel paths to canonical panel routes', function (string $legacyPath, string $canonicalPath) {
     $org  = Organization::factory()->trialExpired()->create();
     $user = User::factory()->owner($org)->create();
 
     Subscription::factory()->trialExpired($org)->create();
 
     $this->actingAs($user)
-        ->get('/owner/dispatch')
+        ->get($legacyPath)
         ->assertStatus(301)
-        ->assertRedirect('/titango');
-});
-
-test('owner with expired trial is redirected from legacy billing path to zeropay panel', function () {
-    $org  = Organization::factory()->trialExpired()->create();
-    $user = User::factory()->owner($org)->create();
-
-    Subscription::factory()->trialExpired($org)->create();
-
-    $this->actingAs($user)
-        ->get('/owner/billing')
-        ->assertStatus(301)
-        ->assertRedirect('/zeropay');
-});
+        ->assertRedirect($canonicalPath);
+})->with('legacy_owner_panel_redirects');
 
 // ── Non-owner roles bypass subscription check ─────────────────────────────────
 
