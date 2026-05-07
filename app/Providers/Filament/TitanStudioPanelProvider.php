@@ -76,7 +76,9 @@ class TitanStudioPanelProvider extends PanelProvider
         $plugins = [];
 
         foreach ($pluginClasses as $pluginClass) {
-            if (! class_exists($pluginClass) || ! method_exists($pluginClass, 'make')) {
+            if (! class_exists($pluginClass)
+                || ! is_subclass_of($pluginClass, Plugin::class)
+                || ! method_exists($pluginClass, 'make')) {
                 continue;
             }
 
