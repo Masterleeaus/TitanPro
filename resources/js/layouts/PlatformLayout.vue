@@ -47,7 +47,7 @@ function navClass(href: string): string {
                 <Link href="/platform/modules/audit-log" :class="navClass('/platform/modules/audit-log')">Audit Log</Link>
 
                 <div class="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-slate-500">App</div>
-                <Link href="/owner/dashboard" class="block rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">Owner dashboard</Link>
+                <Link href="/titanpro" class="block rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">TitanPro panel</Link>
             </nav>
 
             <div class="border-t border-slate-800 px-4 py-3">
