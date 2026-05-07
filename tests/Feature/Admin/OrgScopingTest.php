@@ -79,3 +79,10 @@ test('driver-locations edit page 404s for other-org record', function () {
 
     $this->actingAs($user)->get("/admin/driver-locations/{$record->id}/edit")->assertNotFound();
 });
+
+test('organization-settings edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $record = \App\Models\OrganizationSetting::factory()->create(['organization_id' => $other->id]);
+
+    $this->actingAs($user)->get("/admin/organization-settings/{$record->id}/edit")->assertNotFound();
+});

@@ -33,6 +33,10 @@ dataset('legacy_panel_aliases', [
     ['/titan-quotes', '/titanquotes'],
     ['/titan-grow', '/titannexus'],
     ['/admin', '/titanpro'],
+    ['/owner/dispatch', '/titango'],
+    ['/owner/billing', '/zeropay'],
+    ['/owner/estimates', '/titanquotes'],
+    ['/owner/marketing', '/titannexus'],
 ]);
 
 test('canonical panel routes redirect guests to a login page', function (string $path) {
