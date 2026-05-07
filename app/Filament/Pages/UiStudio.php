@@ -398,7 +398,7 @@ class UiStudio extends Page
         }
 
         if ($type === 'image' && preg_match('/^https?:\/\//i', $value) && filter_var($value, FILTER_VALIDATE_URL)) {
-            return "background-image:url('{$value}');background-size:cover;background-position:center;";
+            return "background-image:url(\"{$value}\");background-size:cover;background-position:center;";
         }
 
         return null;

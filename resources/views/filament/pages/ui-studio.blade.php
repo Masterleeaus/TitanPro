@@ -303,7 +303,7 @@
                             <div class="h-8 rounded-md border border-dashed border-gray-200" style="background: {{ e($this->safeColor($surfaceColor)) }}"></div>
                             @php($backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue))
                             @if ($backgroundPreviewStyle)
-                                <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ $backgroundPreviewStyle }}"></div>
+                                <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ e($backgroundPreviewStyle) }}"></div>
                             @endif
                         </div>
                     </section>
