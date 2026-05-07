@@ -77,7 +77,7 @@ return [
 
         'titansolo' => [
             'label'       => 'TitanSolo',
-            'description' => 'Solo operator all-in-one dashboard',
+            'description' => 'Sole trader / single-operator cleaning business dashboard',
             'path'        => 'titansolo',
             'color'       => 'sky',
             'icon'        => 'heroicon-o-user',
