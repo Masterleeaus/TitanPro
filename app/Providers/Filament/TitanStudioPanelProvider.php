@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,6 +24,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanStudioPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -31,6 +34,12 @@ class TitanStudioPanelProvider extends PanelProvider
             ->brandName('TitanStudio — Creative Hub')
             ->colors([
                 'primary' => Color::Pink,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanStudio/Resources'), for: 'App\\Filament\\TitanStudio\\Resources')
             ->discoverPages(in: app_path('Filament/TitanStudio/Pages'), for: 'App\\Filament\\TitanStudio\\Pages')
