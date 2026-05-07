@@ -79,7 +79,7 @@ class StripeSettings extends Page implements HasForms
 
         if (! $orgId) {
             Notification::make()
-                ->title('No organisation found')
+                ->title('No organization found')
                 ->danger()
                 ->send();
 
