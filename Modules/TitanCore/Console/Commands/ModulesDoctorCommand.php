@@ -74,7 +74,29 @@ class ModulesDoctorCommand extends Command
             $this->components->twoColumnDetail('<fg=green>✓ All dependency constraints satisfied</>', '');
         }
 
-        // ── 3. Manifest schema validation ─────────────────────────────────────
+        // ── 3. Safe-boot provider failures ────────────────────────────────────
+        $bootFailures = app()->bound('titan.module_boot_failures')
+            ? app('titan.module_boot_failures')
+            : [];
+
+        if (is_array($bootFailures) && ! empty($bootFailures)) {
+            $hasProblems = true;
+            $this->components->warn('Safe-boot provider failures detected:');
+
+            foreach ($bootFailures as $failure) {
+                $module = $failure['module'] ?? 'unknown-module';
+                $provider = $failure['provider'] ?? 'unknown-provider';
+                $error = $failure['error'] ?? 'unknown error';
+
+                $this->line("  <fg=yellow>⚠</> <fg=cyan>{$module}</>: {$provider} — {$error}");
+            }
+
+            $this->newLine();
+        } else {
+            $this->components->twoColumnDetail('<fg=green>✓ No safe-boot provider failures</>', '');
+        }
+
+        // ── 4. Manifest schema validation ─────────────────────────────────────
         if (! $this->option('skip-schema')) {
             $schemaProblems = $this->runSchemaValidation();
             if ($schemaProblems) {
@@ -82,7 +104,7 @@ class ModulesDoctorCommand extends Command
             }
         }
 
-        // ── 4. Load order ─────────────────────────────────────────────────────
+        // ── 5. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();

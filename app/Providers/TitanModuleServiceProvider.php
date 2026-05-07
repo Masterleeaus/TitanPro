@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Support\FeatureRegistry;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Nwidart\Modules\Facades\Module as ModuleFacade;
 use Nwidart\Modules\Module;
 
 /**
@@ -26,6 +29,8 @@ class TitanModuleServiceProvider extends ServiceProvider
         // Bind a module-registry singleton so dependent providers can resolve
         // the enabled-module list without circular boot-order issues.
         $this->app->singletonIf('titan.modules', fn () => []);
+        $this->app->singletonIf('titan.features', fn () => new FeatureRegistry());
+        $this->app->singletonIf('titan.module_boot_failures', fn () => []);
 
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
@@ -34,7 +39,10 @@ class TitanModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Guard: only inject when both Filament and nwidart/laravel-modules are present.
+        if (class_exists(Module::class) && class_exists(ModuleFacade::class)) {
+            $this->discoverAndBootEnabledModules();
+        }
+
         if (! class_exists(PanelRegistry::class) || ! class_exists(Module::class)) {
             return;
         }
@@ -46,6 +54,118 @@ class TitanModuleServiceProvider extends ServiceProvider
         $this->app->resolving(PanelRegistry::class, function (PanelRegistry $registry): void {
             $this->injectModuleFilamentPlugins($registry);
         });
+    }
+
+    protected function discoverAndBootEnabledModules(): void
+    {
+        if (! config('titan-modules.discovery.enabled', true)) {
+            return;
+        }
+
+        /** @var array<string, Module> $enabledModules */
+        $enabledModules = ModuleFacade::allEnabled();
+        $this->app->instance('titan.modules', $enabledModules);
+
+        foreach ($enabledModules as $module) {
+            if (! $module instanceof Module) {
+                continue;
+            }
+
+            $this->registerDeclaredModuleProviders($module);
+            $this->registerDeclaredModuleFeatures($module);
+        }
+    }
+
+    protected function registerDeclaredModuleProviders(Module $module): void
+    {
+        $providers = $module->get('providers') ?? [];
+
+        if (! is_array($providers)) {
+            return;
+        }
+
+        foreach ($providers as $providerClass) {
+            if (! is_string($providerClass) || trim($providerClass) === '') {
+                continue;
+            }
+
+            try {
+                $this->app->register($providerClass);
+            } catch (\Throwable $e) {
+                $this->handleModuleProviderBootFailure($module->getName(), $providerClass, $e);
+            }
+        }
+    }
+
+    protected function registerDeclaredModuleFeatures(Module $module): void
+    {
+        /** @var FeatureRegistry $registry */
+        $registry = $this->app->make('titan.features');
+        $moduleName = $module->getName();
+
+        foreach ($this->normalizeFeatureEntries($module->get('capabilities') ?? []) as $key => $value) {
+            $registry->register($key, $value, $moduleName);
+        }
+
+        foreach ($this->normalizeFeatureEntries($module->get('features') ?? []) as $key => $value) {
+            $registry->register($key, $value, $moduleName);
+        }
+    }
+
+    /**
+     * @param  mixed  $entries
+     * @return array<string, mixed>
+     */
+    protected function normalizeFeatureEntries(mixed $entries): array
+    {
+        if (! is_array($entries)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($entries as $key => $value) {
+            if (is_int($key)) {
+                if (is_string($value) && trim($value) !== '') {
+                    $normalized[$value] = true;
+                }
+
+                continue;
+            }
+
+            if (is_string($key) && trim($key) !== '') {
+                $normalized[$key] = $value;
+            }
+        }
+
+        return $normalized;
+    }
+
+    protected function handleModuleProviderBootFailure(string $moduleName, string $providerClass, \Throwable $exception): void
+    {
+        $message = "Skipping module provider [{$providerClass}] for module [{$moduleName}] due to boot failure.";
+        Log::warning($message, [
+            'module' => $moduleName,
+            'provider' => $providerClass,
+            'exception' => $exception::class,
+            'error' => $exception->getMessage(),
+        ]);
+
+        $failures = $this->app->make('titan.module_boot_failures');
+        if (! is_array($failures)) {
+            $failures = [];
+        }
+
+        $failures[] = [
+            'module' => $moduleName,
+            'provider' => $providerClass,
+            'error' => $exception->getMessage(),
+        ];
+        $this->app->instance('titan.module_boot_failures', $failures);
+
+        if (! config('titan-modules.safe_boot', true)) {
+            throw $exception;
+        }
     }
 
     // ─── Plugin injection ─────────────────────────────────────────────────────
