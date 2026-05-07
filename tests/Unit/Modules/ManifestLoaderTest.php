@@ -15,7 +15,7 @@ class TestManifestLoaderLogger extends AbstractLogger
     }
 }
 
-test('classic manifest loader loads manifests slash star manifest json files', function () {
+test('classic manifest loader loads all manifest json files from manifests directory', function () {
     $modulePath = sys_get_temp_dir() . '/titan_manifest_loader_' . uniqid('', true);
     mkdir($modulePath . '/manifests', 0777, true);
 

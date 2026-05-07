@@ -42,9 +42,7 @@ class ModuleKernel
                 $classicManifests = $this->manifestLoader->load($modulePath);
                 $blueprintManifests = $this->blueprintManifestLoader->load($modulePath, $manifestPathMap);
 
-                $moduleName = is_string($metadata['name'] ?? null) && $metadata['name'] !== ''
-                    ? $metadata['name']
-                    : basename($modulePath);
+                $moduleName = $this->resolveModuleName($metadata, $modulePath);
 
                 $metadata['manifest_paths'] = $manifestPathMap;
                 $metadata['manifest'] = array_replace($classicManifests, $blueprintManifests);
@@ -74,7 +72,7 @@ class ModuleKernel
                 continue;
             }
 
-            $absolutePath = str_starts_with($path, DIRECTORY_SEPARATOR) ? $path : base_path($path);
+            $absolutePath = $this->isAbsolutePath($path) ? $path : base_path($path);
 
             if (! is_dir($absolutePath)) {
                 $this->logger->warning('Configured module discovery path does not exist and was skipped.', ['path' => $absolutePath]);
@@ -85,5 +83,19 @@ class ModuleKernel
         }
 
         return array_values(array_unique($normalized));
+    }
+
+    private function resolveModuleName(array $metadata, string $modulePath): string
+    {
+        return is_string($metadata['name'] ?? null) && $metadata['name'] !== ''
+            ? $metadata['name']
+            : basename($modulePath);
+    }
+
+    private function isAbsolutePath(string $path): bool
+    {
+        return str_starts_with($path, DIRECTORY_SEPARATOR)
+            || str_starts_with($path, '\\\\')
+            || preg_match('/^[A-Za-z]:[\\\\\\/]/', $path) === 1;
     }
 }

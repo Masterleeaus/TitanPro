@@ -18,7 +18,7 @@ class TestModuleKernelLogger extends AbstractLogger
     }
 }
 
-test('module kernel discovers and merges metadata classic manifests and blueprint path maps across modules', function () {
+test('module kernel discovers modules and merges classic and blueprint manifests', function () {
     $modulesBase = sys_get_temp_dir() . '/titan_kernel_' . uniqid('', true);
 
     mkdir($modulesBase . '/Ops/manifests', 0777, true);

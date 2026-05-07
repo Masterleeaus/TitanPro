@@ -3,7 +3,7 @@
 use App\Platform\Modules\ModuleMetadataReader;
 use Psr\Log\AbstractLogger;
 
-class TestArrayLogger extends AbstractLogger
+class TestModuleMetadataLogger extends AbstractLogger
 {
     public array $warnings = [];
 
@@ -48,7 +48,7 @@ test('module metadata reader skips invalid module json and logs warning', functi
     mkdir($modulePath, 0777, true);
     file_put_contents($modulePath . '/module.json', '{invalid json');
 
-    $logger = new TestArrayLogger();
+    $logger = new TestModuleMetadataLogger();
     $reader = new ModuleMetadataReader($logger);
 
     expect($reader->read($modulePath))->toBeNull();
