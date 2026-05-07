@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://titan.local/schemas/blueprint.manifest/v1.0.0",
+  "title": "Titan Blueprint Manifest",
+  "description": "Describes the structural blueprint of a module — its domain entities, relationships, and data layer.",
+  "type": "object",
+  "required": ["module"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version this manifest conforms to.",
+      "enum": ["1.0.0"]
+    },
+    "module": {
+      "type": "string",
+      "description": "Name of the owning module.",
+      "minLength": 1
+    },
+    "entities": {
+      "type": "array",
+      "description": "Domain entity class names exposed by this module.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "models": {
+      "type": "array",
+      "description": "Eloquent model class names.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "description": "Repository interface or class names.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "description": "Migration file paths relative to the module root.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seeders": {
+      "type": "array",
+      "description": "Seeder class names bundled with this module.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

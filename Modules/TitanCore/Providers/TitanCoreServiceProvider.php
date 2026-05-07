@@ -12,6 +12,7 @@ use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
 use Modules\TitanCore\Console\Commands\ModulesDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesEnableCommand;
 use Modules\TitanCore\Console\Commands\ModulesHealthCommand;
+use Modules\TitanCore\Console\Commands\ModulesSchemaDocs;
 use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
 use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
 use Modules\TitanCore\Console\SyncTitanAgentsCommand;
@@ -64,6 +65,7 @@ class TitanCoreServiceProvider extends ServiceProvider
                 ModulesDoctorCommand::class,
                 ModulesDepsCommand::class,
                 ModulesEnableCommand::class,
+                ModulesSchemaDocs::class,
             ]);
         }
     }

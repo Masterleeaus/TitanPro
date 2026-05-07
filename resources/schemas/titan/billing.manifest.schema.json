@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://titan.local/schemas/billing.manifest/v1.0.0",
+  "title": "Titan Billing Manifest",
+  "description": "Declares billing meters, usage limits, and subscription features for a module.",
+  "type": "object",
+  "required": ["module"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version this manifest conforms to.",
+      "enum": ["1.0.0"]
+    },
+    "module": {
+      "type": "string",
+      "description": "Name of the owning module.",
+      "minLength": 1
+    },
+    "meters": {
+      "type": "array",
+      "description": "Usage meter identifiers tracked for billing.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "description": "Plan limit identifiers enforced for subscriptions.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "features": {
+      "type": "array",
+      "description": "Feature flag identifiers gated by subscription tier.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "plans": {
+      "type": "array",
+      "description": "Subscription plan definitions.",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

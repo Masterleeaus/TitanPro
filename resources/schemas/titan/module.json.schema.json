@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://titan.local/schemas/module.json/v1.0.0",
+  "title": "Titan Module Manifest (module.json)",
+  "description": "Root module manifest. Declares identity, providers, dependencies, and basic metadata for a Titan module.",
+  "type": "object",
+  "required": ["name", "providers"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version this manifest conforms to.",
+      "enum": ["1.0.0"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Module name in PascalCase.",
+      "minLength": 1
+    },
+    "alias": {
+      "type": "string",
+      "description": "Unique lowercase alias used for routing and referencing.",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the module."
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the module (e.g. 1.0.0).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "requires_php": {
+      "type": "string",
+      "description": "PHP version constraint (Composer semver format)."
+    },
+    "requires_laravel": {
+      "type": "string",
+      "description": "Laravel version constraint (Composer semver format)."
+    },
+    "providers": {
+      "type": "array",
+      "description": "Fully-qualified class names of service providers to register.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "aliases": {
+      "type": "object",
+      "description": "Laravel facade alias map (alias => class).",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "files": {
+      "type": "array",
+      "description": "Additional PHP files to auto-require on boot.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requires": {
+      "type": "array",
+      "description": "Module names or Composer packages this module depends on.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "keywords": {
+      "type": "array",
+      "description": "Searchable keywords for module discovery.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Boot priority. Lower numbers boot earlier.",
+      "minimum": 0
+    },
+    "namespace": {
+      "type": "string",
+      "description": "Root PHP namespace for this module."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-friendly display name shown in UIs."
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Capability tags advertising what the module provides.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

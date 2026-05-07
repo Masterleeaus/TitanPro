@@ -3,6 +3,8 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Modules\TitanCore\Support\ManifestSchemaValidator;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 
 /**
@@ -12,12 +14,14 @@ use Modules\TitanCore\Support\ModuleDependencyGraph;
  *  - Conflicting modules
  *  - Circular dependency cycles
  *  - Suggested safe load order
+ *  - Manifest schema validation errors/warnings
  */
 class ModulesDoctorCommand extends Command
 {
-    protected $signature = 'modules:doctor';
+    protected $signature = 'modules:doctor
+                            {--skip-schema : Skip manifest schema validation}';
 
-    protected $description = 'Diagnose the module dependency graph (missing deps, conflicts, cycles, load order).';
+    protected $description = 'Diagnose the module dependency graph (missing deps, conflicts, cycles, load order, manifest schemas).';
 
     public function handle(ModuleDependencyGraph $graph): int
     {
@@ -70,7 +74,15 @@ class ModulesDoctorCommand extends Command
             $this->components->twoColumnDetail('<fg=green>✓ All dependency constraints satisfied</>', '');
         }
 
-        // ── 3. Load order ─────────────────────────────────────────────────────
+        // ── 3. Manifest schema validation ─────────────────────────────────────
+        if (! $this->option('skip-schema')) {
+            $schemaProblems = $this->runSchemaValidation();
+            if ($schemaProblems) {
+                $hasProblems = true;
+            }
+        }
+
+        // ── 4. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();
@@ -95,5 +107,69 @@ class ModulesDoctorCommand extends Command
         $this->components->info('All checks passed. Module dependency graph is healthy.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Run manifest schema validation across all modules.
+     *
+     * Returns true if any failures were found.
+     */
+    private function runSchemaValidation(): bool
+    {
+        $this->newLine();
+        $this->components->info('Manifest Schema Validation:');
+
+        $modulesBase = base_path(config('titan-modules.path', 'Modules'));
+
+        if (! is_dir($modulesBase)) {
+            $this->components->warn('Modules directory not found. Skipping schema validation.');
+
+            return false;
+        }
+
+        $validator     = new ManifestSchemaValidator();
+        $strict        = (bool) config('titan-modules.strict_manifest_validation', false);
+        $hasFailures   = false;
+        $hasWarnings   = false;
+        $totalChecked  = 0;
+
+        foreach (File::directories($modulesBase) as $moduleDir) {
+            $moduleName = basename($moduleDir);
+            $results    = $validator->validateModule($moduleDir);
+
+            foreach ($results as $result) {
+                $totalChecked++;
+
+                if ($result->isValid() && ! $result->hasWarnings()) {
+                    continue;
+                }
+
+                if (! $result->isValid()) {
+                    $hasFailures = true;
+                    foreach ($result->errors() as $err) {
+                        $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/{$result->label()}</>: {$err}");
+                    }
+                } else {
+                    $hasWarnings = true;
+                    foreach ($result->warnings() as $warn) {
+                        $this->line("  <fg=yellow>⚠</> <fg=cyan>{$moduleName}/{$result->label()}</>: {$warn}");
+                    }
+                }
+            }
+        }
+
+        if (! $hasFailures && ! $hasWarnings) {
+            $this->components->twoColumnDetail(
+                sprintf('<fg=green>✓ All %d manifest(s) valid</>', $totalChecked),
+                ''
+            );
+        }
+
+        if ($hasFailures && $strict) {
+            $this->newLine();
+            $this->components->error('Strict manifest validation is enabled. Fix all schema errors before continuing.');
+        }
+
+        return $hasFailures;
     }
 }
