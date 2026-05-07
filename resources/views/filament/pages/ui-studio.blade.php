@@ -301,8 +301,9 @@
                                 </div>
                             </div>
                             <div class="h-8 rounded-md border border-dashed border-gray-200" style="background: {{ e($this->safeColor($surfaceColor)) }}"></div>
-                            @if (! empty($backgroundValue))
-                                <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ $backgroundType === 'gradient' ? 'background: '.e($backgroundValue) : 'background-image:url('.e($backgroundValue).');background-size:cover;background-position:center;' }}"></div>
+                            @php($backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue))
+                            @if ($backgroundPreviewStyle)
+                                <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ $backgroundPreviewStyle }}"></div>
                             @endif
                         </div>
                     </section>

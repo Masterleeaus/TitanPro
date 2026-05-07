@@ -28,6 +28,8 @@ class UiStudio extends Page
 {
     use WithFileUploads;
 
+    private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Platform';
@@ -263,12 +265,24 @@ class UiStudio extends Page
             'logoUpload' => 'nullable|image|max:2048',
             'faviconUpload' => 'nullable|image|max:1024',
             'panelName' => 'nullable|string|max:255',
-            'primaryColor' => ['required', 'regex:/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/'],
-            'secondaryColor' => ['required', 'regex:/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/'],
+            'primaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'secondaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'fontFamily' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
             'backgroundType' => 'required|in:none,gradient,image',
             'backgroundValue' => 'nullable|string|max:500',
         ]);
+
+        if ($validated['backgroundType'] === 'gradient' && $validated['backgroundValue']) {
+            $this->validate([
+                'backgroundValue' => ['regex:/^linear-gradient\(([-#(),.%\sa-zA-Z0-9]+)\)$/'],
+            ]);
+        }
+
+        if ($validated['backgroundType'] === 'image' && $validated['backgroundValue']) {
+            $this->validate([
+                'backgroundValue' => ['url', 'regex:/^https?:\/\//i'],
+            ]);
+        }
 
         $orgId = auth()->user()?->organization_id;
         $settings = PlatformSetting::current();
@@ -280,7 +294,7 @@ class UiStudio extends Page
                 if ($branding->logo_path) {
                     Storage::disk('public')->delete($branding->logo_path);
                 }
-                $branding->logo_path = $this->logoUpload->store("organization-branding/{$orgId}", 'public');
+                $branding->logo_path = $this->logoUpload->store($this->brandingDirectory($orgId), 'public');
                 $this->logoUpload = null;
             } elseif ($this->logoPath) {
                 $branding->logo_path = $this->logoPath;
@@ -290,7 +304,7 @@ class UiStudio extends Page
                 if ($branding->favicon_path) {
                     Storage::disk('public')->delete($branding->favicon_path);
                 }
-                $branding->favicon_path = $this->faviconUpload->store("organization-branding/{$orgId}", 'public');
+                $branding->favicon_path = $this->faviconUpload->store($this->brandingDirectory($orgId), 'public');
                 $this->faviconUpload = null;
             } elseif ($this->faviconPath) {
                 $branding->favicon_path = $this->faviconPath;
@@ -360,7 +374,7 @@ class UiStudio extends Page
      */
     public function safeColor(string $color, string $default = '#000000'): string
     {
-        return preg_match('/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $color) ? $color : $default;
+        return preg_match(self::HEX_COLOR_REGEX, $color) ? $color : $default;
     }
 
     /**
@@ -370,6 +384,23 @@ class UiStudio extends Page
     public function safeFont(string $font, string $default = 'Figtree'): string
     {
         return preg_match('/^[\w\s\-]+$/', $font) ? $font : $default;
+    }
+
+    public function safeBackgroundStyle(?string $type, ?string $value): ?string
+    {
+        if (! $type || ! $value) {
+            return null;
+        }
+
+        if ($type === 'gradient' && preg_match('/^linear-gradient\(([-#(),.%\sa-zA-Z0-9]+)\)$/', $value)) {
+            return "background: {$value}";
+        }
+
+        if ($type === 'image' && preg_match('/^https?:\/\//i', $value) && filter_var($value, FILTER_VALIDATE_URL)) {
+            return "background-image:url('{$value}');background-size:cover;background-position:center;";
+        }
+
+        return null;
     }
 
     /** @return array<string, string> */
@@ -469,5 +500,10 @@ class UiStudio extends Page
         }
 
         return substr($url, $position + strlen($marker));
+    }
+
+    private function brandingDirectory(int $organizationId): string
+    {
+        return "organization-branding/{$organizationId}";
     }
 }
