@@ -33,7 +33,7 @@ class EstimateResource extends Resource
     {
         return $schema->components([
             Section::make('Quote')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('estimate_number')->label('Quote #')->maxLength(80),
                     TextInput::make('title')->label('Title')->required()->maxLength(160),
