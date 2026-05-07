@@ -4,6 +4,7 @@ namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Modules\TitanCore\Services\ModulePersistence\TitanModuleManifestSnapshotStore;
 
 /**
  * Caches all loaded module manifests (module.json) to a single PHP file
@@ -46,6 +47,7 @@ class ModulesManifestCacheCommand extends Command
     private function buildCache(string $cachePath): int
     {
         $modulesBase = base_path(config('titan-modules.path', 'Modules'));
+        $snapshotStore = app(TitanModuleManifestSnapshotStore::class);
 
         if (! is_dir($modulesBase)) {
             $this->components->error("Modules directory not found: {$modulesBase}");
@@ -76,6 +78,7 @@ class ModulesManifestCacheCommand extends Command
             }
 
             $manifests[$moduleName] = $data;
+            $snapshotStore->sync($moduleName, $data);
             $scanned++;
         }
 

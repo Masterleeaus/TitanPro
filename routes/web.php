@@ -53,6 +53,13 @@ Route::get('/dashboard', function () {
     return redirect()->route('owner.dashboard');
 })->middleware('auth')->name('dashboard');
 
+// Legacy owner panel entry paths must bypass subscription middleware and
+// permanently redirect to canonical Titan panel paths.
+Route::redirect('/owner/dispatch', '/titango', 301)->name('owner.dispatch.alias');
+Route::redirect('/owner/billing', '/zeropay', 301)->name('owner.billing.alias');
+Route::redirect('/owner/estimates', '/titanquotes', 301)->name('owner.estimates.alias');
+Route::redirect('/owner/marketing', '/titannexus', 301)->name('owner.marketing.alias');
+
 // ── Platform SaaS admin — cross-tenant controls for self-hosted operators ──
 Route::middleware(['auth', 'verified', 'role:super_admin'])
     ->prefix('platform')
@@ -197,6 +204,7 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
 // Public Titan BOS marketing, app, Service Mode, and CMS pages.
 Route::get('/platform', fn () => app(CmsPageController::class)->show('platform'))->name('platform.public');
 Route::get('/platform-overview', fn () => redirect('/platform'))->name('platform.overview');
+Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
 Route::get('/apps', fn () => app(CmsPageController::class)->show('apps'))->name('apps.index');
 Route::get('/apps/{slug}', fn (string $slug) => app(CmsPageController::class)->show('app-'.$slug))->name('apps.show');
 Route::get('/service-modes', fn () => app(CmsPageController::class)->show('service-modes'))->name('service-modes.index');
@@ -212,7 +220,12 @@ Route::get('/features', fn () => app(CmsPageController::class)->show('features')
 Route::get('/faq', fn () => app(CmsPageController::class)->show('faq'))->name('faq');
 Route::get('/about', fn () => app(CmsPageController::class)->show('about'))->name('about');
 Route::get('/contact', fn () => app(CmsPageController::class)->show('contact'))->name('contact');
-Route::get('/zeropay', fn () => app(CmsPageController::class)->show('zeropay'))->name('zeropay');
+// Legacy panel aliases — permanent redirects to canonical panel paths.
+Route::redirect('/admin', '/titanpro', 301)->name('titanpro.alias');
+Route::redirect('/ground-zero', '/groundzero', 301)->name('groundzero.alias');
+Route::redirect('/titan-go', '/titango', 301)->name('titango.alias');
+Route::redirect('/titan-quotes', '/titanquotes', 301)->name('titanquotes.alias');
+Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
 Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.index');
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');

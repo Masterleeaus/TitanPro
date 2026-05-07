@@ -67,8 +67,18 @@ test('super admin role can access technician dashboard in preview mode', functio
             ->component('Technician/Dashboard')
             ->where('preview', true)
         );
-    });
+});
 
+test('owner role can access technician dashboard in admin preview mode', function () {
+    [$user] = techUser('owner');
+    $this->actingAs($user)
+        ->get('/technician/dashboard?admin_preview=1')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', true)
+        );
+});
 test('dispatcher role cannot access technician dashboard', function () {
     [$user] = techUser('dispatcher');
     $this->actingAs($user)->get('/technician/dashboard')->assertForbidden();

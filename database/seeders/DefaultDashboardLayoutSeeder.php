@@ -96,7 +96,7 @@ class DefaultDashboardLayoutSeeder extends Seeder
                     'content' => '<ol class="list-decimal list-inside space-y-1 text-sm text-gray-600 dark:text-gray-300">'
                         . '<li>Go to <strong>Admin → Dashboard Layouts</strong> to customise this dashboard.</li>'
                         . '<li>Add customers via <strong>Admin → Customers</strong>.</li>'
-                        . '<li>Configure your job types in <strong>Admin → Job Types</strong>.</li>'
+                        . '<li>Configure your services in <strong>Admin → Services</strong>.</li>'
                         . '<li>Invite your team under <strong>Owner → Team</strong>.</li>'
                         . '<li>Set up your branding in <strong>Admin → Site Settings</strong>.</li>'
                         . '</ol>',

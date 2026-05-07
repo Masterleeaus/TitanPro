@@ -30,7 +30,7 @@ class OrganizationSettingResource extends Resource
     {
         return $schema->components([
             Section::make('Organization Setting')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('organization_id')->label('Organization ID')->numeric(),
                     TextInput::make('company_name')->label('Company Name')->maxLength(160),
