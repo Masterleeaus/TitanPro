@@ -13,6 +13,7 @@ class DashboardController extends Controller
     public function index(Request $request): Response|ResponseFactory
     {
         $user = $request->user();
+        $preview = $user->hasAnyRole(['owner', 'admin', 'super_admin']);
 
         $todayCount = Job::where('assigned_to', $user->id)
             ->whereDate('scheduled_at', today())
@@ -28,6 +29,7 @@ class DashboardController extends Controller
                 'today_jobs'  => $todayCount,
                 'in_progress' => $inProgressCount,
             ],
+            'preview' => $preview,
         ]);
     }
 }

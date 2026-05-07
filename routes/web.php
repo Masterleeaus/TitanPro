@@ -175,7 +175,7 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::post('/estimates/{token}/decline', [PublicEstimateController::class, 'decline'])->name('estimates.decline');
 });
 
-Route::middleware(['auth', 'role:technician'])
+Route::middleware(['auth', 'role:technician|owner|admin|super_admin'])
     ->prefix('technician')
     ->name('technician.')
     ->group(function () {
