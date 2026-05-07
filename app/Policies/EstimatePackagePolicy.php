@@ -19,6 +19,10 @@ class EstimatePackagePolicy
 
     public function view(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:EstimatePackage');
     }
 
@@ -29,11 +33,19 @@ class EstimatePackagePolicy
 
     public function update(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:EstimatePackage');
     }
 
     public function delete(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:EstimatePackage');
     }
 
@@ -44,11 +56,19 @@ class EstimatePackagePolicy
 
     public function restore(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:EstimatePackage');
     }
 
     public function forceDelete(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:EstimatePackage');
     }
 
@@ -64,6 +84,10 @@ class EstimatePackagePolicy
 
     public function replicate(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
+        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:EstimatePackage');
     }
 

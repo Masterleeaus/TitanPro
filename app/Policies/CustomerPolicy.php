@@ -19,6 +19,10 @@ class CustomerPolicy
 
     public function view(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Customer');
     }
 
@@ -29,11 +33,19 @@ class CustomerPolicy
 
     public function update(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Customer');
     }
 
     public function delete(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Customer');
     }
 
@@ -44,11 +56,19 @@ class CustomerPolicy
 
     public function restore(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Customer');
     }
 
     public function forceDelete(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Customer');
     }
 
@@ -64,6 +84,10 @@ class CustomerPolicy
 
     public function replicate(AuthUser $authUser, Customer $customer): bool
     {
+        if ((int) $customer->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Customer');
     }
 

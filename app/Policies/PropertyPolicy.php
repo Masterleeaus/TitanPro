@@ -19,6 +19,10 @@ class PropertyPolicy
 
     public function view(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Property');
     }
 
@@ -29,11 +33,19 @@ class PropertyPolicy
 
     public function update(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Property');
     }
 
     public function delete(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Property');
     }
 
@@ -44,11 +56,19 @@ class PropertyPolicy
 
     public function restore(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Property');
     }
 
     public function forceDelete(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Property');
     }
 
@@ -64,6 +84,10 @@ class PropertyPolicy
 
     public function replicate(AuthUser $authUser, Property $property): bool
     {
+        if ((int) $property->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Property');
     }
 

@@ -19,6 +19,10 @@ class PaymentPolicy
 
     public function view(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Payment');
     }
 
@@ -29,11 +33,19 @@ class PaymentPolicy
 
     public function update(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Payment');
     }
 
     public function delete(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Payment');
     }
 
@@ -44,11 +56,19 @@ class PaymentPolicy
 
     public function restore(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Payment');
     }
 
     public function forceDelete(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Payment');
     }
 
@@ -64,6 +84,10 @@ class PaymentPolicy
 
     public function replicate(AuthUser $authUser, Payment $payment): bool
     {
+        if ((int) $payment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Payment');
     }
 

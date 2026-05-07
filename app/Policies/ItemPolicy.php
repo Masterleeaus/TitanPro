@@ -19,6 +19,10 @@ class ItemPolicy
 
     public function view(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Item');
     }
 
@@ -29,11 +33,19 @@ class ItemPolicy
 
     public function update(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Item');
     }
 
     public function delete(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Item');
     }
 
@@ -44,11 +56,19 @@ class ItemPolicy
 
     public function restore(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Item');
     }
 
     public function forceDelete(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Item');
     }
 
@@ -64,6 +84,10 @@ class ItemPolicy
 
     public function replicate(AuthUser $authUser, Item $item): bool
     {
+        if ((int) $item->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Item');
     }
 
