@@ -21,6 +21,7 @@ class LocationController extends Controller
         ]);
 
         $location = DriverLocation::create([
+            'organization_id' => $request->user()->organization_id,
             'user_id'     => $request->user()->id,
             'latitude'    => $validated['latitude'],
             'longitude'   => $validated['longitude'],
