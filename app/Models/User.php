@@ -57,8 +57,17 @@ class User extends Authenticatable implements FilamentUser
             return $this->hasRole(['owner', 'admin']);
         }
 
+        if ($panel->getId() === 'groundzero') {
+            return $this->hasRole(['super_admin', 'admin', 'owner', 'dispatcher', 'bookkeeper']);
+        }
+
         if ($panel->getId() === 'zeropay') {
             return $this->hasRole(['super_admin', 'admin', 'owner', 'bookkeeper']);
+        }
+
+        if ($panel->getId() === 'titansolo') {
+            return $this->hasRole('owner')
+                && in_array($this->organization?->plan, ['starter', 'solo', 'single_operator'], true);
         }
 
         return $this->hasRole(['super_admin', 'admin', 'owner']);
