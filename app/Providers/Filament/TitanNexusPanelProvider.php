@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,6 +24,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanNexusPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -31,6 +34,14 @@ class TitanNexusPanelProvider extends PanelProvider
             ->brandName('TitanNexus')
             ->colors([
                 'primary' => Color::Indigo,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanNexus/Resources'), for: 'App\\Filament\\TitanNexus\\Resources')
             ->discoverPages(in: app_path('Filament/TitanNexus/Pages'), for: 'App\\Filament\\TitanNexus\\Pages')

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -32,6 +33,8 @@ use Modules\CRMCore\Filament\Plugin\CRMCorePlugin;
  */
 class TitanProPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         $crmCoreAutoloaderPath = base_path('Modules/CRMCore/Support/CRMCoreAutoloader.php');
@@ -54,11 +57,8 @@ class TitanProPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
                 CRMCorePlugin::make(),
+                ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    // Account / auth / security
-                    'Jeffgreco13\\FilamentBreezy\\BreezyCore',
-                    'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
-
                     // Media / activity / dashboard surfaces
                     'Awcodes\\Curator\\CuratorPlugin',
                     'Alizharb\\FilamentActivitylog\\FilamentActivitylogPlugin',
@@ -68,6 +68,7 @@ class TitanProPanelProvider extends PanelProvider
                     'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
 
                     // Navigation / panel shell
+                    'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
                     'Andreia\\FilamentUiSwitcher\\FilamentUiSwitcherPlugin',
                     'Biostate\\FilamentMenuBuilder\\FilamentMenuBuilderPlugin',
                     'NoteBrainsLab\\FilamentMenuManager\\FilamentMenuManagerPlugin',
@@ -97,6 +98,7 @@ class TitanProPanelProvider extends PanelProvider
                 \App\Filament\Widgets\InvoiceVisibilityWidget::class,
                 \App\Filament\Widgets\PwaLaunchWidget::class,
                 \App\Filament\Widgets\CleanerLiveMap::class,
+                \App\Filament\Widgets\RevenueChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -112,27 +114,5 @@ class TitanProPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    /**
-     * Register optional Composer-installed Filament plugins without breaking the panel
-     * if a package is removed, renamed, or only provides component classes.
-     *
-     * @param  array<int, class-string>  $pluginClasses
-     * @return array<int, object>
-     */
-    private function availablePlugins(array $pluginClasses): array
-    {
-        $plugins = [];
-
-        foreach ($pluginClasses as $pluginClass) {
-            if (! class_exists($pluginClass) || ! method_exists($pluginClass, 'make')) {
-                continue;
-            }
-
-            $plugins[] = $pluginClass::make();
-        }
-
-        return $plugins;
     }
 }
