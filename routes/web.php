@@ -212,6 +212,8 @@ Route::get('/industries', fn () => app(CmsPageController::class)->show('industri
 Route::get('/pricing', fn () => app(CmsPageController::class)->show('pricing'))->name('pricing');
 Route::get('/zero-philosophy', fn () => app(CmsPageController::class)->show('zero-philosophy'))->name('zero-philosophy');
 Route::get('/zero', fn () => app(CmsPageController::class)->show('zero-philosophy'))->name('zero');
+// ZeroPay product marketing page — the panel itself lives at /zeropay (handled by ZeroPayPanelProvider).
+Route::get('/zeropay-product', fn () => app(CmsPageController::class)->show('zeropay'))->name('zeropay.product');
 Route::get('/security', fn () => app(CmsPageController::class)->show('security'))->name('security');
 Route::get('/ai-strategy', fn () => app(CmsPageController::class)->show('ai-strategy'))->name('ai-strategy');
 Route::get('/automation-engine', fn () => app(CmsPageController::class)->show('automation-engine'))->name('automation-engine');

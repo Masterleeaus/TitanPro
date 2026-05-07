@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\ZeroFuss\Pages\Dashboard;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,6 +24,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class ZeroFussPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -31,6 +34,9 @@ class ZeroFussPanelProvider extends PanelProvider
             ->brandName('ZeroFuss')
             ->colors([
                 'primary' => Color::Teal,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
             ])
             ->discoverResources(in: app_path('Filament/ZeroFuss/Resources'), for: 'App\\Filament\\ZeroFuss\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroFuss/Pages'), for: 'App\\Filament\\ZeroFuss\\Pages')

@@ -59,6 +59,18 @@ test('canonical panel routes render for authenticated users', function (string $
         ->assertOk();
 })->with('canonical_panel_paths_with_roles');
 
+test('zeropay panel is accessible to bookkeeper role', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $user = User::factory()->create();
+    $user->assignRole('bookkeeper');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/zeropay')
+        ->assertOk();
+});
+
 test('legacy panel aliases permanently redirect to canonical routes', function (string $alias, string $canonical) {
     $response = $this->get($alias);
 
