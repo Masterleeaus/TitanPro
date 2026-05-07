@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
 use App\Http\Middleware\CheckSubscription;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -27,6 +29,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class GroundZeroPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -36,6 +40,14 @@ class GroundZeroPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Cyan,
             ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
+            ])
             ->discoverResources(in: app_path('Filament/GroundZero/Resources'), for: 'App\\Filament\\GroundZero\\Resources')
             ->discoverPages(in: app_path('Filament/GroundZero/Pages'), for: 'App\\Filament\\GroundZero\\Pages')
             ->pages([
@@ -44,6 +56,7 @@ class GroundZeroPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/GroundZero/Widgets'), for: 'App\\Filament\\GroundZero\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                JobsByStatusChartWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

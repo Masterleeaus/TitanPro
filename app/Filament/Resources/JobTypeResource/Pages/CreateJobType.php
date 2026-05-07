@@ -15,4 +15,12 @@ class CreateJobType extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        JobTypeResource::syncChecklistBindings(
+            $this->record,
+            $this->data['task_library_item_ids'] ?? [],
+        );
+    }
 }

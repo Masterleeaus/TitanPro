@@ -11,6 +11,7 @@ class CreateJob extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data = JobResource::prepareFormData($data);
         $data['organization_id'] = auth()->user()?->organization_id;
 
         return $data;
