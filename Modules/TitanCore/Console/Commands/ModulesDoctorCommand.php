@@ -4,6 +4,7 @@ namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Modules\TitanCore\Support\ManifestSchemaValidator;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 
@@ -87,7 +88,12 @@ class ModulesDoctorCommand extends Command
             $hasProblems = true;
         }
 
-        // ── 5. Load order ─────────────────────────────────────────────────────
+        // ── 5. Tenant boundary diagnostics ─────────────────────────────────────
+        if ($this->runTenantBoundaryValidation()) {
+            $hasProblems = true;
+        }
+
+        // ── 6. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();
@@ -233,6 +239,28 @@ class ModulesDoctorCommand extends Command
         }
 
         return $hasFailures;
+    }
+
+    private function runTenantBoundaryValidation(): bool
+    {
+        $this->newLine();
+        $this->components->info('Tenant Boundary Validation:');
+
+        if (! Schema::hasTable('driver_locations')) {
+            $this->components->warn('driver_locations table not found. Skipping technician location tenant boundary checks.');
+
+            return false;
+        }
+
+        if (Schema::hasColumn('driver_locations', 'organization_id')) {
+            $this->components->twoColumnDetail('<fg=green>✓ driver_locations has organization_id for org-scoped technician location queries</>', '');
+
+            return false;
+        }
+
+        $this->line('  <fg=red>✗</> <fg=cyan>driver_locations</>: missing organization_id column required for org-scoped technician location queries');
+
+        return true;
     }
 
     /**

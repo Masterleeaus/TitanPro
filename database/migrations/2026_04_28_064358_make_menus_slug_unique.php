@@ -11,9 +11,17 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('fmm_menus', function (Blueprint $table) {
+        $tableName = config('filament-menu-manager.table_prefix', 'fmm_') . 'menus';
+
+        if (! Schema::hasColumn($tableName, 'slug')) {
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->string('slug')->nullable()->after('name');
+            });
+        }
+
+        Schema::table($tableName, function (Blueprint $table) {
             $table->unique(['slug']);
         });
     }
@@ -23,9 +31,11 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('fmm_menus', function (Blueprint $table) {
+        $tableName = config('filament-menu-manager.table_prefix', 'fmm_') . 'menus';
+
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropUnique(['slug']);
         });
     }

@@ -1,4 +1,4 @@
-name: 🤖 Copilot — PR Reviewer
+name: 🤖 Copilot — PR Auto-Merger
 
 on:
   schedule:
@@ -6,26 +6,26 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'Specific PR number (blank = all open PRs)'
+        description: 'Specific PR number (blank = all open Copilot PRs)'
         required: false
         type: string
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 concurrency:
-  group: copilot-pr-reviewer
+  group: copilot-pr-merger
   cancel-in-progress: false
 
 jobs:
-  review-prs:
-    name: Request Copilot review on open pull requests
+  merge-copilot-prs:
+    name: Undraft and merge open Copilot PRs
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
-      - name: Fetch open PRs
+      - name: Fetch open Copilot PRs
         id: prs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -33,27 +33,26 @@ jobs:
           if [ -n "${{ github.event.inputs.pr_number }}" ]; then
             echo "[${{ github.event.inputs.pr_number }}]" > /tmp/pr_numbers.json
           else
+            # All open PRs authored by Copilot (draft or ready)
             gh pr list \
               --repo "${{ github.repository }}" \
               --state open \
               --limit 50 \
-              --json number,reviewRequests \
-              --jq '[.[] | select(
-                      .reviewRequests | map(.login // .name) |
-                      contains(["copilot"]) | not
-                    ) | .number]' > /tmp/pr_numbers.json
+              --json number,author,isDraft,mergeable,mergeStateStatus \
+              --jq '[.[] | select(.author.login == "Copilot") | .number]' \
+              > /tmp/pr_numbers.json
           fi
 
-          COUNT=$(python3 -c "import sys,json; print(len(json.load(open('/tmp/pr_numbers.json'))))")
+          COUNT=$(python3 -c "import json; print(len(json.load(open('/tmp/pr_numbers.json'))))")
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-          echo "Found $COUNT PR(s) without Copilot review."
+          echo "Found $COUNT Copilot PR(s) to process."
           cat /tmp/pr_numbers.json
 
       - name: Skip if no PRs
         if: steps.prs.outputs.count == '0'
-        run: echo "No open PRs needing Copilot review."
+        run: echo "No open Copilot PRs."
 
-      - name: Request Copilot review on each PR
+      - name: Undraft, approve, and merge each Copilot PR
         if: steps.prs.outputs.count != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,23 +62,53 @@ jobs:
 
           for PR_NUM in $PR_NUMS; do
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Requesting Copilot review on PR #$PR_NUM"
+            echo "Processing Copilot PR #$PR_NUM"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-            TITLE=$(gh pr view "$PR_NUM" --repo "$REPO" --json title --jq '.title')
-            echo "  Title: $TITLE"
+            PR_DATA=$(gh pr view "$PR_NUM" --repo "$REPO" \
+              --json title,isDraft,mergeable,mergeStateStatus,headRefName)
 
-            # Request Copilot as reviewer
-            if gh pr edit "$PR_NUM" --repo "$REPO" \
-                --add-reviewer "copilot" 2>/dev/null; then
-              echo "  ✓ Copilot review requested on PR #$PR_NUM"
-            else
-              # Fallback via API
-              gh api "repos/$REPO/pulls/$PR_NUM/requested_reviewers" \
-                --method POST \
-                -f "reviewers[]=copilot" || true
-              echo "  ✓ Copilot review requested (via API) on PR #$PR_NUM"
+            TITLE=$(echo "$PR_DATA"     | python3 -c "import sys,json; print(json.load(sys.stdin)['title'])")
+            IS_DRAFT=$(echo "$PR_DATA"  | python3 -c "import sys,json; print(json.load(sys.stdin)['isDraft'])")
+            MERGEABLE=$(echo "$PR_DATA" | python3 -c "import sys,json; print(json.load(sys.stdin)['mergeable'])")
+            STATUS=$(echo "$PR_DATA"    | python3 -c "import sys,json; print(json.load(sys.stdin)['mergeStateStatus'])")
+
+            echo "  Title:     $TITLE"
+            echo "  Draft:     $IS_DRAFT"
+            echo "  Mergeable: $MERGEABLE ($STATUS)"
+
+            # Skip if there are conflicts
+            if [ "$MERGEABLE" = "CONFLICTING" ]; then
+              echo "  ⚠️  PR #$PR_NUM has conflicts — skipping. Needs manual resolution."
+              gh pr comment "$PR_NUM" --repo "$REPO" \
+                --body "⚠️ **Merge conflict detected.** This PR cannot be auto-merged. Please resolve the conflicts and push to the branch." 2>/dev/null || true
+              continue
             fi
 
-            echo "Finished PR #$PR_NUM"
+            # Step 1: Undraft if needed
+            if [ "$IS_DRAFT" = "True" ]; then
+              echo "  Marking PR #$PR_NUM ready for review..."
+              gh pr ready "$PR_NUM" --repo "$REPO" || true
+              sleep 5   # give GitHub a moment to update merge status
+            fi
+
+            # Step 2: Approve
+            gh pr review "$PR_NUM" --repo "$REPO" \
+              --approve \
+              --body "✅ Auto-approved by Titan workflow. Copilot coding agent PR." \
+              2>/dev/null || true
+
+            # Step 3: Merge (try --auto first, fall back to direct merge)
+            if gh pr merge "$PR_NUM" --repo "$REPO" --squash --auto --delete-branch 2>/dev/null; then
+              echo "  ✓ PR #$PR_NUM queued for auto-merge (branch will be deleted)"
+            elif gh pr merge "$PR_NUM" --repo "$REPO" --squash --delete-branch 2>/dev/null; then
+              echo "  ✓ PR #$PR_NUM merged directly (branch deleted)"
+            else
+              echo "  ✗ PR #$PR_NUM could not be merged — may need status checks to pass first"
+              gh pr comment "$PR_NUM" --repo "$REPO" \
+                --body "⚠️ **Auto-merge failed.** This PR may be waiting on required status checks. It will be retried next hour." \
+                2>/dev/null || true
+            fi
+
+            sleep 3
           done

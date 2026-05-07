@@ -36,11 +36,13 @@ test('technician can post a location update', function () {
             'speed'     => 15.0,
         ])
         ->assertCreated()
+        ->assertJsonPath('data.organization_id', $user->organization_id)
         ->assertJsonPath('data.user_id', $user->id)
         ->assertJsonPath('data.latitude', '40.7128000')
         ->assertJsonPath('data.longitude', '-74.0060000');
 
     $this->assertDatabaseHas('driver_locations', [
+        'organization_id' => $user->organization_id,
         'user_id'   => $user->id,
         'latitude'  => '40.7128000',
         'longitude' => '-74.0060000',

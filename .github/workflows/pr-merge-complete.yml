@@ -1,0 +1,57 @@
+name: 🏷️ Mark Issues Agent-Completed on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: pr-merge-complete-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  mark-completed:
+    if: github.event.pull_request.merged == true
+    name: Label linked issues agent-completed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Extract linked issues and update labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          PR_NUM:   ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY:  ${{ github.event.pull_request.body }}
+        run: |
+          # Extract issue numbers linked via Closes/Fixes/Resolves in body
+          printf '%s\n' "$PR_BODY" \
+            | grep -oiE '(closes|fixes|resolves)[[:space:]]+#[0-9]+' \
+            | grep -oE '[0-9]+' > /tmp/linked.txt || true
+
+          # Also catch bare #N references in the PR title
+          printf '%s\n' "$PR_TITLE" \
+            | grep -oE '#[0-9]+' \
+            | tr -d '#' >> /tmp/linked.txt || true
+
+          sort -u /tmp/linked.txt | grep -v '^$' > /tmp/issues.txt
+
+          COUNT=$(wc -l < /tmp/issues.txt | tr -d ' ')
+          echo "PR #$PR_NUM merged — found $COUNT linked issue(s):"
+          cat /tmp/issues.txt
+
+          while IFS= read -r N; do
+            [ -z "$N" ] && continue
+            echo "  Marking issue #$N as agent-completed"
+            gh issue edit "$N" --repo "$REPO" \
+              --add-label "agent-completed" \
+              --remove-label "agent-assigned" 2>/dev/null || true
+            gh issue comment "$N" --repo "$REPO" \
+              --body "✅ **Agent completed.** Pull request #${PR_NUM} was merged into \`main\`. Issue marked \`agent-completed\` and will be picked up by the continuation workflow to generate any follow-up issues from its \`issue-docs/issue-${N}.md\`." \
+              2>/dev/null || true
+            echo "  ✓ Done #$N"
+          done < /tmp/issues.txt
