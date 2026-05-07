@@ -7,6 +7,15 @@ use App\Platform\AI\BlueprintAIManifestRegistry;
 use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Filament\FilamentRegistry;
 use App\Platform\Workflows\WorkflowDefinitionRegistry;
+use App\Platform\Modules\ChannelManifestRegistry;
+use App\Platform\Modules\DashboardRegistry;
+use App\Platform\Modules\OmniManifestRegistry;
+use App\Platform\Modules\PwaManifestRegistry;
+use App\Platform\Modules\SettingsRegistry;
+use App\Platform\Modules\ShortcutRegistry;
+use App\Platform\Modules\TableRegistry;
+use App\Platform\Modules\UiKitRegistry;
+use App\Platform\Modules\VoiceManifestRegistry;
 
 class ModuleManifestRegistryLoader
 {
@@ -21,6 +30,15 @@ class ModuleManifestRegistryLoader
         private readonly AutomationRegistry $automationRegistry,
         private readonly AIManifestRegistry $aiRegistry,
         private readonly BlueprintAIManifestRegistry $blueprintAIRegistry,
+        private readonly PwaManifestRegistry $pwaManifestRegistry,
+        private readonly ChannelManifestRegistry $channelManifestRegistry,
+        private readonly OmniManifestRegistry $omniManifestRegistry,
+        private readonly VoiceManifestRegistry $voiceManifestRegistry,
+        private readonly UiKitRegistry $uiKitRegistry,
+        private readonly DashboardRegistry $dashboardRegistry,
+        private readonly TableRegistry $tableRegistry,
+        private readonly ShortcutRegistry $shortcutRegistry,
+        private readonly SettingsRegistry $settingsRegistry,
     ) {}
 
     public function load(string $modulesPath): void
@@ -48,6 +66,15 @@ class ModuleManifestRegistryLoader
             $this->loadAutomationManifest($moduleDir, $module);
             $this->loadAIManifest($moduleDir, $module);
             $this->loadBlueprintAIManifest($moduleDir, $module);
+            $this->loadPwaManifest($moduleDir, $module);
+            $this->loadChannelManifest($moduleDir, $module);
+            $this->loadOmniManifest($moduleDir, $module);
+            $this->loadVoiceManifest($moduleDir, $module);
+            $this->loadUiKitManifest($moduleDir, $module);
+            $this->loadDashboardManifest($moduleDir, $module);
+            $this->loadTableManifest($moduleDir, $module);
+            $this->loadShortcutManifest($moduleDir, $module);
+            $this->loadSettingsManifest($moduleDir, $module);
 
             $this->loadedModules[$module] = true;
         }
@@ -219,6 +246,136 @@ class ModuleManifestRegistryLoader
         return $agents;
     }
 
+    private function loadPwaManifest(string $moduleDir, string $module): void
+    {
+        $pwaManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/pwa.manifest.json',
+            $moduleDir.'/PWA/pwa.manifest.json',
+            $moduleDir.'/manifests/pwa.json',
+        ]);
+
+        if (! is_array($pwaManifest) || ($pwaManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->pwaManifestRegistry->registerManifest($module, $pwaManifest);
+    }
+
+    private function loadChannelManifest(string $moduleDir, string $module): void
+    {
+        $channelManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/channel.manifest.json',
+            $moduleDir.'/AI/Channels/channel.manifest.json',
+            $moduleDir.'/manifests/channel.json',
+        ]);
+
+        if (! is_array($channelManifest) || ($channelManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->channelManifestRegistry->registerManifest($module, $channelManifest);
+    }
+
+    private function loadOmniManifest(string $moduleDir, string $module): void
+    {
+        $omniManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/omni_manifest.json',
+            $moduleDir.'/manifests/omni.manifest.json',
+            $moduleDir.'/manifests/omni.json',
+        ]);
+
+        if (! is_array($omniManifest) || ($omniManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->omniManifestRegistry->registerManifest($module, $omniManifest);
+    }
+
+    private function loadVoiceManifest(string $moduleDir, string $module): void
+    {
+        $voiceManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/voice.manifest.json',
+            $moduleDir.'/AI/Voice/voice.manifest.json',
+            $moduleDir.'/manifests/voice.json',
+        ]);
+
+        if (! is_array($voiceManifest) || ($voiceManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->voiceManifestRegistry->registerManifest($module, $voiceManifest);
+    }
+
+    private function loadUiKitManifest(string $moduleDir, string $module): void
+    {
+        $uiKitManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/ui-kit.manifest.json',
+            $moduleDir.'/manifests/ui_kit.manifest.json',
+        ]);
+
+        if (! is_array($uiKitManifest) || ($uiKitManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->uiKitRegistry->registerManifest($module, $uiKitManifest);
+    }
+
+    private function loadDashboardManifest(string $moduleDir, string $module): void
+    {
+        $dashboardManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/dashboard.manifest.json',
+        ]);
+
+        if (! is_array($dashboardManifest) || ($dashboardManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->dashboardRegistry->registerManifest($module, $dashboardManifest);
+    }
+
+    private function loadTableManifest(string $moduleDir, string $module): void
+    {
+        $tableManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/table.manifest.json',
+            $moduleDir.'/UI/manifests/ui.json',
+            $moduleDir.'/Filament/PageManifest/module-page.json',
+        ]);
+
+        if (! is_array($tableManifest) || ($tableManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->tableRegistry->registerManifest($module, $tableManifest);
+    }
+
+    private function loadShortcutManifest(string $moduleDir, string $module): void
+    {
+        $shortcutManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/shortcut.manifest.json',
+            $moduleDir.'/Filament/Shortcuts/shortcuts.json',
+        ]);
+
+        if (! is_array($shortcutManifest) || ($shortcutManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->shortcutRegistry->registerManifest($module, $shortcutManifest);
+    }
+
+    private function loadSettingsManifest(string $moduleDir, string $module): void
+    {
+        $settingsManifest = $this->readFirstJson([
+            $moduleDir.'/manifests/settings.manifest.json',
+            $moduleDir.'/Filament/Settings/settings.schema.json',
+        ]);
+
+        if (! is_array($settingsManifest) || ($settingsManifest['enabled'] ?? true) === false) {
+            return;
+        }
+
+        $this->settingsRegistry->registerManifest($module, $settingsManifest);
+    }
+
     /**
      * @return array<string, mixed>|null
      */
@@ -244,5 +401,22 @@ class ModuleManifestRegistryLoader
         $decoded = json_decode($raw, true);
 
         return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * @param  array<int, string>  $paths
+     * @return array<string, mixed>|null
+     */
+    private function readFirstJson(array $paths): ?array
+    {
+        foreach ($paths as $path) {
+            $manifest = $this->readJson($path);
+
+            if (is_array($manifest)) {
+                return $manifest;
+            }
+        }
+
+        return null;
     }
 }

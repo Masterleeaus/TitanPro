@@ -16,6 +16,7 @@ return new class extends Migration
                   ->constrained($prefix . 'menu_locations')
                   ->cascadeOnDelete();
             $table->string('name');
+            $table->string('slug')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

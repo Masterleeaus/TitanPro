@@ -79,6 +79,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Manifest Cache Path
+    |--------------------------------------------------------------------------
+    |
+    | Absolute or base_path()-relative path for the manifest cache file written
+    | by `php artisan modules:manifest-cache`. Defaults to
+    | bootstrap/cache/titan_manifests.php.
+    |
+    */
+
+    'manifest_cache_path' => env('TITAN_MANIFEST_CACHE_PATH', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Manifest Schema Validation
     |--------------------------------------------------------------------------
     |

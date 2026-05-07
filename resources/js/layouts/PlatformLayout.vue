@@ -25,6 +25,7 @@ function navClass(href: string): string {
         <aside
             class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-slate-950 text-slate-100 transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            :style="{ width: 'var(--sidebar-width, 16rem)' }"
         >
             <div class="border-b border-slate-800 px-6 py-4">
                 <div class="flex items-center gap-3">
@@ -71,7 +72,9 @@ function navClass(href: string): string {
             </header>
 
             <main class="flex-1 p-4 sm:p-6">
-                <slot />
+                <div class="mx-auto w-full" :style="{ maxWidth: 'var(--content-max-width, 80rem)' }">
+                    <slot />
+                </div>
             </main>
         </div>
     </div>

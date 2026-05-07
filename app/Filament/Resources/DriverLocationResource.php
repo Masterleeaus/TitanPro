@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DriverLocationResource\Pages;
 use App\Models\DriverLocation;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
@@ -72,5 +73,17 @@ class DriverLocationResource extends Resource
             'create' => Pages\CreateDriverLocation::route('/create'),
             'edit' => Pages\EditDriverLocation::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

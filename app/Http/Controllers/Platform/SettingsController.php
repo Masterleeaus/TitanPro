@@ -31,6 +31,7 @@ class SettingsController extends Controller
             'primary_color' => ['nullable', 'string', 'max:20'],
             'support_email' => ['nullable', 'email', 'max:255'],
             'footer_text' => ['nullable', 'string', 'max:255'],
+            'custom_css' => ['nullable', 'string'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'favicon' => ['nullable', 'image', 'max:1024'],
             'remove_logo' => ['nullable', 'boolean'],
@@ -66,9 +67,10 @@ class SettingsController extends Controller
             'primary_color' => $data['primary_color'] ?: '#2563eb',
             'support_email' => $data['support_email'] ?? null,
             'footer_text' => $data['footer_text'] ?? null,
+            'custom_css' => $data['custom_css'] ?? null,
         ])->save();
 
-        Cache::forget('platform.settings');
+        Cache::forget('platform_settings');
 
         return back()->with('success', 'Platform settings updated.');
     }
@@ -90,6 +92,7 @@ class SettingsController extends Controller
             'footer_text' => $settings->footer_text,
             'logo_url' => $settings->logo_url,
             'favicon_url' => $settings->favicon_url,
+            'custom_css' => $settings->custom_css,
         ];
     }
 }

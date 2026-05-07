@@ -48,10 +48,13 @@ class DispatchController extends Controller
         $techIds = $technicians->pluck('id');
 
         // Latest location per technician — one query using a self-join
-        $latestLocations = DriverLocation::whereIn('user_id', $techIds)
-            ->whereIn('id', function ($sub) use ($techIds) {
+        $latestLocations = DriverLocation::query()
+            ->forOrganization($orgId)
+            ->whereIn('user_id', $techIds)
+            ->whereIn('id', function ($sub) use ($orgId, $techIds) {
                 $sub->selectRaw('MAX(id)')
                     ->from('driver_locations')
+                    ->where('organization_id', $orgId)
                     ->whereIn('user_id', $techIds)
                     ->groupBy('user_id');
             })
@@ -108,7 +111,9 @@ class DispatchController extends Controller
     {
         abort_unless($user->organization_id === $request->user()->organization_id, 403);
 
-        $points = DriverLocation::where('user_id', $user->id)
+        $points = DriverLocation::query()
+            ->forOrganization($request->user()->organization_id)
+            ->where('user_id', $user->id)
             ->whereDate('recorded_at', today())
             ->orderBy('recorded_at')
             ->get(['latitude', 'longitude', 'recorded_at'])

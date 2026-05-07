@@ -3,11 +3,6 @@ name: 🤖 Copilot — Issue Assigner
 on:
   schedule:
     - cron: '*/30 * * * *'   # every 30 minutes
-    # ── Batch size guide ────────────────────────────────────────────────────
-    # GitHub Copilot Pro+ coding agent handles the actual implementation.
-    # This workflow only assigns issues — no Anthropic API needed.
-    # Batch of 5 is conservative; raise to 10-20 if Copilot keeps up.
-    # ────────────────────────────────────────────────────────────────────────
   workflow_dispatch:
     inputs:
       issue_number:
@@ -40,16 +35,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for ENTRY in \
-            "agent-assigned|0075ca|Issue currently being worked on by an agent" \
-            "agent-completed|0e8a16|Agent successfully resolved this issue" \
-            "agent-failed|d93f0b|Agent encountered an error on this issue"; do
+            "agent-assigned|0075ca|Issue currently being worked on by Copilot" \
+            "agent-completed|0e8a16|Copilot successfully resolved this issue" \
+            "agent-failed|d93f0b|Copilot encountered an error on this issue"; do
             NAME=$(echo "$ENTRY"  | cut -d'|' -f1)
             COLOR=$(echo "$ENTRY" | cut -d'|' -f2)
             DESC=$(echo "$ENTRY"  | cut -d'|' -f3)
             gh api "repos/${{ github.repository }}/labels" \
               --method POST \
               -f name="$NAME" -f color="$COLOR" -f description="$DESC" \
-              2>/dev/null || true   # silently skip if label already exists
+              2>/dev/null || true
           done
 
       - name: Select issues to assign
@@ -62,14 +57,13 @@ jobs:
           if [ -n "${{ github.event.inputs.issue_number }}" ]; then
             echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
           else
-            # Pick N oldest open issues without agent labels
             gh issue list \
               --repo "${{ github.repository }}" \
               --state open \
               --limit 200 \
               --json number,createdAt,labels \
               --jq "[.[] | select(.labels | map(.name) |
-                    (contains([\"agent-assigned\"]) or
+                    (contains([\"agent-assigned\"] ) or
                      contains([\"agent-completed\"]) or
                      contains([\"agent-failed\"])) | not)]
                    | sort_by(.createdAt) | .[:${BATCH}] | .[].number" \
@@ -80,18 +74,13 @@ jobs:
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "Selected $COUNT issue(s) to assign:"
           cat /tmp/issue_numbers.txt
-
-          if [ "$COUNT" -eq 0 ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
+          [ "$COUNT" -eq 0 ] && echo "skip=true" >> "$GITHUB_OUTPUT" || echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - name: Skip if no eligible issues
         if: steps.pick.outputs.skip == 'true'
         run: echo "No eligible open issues. All issues are assigned or completed."
 
-      - name: Assign each issue to GitHub Copilot
+      - name: Trigger Copilot coding agent on each issue
         if: steps.pick.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,32 +90,29 @@ jobs:
             [ -z "$ISSUE_NUM" ] && continue
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "  Assigning issue #$ISSUE_NUM to GitHub Copilot"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
             TITLE=$(gh issue view "$ISSUE_NUM" --repo "$REPO" --json title --jq '.title')
-            echo "  Title: $TITLE"
+            echo "  Assigning Copilot coding agent to issue #$ISSUE_NUM: $TITLE"
 
-            # Assign Copilot as coding agent
-            if gh issue edit "$ISSUE_NUM" --repo "$REPO" \
-                --add-assignee "copilot" \
-                --add-label "agent-assigned" 2>/dev/null; then
-              echo "  ✓ Copilot assigned to issue #$ISSUE_NUM"
-            else
-              # Fallback: assign via API (handles orgs where @copilot syntax differs)
-              gh api "repos/$REPO/issues/$ISSUE_NUM/assignees" \
+            # Use the Copilot coding agent API — this actually triggers Copilot to work
+            # (NOT gh issue edit --add-assignee which only adds a user to the assignee list)
+            if gh api "repos/$REPO/issues/$ISSUE_NUM/copilot" \
                 --method POST \
-                -f "assignees[]=copilot" || true
-              gh issue edit "$ISSUE_NUM" --repo "$REPO" \
-                --add-label "agent-assigned" || true
-              echo "  ✓ Copilot assigned (via API) to issue #$ISSUE_NUM"
+                -f base_ref="main" 2>/dev/null; then
+              echo "  ✓ Copilot coding agent triggered for issue #$ISSUE_NUM"
+              ASSIGNED=true
+            else
+              echo "  ⚠️  Copilot API failed for #$ISSUE_NUM — check Copilot coding agent is enabled in repo settings"
+              ASSIGNED=false
             fi
 
-            # Post a comment with full Copilot instructions (including issue-docs requirement)
-            # Build body via echo to avoid unindented lines that would break YAML parsing
+            # Label the issue regardless so it doesn't keep getting picked up
+            gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+              --add-label "agent-assigned" 2>/dev/null || true
+
+            # Post instructions comment
             BODY_FILE=$(mktemp)
             {
-              echo "🤖 **GitHub Copilot** has been assigned to this issue."
+              echo "🤖 **GitHub Copilot coding agent** has been assigned to this issue."
               echo ""
               echo "## Instructions for Copilot"
               echo ""
@@ -154,12 +140,12 @@ jobs:
               echo "2. Commit **all** changes (code + \`issue-docs/issue-${ISSUE_NUM}.md\`) together."
               echo "3. Open a pull request targeting \`main\`."
               echo ""
-              echo "> The \`issue-docs\` file is required — an automated agent reads the **Next Steps** section after merge to create follow-up issues. PRs missing this file will be flagged."
+              echo "> The \`issue-docs\` file is required — an automated agent reads the **Next Steps** section after merge to create follow-up issues."
             } > "$BODY_FILE"
-            gh issue comment "$ISSUE_NUM" --repo "$REPO" \
-              --body-file "$BODY_FILE" || true
+            gh issue comment "$ISSUE_NUM" --repo "$REPO" --body-file "$BODY_FILE" || true
             rm -f "$BODY_FILE"
 
+            sleep 2
           done < /tmp/issue_numbers.txt
 
           echo ""
