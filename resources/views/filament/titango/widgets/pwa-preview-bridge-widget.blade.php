@@ -9,7 +9,7 @@
                     src="{{ url('/technician/dashboard?admin_preview=1') }}"
                     title="TitanGo PWA Preview"
                     class="h-[420px] w-full"
-                    sandbox="allow-same-origin allow-scripts allow-forms"
+                    sandbox="allow-scripts allow-forms"
                 ></iframe>
             </div>
 

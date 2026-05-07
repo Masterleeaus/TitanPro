@@ -189,14 +189,11 @@ Route::middleware(['auth'])
                 abort(403);
             })
             ->name('dashboard');
-    });
 
-Route::middleware(['auth', 'role:technician'])
-    ->prefix('technician')
-    ->name('technician.')
-    ->group(function () {
-        Route::get('/jobs', [TechnicianJobController::class, 'index'])->name('jobs.index');
-        Route::get('/jobs/{job}', [TechnicianJobController::class, 'show'])->name('jobs.show');
+        Route::middleware('role:technician')->group(function () {
+            Route::get('/jobs', [TechnicianJobController::class, 'index'])->name('jobs.index');
+            Route::get('/jobs/{job}', [TechnicianJobController::class, 'show'])->name('jobs.show');
+        });
     });
 
 // Health checks — no auth, no CSRF, used by uptime monitors and orchestrators

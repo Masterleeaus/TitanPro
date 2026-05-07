@@ -6,7 +6,7 @@ use App\Models\DriverLocation;
 use App\Models\Job;
 use App\Models\User;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TitanGoDashboardWidget extends Widget
 {
@@ -31,7 +31,7 @@ class TitanGoDashboardWidget extends Widget
             ];
         }
 
-        $activeTechnicians = User::query()
+        $technicianCount = User::query()
             ->where('organization_id', $organizationId)
             ->whereHas('roles', fn ($query) => $query->where('name', 'technician'))
             ->count();
@@ -46,19 +46,20 @@ class TitanGoDashboardWidget extends Widget
             ->whereIn('status', [Job::STATUS_SCHEDULED, Job::STATUS_ASSIGNED])
             ->count();
 
-        $latestLocations = DriverLocation::query()
-            ->where('organization_id', $organizationId)
-            ->selectRaw('MAX(recorded_at) as recorded_at')
-            ->groupBy('user_id')
-            ->get();
-
-        $offlineTechnicians = $latestLocations
-            ->filter(fn ($location) => $location->recorded_at !== null && Carbon::parse($location->recorded_at)->lt(now()->subMinutes(30)))
+        $offlineTechnicians = DB::query()
+            ->fromSub(
+                DriverLocation::query()
+                    ->where('organization_id', $organizationId)
+                    ->selectRaw('user_id, MAX(recorded_at) as recorded_at')
+                    ->groupBy('user_id'),
+                'latest_locations'
+            )
+            ->where('recorded_at', '<', now()->subMinutes(30))
             ->count();
 
         return [
             'stats' => [
-                'active_technicians' => $activeTechnicians,
+                'active_technicians' => $technicianCount,
                 'active_jobs' => $activeJobs,
                 'scheduled_jobs' => $scheduledJobs,
                 'offline_technicians' => $offlineTechnicians,

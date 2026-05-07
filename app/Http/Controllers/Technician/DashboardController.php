@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Job;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -17,14 +18,22 @@ class DashboardController extends Controller
         $assignedUserId = $user->id;
 
         if ($request->boolean('admin_preview') && $user->hasRole(['owner', 'admin', 'super_admin'])) {
+            $request->validate([
+                'technician_id' => [
+                    'nullable',
+                    'integer',
+                    Rule::exists('users', 'id')->where(fn ($query) => $query->where('organization_id', $user->organization_id)),
+                ],
+            ]);
+
             $previewUser = User::query()
                 ->where('organization_id', $user->organization_id)
                 ->whereHas('roles', fn ($query) => $query->where('name', 'technician'))
                 ->when(
                     $request->filled('technician_id'),
-                    fn ($query) => $query->whereKey((int) $request->input('technician_id'))
+                    fn ($query) => $query->whereKey((int) $request->input('technician_id')),
+                    fn ($query) => $query->orderBy('name')
                 )
-                ->orderBy('name')
                 ->first();
 
             if ($previewUser) {

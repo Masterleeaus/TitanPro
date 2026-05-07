@@ -42,9 +42,9 @@ class TechnicianActivityWidget extends Widget
         $latestLocations = DriverLocation::query()
             ->where('organization_id', $organizationId)
             ->whereIn('user_id', $technicians->pluck('id'))
-            ->orderByDesc('recorded_at')
-            ->get(['user_id', 'recorded_at'])
-            ->unique('user_id')
+            ->selectRaw('user_id, MAX(recorded_at) as recorded_at')
+            ->groupBy('user_id')
+            ->get()
             ->keyBy('user_id');
 
         $staleThreshold = now()->subMinutes(30);
