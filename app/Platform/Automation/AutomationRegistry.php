@@ -24,6 +24,13 @@ class AutomationRegistry
     private array $automations = [];
 
     /**
+     * Manifest-derived automation declarations keyed by module name.
+     *
+     * @var array<string, array{triggers: array<int, array<string, mixed>>, handlers: array<int, array<string, mixed>>, pipelines: array<int, array<string, mixed>>, schedulers: array<int, array<string, mixed>>}>
+     */
+    private array $manifestEntries = [];
+
+    /**
      * Register one or more automation definitions.
      *
      * @param array<string, mixed> $definition
@@ -91,5 +98,123 @@ class AutomationRegistry
     public function find(string $id): ?array
     {
         return $this->automations[$id] ?? null;
+    }
+
+    /**
+     * Register manifest-declared automation surfaces for a single module.
+     *
+     * Re-registering the same module replaces existing entries, making the
+     * operation idempotent.
+     *
+     * @param  array<string, mixed>  $manifest
+     */
+    public function registerManifest(string $module, array $manifest): void
+    {
+        $this->manifestEntries[$module] = [
+            'triggers' => $this->normalizeManifestEntries($module, (array) ($manifest['triggers'] ?? []), 'trigger'),
+            'handlers' => $this->normalizeManifestEntries($module, (array) ($manifest['handlers'] ?? []), 'handler'),
+            'pipelines' => $this->normalizeManifestEntries($module, (array) ($manifest['pipelines'] ?? []), 'pipeline'),
+            'schedulers' => $this->normalizeManifestEntries($module, (array) ($manifest['schedulers'] ?? []), 'scheduler'),
+        ];
+    }
+
+    /**
+     * @return array<string, array{triggers: array<int, array<string, mixed>>, handlers: array<int, array<string, mixed>>, pipelines: array<int, array<string, mixed>>, schedulers: array<int, array<string, mixed>>}>
+     */
+    public function manifestEntries(): array
+    {
+        return $this->manifestEntries;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function triggers(?string $module = null): array
+    {
+        return $this->manifestEntriesByType('triggers', $module);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function handlers(?string $module = null): array
+    {
+        return $this->manifestEntriesByType('handlers', $module);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function pipelines(?string $module = null): array
+    {
+        return $this->manifestEntriesByType('pipelines', $module);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function schedulerHooks(?string $module = null): array
+    {
+        return $this->manifestEntriesByType('schedulers', $module);
+    }
+
+    /**
+     * @param  array<int, mixed>  $entries
+     * @return array<int, array<string, mixed>>
+     */
+    private function normalizeManifestEntries(string $module, array $entries, string $type): array
+    {
+        $normalized = [];
+
+        foreach ($entries as $entry) {
+            if (is_string($entry)) {
+                $normalized[] = [
+                    'module' => $module,
+                    'type' => $type,
+                    'key' => $entry,
+                    'class' => $entry,
+                ];
+                continue;
+            }
+
+            if (! is_array($entry)) {
+                continue;
+            }
+
+            $key = $entry['key'] ?? $entry['id'] ?? $entry['name'] ?? $entry['class'] ?? null;
+
+            if (! is_string($key) || $key === '') {
+                continue;
+            }
+
+            $normalized[] = array_merge(
+                [
+                    'module' => $module,
+                    'type' => $type,
+                    'key' => $key,
+                    'class' => $entry['class'] ?? $key,
+                ],
+                $entry
+            );
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function manifestEntriesByType(string $type, ?string $module = null): array
+    {
+        if ($module !== null) {
+            return $this->manifestEntries[$module][$type] ?? [];
+        }
+
+        $combined = [];
+        foreach ($this->manifestEntries as $entries) {
+            $combined = array_merge($combined, $entries[$type] ?? []);
+        }
+
+        return $combined;
     }
 }
