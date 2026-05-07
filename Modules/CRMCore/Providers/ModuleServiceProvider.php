@@ -3,6 +3,7 @@
 namespace Modules\CRMCore\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\CRMCore\Console\Commands\ModulesPermissionsSyncCommand;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -28,5 +29,11 @@ class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../Database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'crmcore');
         $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'crmcore');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ModulesPermissionsSyncCommand::class,
+            ]);
+        }
     }
 }
