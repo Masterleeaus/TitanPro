@@ -226,12 +226,19 @@ test('manifest loader populates registries and excludes disabled modules idempot
     expect($tenancyRegistry->resolvers('DisabledModule'))->toBeEmpty();
 
     expect($verticalPackRegistry->find('missing-vertical'))->toBeNull();
+    expect($verticalPackRegistry->find('disabled'))->toBeNull();
     expect($billingRegistry->findPlan('missing-plan'))->toBeNull();
+    expect($billingRegistry->findPlan('disabled.plan'))->toBeNull();
     expect($billingRegistry->findMeter('missing-meter'))->toBeNull();
+    expect($billingRegistry->findMeter('disabled.meter'))->toBeNull();
     expect($billingRegistry->findLimit('missing-limit'))->toBeNull();
+    expect($billingRegistry->findLimit('disabled.limit'))->toBeNull();
     expect($searchRegistry->find('missing-index'))->toBeNull();
+    expect($searchRegistry->find('disabled.index'))->toBeNull();
     expect($tenancyRegistry->findResolver('missing-resolver'))->toBeNull();
+    expect($tenancyRegistry->findResolver('disabled.resolver'))->toBeNull();
     expect($tenancyRegistry->findPolicy('missing-policy'))->toBeNull();
+    expect($tenancyRegistry->findPolicy('disabled.policy'))->toBeNull();
     expect((new VerticalResolver($verticalPackRegistry))->resolve([
         'request' => ['query' => ['vertical' => 'missing-vertical']],
     ], 'RegistryTestModule'))->toBeNull();

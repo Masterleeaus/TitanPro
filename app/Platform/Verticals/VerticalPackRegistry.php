@@ -52,9 +52,11 @@ class VerticalPackRegistry
             ] + $pack;
         }
 
+        $default = $manifest['default'] ?? null;
+
         $this->entries[$module] = [
-            'default' => is_string($manifest['default'] ?? null) && $manifest['default'] !== ''
-                ? $manifest['default']
+            'default' => is_string($default) && $default !== ''
+                ? $default
                 : null,
             'packs' => array_values($packs),
         ];
