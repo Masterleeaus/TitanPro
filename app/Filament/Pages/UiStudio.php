@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -53,8 +54,8 @@ class UiStudio extends Page
     public string $fontFamily     = 'Figtree';
     public ?string $logoPath      = null;
     public ?string $faviconPath   = null;
-    public $logoUpload = null;
-    public $faviconUpload = null;
+    public TemporaryUploadedFile|null $logoUpload = null;
+    public TemporaryUploadedFile|null $faviconUpload = null;
     public string $panelName      = 'TITAN ZERO';
     public string $backgroundType = 'none';
     public ?string $backgroundValue = null;
@@ -274,7 +275,7 @@ class UiStudio extends Page
 
         if ($validated['backgroundType'] === 'gradient' && $validated['backgroundValue']) {
             $this->validate([
-                'backgroundValue' => ['regex:/^linear-gradient\(([-#(),.%\sa-zA-Z0-9]+)\)$/'],
+                'backgroundValue' => ['regex:/^linear-gradient\(([#0-9a-fA-F.,%\s-]+)\)$/'],
             ]);
         }
 
@@ -392,7 +393,7 @@ class UiStudio extends Page
             return null;
         }
 
-        if ($type === 'gradient' && preg_match('/^linear-gradient\(([-#(),.%\sa-zA-Z0-9]+)\)$/', $value)) {
+        if ($type === 'gradient' && preg_match('/^linear-gradient\(([#0-9a-fA-F.,%\s-]+)\)$/', $value)) {
             return "background: {$value}";
         }
 
