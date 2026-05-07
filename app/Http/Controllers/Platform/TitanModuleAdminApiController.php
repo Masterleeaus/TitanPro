@@ -76,6 +76,41 @@ class TitanModuleAdminApiController extends Controller
         ]);
     }
 
+    public function manifests(string $module): JsonResponse
+    {
+        $resolved = $this->resolveModule($module);
+        abort_if($resolved === null, 404, 'Module not found.');
+
+        return response()->json([
+            'module' => $resolved->getName(),
+            'manifest' => $this->manifestFor($resolved),
+        ]);
+    }
+
+    public function sync(ModuleAuditLogger $audit): JsonResponse
+    {
+        Artisan::call('modules:manifest-cache');
+
+        $modules = collect(ModulesFacade::all())->map(function ($module): array {
+            $manifest = $this->manifestFor($module);
+
+            return [
+                'name' => $module->getName(),
+                'alias' => $manifest['alias'] ?? strtolower($module->getName()),
+                'enabled' => (bool) $module->isEnabled(),
+                'version' => $manifest['version'] ?? null,
+                'description' => $manifest['description'] ?? null,
+            ];
+        })->values();
+
+        $audit->logSync('*');
+
+        return response()->json([
+            'ok' => true,
+            'data' => $modules,
+        ]);
+    }
+
     /**
      * Resolve a module identifier by exact module name first, then by manifest
      * alias and case-insensitive module name fallback.
