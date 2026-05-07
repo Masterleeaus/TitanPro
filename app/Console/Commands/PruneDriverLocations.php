@@ -17,29 +17,11 @@ class PruneDriverLocations extends Command
     {
         $days = (int) $this->option('days');
 
-        $backfilled = 0;
-
-        DriverLocation::query()
+        $backfilled = DriverLocation::query()
             ->whereNull('organization_id')
-            ->select('id', 'user_id')
-            ->orderBy('id')
-            ->chunkById(100, function ($locations) use (&$backfilled): void {
-                $organizationIds = DB::table('users')
-                    ->whereIn('id', $locations->pluck('user_id')->filter()->unique())
-                    ->pluck('organization_id', 'id');
-
-                foreach ($locations as $location) {
-                    $organizationId = $organizationIds[$location->user_id] ?? null;
-
-                    if ($organizationId === null) {
-                        continue;
-                    }
-
-                    $backfilled += DriverLocation::query()
-                        ->whereKey($location->id)
-                        ->update(['organization_id' => $organizationId]);
-                }
-            });
+            ->update([
+                'organization_id' => DB::raw('(select organization_id from users where users.id = driver_locations.user_id)'),
+            ]);
 
         $deleted = DriverLocation::query()
             ->where('recorded_at', '<', now()->subDays($days))

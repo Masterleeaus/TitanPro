@@ -16,25 +16,10 @@ return new class extends Migration
         });
 
         DB::table('driver_locations')
-            ->select('id', 'user_id')
-            ->orderBy('id')
-            ->chunkById(100, function ($locations): void {
-                $organizationIds = DB::table('users')
-                    ->whereIn('id', $locations->pluck('user_id')->filter()->unique())
-                    ->pluck('organization_id', 'id');
-
-                foreach ($locations as $location) {
-                    $organizationId = $organizationIds[$location->user_id] ?? null;
-
-                    if ($organizationId === null) {
-                        continue;
-                    }
-
-                    DB::table('driver_locations')
-                        ->where('id', $location->id)
-                        ->update(['organization_id' => $organizationId]);
-                }
-            });
+            ->whereNull('organization_id')
+            ->update([
+                'organization_id' => DB::raw('(select organization_id from users where users.id = driver_locations.user_id)'),
+            ]);
     }
 
     public function down(): void
