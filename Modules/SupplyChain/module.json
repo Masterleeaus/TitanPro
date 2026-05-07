@@ -2,7 +2,13 @@
   "name": "SupplyChain",
   "alias": "supplychain",
   "description": "SupplyChain engine unifying suppliers and inventory workflows",
-  "keywords": ["supplychain", "suppliers", "inventory", "procurement", "stock"],
+  "keywords": [
+    "supplychain",
+    "suppliers",
+    "inventory",
+    "procurement",
+    "stock"
+  ],
   "priority": 10,
   "providers": [
     "Modules\\SupplyChain\\Providers\\SupplyChainServiceProvider",
@@ -25,5 +31,6 @@
     "supplychain.transfer.view",
     "supplychain.transfer.manage"
   ],
-  "sidebar_menu": true
+  "sidebar_menu": true,
+  "filament_panel": "titanpro"
 }

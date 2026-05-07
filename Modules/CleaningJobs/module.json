@@ -36,5 +36,7 @@
     "Helpers/helpers.php"
   ],
   "requires": [],
-  "version": "0.4.0"
+  "version": "0.4.0",
+  "filament_panel": "groundzero",
+  "active": 1
 }

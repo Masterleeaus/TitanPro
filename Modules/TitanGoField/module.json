@@ -1,0 +1,18 @@
+{
+  "name": "TitanGoField",
+  "description": "Field technician kit for the TitanGo panel. Provides offline-capable job cards, GPS check-in/out, digital signature capture, before/after photo logging, parts usage logging, and push notification management — field-side features not covered by CleaningJobs, CleanQuality, or Biometric.",
+  "active": 1,
+  "filament_panel": "titango",
+  "providers": [
+    "Modules\\\\TitanGoField\\\\Providers\\\\TitanGoFieldServiceProvider"
+  ],
+  "keywords": [
+    "field",
+    "offline",
+    "gps",
+    "signature",
+    "photos",
+    "parts",
+    "push"
+  ]
+}

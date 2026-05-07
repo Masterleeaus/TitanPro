@@ -20,5 +20,7 @@
     "filament-ui",
     "search-indexing",
     "billing-meters"
-  ]
+  ],
+  "filament_panel": "titannexus",
+  "active": 1
 }

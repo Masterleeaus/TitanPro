@@ -1,0 +1,17 @@
+{
+  "name": "GroundZeroOps",
+  "description": "Live dispatch and operations hub for the Ground Zero panel. Provides real-time job board, technician map view, shift management, live job assignment, incident logging, and operational KPI widgets — features not covered by domain modules CleaningJobs, BookingModule, or CallingAgent.",
+  "active": 1,
+  "filament_panel": "groundzero",
+  "providers": [
+    "Modules\\\\GroundZeroOps\\\\Providers\\\\GroundZeroOpsServiceProvider"
+  ],
+  "keywords": [
+    "dispatch",
+    "ops",
+    "map",
+    "realtime",
+    "shift",
+    "job-board"
+  ]
+}

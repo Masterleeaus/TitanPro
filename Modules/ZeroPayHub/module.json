@@ -1,0 +1,17 @@
+{
+  "name": "ZeroPayHub",
+  "description": "Payment operations hub for the ZeroPay panel. Provides payment gateway configuration (Stripe/Square/PayPal), payment plan builder, refund management, payment link generator, payout reports, and recurring billing setup — the payment infrastructure layer not covered by Accountings or EInvoice.",
+  "active": 1,
+  "filament_panel": "zeropay",
+  "providers": [
+    "Modules\\\\ZeroPayHub\\\\Providers\\\\ZeroPayHubServiceProvider"
+  ],
+  "keywords": [
+    "payments",
+    "gateway",
+    "stripe",
+    "refunds",
+    "recurring",
+    "payout"
+  ]
+}

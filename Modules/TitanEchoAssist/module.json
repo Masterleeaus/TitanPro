@@ -16,5 +16,7 @@
   "priority": 10,
   "providers": [
     "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider"
-  ]
+  ],
+  "filament_panel": "zerofuss",
+  "active": 1
 }

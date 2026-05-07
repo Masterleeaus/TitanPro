@@ -10,5 +10,7 @@
     "Core"
   ],
   "version": "2.0.1-fullfat-v4",
-  "preserves_original_source": true
+  "preserves_original_source": true,
+  "filament_panel": "titanpro",
+  "active": 1
 }
