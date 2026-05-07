@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\PlatformSetting;
+use App\Models\RoleUIProfile;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,8 +21,7 @@ class HandleAppearance
             ?? $this->settingValue($settings, 'brandName')
             ?? config('app.name');
 
-        View::share('appearance', in_array($appearance, ['light', 'dark', 'system']) ? $appearance : 'system');
-        View::share('platformBranding', [
+        $branding = [
             'app_name' => $brandName,
             'site_name' => $this->settingValue($settings, 'site_name') ?: $brandName,
             'logo_url' => $this->settingValue($settings, 'logo_url'),
@@ -40,7 +40,28 @@ class HandleAppearance
             'meta_title' => $this->settingValue($settings, 'meta_title') ?: $brandName,
             'meta_description' => $this->settingValue($settings, 'meta_description'),
             'custom_css' => $this->settingValue($settings, 'custom_css'),
-        ]);
+        ];
+
+        // Apply role-specific theme overrides when a RoleUIProfile exists.
+        $user = $request->user();
+        if ($user && $user->organization_id) {
+            $role = $user->getRoleNames()->first();
+            if ($role) {
+                $profile = Cache::remember(
+                    "role_ui_profile.{$user->organization_id}.{$role}",
+                    300,
+                    fn () => RoleUIProfile::forRole($role, $user->organization_id)
+                );
+                if ($profile) {
+                    foreach ($profile->themeOverrides() as $key => $value) {
+                        $branding[$key] = $value;
+                    }
+                }
+            }
+        }
+
+        View::share('appearance', in_array($appearance, ['light', 'dark', 'system']) ? $appearance : 'system');
+        View::share('platformBranding', $branding);
 
         return $next($request);
     }

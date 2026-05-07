@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\PlatformSetting;
+use App\Models\RoleUIProfile;
 use App\Services\PlanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -100,6 +101,28 @@ class HandleInertiaRequests extends Middleware
         });
 
 
+        // Resolve the active role UI profile for the authenticated user so the
+        // frontend can apply menu and layout overrides without an extra request.
+        $roleUi = null;
+        if ($user && $user->organization_id) {
+            $role = $user->getRoleNames()->first();
+            if ($role) {
+                $profile = Cache::remember(
+                    "role_ui_profile.{$user->organization_id}.{$role}",
+                    300,
+                    fn () => RoleUIProfile::forRole($role, $user->organization_id)
+                );
+                if ($profile) {
+                    $roleUi = [
+                        'role'             => $role,
+                        'hidden_nav_items' => $profile->hidden_nav_items ?? [],
+                        'widget_layout'    => $profile->widget_layout    ?? [],
+                        'theme'            => $profile->themeOverrides(),
+                    ];
+                }
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -109,6 +132,7 @@ class HandleInertiaRequests extends Middleware
             'subscription' => $subscription,
             'plan'         => $planData,
             'platform'     => $platformSettings,
+            'role_ui'      => $roleUi,
         ];
     }
 }

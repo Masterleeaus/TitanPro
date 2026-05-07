@@ -172,7 +172,7 @@
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10">
-                @foreach (['theme' => 'Theme', 'layout' => 'Layout', 'menu' => 'Menu'] as $tab => $tabLabel)
+                @foreach (['theme' => 'Theme', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
@@ -382,6 +382,134 @@
                                 </div>
                             @endforeach
                         </div>
+                    </section>
+                @endif
+
+                {{-- ── Role Profiles tab ───────────────────────────── --}}
+                @if ($activeTab === 'roles')
+                    @php
+                        $supportedRoles = \App\Models\RoleUIProfile::SUPPORTED_ROLES;
+                        $allNavItems = [
+                            'Dashboard', 'Jobs', 'Customers', 'Invoices', 'Site Settings',
+                        ];
+                        $allWidgets = [
+                            'kpi-grid-card'        => 'KPI Grid',
+                            'map-card'             => 'Live Map',
+                            'stat-card'            => 'Stat Card',
+                            'chart-bar-card'       => 'Bar Chart',
+                            'chart-line-card'      => 'Line Chart',
+                            'recent-activity-card' => 'Recent Activity',
+                            'table-card'           => 'Data Table',
+                            'alert-notice-card'    => 'Alert / Notice',
+                        ];
+                    @endphp
+
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Select a Role</h4>
+                        <div class="grid grid-cols-1 gap-1.5 mb-4">
+                            @foreach ($supportedRoles as $roleSlug => $roleLabel)
+                                <button
+                                    type="button"
+                                    wire:click="selectRole('{{ $roleSlug }}')"
+                                    class="flex items-center justify-between rounded-lg border px-3 py-2 text-xs transition-colors
+                                        {{ $selectedRole === $roleSlug
+                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-300'
+                                            : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5' }}"
+                                >
+                                    <span class="font-medium">{{ $roleLabel }}</span>
+                                    @if (isset($roleProfiles[$roleSlug]) && array_filter([
+                                        $roleProfiles[$roleSlug]['primary_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['secondary_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['accent_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['surface_color'] ?? '',
+                                    ]))
+                                        <span class="text-[10px] text-green-500">customised</span>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+
+                        @if ($selectedRole && isset($supportedRoles[$selectedRole]))
+                            @php $profile = $roleProfiles[$selectedRole] ?? []; @endphp
+                            <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 space-y-4">
+                                <h5 class="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                                    {{ $supportedRoles[$selectedRole] }} — Theme Overrides
+                                </h5>
+                                <p class="text-[10px] text-gray-400 -mt-2">Leave blank to inherit the platform default.</p>
+
+                                {{-- Color overrides --}}
+                                @foreach ([
+                                    'primary_color'   => 'Primary',
+                                    'secondary_color' => 'Secondary',
+                                    'accent_color'    => 'Accent',
+                                    'surface_color'   => 'Surface',
+                                ] as $colorField => $colorLabel)
+                                    <div class="flex items-center justify-between gap-2">
+                                        <label class="text-xs text-gray-600 dark:text-gray-400 flex-1">{{ $colorLabel }}</label>
+                                        <input
+                                            type="color"
+                                            value="{{ $profile[$colorField] ?? '#ffffff' }}"
+                                            wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
+                                            class="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-white/10 p-0.5"
+                                            title="{{ $colorLabel }} override for {{ $selectedRole }}"
+                                        />
+                                        <input
+                                            type="text"
+                                            value="{{ $profile[$colorField] ?? '' }}"
+                                            wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
+                                            maxlength="7"
+                                            placeholder="#inherit"
+                                            class="w-20 rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] font-mono text-gray-700 dark:text-gray-300"
+                                        />
+                                    </div>
+                                @endforeach
+
+                                {{-- Hidden nav items --}}
+                                <div>
+                                    <h6 class="text-[11px] font-semibold text-gray-500 mb-2">Hidden Navigation Items</h6>
+                                    <div class="space-y-1">
+                                        @foreach ($allNavItems as $navItem)
+                                            @php $isHidden = in_array($navItem, $profile['hidden_nav_items'] ?? [], true); @endphp
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    @checked($isHidden)
+                                                    wire:click="toggleNavItem('{{ $selectedRole }}', '{{ $navItem }}')"
+                                                    class="rounded border-gray-300 dark:border-white/20 text-primary-600"
+                                                />
+                                                <span class="text-xs text-gray-600 dark:text-gray-400 {{ $isHidden ? 'line-through opacity-50' : '' }}">
+                                                    {{ $navItem }}
+                                                </span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                {{-- Widget layout --}}
+                                <div>
+                                    <h6 class="text-[11px] font-semibold text-gray-500 mb-2">Enabled Dashboard Widgets</h6>
+                                    <div class="space-y-1">
+                                        @foreach ($allWidgets as $widgetType => $widgetLabel)
+                                            @php $isEnabled = in_array($widgetType, $profile['widget_layout'] ?? [], true); @endphp
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    @checked($isEnabled)
+                                                    wire:click="updateRoleWidgetLayout('{{ $selectedRole }}', '{{ $widgetType }}', {{ $isEnabled ? 'false' : 'true' }})"
+                                                    class="rounded border-gray-300 dark:border-white/20 text-primary-600"
+                                                />
+                                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ $widgetLabel }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-400 dark:text-gray-600">
+                                <x-heroicon-o-user-group class="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                <p class="text-xs">Select a role above to configure its UI profile.</p>
+                            </div>
+                        @endif
                     </section>
                 @endif
 
