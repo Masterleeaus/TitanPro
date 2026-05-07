@@ -4,6 +4,18 @@ use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 dataset('canonical_panel_paths', [
+    '/groundzero',
+    '/titanquotes',
+    '/zeropay',
+    '/titango',
+    '/zerofuss',
+    '/titansolo',
+    '/titanstudio',
+    '/titannexus',
+    '/titanpro',
+]);
+
+dataset('canonical_panel_paths_with_roles', [
     ['/groundzero', 'owner'],
     ['/titanquotes', 'owner'],
     ['/zeropay', 'owner'],
@@ -23,13 +35,11 @@ dataset('legacy_panel_aliases', [
     ['/admin', '/titanpro'],
 ]);
 
-test('canonical panel routes redirect guests to a login page', function (string $path, string $requiredRole) {
+test('canonical panel routes redirect guests to a login page', function (string $path) {
     $response = $this->get($path);
     $location = $response->headers->get('Location');
 
-    expect($requiredRole)->not->toBe('');
     $response->assertStatus(302);
-    expect($response->isRedirect())->toBeTrue();
     expect(parse_url((string) $location, PHP_URL_PATH))->toEndWith('/login');
 })->with('canonical_panel_paths');
 
@@ -43,7 +53,7 @@ test('canonical panel routes render for authenticated users', function (string $
         ->followingRedirects()
         ->get($path)
         ->assertOk();
-})->with('canonical_panel_paths');
+})->with('canonical_panel_paths_with_roles');
 
 test('legacy panel aliases permanently redirect to canonical routes', function (string $alias, string $canonical) {
     $response = $this->get($alias);
