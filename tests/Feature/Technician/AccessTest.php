@@ -32,18 +32,53 @@ test('unauthenticated user is blocked from api jobs today', function () {
     $this->getJson('/api/technician/jobs/today')->assertUnauthorized();
 });
 
-// ── Role gate: non-technician roles are blocked ───────────────────────────────
+// ── Role gate: preview-capable roles are allowed; others stay blocked ─────────
 
-test('owner role cannot access technician dashboard', function () {
+test('owner role can access technician dashboard in preview mode', function () {
     [$user] = techUser('owner');
-    $this->actingAs($user)->get('/technician/dashboard')->assertForbidden();
+    $this->actingAs($user)
+        ->get('/technician/dashboard')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', true)
+        );
+});
+
+test('admin role can access technician dashboard in preview mode', function () {
+    [$user] = techUser('admin');
+
+    $this->actingAs($user)
+        ->get('/technician/dashboard')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', true)
+        );
+});
+
+test('super admin role can access technician dashboard in preview mode', function () {
+    [$user] = techUser('super_admin');
+
+    $this->actingAs($user)
+        ->get('/technician/dashboard')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', true)
+        );
 });
 
 test('owner role can access technician dashboard in admin preview mode', function () {
     [$user] = techUser('owner');
-    $this->actingAs($user)->get('/technician/dashboard?admin_preview=1')->assertOk();
+    $this->actingAs($user)
+        ->get('/technician/dashboard?admin_preview=1')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', true)
+        );
 });
-
 test('dispatcher role cannot access technician dashboard', function () {
     [$user] = techUser('dispatcher');
     $this->actingAs($user)->get('/technician/dashboard')->assertForbidden();
@@ -73,7 +108,22 @@ test('technician can access the dashboard page', function () {
     $this->actingAs($user)
         ->get('/technician/dashboard')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('Technician/Dashboard'));
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Dashboard')
+            ->where('preview', false)
+        );
+});
+
+test('owner can access the jobs list page in preview mode', function () {
+    [$user] = techUser('owner');
+
+    $this->actingAs($user)
+        ->get('/technician/jobs')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Jobs/Index')
+            ->where('preview', true)
+        );
 });
 
 test('technician can access the jobs list page', function () {
@@ -82,7 +132,10 @@ test('technician can access the jobs list page', function () {
     $this->actingAs($user)
         ->get('/technician/jobs')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('Technician/Jobs/Index'));
+        ->assertInertia(fn ($page) => $page
+            ->component('Technician/Jobs/Index')
+            ->where('preview', false)
+        );
 });
 
 // ── Post-login redirect ───────────────────────────────────────────────────────

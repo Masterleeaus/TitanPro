@@ -16,8 +16,9 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $assignedUserId = $user->id;
+        $preview = $user->hasAnyRole(['owner', 'admin', 'super_admin']);
 
-        if ($request->boolean('admin_preview') && $user->hasRole(['owner', 'admin', 'super_admin'])) {
+        if ($request->boolean('admin_preview') && $preview) {
             $request->validate([
                 'technician_id' => [
                     'nullable',
@@ -32,7 +33,7 @@ class DashboardController extends Controller
                 ->when(
                     $request->filled('technician_id'),
                     fn ($query) => $query->whereKey((int) $request->input('technician_id')),
-                    fn ($query) => $query->orderBy('name')
+                    fn ($query) => $query->orderBy('name'),
                 )
                 ->first();
 
@@ -55,6 +56,7 @@ class DashboardController extends Controller
                 'today_jobs'  => $todayCount,
                 'in_progress' => $inProgressCount,
             ],
+            'preview' => $preview,
         ]);
     }
 }

@@ -25,6 +25,8 @@ class JobController extends Controller
 
     public function index(Request $request): Response|ResponseFactory
     {
+        $preview = $request->user()->hasAnyRole(['owner', 'admin', 'super_admin']);
+
         $jobs = $this->todayQuery($request->user()->id)
             ->with(['customer', 'property', 'jobType', 'checklistItems', 'attachments', 'lineItems'])
             ->orderBy('scheduled_at')
@@ -33,6 +35,7 @@ class JobController extends Controller
         return inertia('Technician/Jobs/Index', [
             'jobs' => $jobs,
             'statuses' => Job::statuses(),
+            'preview' => $preview,
         ]);
     }
 
