@@ -32,7 +32,7 @@ class DriverLocationResource extends Resource
     {
         return $schema->components([
             Section::make('Cleaner Location')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('user_id')->label('User ID')->numeric(),
                     TextInput::make('latitude')->label('Latitude')->numeric(),

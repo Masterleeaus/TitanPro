@@ -31,9 +31,8 @@ class OrganizationSettingResource extends Resource
     {
         return $schema->components([
             Section::make('Organization Setting')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
-                                        TextInput::make('organization_id')->label('Organization ID')->numeric(),
                     TextInput::make('company_name')->label('Company Name')->maxLength(160),
                     TextInput::make('company_email')->label('Company Email')->maxLength(160),
                     TextInput::make('company_phone')->label('Company Phone')->maxLength(80),
@@ -49,7 +48,6 @@ class OrganizationSettingResource extends Resource
     {
         return $table
             ->columns([
-                                TextColumn::make('organization_id')->label('Org')->searchable()->sortable(),
                 TextColumn::make('company_name')->label('Company')->searchable()->sortable(),
                 TextColumn::make('company_email')->label('Email')->searchable()->sortable(),
                 TextColumn::make('default_tax_rate')->label('Tax Rate')->searchable()->sortable(),

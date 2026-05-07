@@ -35,7 +35,7 @@ class EstimatePackageResource extends Resource
     {
         return $schema->components([
             Section::make('Cleaning Package')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('estimate_id')->label('Quote ID')->numeric(),
                     Select::make('tier')->label('Tier')->options(['good' => 'Good', 'better' => 'Better', 'best' => 'Best'])->required(),

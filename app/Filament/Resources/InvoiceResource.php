@@ -34,7 +34,7 @@ class InvoiceResource extends Resource
     {
         return $schema->components([
             Section::make('Invoice')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('invoice_number')->label('Invoice #')->maxLength(80),
                     Select::make('status')->label('Status')->options(['draft' => 'Draft', 'sent' => 'Sent', 'paid' => 'Paid', 'partial' => 'Partial', 'overdue' => 'Overdue', 'void' => 'Void'])->required(),

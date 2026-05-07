@@ -6,25 +6,25 @@
 
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">Finance Snapshot</x-slot>
-        <x-slot name="description">Uses the real invoice statuses in this project: draft, sent, paid, partial, overdue, void.</x-slot>
+        <x-slot name="heading">Finance / Revenue Snapshot</x-slot>
+        <x-slot name="description">Weekly and monthly revenue, outstanding invoices, and average completed invoice value.</x-slot>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Invoices</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['total_invoices'] }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Revenue This Week</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['revenue_this_week']) }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Overdue</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['overdue_invoices'] }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Revenue This Month</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['revenue_this_month']) }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Paid This Month</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['payments_this_month']) }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Outstanding Invoices</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['outstanding_balance']) }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Accepted Quotes</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['quotes_accepted'] }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Average Job Value</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['average_job_value']) }}</div>
             </div>
         </div>
 

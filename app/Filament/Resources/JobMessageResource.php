@@ -33,7 +33,7 @@ class JobMessageResource extends Resource
     {
         return $schema->components([
             Section::make('Job Message')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('job_id')->label('Job ID')->numeric(),
                     TextInput::make('customer_id')->label('Customer ID')->numeric(),

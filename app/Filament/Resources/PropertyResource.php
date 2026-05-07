@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Actions;
 use Filament\Schemas;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -39,33 +40,38 @@ class PropertyResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('customer_id')
-                ->label('Customer')
-                ->relationship('customer', 'last_name', fn (Builder $query) =>
-                    $query->where('organization_id', auth()->user()?->organization_id)
-                )
-                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->last_name}, {$record->first_name}")
-                ->searchable()
-                ->preload()
-                ->required(),
-            TextInput::make('name')
-                ->label('Property Label')
-                ->maxLength(255),
-            TextInput::make('address_line1')
-                ->label('Street Address')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('address_line2')
-                ->label('Apt / Suite')
-                ->maxLength(255),
-            TextInput::make('city')->required()->maxLength(100),
-            TextInput::make('state')->required()->maxLength(50),
-            TextInput::make('postal_code')
-                ->label('ZIP Code')
-                ->required()
-                ->maxLength(20),
-            Textarea::make('notes')->rows(3)->columnSpanFull(),
-        ])->columns(2);
+            Section::make('Property Details')
+                ->columns(['sm' => 1, 'lg' => 2])
+                ->schema([
+                    Select::make('customer_id')
+                        ->label('Customer')
+                        ->relationship('customer', 'last_name', fn (Builder $query) =>
+                            $query->where('organization_id', auth()->user()?->organization_id)
+                        )
+                        ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->last_name}, {$record->first_name}")
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->columnSpanFull(),
+                    TextInput::make('name')
+                        ->label('Property Label')
+                        ->maxLength(255),
+                    TextInput::make('address_line1')
+                        ->label('Street Address')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('address_line2')
+                        ->label('Apt / Suite')
+                        ->maxLength(255),
+                    TextInput::make('city')->required()->maxLength(100),
+                    TextInput::make('state')->required()->maxLength(50),
+                    TextInput::make('postal_code')
+                        ->label('ZIP Code')
+                        ->required()
+                        ->maxLength(20),
+                    Textarea::make('notes')->rows(3)->columnSpanFull(),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table

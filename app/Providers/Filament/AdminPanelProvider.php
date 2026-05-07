@@ -81,6 +81,12 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                \App\Filament\Widgets\CleaningOperationsOverview::class,
+                \App\Filament\Widgets\DispatchOverviewWidget::class,
+                \App\Filament\Widgets\RevenueReportingSnapshot::class,
+                \App\Filament\Widgets\InvoiceVisibilityWidget::class,
+                \App\Filament\Widgets\PwaLaunchWidget::class,
+                \App\Filament\Widgets\CleanerLiveMap::class,
             ])
             ->middleware([
                 EncryptCookies::class,
