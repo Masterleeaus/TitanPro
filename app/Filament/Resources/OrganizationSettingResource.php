@@ -72,13 +72,15 @@ class OrganizationSettingResource extends Resource
         ];
     }
 
-    /**
-     * Scope all queries to the current user's organization so that admins
-     * can only see and edit their own organization's settings.
-     */
     public static function getEloquentQuery(): Builder
     {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
         return parent::getEloquentQuery()
-            ->where('organization_id', auth()->user()?->organization_id);
+            ->where('organization_id', $organizationId);
     }
 }
