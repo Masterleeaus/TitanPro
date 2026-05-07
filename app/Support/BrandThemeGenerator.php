@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use Illuminate\Support\Facades\Log;
+
 class BrandThemeGenerator
 {
+    private const TARGET_SAMPLE_PIXELS = 6000;
+
     public function generate(array $input): array
     {
         $logoColors = $this->extractDominantColorsFromImage($input['logo_absolute_path'] ?? null);
@@ -57,6 +61,15 @@ class BrandThemeGenerator
 
         if ($scheme !== 'https' || $host !== 'fonts.googleapis.com' || ! str_starts_with($path, '/css')) {
             return null;
+        }
+
+        parse_str((string) ($parts['query'] ?? ''), $query);
+        $allowedQueryParams = ['family', 'display'];
+
+        foreach (array_keys($query) as $param) {
+            if (! in_array($param, $allowedQueryParams, true)) {
+                return null;
+            }
         }
 
         return $url;
@@ -114,13 +127,13 @@ class BrandThemeGenerator
             return [];
         }
 
-        $imageData = @file_get_contents($absolutePath);
+        $imageData = file_get_contents($absolutePath);
 
         if ($imageData === false) {
             return [];
         }
 
-        $image = @imagecreatefromstring($imageData);
+        $image = $this->createImageFromStringSafely($imageData);
 
         if (! $image) {
             return [];
@@ -128,7 +141,8 @@ class BrandThemeGenerator
 
         $width = imagesx($image);
         $height = imagesy($image);
-        $step = max(1, (int) floor(sqrt(($width * $height) / 6000)));
+        // Step size targets sampling roughly 6,000 total pixels to balance speed vs quality.
+        $step = max(1, (int) floor(sqrt(($width * $height) / self::TARGET_SAMPLE_PIXELS)));
         $counts = [];
 
         for ($y = 0; $y < $height; $y += $step) {
@@ -152,7 +166,7 @@ class BrandThemeGenerator
 
     private function extractColorsFromSvg(string $path, int $limit): array
     {
-        $contents = @file_get_contents($path);
+        $contents = file_get_contents($path);
 
         if ($contents === false) {
             return [];
@@ -180,6 +194,28 @@ class BrandThemeGenerator
         $b = (int) round($b / 16) * 16;
 
         return sprintf('#%02x%02x%02x', min($r, 255), min($g, 255), min($b, 255));
+    }
+
+    private function createImageFromStringSafely(string $imageData): mixed
+    {
+        $warnings = [];
+        set_error_handler(static function (int $severity, string $message) use (&$warnings): bool {
+            $warnings[] = $message;
+
+            return true;
+        });
+
+        try {
+            $image = imagecreatefromstring($imageData);
+
+            if (! $image && $warnings !== []) {
+                Log::debug('BrandThemeGenerator could not parse image data.', ['warnings' => $warnings]);
+            }
+
+            return $image;
+        } finally {
+            restore_error_handler();
+        }
     }
 
     private function bestTextColorForBackground(string $background): string

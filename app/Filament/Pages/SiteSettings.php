@@ -13,11 +13,23 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 
 class SiteSettings extends Page implements HasSchemas
 {
     use InteractsWithSchemas;
+
+    private const FONT_UPLOAD_MIME_TYPES = [
+        'font/ttf',
+        'font/otf',
+        'font/woff',
+        'font/woff2',
+        'application/x-font-ttf',
+        'application/font-sfnt',
+    ];
+
+    private const MAX_THEME_SNAPSHOTS = 20;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
@@ -83,7 +95,7 @@ class SiteSettings extends Page implements HasSchemas
                         ->label('Brand font file')
                         ->disk('public')
                         ->directory('platform/fonts')
-                        ->acceptedFileTypes(['font/ttf', 'font/otf', 'font/woff', 'font/woff2', 'application/x-font-ttf', 'application/font-sfnt'])
+                        ->acceptedFileTypes(self::FONT_UPLOAD_MIME_TYPES)
                         ->preserveFilenames()
                         ->downloadable()
                         ->openable(),
@@ -140,8 +152,8 @@ class SiteSettings extends Page implements HasSchemas
         $disk = Storage::disk('public');
 
         $generated = $generator->generate([
-            'logo_absolute_path' => ! empty($state['logo_path']) ? $disk->path($state['logo_path']) : null,
-            'wallpaper_absolute_path' => ! empty($state['bg_image_path']) ? $disk->path($state['bg_image_path']) : null,
+            'logo_absolute_path' => $this->resolveStorageAbsolutePath($disk, $state['logo_path'] ?? null),
+            'wallpaper_absolute_path' => $this->resolveStorageAbsolutePath($disk, $state['bg_image_path'] ?? null),
             'accent_color' => $state['accent_color'] ?? null,
             'font_source_url' => $state['font_source_url'] ?? null,
             'font_file_path' => $state['font_path'] ?? null,
@@ -158,13 +170,20 @@ class SiteSettings extends Page implements HasSchemas
         $orgName = $state['site_name'] ?: ($state['app_name'] ?? 'Org');
         $this->generatedThemeName = "Brand: {$orgName} — auto";
         $this->generatedThemePreview = [
-            ...$generated,
+            'primary_color' => $generated['primary_color'],
+            'secondary_color' => $generated['secondary_color'],
+            'surface_color' => $generated['surface_color'],
+            'font_heading' => $generated['font_heading'],
+            'font_body' => $generated['font_body'],
+            'wcag_warning' => $generated['wcag_warning'],
+            'contrast_ratio' => $generated['contrast_ratio'],
+            'text_color' => $generated['text_color'],
             'name' => $this->generatedThemeName,
             'bg_image_url' => ! empty($state['bg_image_path']) ? $disk->url($state['bg_image_path']) : null,
         ];
 
         $settings = PlatformSetting::current();
-        $snapshots = is_array($settings->theme_snapshots) ? $settings->theme_snapshots : [];
+        $snapshots = $settings->theme_snapshots ?? [];
         array_unshift($snapshots, [
             'name' => $this->generatedThemeName,
             'generated_at' => now()->toIso8601String(),
@@ -179,10 +198,21 @@ class SiteSettings extends Page implements HasSchemas
             ],
             'wcag_warning' => $generated['wcag_warning'],
         ]);
-        $settings->update(['theme_snapshots' => array_slice($snapshots, 0, 20)]);
+        $settings->update(['theme_snapshots' => array_slice($snapshots, 0, self::MAX_THEME_SNAPSHOTS)]);
         cache()->forget('platform_settings');
 
         Notification::make()->title('Theme generated from brand assets')->success()->send();
+    }
+
+    private function resolveStorageAbsolutePath(FilesystemAdapter $disk, ?string $path): ?string
+    {
+        $normalizedPath = is_string($path) ? urldecode($path) : null;
+
+        if (! is_string($normalizedPath) || $normalizedPath === '' || str_contains($normalizedPath, '..') || str_starts_with($normalizedPath, '/') || ! $disk->exists($normalizedPath)) {
+            return null;
+        }
+
+        return $disk->path($normalizedPath);
     }
 
     public function save(): void

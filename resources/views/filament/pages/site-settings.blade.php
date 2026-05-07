@@ -8,22 +8,22 @@
                 <div class="mt-3 grid gap-3 md:grid-cols-3">
                     <div class="rounded-lg border p-3 text-xs">
                         <p class="text-gray-500">Primary</p>
-                        <div class="mt-2 h-8 rounded" style="background: {{ $this->generatedThemePreview['primary_color'] }}"></div>
+                        <div class="mt-2 h-8 rounded" style="background: {{ e($this->generatedThemePreview['primary_color']) }}"></div>
                         <p class="mt-1">{{ $this->generatedThemePreview['primary_color'] }}</p>
                     </div>
                     <div class="rounded-lg border p-3 text-xs">
                         <p class="text-gray-500">Secondary</p>
-                        <div class="mt-2 h-8 rounded" style="background: {{ $this->generatedThemePreview['secondary_color'] }}"></div>
+                        <div class="mt-2 h-8 rounded" style="background: {{ e($this->generatedThemePreview['secondary_color']) }}"></div>
                         <p class="mt-1">{{ $this->generatedThemePreview['secondary_color'] }}</p>
                     </div>
                     <div class="rounded-lg border p-3 text-xs">
                         <p class="text-gray-500">Surface</p>
-                        <div class="mt-2 h-8 rounded" style="background: {{ $this->generatedThemePreview['surface_color'] }}"></div>
+                        <div class="mt-2 h-8 rounded" style="background: {{ e($this->generatedThemePreview['surface_color']) }}"></div>
                         <p class="mt-1">{{ $this->generatedThemePreview['surface_color'] }}</p>
                     </div>
                 </div>
                 @if (! empty($this->generatedThemePreview['bg_image_url']))
-                    <div class="mt-3 h-28 rounded-lg border bg-cover bg-center" style="background-image: url('{{ $this->generatedThemePreview['bg_image_url'] }}')"></div>
+                    <div class="mt-3 h-28 rounded-lg border bg-cover bg-center" style="background-image: url('{{ e($this->generatedThemePreview['bg_image_url']) }}')"></div>
                 @endif
                 @if (! empty($this->generatedThemePreview['wcag_warning']))
                     <div class="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
