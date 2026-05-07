@@ -215,7 +215,7 @@ class ModulesDoctorCommand extends Command
                 continue;
             }
 
-            foreach ((array) ($manifest['handlers'] ?? []) as $handler) {
+            foreach ((array) ($manifest['handlers'] ?? []) as $index => $handler) {
                 $class = $this->resolveManifestClass($moduleName, $handler, 'Handlers');
 
                 if ($class === null || class_exists($class)) {
@@ -223,7 +223,8 @@ class ModulesDoctorCommand extends Command
                 }
 
                 $hasFailures = true;
-                $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/manifests/automation.manifest.json</>: missing handler class {$class}");
+                $entryLabel = is_int($index) ? "handlers[{$index}]" : "handlers.{$index}";
+                $this->line("  <fg=red>✗</> <fg=cyan>{$moduleName}/manifests/automation.manifest.json ({$entryLabel})</>: missing handler class {$class}");
             }
         }
 

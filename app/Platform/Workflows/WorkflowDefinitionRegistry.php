@@ -9,10 +9,13 @@ class WorkflowDefinitionRegistry
      */
     private array $entries = [];
 
+    /** @var array<string, array{module: string, key: string, class: string}> */
+    private array $indexByKey = [];
+
     /**
-     * @var array<string, array{module: string, key: string, class: string}>
+     * @var array<string, array<int, array{module: string, key: string, class: string}>>
      */
-    private array $index = [];
+    private array $indexByClass = [];
 
     /**
      * @param  array<string, mixed>  $manifest
@@ -77,17 +80,26 @@ class WorkflowDefinitionRegistry
      */
     public function find(string $key): ?array
     {
-        return $this->index[$key] ?? null;
+        if (isset($this->indexByKey[$key])) {
+            return $this->indexByKey[$key];
+        }
+
+        if (isset($this->indexByClass[$key][0])) {
+            return $this->indexByClass[$key][0];
+        }
+
+        return null;
     }
 
     private function rebuildIndex(): void
     {
-        $this->index = [];
+        $this->indexByKey = [];
+        $this->indexByClass = [];
 
         foreach ($this->entries as $moduleEntries) {
             foreach ($moduleEntries as $entry) {
-                $this->index[$entry['key']] = $entry;
-                $this->index[$entry['class']] = $entry;
+                $this->indexByKey[$entry['key']] = $entry;
+                $this->indexByClass[$entry['class']][] = $entry;
             }
         }
     }
