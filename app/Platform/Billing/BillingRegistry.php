@@ -134,37 +134,37 @@ class BillingRegistry
                 continue;
             }
 
-            if (is_array($entry)) {
-                $key = is_string($entryKey) && $entryKey !== ''
-                    ? $entryKey
-                    : ($entry['key'] ?? $entry['id'] ?? $entry['name'] ?? $entry['slug'] ?? $entry['class'] ?? null);
-
-                if (! is_string($key) || $key === '') {
+            if (! is_array($entry)) {
+                if (! is_string($entryKey) || $entryKey === '') {
                     continue;
                 }
 
-                $normalized[] = array_merge(
-                    [
-                        'module' => $module,
-                        'type' => $type,
-                        'key' => $key,
-                    ],
-                    $entry
-                );
+                $normalized[] = [
+                    'module' => $module,
+                    'type' => $type,
+                    'key' => $entryKey,
+                    'value' => $entry,
+                ];
 
                 continue;
             }
 
-            if (! is_string($entryKey) || $entryKey === '') {
+            $key = is_string($entryKey) && $entryKey !== ''
+                ? $entryKey
+                : ($entry['key'] ?? $entry['id'] ?? $entry['name'] ?? $entry['slug'] ?? $entry['class'] ?? null);
+
+            if (! is_string($key) || $key === '') {
                 continue;
             }
 
-            $normalized[] = [
-                'module' => $module,
-                'type' => $type,
-                'key' => $entryKey,
-                'value' => $entry,
-            ];
+            $normalized[] = array_merge(
+                [
+                    'module' => $module,
+                    'type' => $type,
+                    'key' => $key,
+                ],
+                $entry
+            );
         }
 
         return array_values($normalized);
