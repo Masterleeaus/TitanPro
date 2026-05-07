@@ -35,6 +35,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 class TitanGoPanelProvider extends PanelProvider
 {
     use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
