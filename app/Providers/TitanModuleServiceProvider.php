@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Platform\Modules\BlueprintManifestLoader;
+use App\Platform\Modules\ManifestLoader;
+use App\Platform\Modules\ModuleKernel;
+use App\Platform\Modules\ModuleMetadataReader;
 use App\Platform\Automation\AutomationRegistry;
 use App\Platform\Modules\ChannelManifestRegistry;
 use App\Platform\Modules\DashboardRegistry;
@@ -36,9 +40,23 @@ class TitanModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(ModuleMetadataReader::class, fn ($app) => new ModuleMetadataReader($app['log']));
+        $this->app->singleton(ManifestLoader::class, fn ($app) => new ManifestLoader($app['log']));
+        $this->app->singleton(BlueprintManifestLoader::class, fn ($app) => new BlueprintManifestLoader($app['log']));
+        $this->app->singleton(ModuleKernel::class, fn ($app) => new ModuleKernel(
+            $app->make(ModuleMetadataReader::class),
+            $app->make(ManifestLoader::class),
+            $app->make(BlueprintManifestLoader::class),
+            $app['log'],
+        ));
+
         // Bind a module-registry singleton so dependent providers can resolve
         // the enabled-module list without circular boot-order issues.
-        $this->app->singletonIf('titan.modules', fn () => []);
+        $this->app->singletonIf('titan.modules', function ($app) {
+            $paths = config('titan-modules.path', 'Modules');
+
+            return $app->make(ModuleKernel::class)->discover($paths);
+        });
 
         // Tenancy layer — available throughout the container.
         $this->app->singleton(TenantResolver::class);
