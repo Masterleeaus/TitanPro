@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\TitanSolo\Pages\Dashboard;
 use App\Filament\TitanSolo\Widgets\SoloOverviewWidget;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -24,6 +25,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanSoloPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -32,6 +35,13 @@ class TitanSoloPanelProvider extends PanelProvider
             ->brandName('TitanSolo')
             ->colors([
                 'primary' => Color::Sky,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanSolo/Pages'), for: 'App\\Filament\\TitanSolo\\Pages')

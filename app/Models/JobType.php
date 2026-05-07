@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class JobType extends Model implements TenantAware
 {
@@ -33,5 +34,10 @@ class JobType extends Model implements TenantAware
     public function checklistItems(): HasMany
     {
         return $this->hasMany(JobTypeChecklistItem::class)->orderBy('sort_order');
+    }
+
+    public function attachableItems(): BelongsToMany
+    {
+        return $this->belongsToMany(Item::class, 'item_job_type')->withTimestamps();
     }
 }

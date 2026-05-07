@@ -14,4 +14,12 @@ class EditJobType extends EditRecord
     {
         return [DeleteAction::make()];
     }
+
+    protected function afterSave(): void
+    {
+        JobTypeResource::syncChecklistBindings(
+            $this->record,
+            $this->data['task_library_item_ids'] ?? [],
+        );
+    }
 }

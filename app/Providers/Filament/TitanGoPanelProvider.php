@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Filament\TitanGo\Pages\Dashboard;
 use App\Filament\TitanGo\Widgets\ActiveJobsWidget;
 use App\Filament\TitanGo\Widgets\PwaPreviewBridgeWidget;
 use App\Filament\TitanGo\Widgets\SyncHealthWidget;
+use App\Filament\TitanGo\Widgets\TechnicianActivityChartWidget;
 use App\Filament\TitanGo\Widgets\TechnicianActivityWidget;
 use App\Filament\TitanGo\Widgets\TitanGoDashboardWidget;
 use App\Filament\Widgets\CleanerLiveMap;
@@ -32,6 +34,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanGoPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -40,6 +44,14 @@ class TitanGoPanelProvider extends PanelProvider
             ->brandName('TitanGo — Field Ops')
             ->colors([
                 'primary' => Color::Orange,
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanGo/Resources'), for: 'App\\Filament\\TitanGo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanGo/Pages'), for: 'App\\Filament\\TitanGo\\Pages')
@@ -51,6 +63,7 @@ class TitanGoPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 TitanGoDashboardWidget::class,
                 TechnicianActivityWidget::class,
+                TechnicianActivityChartWidget::class,
                 ActiveJobsWidget::class,
                 CleanerLiveMap::class,
                 SyncHealthWidget::class,
@@ -72,3 +85,4 @@ class TitanGoPanelProvider extends PanelProvider
             ]);
     }
 }
+
