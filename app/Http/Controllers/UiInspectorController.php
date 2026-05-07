@@ -43,7 +43,7 @@ class UiInspectorController extends Controller
             componentKey: $request->input('component_key'),
             properties: $request->input('properties'),
             organizationId: $this->orgId($request),
-            userId: (int) $request->user()->id,
+            userId: $request->user()?->id ? (int) $request->user()->id : null,
         );
 
         return response()->json($override);

@@ -82,7 +82,39 @@
         pulse:     'transform 0.6s ease-in-out infinite alternate',
     };
 
+    const FONT_WEIGHTS = ['300', '400', '500', '600', '700', '800', '900'];
+
+    /**
+     * Maps PROPERTY_DEFS key → computed style property name for auto-populating
+     * the sidebar from the element's actual computed styles.
+     */
+    const COMPUTED_MAP = {
+        'padding':          c => c.padding,
+        'margin':           c => c.margin,
+        'border-radius':    c => c.borderRadius,
+        'box-shadow':       c => c.boxShadow,
+        'background-color': c => c.backgroundColor,
+        'color':            c => c.color,
+        'font-size':        c => c.fontSize,
+        'font-weight':      c => c.fontWeight,
+        '--gradient':       () => '',
+        '--glass':          () => '',
+        '--animation':      () => 'none',
+    };
+
     /* ── Utilities ──────────────────────────────────────────────────────── */
+
+    /**
+     * Safe wrapper around CSS.escape() with a fallback for environments where
+     * it may not be available.
+     */
+    function cssEscape(str) {
+        if (typeof CSS !== 'undefined' && CSS.escape) {
+            return CSS.escape(str);
+        }
+        // Minimal fallback: escape characters that break attribute selectors
+        return str.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]/g, '\\$&');
+    }
 
     /** Generate a stable key for an element based on its selector path. */
     function elementKey(el) {
@@ -141,7 +173,7 @@
     }
 
     /** Remove all inspector-applied styles from an element. */
-    function clearProps(el, props) {
+    function clearProps(el) {
         const ALL_PROPS = ['padding','margin','border-radius','box-shadow','background-color','color','font-size','font-weight','backdrop-filter','-webkit-backdrop-filter','transition','animation','background'];
         for (const prop of ALL_PROPS) {
             el.style.removeProperty(prop);
@@ -191,7 +223,7 @@
         const data = loadStorage();
         for (const [key, props] of Object.entries(data)) {
             // Best-effort: find element by data-ui-key or skip (Livewire may re-render later)
-            const el = document.querySelector(`[data-ui-key="${CSS.escape(key)}"]`);
+            const el = document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
             if (el) applyProps(el, props);
         }
     }
@@ -371,22 +403,15 @@
 
             _loadComponentProps(el, key) {
                 // Start from stored overrides for this key, fill rest from computed style
-                const stored = this.store[key] ?? {};
+                const stored   = this.store[key] ?? {};
                 const computed = window.getComputedStyle(el);
 
-                this.props = {
-                    padding:           stored['padding']          ?? computed.padding         ?? '',
-                    margin:            stored['margin']           ?? computed.margin           ?? '',
-                    'border-radius':   stored['border-radius']    ?? computed.borderRadius     ?? '',
-                    'box-shadow':      stored['box-shadow']       ?? computed.boxShadow        ?? 'none',
-                    'background-color':stored['background-color'] ?? computed.backgroundColor ?? '',
-                    color:             stored['color']            ?? computed.color            ?? '',
-                    'font-size':       stored['font-size']        ?? computed.fontSize         ?? '',
-                    'font-weight':     stored['font-weight']      ?? computed.fontWeight       ?? '400',
-                    '--gradient':      stored['--gradient']       ?? '',
-                    '--glass':         stored['--glass']          ?? '',
-                    '--animation':     stored['--animation']      ?? 'none',
-                };
+                // Build props map from COMPUTED_MAP so adding new properties
+                // only requires updating the constant at the top of the file.
+                this.props = {};
+                for (const [prop, getFallback] of Object.entries(COMPUTED_MAP)) {
+                    this.props[prop] = stored[prop] ?? getFallback(computed) ?? '';
+                }
 
                 // Determine active shadow preset
                 this.shadowPreset = Object.keys(SHADOW_PRESETS)
@@ -436,7 +461,7 @@
 
             async resetComponent() {
                 if (!this.selectedEl) return;
-                clearProps(this.selectedEl, this.props);
+                clearProps(this.selectedEl);
                 delete this.store[this.selectedKey];
                 saveStorage(this.store);
                 await apiReset(this.selectedKey);
@@ -454,6 +479,7 @@
             get propertyDefs() { return PROPERTY_DEFS; },
             get shadowPresets() { return Object.keys(SHADOW_PRESETS); },
             get animationPresets() { return ANIMATION_PRESETS; },
+            get fontWeights() { return FONT_WEIGHTS; },
 
             sliderValue(prop) {
                 const raw = this.props[prop] ?? '';

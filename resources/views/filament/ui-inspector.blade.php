@@ -239,7 +239,7 @@
             <div>
                 <label class="block text-[11px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Font Weight</label>
                 <div class="grid grid-cols-4 gap-1">
-                    <template x-for="w in ['300','400','500','600','700','800','900']" :key="w">
+                    <template x-for="w in fontWeights" :key="w">
                         <button
                             @click="applyProp('font-weight', w)"
                             class="rounded py-1 text-[11px] font-medium transition-colors"
@@ -248,7 +248,6 @@
                                 color: props['font-weight'] === w ? '#fff' : '#a6adc8',
                                 border: '1px solid ' + (props['font-weight'] === w ? '#6366f1' : 'rgba(255,255,255,0.1)')
                             }"
-                            :class="{ 'font-black': w === '900', 'font-bold': w === '700', 'font-semibold': w === '600' }"
                             x-text="w"
                         ></button>
                     </template>
