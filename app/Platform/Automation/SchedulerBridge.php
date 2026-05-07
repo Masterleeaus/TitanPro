@@ -59,10 +59,13 @@ class SchedulerBridge
             $id = (string) ($hook['key'] ?? $class);
             $cadence = (string) ($hook['schedule'] ?? 'daily');
 
-            $event = $schedule->call(function () use ($class) {
+            $event = $schedule->call(function () use ($class, $id, $cadence) {
                 $instance = app()->make($class);
                 if (method_exists($instance, 'handle')) {
-                    $instance->handle([]);
+                    $instance->handle([
+                        'scheduler_hook' => $id,
+                        'cadence' => $cadence,
+                    ]);
                 }
             })->name("automation:scheduler-hook:{$id}")->withoutOverlapping();
 

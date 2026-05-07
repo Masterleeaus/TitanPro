@@ -62,7 +62,7 @@ class ModuleManifestRegistryLoader
                 continue;
             }
 
-            $decoded = json_decode((string) file_get_contents($statusFile), true);
+            $decoded = $this->decodeJsonFile($statusFile);
 
             if (! is_array($decoded)) {
                 return [];
@@ -151,11 +151,24 @@ class ModuleManifestRegistryLoader
      */
     private function readJson(string $path): ?array
     {
+        return $this->decodeJsonFile($path);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function decodeJsonFile(string $path): ?array
+    {
         if (! is_file($path)) {
             return null;
         }
 
-        $decoded = json_decode((string) file_get_contents($path), true);
+        $raw = file_get_contents($path);
+        if ($raw === false) {
+            return null;
+        }
+
+        $decoded = json_decode($raw, true);
 
         return is_array($decoded) ? $decoded : null;
     }

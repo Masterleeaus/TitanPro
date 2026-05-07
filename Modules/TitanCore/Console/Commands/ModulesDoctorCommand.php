@@ -210,7 +210,7 @@ class ModulesDoctorCommand extends Command
                 continue;
             }
 
-            $manifest = json_decode((string) file_get_contents($manifestPath), true);
+            $manifest = $this->decodeJsonFile($manifestPath);
             if (! is_array($manifest) || ($manifest['enabled'] ?? true) === false) {
                 continue;
             }
@@ -248,7 +248,7 @@ class ModulesDoctorCommand extends Command
             return true;
         }
 
-        $moduleJson = json_decode((string) file_get_contents($moduleJsonPath), true);
+        $moduleJson = $this->decodeJsonFile($moduleJsonPath);
         if (! is_array($moduleJson)) {
             return true;
         }
@@ -275,7 +275,7 @@ class ModulesDoctorCommand extends Command
                 continue;
             }
 
-            $decoded = json_decode((string) file_get_contents($statusFile), true);
+            $decoded = $this->decodeJsonFile($statusFile);
             if (! is_array($decoded)) {
                 return [];
             }
@@ -309,5 +309,24 @@ class ModulesDoctorCommand extends Command
         return str_contains($candidate, '\\')
             ? $candidate
             : "Modules\\{$moduleName}\\Automation\\{$defaultSubNamespace}\\{$candidate}";
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function decodeJsonFile(string $path): ?array
+    {
+        if (! is_file($path)) {
+            return null;
+        }
+
+        $raw = file_get_contents($path);
+        if ($raw === false) {
+            return null;
+        }
+
+        $decoded = json_decode($raw, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 }
