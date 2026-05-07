@@ -25,13 +25,14 @@ dataset('legacy_panel_aliases', [
 
 test('canonical panel routes redirect guests to a login page', function (string $path) {
     $response = $this->get($path);
+    $location = $response->headers->get('Location');
 
     expect($response->isRedirect())->toBeTrue();
-    expect($response->headers->get('Location'))->toContain('login');
+    expect(parse_url((string) $location, PHP_URL_PATH))->toEndWith('/login');
 })->with('canonical_panel_paths');
 
 test('canonical panel routes render for authenticated users', function (string $path) {
-    (new RolesAndPermissionsSeeder())->run();
+    $this->seed(RolesAndPermissionsSeeder::class);
 
     $user = User::factory()->create();
     $user->assignRole('owner');
