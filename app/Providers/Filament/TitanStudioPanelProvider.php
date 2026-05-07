@@ -68,8 +68,8 @@ class TitanStudioPanelProvider extends PanelProvider
     }
 
     /**
-     * @param  array<int, class-string>  $pluginClasses
-     * @return array<int, Plugin>
+     * @param  list<class-string>  $pluginClasses
+     * @return list<Plugin>
      */
     private function availablePlugins(array $pluginClasses): array
     {
