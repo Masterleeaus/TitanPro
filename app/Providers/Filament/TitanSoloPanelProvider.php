@@ -2,11 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanSolo\Pages\Dashboard;
+use App\Filament\TitanSolo\Widgets\SoloOverviewWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -28,18 +29,19 @@ class TitanSoloPanelProvider extends PanelProvider
         return $panel
             ->id('titansolo')
             ->path('titansolo')
-            ->brandName('TitanSolo — Solo Ops')
+            ->brandName('TitanSolo')
             ->colors([
                 'primary' => Color::Sky,
             ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanSolo/Pages'), for: 'App\\Filament\\TitanSolo\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanSolo/Widgets'), for: 'App\\Filament\\TitanSolo\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                SoloOverviewWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
