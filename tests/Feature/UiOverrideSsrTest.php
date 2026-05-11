@@ -97,6 +97,23 @@ test('render expands --animation to transition property', function () {
     expect($css)->toContain('transition: opacity 0.4s ease');
 });
 
+test('render expands --animation pulse to both transition and animation properties', function () {
+    $org = Organization::factory()->create();
+
+    UiOverride::upsertForComponent(
+        componentKey: 'sidebar',
+        properties: ['--animation' => 'pulse'],
+        organizationId: $org->id,
+        userId: null,
+    );
+
+    $css = UiOverrideCssRenderer::render($org->id);
+
+    expect($css)
+        ->toContain('transition: transform 0.6s ease-in-out infinite alternate')
+        ->toContain('animation: titanPulse 1.2s ease-in-out infinite alternate');
+});
+
 test('render skips empty property values', function () {
     $org = Organization::factory()->create();
 
