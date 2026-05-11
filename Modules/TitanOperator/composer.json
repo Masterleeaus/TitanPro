@@ -1,0 +1,17 @@
+{
+    "name": "modules/titanoperator",
+    "description": "TitanOperator module",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Modules\\TitanOperator\\": ""
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\TitanOperator\\Providers\\TitanOperatorServiceProvider"
+            ]
+        }
+    }
+}

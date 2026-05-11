@@ -5,6 +5,8 @@ namespace Modules\TitanEchoAssist\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class Conversation extends Model
 {
@@ -41,6 +43,40 @@ class Conversation extends Model
         'created_at'        => 'datetime',
         'updated_at'        => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function (self $conversation): void {
+            if (
+                $conversation->chatbot_channel_id === null
+                || ! Schema::hasTable('tz_portal_operator_channels')
+                || ! Schema::hasTable('tz_portal_operator_conversations')
+            ) {
+                return;
+            }
+
+            $operatorId = DB::table('tz_portal_operator_channels')
+                ->where('id', $conversation->chatbot_channel_id)
+                ->value('operator_id');
+
+            if (! is_numeric($operatorId)) {
+                return;
+            }
+
+            DB::table('tz_portal_operator_conversations')->updateOrInsert(
+                [
+                    'operator_id' => (int) $operatorId,
+                    'session_id' => $conversation->session_id,
+                ],
+                [
+                    'chatbot_channel_id' => $conversation->chatbot_channel_id,
+                    'last_activity_at' => $conversation->last_activity_at ?? now(),
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+        });
+    }
 
     public function chatbot(): BelongsTo
     {

@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public static $prefix = 'tz_portal';
+
+    public function up(): void
+    {
+        if (Schema::hasTable(self::$prefix . '_operator_channel_webhooks')) {
+            return;
+        }
+
+        Schema::create(self::$prefix . '_operator_channel_webhooks', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('operator_id')->nullable();
+            $table->bigInteger('operator_channel_id')->nullable();
+            $table->json('payload')->nullable();
+            $table->timestamp('created_at')->nullable()->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists(self::$prefix . '_operator_channel_webhooks');
+    }
+};
