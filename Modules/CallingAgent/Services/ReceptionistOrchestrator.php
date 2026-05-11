@@ -4,7 +4,6 @@ namespace Modules\CallingAgent\Services;
 use Illuminate\Support\Facades\DB;
 use Modules\CallingAgent\AI\Agents\ReceptionistAgent;
 use Modules\CallingAgent\AI\Pipelines\OutcomeExtractionPipeline;
-use Modules\CallingAgent\Jobs\SummarizeCallJob;
 use Modules\CallingAgent\Models\CallingAgent;
 use Modules\CallingAgent\Models\CallingAgentActiveCall;
 use Modules\CallingAgent\Models\CallingAgentCall;
@@ -12,6 +11,7 @@ use Modules\CallingAgent\Models\CallingAgentCallerProfile;
 use Modules\CallingAgent\Models\CallingAgentCallOutcome;
 use Modules\CallingAgent\Models\CallingAgentPhoneNumber;
 use Modules\CallingAgent\Models\CallingAgentTranscript;
+use Modules\CallingAgent\Support\TenantContext;
 
 class ReceptionistOrchestrator
 {
@@ -26,10 +26,33 @@ class ReceptionistOrchestrator
         if (!$to) {
             return null;
         }
-        $pn = CallingAgentPhoneNumber::where('number', $to)->first();
-        return $pn?->calling_agent_id
-            ? CallingAgent::find($pn->calling_agent_id)
-            : CallingAgent::where('phone_number', $to)->first();
+
+        $tenantId = TenantContext::id(['to' => $to]);
+        $phoneNumbers = CallingAgentPhoneNumber::query()->withoutGlobalScopes()->where('number', $to);
+
+        if ($tenantId !== null) {
+            $phoneNumbers->where('tenant_id', $tenantId);
+        }
+
+        $pn = $phoneNumbers->first();
+
+        $agents = CallingAgent::query()->withoutGlobalScopes();
+
+        if ($pn?->calling_agent_id) {
+            $agents->whereKey($pn->calling_agent_id);
+        } else {
+            $agents->where('phone_number', $to);
+        }
+
+        if ($tenantId !== null) {
+            $agents->where('tenant_id', $tenantId);
+        }
+
+        $agent = $agents->first();
+
+        TenantContext::setTenantId($agent?->tenant_id ?? $pn?->tenant_id ?? $tenantId);
+
+        return $agent;
     }
 
     // -------------------------------------------------------------------------
@@ -39,32 +62,41 @@ class ReceptionistOrchestrator
     public function startInbound(array $payload): CallingAgentCall
     {
         $callSid = $payload['CallSid'] ?? null;
+        $agent = $this->resolveByNumber($payload['To'] ?? null);
+        $tenantId = $agent?->tenant_id ?? TenantContext::id($payload);
+
+        TenantContext::setTenantId($tenantId);
 
         return CallingAgentCall::updateOrCreate(
             ['call_sid' => $callSid],
             [
-                'provider'   => 'twilio',
-                'direction'  => 'inbound',
-                'from'       => $payload['From'] ?? null,
-                'to'         => $payload['To'] ?? null,
-                'status'     => $payload['CallStatus'] ?? 'ringing',
+                'tenant_id' => $tenantId,
+                'calling_agent_id' => $agent?->id,
+                'provider' => 'twilio',
+                'direction' => 'inbound',
+                'from' => $payload['From'] ?? null,
+                'to' => $payload['To'] ?? null,
+                'status' => $payload['CallStatus'] ?? 'ringing',
                 'started_at' => now(),
-                'metadata'   => $payload,
+                'metadata' => $payload,
             ]
         );
     }
 
     public function touchActive(CallingAgentCall $call, array $payload): void
     {
+        TenantContext::setTenantId($call->tenant_id ?? TenantContext::id($payload));
+
         CallingAgentActiveCall::updateOrCreate(
             ['call_sid' => $call->call_sid],
             [
+                'tenant_id'              => $call->tenant_id,
                 'calling_agent_call_id' => $call->id,
-                'from'                  => $call->from,
-                'to'                    => $call->to,
-                'state'                 => $payload['CallStatus'] ?? 'ringing',
-                'last_seen_at'          => now(),
-                'context'               => $payload,
+                'from'                   => $call->from,
+                'to'                     => $call->to,
+                'state'                  => $payload['CallStatus'] ?? 'ringing',
+                'last_seen_at'           => now(),
+                'context'                => $payload,
             ]
         );
     }
@@ -75,6 +107,8 @@ class ReceptionistOrchestrator
 
     public function answer(CallingAgentCall $call, string $speech, array $context = []): string
     {
+        TenantContext::setTenantId($call->tenant_id);
+
         // Persist caller turn
         CallingAgentTranscript::create([
             'calling_agent_call_id' => $call->id,
@@ -108,11 +142,21 @@ class ReceptionistOrchestrator
 
     public function complete(string $callSid, array $payload): void
     {
-        $call = CallingAgentCall::where('call_sid', $callSid)->first();
+        $tenantId = TenantContext::id($payload);
+        $callQuery = CallingAgentCall::query()->withoutGlobalScopes()->where('call_sid', $callSid);
+
+        if ($tenantId !== null) {
+            $callQuery->where('tenant_id', $tenantId);
+        }
+
+        $call = $callQuery->first();
+
+        TenantContext::setTenantId($call?->tenant_id ?? $tenantId);
 
         if ($call) {
             $call->update([
-                'status'   => $payload['CallStatus'] ?? 'completed',
+                'tenant_id' => $call->tenant_id ?? $tenantId,
+                'status' => $payload['CallStatus'] ?? 'completed',
                 'duration' => (int) ($payload['CallDuration'] ?? $call->duration),
                 'ended_at' => now(),
                 'metadata' => array_merge($call->metadata ?? [], $payload),
@@ -131,7 +175,13 @@ class ReceptionistOrchestrator
             }
         }
 
-        CallingAgentActiveCall::where('call_sid', $callSid)->delete();
+        $activeCalls = CallingAgentActiveCall::query()->withoutGlobalScopes()->where('call_sid', $callSid);
+
+        if (($call?->tenant_id ?? $tenantId) !== null) {
+            $activeCalls->where('tenant_id', $call?->tenant_id ?? $tenantId);
+        }
+
+        $activeCalls->delete();
     }
 
     // -------------------------------------------------------------------------
@@ -144,14 +194,18 @@ class ReceptionistOrchestrator
      */
     public function isDuplicate(string $eventId, string $source = 'twilio'): bool
     {
+        $tenantId = TenantContext::id();
+        $scopedEventId = TenantContext::scopedEventId($source . ':' . $eventId, $tenantId);
+
         try {
             $inserted = DB::table('calling_agent_webhook_idempotency')->insertOrIgnore([
-                'event_id'     => $eventId,
-                'source'       => $source,
+                'tenant_id' => $tenantId,
+                'event_id' => $scopedEventId,
+                'source' => $source,
                 'processed_at' => now(),
                 'payload_hash' => null,
-                'created_at'   => now(),
-                'updated_at'   => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
             // insertOrIgnore returns affected rows: 0 = already existed (duplicate)
             return $inserted === 0;
@@ -171,7 +225,14 @@ class ReceptionistOrchestrator
         if (!$phone) {
             return null;
         }
-        return CallingAgentCallerProfile::where('phone', $phone)->first();
+
+        $query = CallingAgentCallerProfile::query()->withoutGlobalScopes()->where('phone', $phone);
+
+        if (($tenantId = TenantContext::id(['phone' => $phone])) !== null) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        return $query->first();
     }
 
     private function updateCallerProfile(CallingAgentCall $call): void
@@ -182,10 +243,15 @@ class ReceptionistOrchestrator
 
         try {
             CallingAgentCallerProfile::updateOrCreate(
-                ['phone' => $call->from],
                 [
+                    'tenant_id' => $call->tenant_id,
+                    'phone' => $call->from,
+                ],
+                [
+                    'tenant_id' => $call->tenant_id,
                     'last_call_at' => now(),
-                    'call_count'   => DB::raw('COALESCE(call_count, 0) + 1'),
+                    'last_seen_at' => now(),
+                    'call_count' => DB::raw('COALESCE(call_count, 0) + 1'),
                 ]
             );
         } catch (\Throwable $e) {
@@ -214,7 +280,10 @@ class ReceptionistOrchestrator
 
             CallingAgentCallOutcome::updateOrCreate(
                 ['call_sid' => $call->call_sid],
-                array_merge($outcome->toArray(), ['raw' => $outcome->toArray()])
+                array_merge($outcome->toArray(), [
+                    'tenant_id' => $call->tenant_id,
+                    'raw' => $outcome->toArray(),
+                ])
             );
         } catch (\Throwable $e) {
             report($e);
@@ -244,15 +313,16 @@ class ReceptionistOrchestrator
     {
         try {
             DB::table('calling_agent_missed_call_recovery_tasks')->insertOrIgnore([
+                'tenant_id'             => $call->tenant_id,
                 'calling_agent_call_id' => $call->id,
-                'call_sid'              => $call->call_sid,
-                'phone'                 => $call->from,
-                'channel'               => 'sms',
-                'status'                => 'pending',
-                'attempts'              => 0,
-                'scheduled_at'          => now()->addMinutes(5),
-                'created_at'            => now(),
-                'updated_at'            => now(),
+                'call_sid' => $call->call_sid,
+                'phone' => $call->from,
+                'channel' => 'sms',
+                'status' => 'pending',
+                'attempts' => 0,
+                'scheduled_at' => now()->addMinutes(5),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         } catch (\Throwable $e) {
             if (!$this->isMissingTableException($e)) {
@@ -261,4 +331,3 @@ class ReceptionistOrchestrator
         }
     }
 }
-

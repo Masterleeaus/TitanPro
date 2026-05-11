@@ -8,6 +8,7 @@ use Modules\CallingAgent\AI\Agents\ReceptionistAgent;
 use Modules\CallingAgent\Models\CallingAgentMessage;
 use Modules\CallingAgent\Services\ReceptionistOrchestrator;
 use Modules\CallingAgent\Services\TwilioChannelService;
+use Modules\CallingAgent\Support\TenantContext;
 
 class TwilioMessagingWebhookController extends Controller
 {
@@ -19,11 +20,16 @@ class TwilioMessagingWebhookController extends Controller
 
     public function incoming(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         $messageSid = (string) ($request->input('MessageSid') ?: $request->input('SmsSid', ''));
         $from       = (string) $request->input('From', '');
         $to         = (string) $request->input('To', '');
         $body       = (string) $request->input('Body', '');
         $channel    = str_starts_with($from, 'whatsapp:') ? 'whatsapp' : 'sms';
+        $lookupTo   = preg_replace('/^whatsapp:/i', '', $to) ?: $to;
+        $agent      = $this->orchestrator->resolveByNumber($lookupTo);
+        $tenantId   = $agent?->tenant_id ?? TenantContext::id();
 
         // Idempotency: skip duplicate deliveries
         if ($messageSid && $this->orchestrator->isDuplicate('msg:' . $messageSid, 'twilio')) {
@@ -32,6 +38,8 @@ class TwilioMessagingWebhookController extends Controller
 
         // Persist inbound message
         CallingAgentMessage::create([
+            'tenant_id'   => $tenantId,
+            'calling_agent_id' => $agent?->id,
             'provider'    => 'twilio',
             'channel'     => $channel,
             'message_sid' => $messageSid ?: null,
@@ -46,7 +54,7 @@ class TwilioMessagingWebhookController extends Controller
         // Enrich context with caller profile memory
         $context = [];
         $callerPhone = $channel === 'whatsapp'
-            ? ltrim($from, 'whatsapp:')
+            ? preg_replace('/^whatsapp:/i', '', $from)
             : $from;
 
         $profile = $this->orchestrator->recallCallerProfile($callerPhone);
@@ -66,6 +74,8 @@ class TwilioMessagingWebhookController extends Controller
 
         // Persist outbound message
         CallingAgentMessage::create([
+            'tenant_id' => $tenantId,
+            'calling_agent_id' => $agent?->id,
             'provider'  => 'twilio',
             'channel'   => $channel,
             'from'      => $to,
