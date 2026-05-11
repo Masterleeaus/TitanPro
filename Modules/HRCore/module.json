@@ -1,5 +1,6 @@
 {
     "name": "HRCore",
+    "active": 1,
     "alias": "hrcore",
     "displayName": "HR Core",
     "version": "1.0.0",

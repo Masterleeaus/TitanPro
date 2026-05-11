@@ -1,5 +1,6 @@
 {
     "name": "Biometric",
+    "active": 1,
     "alias": "biometric",
     "description": "",
     "keywords": [],
