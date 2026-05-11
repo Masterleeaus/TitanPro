@@ -14,12 +14,14 @@ import {
 import { dashboard } from '@/routes';
 import { type AppPageProps, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Paintbrush, Smartphone, TrendingUp, UserRound } from 'lucide-vue-next';
+import { BookOpen, CreditCard, Folder, LayoutGrid, MapPinned, Paintbrush, Smartphone, TrendingUp, UserRound } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage<AppPageProps>();
 const roles = page.props.auth?.roles ?? [];
 const canAccessTitanGo = roles.some((role) => ['owner', 'admin', 'super_admin'].includes(role));
+const canAccessGroundZero = roles.some((role) => ['owner', 'admin', 'dispatcher', 'bookkeeper'].includes(role));
+const canAccessZeroPay = roles.some((role) => ['owner', 'admin', 'bookkeeper'].includes(role));
 const canAccessTitanStudio = roles.some((role) => ['owner', 'admin'].includes(role));
 const canAccessZeroFuss = roles.includes('customer');
 const canAccessTitanNexus = roles.some((role) => ['owner', 'admin'].includes(role));
@@ -37,6 +39,24 @@ const mainNavItems: NavItem[] = [
                   title: 'TitanGo Panel',
                   href: '/titango',
                   icon: Smartphone,
+              },
+          ]
+        : []),
+    ...(canAccessGroundZero
+        ? [
+              {
+                  title: 'GroundZero Panel',
+                  href: '/groundzero',
+                  icon: MapPinned,
+              },
+          ]
+        : []),
+    ...(canAccessZeroPay
+        ? [
+              {
+                  title: 'ZeroPay Panel',
+                  href: '/zeropay',
+                  icon: CreditCard,
               },
           ]
         : []),
