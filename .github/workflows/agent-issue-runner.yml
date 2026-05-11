@@ -14,6 +14,8 @@ on:
         required: false
         default: '10'
         type: string
+  issues:
+    types: [assigned]
 
 # models: read  — required for Copilot coding agent API
 # pull-requests: write — required for Copilot to create PRs
@@ -59,7 +61,10 @@ jobs:
         run: |
           BATCH="${{ github.event.inputs.batch_size || '10' }}"
 
-          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
+          if [ -n "${{ github.event.issue.number }}" ]; then
+            # Triggered by issues.assigned event — use the event's issue number directly
+            echo "${{ github.event.issue.number }}" > /tmp/issue_numbers.txt
+          elif [ -n "${{ github.event.inputs.issue_number }}" ]; then
             echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
           else
             gh issue list \
@@ -105,11 +110,14 @@ jobs:
             echo "  Assigning Copilot coding agent to issue #$ISSUE_NUM: $TITLE"
 
             # Trigger Copilot coding agent via the REST API.
-            # Errors are printed to the log (NOT silenced) so failures are visible.
+            # Disable errexit around the API call so a non-zero exit code is
+            # handled by the if/else below rather than aborting the whole job.
+            set +e
             API_RESPONSE=$(gh api "repos/$REPO/issues/$ISSUE_NUM/copilot" \
               --method POST \
               -f base_ref="main" 2>&1)
             API_EXIT=$?
+            set -e
 
             if [ $API_EXIT -eq 0 ]; then
               echo "  ✓ Copilot coding agent triggered for issue #$ISSUE_NUM"
