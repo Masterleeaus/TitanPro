@@ -1,5 +1,6 @@
 {
   "name": "CRMCore",
+  "active": 1,
   "alias": "crmcore",
   "description": "Full preserved CRMCore module rebuilt to Titan canonical tree for Filament v4 upgraded site.",
   "priority": 30,
@@ -10,5 +11,6 @@
     "Core"
   ],
   "version": "2.0.1-fullfat-v4",
-  "preserves_original_source": true
+  "preserves_original_source": true,
+  "filament_panel": "titanpro"
 }

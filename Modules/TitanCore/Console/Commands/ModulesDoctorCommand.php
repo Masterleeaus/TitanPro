@@ -109,33 +109,34 @@ class ModulesDoctorCommand extends Command
             }
         }
 
-        // ── 4. Automation handler class checks ───────────────────────────────
+        // ── 5. Automation handler class checks ───────────────────────────────
         if ($this->runAutomationHandlerValidation()) {
             $hasProblems = true;
         }
 
-        // ── 5. AI manifest class checks ───────────────────────────────────────
+        // ── 6. AI manifest class checks ───────────────────────────────────────
         if ($this->runAIManifestValidation()) {
             $hasProblems = true;
         }
 
-        // ── 6. Tenant boundary diagnostics ─────────────────────────────────────
+        // ── 7. Tenant boundary diagnostics ─────────────────────────────────────
         if ($this->runTenantBoundaryValidation()) {
             $hasProblems = true;
         }
 
-        // ── 7. Load order ─────────────────────────────────────────────────────
+        // ── 8. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();
+        $nodes = $graph->getNodes();
 
-        foreach ($order as $i => $name) {
+        $enabledModulesOrder = array_values(
+            array_filter($order, fn (string $name) => isset($nodes[$name]) && $nodes[$name]['enabled'])
+        );
+
+        foreach ($enabledModulesOrder as $i => $name) {
             $num = str_pad((string) ($i + 1), 3, ' ', STR_PAD_LEFT);
-            $nodes = $graph->getNodes();
-            $enabled = isset($nodes[$name]) && $nodes[$name]['enabled'];
-            $status = $enabled ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
-
-            $this->line("  {$num}. <fg=cyan>{$name}</> [{$status}]");
+            $this->line("  {$num}. <fg=cyan>{$name}</> [<fg=green>enabled</>]");
         }
 
         $this->newLine();
