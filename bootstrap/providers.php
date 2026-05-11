@@ -22,6 +22,7 @@ return [
     App\Providers\Filament\TitanNexusPanelProvider::class,
     App\Providers\FortifyServiceProvider::class,
     Modules\CRMCore\Providers\ModuleServiceProvider::class,
+    Modules\TitanCommand\Providers\TitanCommandServiceProvider::class,
     // Only registered when Telescope is installed (dev environments only)
     ...(class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)
         ? [App\Providers\TelescopeServiceProvider::class]
