@@ -228,8 +228,15 @@
         }
     }
 
-    // Run on load + after Livewire re-renders
-    document.addEventListener('DOMContentLoaded', applyAllStoredOverrides);
+    // Run on load + after Livewire re-renders.
+    // Skip the initial DOMContentLoaded pass when the server already injected
+    // the overrides via the SSR <style> block (id="titan-ui-override-ssr") to
+    // avoid redundant double-application on first paint.
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!document.getElementById('titan-ui-override-ssr')) {
+            applyAllStoredOverrides();
+        }
+    });
     document.addEventListener('livewire:navigated', applyAllStoredOverrides);
     document.addEventListener('livewire:load', applyAllStoredOverrides);
 

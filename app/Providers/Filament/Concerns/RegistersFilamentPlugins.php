@@ -82,4 +82,22 @@ trait RegistersFilamentPlugins
             ]),
         ];
     }
+
+    /**
+     * Register the SSR UI-override <style> render hook so that saved component
+     * overrides are injected into the panel <head> before the browser paints,
+     * eliminating any flash of unstyled content.
+     *
+     * Inject into a panel via:
+     *   ->renderHook(...$this->uiOverrideSsrHook())
+     *
+     * @return array{0: string, 1: \Closure}
+     */
+    private function uiOverrideSsrHook(): array
+    {
+        return [
+            'panels::head.end',
+            fn (): \Illuminate\Contracts\View\View => view('filament.ui-override-ssr'),
+        ];
+    }
 }
