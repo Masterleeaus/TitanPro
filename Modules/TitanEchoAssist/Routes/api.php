@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\TitanChatbot\Http\Controllers\Api\ConversationController;
-use Modules\TitanChatbot\Http\Controllers\TitanChatbotController;
-use Modules\TitanChatbot\Http\Controllers\Api\ModuleAgentController;
-use Modules\TitanChatbot\Http\Controllers\Api\TitanChatbotApiController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\ConversationController;
+use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\ModuleAgentController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\TitanChatbotApiController;
 
 Route::middleware(['api'])->prefix(config('titan-chatbot.api_prefix', 'api/titan-chatbot'))->name('api.titan-chatbot.')->group(function () {
     Route::get('/health', [TitanChatbotController::class, 'health'])->name('health');

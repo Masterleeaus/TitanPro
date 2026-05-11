@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Http\Controllers\Webhook;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Http\Controllers\Webhook;
 
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
 use App\Extensions\Chatbot\System\Models\ChatbotChannelWebhook;
-use App\Extensions\ChatbotMessenger\System\Services\MessengerConversationService;
+use Modules\TitanEchoAssist\Channels\Messenger\System\Services\MessengerConversationService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

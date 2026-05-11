@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
-use Modules\TitanChatbot\AI\Core\TitanAgent;
+use Modules\TitanEchoAssist\AI\Core\TitanAgent;
 
 class ConversationAgent extends TitanAgent
 {

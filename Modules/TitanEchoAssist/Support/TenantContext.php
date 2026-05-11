@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Support;
+namespace Modules\TitanEchoAssist\Support;
 
 class TenantContext
 {

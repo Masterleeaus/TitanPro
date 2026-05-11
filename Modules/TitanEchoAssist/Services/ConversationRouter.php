@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Event;
-use Modules\TitanChatbot\DTOs\MessagePayload;
-use Modules\TitanChatbot\Events\ConversationStarted;
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\Events\ConversationStarted;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ConversationRouter
 {

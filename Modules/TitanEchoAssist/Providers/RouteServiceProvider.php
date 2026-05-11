@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Providers;
+namespace Modules\TitanEchoAssist\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

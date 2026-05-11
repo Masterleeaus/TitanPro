@@ -449,7 +449,7 @@ TitanChatbot/
       offline/
   Filament/
     Plugin/
-      TitanChatbotPlugin.php
+      TitanEchoAssistPlugin.php
     Resources/
       ChatbotResource.php
     Pages/

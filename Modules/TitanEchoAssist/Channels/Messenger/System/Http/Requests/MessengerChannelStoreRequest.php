@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Http\Requests;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

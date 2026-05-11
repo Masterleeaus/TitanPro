@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Billing\Meters;
+namespace Modules\TitanEchoAssist\Billing\Meters;
 
 use Illuminate\Support\Facades\Cache;
 

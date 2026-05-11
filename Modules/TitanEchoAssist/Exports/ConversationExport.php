@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Exports;
+namespace Modules\TitanEchoAssist\Exports;
 
 class ConversationExport
 {

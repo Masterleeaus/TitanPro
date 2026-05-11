@@ -300,6 +300,31 @@ test('OrganizationSetting mask handles short strings without crashing', function
     expect($masked)->toBe('•••');
 });
 
+// ── OrganizationSetting::maskPrefix ──────────────────────────────────────────
+
+test('OrganizationSetting maskPrefix returns null for null input', function () {
+    expect(OrganizationSetting::maskPrefix(null))->toBeNull();
+});
+
+test('OrganizationSetting maskPrefix shows first 12 characters followed by ****', function () {
+    $key    = 'pk_live_abcdef123456789';
+    $masked = OrganizationSetting::maskPrefix($key);
+
+    expect($masked)->toStartWith('pk_live_abcd');
+    expect($masked)->toEndWith('****');
+    expect(str_contains($masked, '123456789'))->toBeFalse();
+});
+
+test('OrganizationSetting maskPrefix appends **** even when value is shorter than prefix length', function () {
+    $masked = OrganizationSetting::maskPrefix('pk_live_', 12);
+    expect($masked)->toBe('pk_live_****');
+});
+
+test('OrganizationSetting maskPrefix respects custom prefix length', function () {
+    $masked = OrganizationSetting::maskPrefix('pk_live_abcdef', 8);
+    expect($masked)->toBe('pk_live_****');
+});
+
 test('OrganizationSetting secrets are encrypted in the database', function () {
     [$user, $org] = settingsSetup();
 

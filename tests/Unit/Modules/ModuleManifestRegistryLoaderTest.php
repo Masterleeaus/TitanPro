@@ -236,6 +236,18 @@ test('manifest loader populates registries and excludes disabled modules idempot
             ['key' => 'registry.enabled', 'type' => 'boolean'],
         ],
     ]);
+    writeJson($modulesPath.'/RegistryTestModule/manifests/ai.manifest.json', [
+        'enabled' => true,
+        'agents' => ['Modules\\RegistryTestModule\\AI\\Agents\\RegistryAgent'],
+        'tools' => [['name' => 'registry.lookup', 'class' => 'Modules\\RegistryTestModule\\AI\\Tools\\RegistryLookupTool']],
+    ]);
+    writeJson($modulesPath.'/RegistryTestModule/AI/Guardrails/guardrails.json', [
+        'input_guardrails' => [['id' => 'registry_prompt_injection', 'action' => 'block']],
+    ]);
+    writeJson($modulesPath.'/RegistryTestModule/Agents/RegistryAgent/agent.manifest.json', [
+        'agent_id' => 'registry-agent',
+        'agent_class' => 'Modules\\RegistryTestModule\\AI\\Agents\\RegistryAgent',
+    ]);
 
     // Enabled module with empty declarations should not throw.
     writeJson($modulesPath.'/EmptyDeclarationsModule/module.json', [
@@ -281,6 +293,12 @@ test('manifest loader populates registries and excludes disabled modules idempot
         'resolvers' => [['key' => 'disabled.resolver']],
         'policies' => [['key' => 'disabled.policy']],
     ]);
+    writeJson($modulesPath.'/DisabledModule/manifests/ai.manifest.json', [
+        'agents' => ['Modules\\DisabledModule\\AI\\Agents\\DisabledAgent'],
+    ]);
+    writeJson($modulesPath.'/DisabledModule/AI/Guardrails/guardrails.json', [
+        'input_guardrails' => [['id' => 'disabled_guardrail', 'action' => 'block']],
+    ]);
     writeJson($modulesPath.'/DisabledModule/manifests/verticals.json', [
         'default' => 'disabled',
         'verticals' => [
@@ -310,6 +328,8 @@ test('manifest loader populates registries and excludes disabled modules idempot
         'billing'    => $billingRegistry,
         'search'     => $searchRegistry,
         'tenancy'    => $tenancyRegistry,
+        'ai'         => $aiRegistry,
+        'blueprint'  => $blueprintAIRegistry,
         'pwa'        => $pwaRegistry,
         'channel'    => $channelRegistry,
         'omni'       => $omniRegistry,
@@ -366,6 +386,12 @@ test('manifest loader populates registries and excludes disabled modules idempot
     expect($tenancyRegistry->policies('RegistryTestModule'))->toHaveCount(1);
     expect($tenancyRegistry->findResolver('registry.tenant')['class'])->toBe('Modules\\RegistryTestModule\\Tenancy\\Resolvers\\RegistryTenantResolver');
     expect($tenancyRegistry->findPolicy('registry.access')['class'])->toBe('Modules\\RegistryTestModule\\Tenancy\\Policies\\RegistryTenantPolicy');
+    expect($aiRegistry->agents('RegistryTestModule'))->toBe([
+        'Modules\\RegistryTestModule\\AI\\Agents\\RegistryAgent',
+    ]);
+    expect($aiRegistry->tools('RegistryTestModule'))->toHaveCount(1);
+    expect($blueprintAIRegistry->guardrails('RegistryTestModule'))->toHaveKey('input_guardrails');
+    expect($blueprintAIRegistry->agents('RegistryTestModule'))->toHaveCount(1);
 
     expect($pwaRegistry->manifest('RegistryTestModule'))->not->toBeNull();
     expect($pwaRegistry->byType('screen', 'RegistryTestModule'))->toHaveCount(1);
@@ -392,6 +418,9 @@ test('manifest loader populates registries and excludes disabled modules idempot
     expect($billingRegistry->plans('DisabledModule'))->toBeEmpty();
     expect($searchRegistry->indexes('DisabledModule'))->toBeEmpty();
     expect($tenancyRegistry->resolvers('DisabledModule'))->toBeEmpty();
+    expect($aiRegistry->agents('DisabledModule'))->toBeEmpty();
+    expect($blueprintAIRegistry->guardrails('DisabledModule'))->toBeNull();
+    expect($blueprintAIRegistry->agents('DisabledModule'))->toBeEmpty();
 
     expect($verticalPackRegistry->find('missing-vertical'))->toBeNull();
     expect($verticalPackRegistry->find('disabled'))->toBeNull();
@@ -587,4 +616,3 @@ test('manifest loader skips AI manifest when enabled flag is false', function ()
 
     deleteDirectory($base);
 });
-

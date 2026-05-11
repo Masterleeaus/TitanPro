@@ -1,11 +1,11 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\AI\DataModels\BookingIntentModel;
-use Modules\TitanChatbot\AI\DataModels\EscalationDecisionModel;
-use Modules\TitanChatbot\AI\DataModels\QuoteRequestModel;
-use Modules\TitanChatbot\AI\DataModels\TrainingResultModel;
-use Modules\TitanChatbot\AI\DataModels\VoiceResponseModel;
+use Modules\TitanEchoAssist\AI\DataModels\BookingIntentModel;
+use Modules\TitanEchoAssist\AI\DataModels\EscalationDecisionModel;
+use Modules\TitanEchoAssist\AI\DataModels\QuoteRequestModel;
+use Modules\TitanEchoAssist\AI\DataModels\TrainingResultModel;
+use Modules\TitanEchoAssist\AI\DataModels\VoiceResponseModel;
 
 class DataModelTest extends TestCase
 {

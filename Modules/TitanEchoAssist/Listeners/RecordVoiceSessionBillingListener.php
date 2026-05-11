@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Listeners;
+namespace Modules\TitanEchoAssist\Listeners;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter;
-use Modules\TitanChatbot\Events\VoiceSessionDurationRecorded;
+use Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter;
+use Modules\TitanEchoAssist\Events\VoiceSessionDurationRecorded;
 
 class RecordVoiceSessionBillingListener
 {

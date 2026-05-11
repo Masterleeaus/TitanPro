@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Tools;
+namespace Modules\TitanEchoAssist\AI\Tools;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

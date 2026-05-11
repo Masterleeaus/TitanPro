@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Helpers;
+namespace Modules\TitanEchoAssist\Helpers;
 
 class ChatbotHelper
 {

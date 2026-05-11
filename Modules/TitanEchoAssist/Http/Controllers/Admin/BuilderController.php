@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Admin;
+namespace Modules\TitanEchoAssist\Http\Controllers\Admin;
 
 class BuilderController
 {

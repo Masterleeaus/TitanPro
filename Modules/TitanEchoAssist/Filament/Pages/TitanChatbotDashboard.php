@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Pages;
+namespace Modules\TitanEchoAssist\Filament\Pages;
 
 if (class_exists(\Filament\Pages\Page::class)) {
     class TitanChatbotDashboard extends \Filament\Pages\Page
