@@ -1,3 +1,206 @@
+# Issue 197 — Audit Filament relation managers and custom list pages for tenant-scoping bypass
+
+## Summary
+
+Follow-up to issue 129. All Filament resources, relation managers, and custom list pages were
+audited for tenant-scoping correctness. Five resources were missing the null-safe guard pattern
+(`$organizationId === null → whereRaw('1 = 0')`) that prevents potential data leakage when
+the authenticated user has no `organization_id` (e.g. a super-admin or an unauthenticated
+queue context). Three new HTTP-level 404 tests were added covering the fixed resources.
+
+## Audit Results
+
+### Relation managers
+
+`app/Filament/Resources/*/RelationManagers/` — **no relation manager files exist in this
+codebase**. The directory does not exist. This audit criterion is vacuously satisfied.
+
+### Custom list pages overriding `getTableQuery()`
+
+Checked all files under `app/Filament/Resources/*/Pages/`, `app/Filament/TitanSolo/Resources/*/Pages/`,
+`app/Filament/ZeroPay/Resources/*/Pages/`, and `app/Filament/ZeroFuss/Resources/*/Pages/`.
+**No list page overrides `getTableQuery()`**. This criterion is also vacuously satisfied.
+
+### Resource-level `getEloquentQuery()` audit
+
+| Resource | Has `getEloquentQuery()` | Null-safe guard | Status |
+|---|---|---|---|
+| `CustomerResource` | ✅ | ✅ | OK |
+| `PropertyResource` | ✅ | ✅ | OK |
+| `JobResource` | ✅ | ✅ | OK |
+| `DriverLocationResource` | ✅ | ✅ | OK |
+| `InvoiceResource` | ✅ | ✅ | OK |
+| `PaymentResource` | ✅ | ✅ | OK |
+| `EstimateResource` | ✅ | ✅ | OK |
+| `AttachmentResource` | ✅ | ✅ | OK |
+| `OrganizationSettingResource` | ✅ | ✅ | OK |
+| `EstimatePackageResource` | ✅ | ✅ | OK |
+| `JobMessageResource` | ✅ | ✅ | OK |
+| `ItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobTypeResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `MessageTemplateResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobChecklistItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobTypeChecklistItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `CmsPageResource` | ❌ (not needed) | N/A | OK — `CmsPage` has no `organization_id`; it is a global system resource |
+| `TitanSolo/CustomerResource` | ✅ | ✅ | OK |
+| `TitanSolo/JobResource` | ✅ | ✅ | OK |
+| `TitanSolo/InvoiceResource` | ✅ | ✅ | OK |
+| `ZeroPay/InvoiceResource` | ✅ | ✅ | OK |
+| `ZeroPay/PaymentResource` | ✅ | ✅ | OK |
+| `ZeroFuss/BookingResource` | ✅ | ✅ | OK |
+
+## Files Changed
+
+| File | Fix Applied |
+|------|-------------|
+| `app/Filament/Resources/ItemResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/JobTypeResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/MessageTemplateResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/JobChecklistItemResource.php` | Added null-safe guard; extracted `$organizationId` variable to avoid double call to `auth()->user()?->organization_id` inside the closure |
+| `app/Filament/Resources/JobTypeChecklistItemResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `tests/Feature/Admin/OrgScopingTest.php` | Added 3 new 404-level cross-org tests for `job-type-checklist-items`, `job-checklist-items`, and `message-templates` |
+
+## Fixes Applied
+
+All five resources now follow the established null-safe guard pattern from issue 129:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    $organizationId = auth()->user()?->organization_id;
+
+    if ($organizationId === null) {
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+
+    return parent::getEloquentQuery()->where('organization_id', $organizationId);
+}
+```
+
+`JobChecklistItemResource` retains its intentional `OR` logic (items are visible if either
+their own `organization_id` or their parent job's `organization_id` matches) but now passes
+the resolved `$organizationId` into the closure rather than calling `auth()->user()?->organization_id`
+twice — and returns an empty set when no org context is present.
+
+## Next Steps
+
+- Add a `HasFactory` trait and `JobChecklistItemFactory` / `MessageTemplateFactory` to enable
+  richer factory-based tests for these models.
+- Consider adding `TenantAware` / `BelongsToTenant` to `JobChecklistItem` so TenantScope is
+  applied automatically at the model level, reducing reliance on manual resource-level guards.
+- Monitor for any new Filament resources added to the codebase — enforce the null-safe pattern
+  as a code-review checklist item.
+# Issue 197 – Vue component test infrastructure for grid editor drag interactions
+
+**Source:** Follow-up to issue-148.md (visual grid editor delivered in `Settings.vue` / `layoutTokens.ts`).
+
+---
+
+## Summary
+
+Established Vitest + Vue Test Utils frontend testing infrastructure and wrote initial coverage for the grid editor's drag-driven flows that were explicitly flagged as a gap in issue-148.
+
+---
+
+## Changes Made
+
+### New devDependencies (`package.json`)
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `vitest` | ^4.1.5 | Test runner (Vite-native, fast) |
+| `@vue/test-utils` | ^2.4.10 | Vue 3 component mounting & assertions |
+| `happy-dom` | ^20.9.0 | DOM simulation environment (patched; ≥ 20.8.9 fixes advisory CVEs) |
+| `@vitest/coverage-v8` | ^4.1.5 | Optional coverage support (`npm run test:coverage`) |
+
+### New scripts (`package.json`)
+
+```json
+"test":          "vitest run",
+"test:watch":    "vitest",
+"test:coverage": "vitest run --coverage"
+```
+
+### New file – `vitest.config.ts`
+
+Minimal Vitest configuration:
+- Uses `@vitejs/plugin-vue` (already in devDependencies) to transform `.vue` SFCs.
+- Resolves the `@/` alias to `resources/js/` (matching `tsconfig.json`).
+- Sets the test environment to `happy-dom`.
+- Scans `resources/js/**/*.spec.ts` for test files.
+
+### New file – `resources/js/pages/Platform/__tests__/layoutTokens.spec.ts`
+
+33 pure-unit tests covering every exported function in `layoutTokens.ts`:
+
+- `snapValue` – rounding to grid multiples, clamping, zero-delta identity.
+- `cloneLayoutTokens` – shallow copy, mutation isolation.
+- `sanitizeLayoutTokens` – defaults fill, all clamp ranges, `cardMinHeight` derivation.
+- `extractLayoutTokens` – null/undefined/missing-block fallbacks, full parse, custom value, out-of-range sanitisation, user CSS outside the block.
+- `buildLayoutTokenCss` – sentinel markers, all CSS custom properties, sanitisation, round-trip stability.
+- `mergeLayoutTokenCss` – no-existing-CSS case, block replacement, user CSS preservation, no block duplication on repeated merges.
+- `layoutPreviewStyles` – property strings, sanitisation.
+- **Token round-trip** – extract → build → extract identity, modified tokens, multi-save stability.
+
+### New file – `resources/js/pages/Platform/__tests__/Settings.spec.ts`
+
+23 Vue component tests covering the grid editor's interactive behaviours.
+Dependencies (`@inertiajs/vue3`, `PlatformLayout`) are stubbed at the module level so the component mounts in isolation.
+
+| Group | Tests |
+|-------|-------|
+| **Sidebar width drag** | increases on rightward drag, decreases on leftward drag, clamps to 192px min, clamps to 384px max, history pushed on `pointerup` |
+| **Content width drag** | increases on rightward drag, clamps to 720px min, clamps to 1440px max |
+| **Snap-to-grid** | 8px snap (default), 4px snap after `<select>` change, row-gap snapped on resize-rows drag |
+| **Undo / redo** | undo restores previous value, redo re-applies, Undo disabled at initial state, Redo disabled at initial state, Redo disabled after new drag (future history pruned), `Ctrl+Z` keyboard undo, `Ctrl+Y` keyboard redo |
+| **Reset** | restores all tokens to defaults, pushes undo-able history entry, works when `custom_css` had persisted custom values |
+| **Token initialisation** | reads persisted tokens from `custom_css` on mount, falls back to defaults when `custom_css` is `null` |
+
+### Updated file – `.github/workflows/production-check.yml`
+
+Added a new `frontend-tests` job that:
+1. Checks out code.
+2. Installs Node 22.
+3. Runs `npm install`.
+4. Runs `npm run test`.
+
+This job runs in parallel with (not gating) the existing `production-check` job.
+
+---
+
+# Issue 197 — ModuleManifestRegistryLoaderTest AI/Blueprint Destructuring Fix
+
+## Issue Summary
+
+`tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php` had a `makeLoader()` destructuring site in the main idempotency test that did not include the `ai` and `blueprint` keys returned by `makeLoader()`. This left the AI registries unavailable in that test and prevented asserting AI/blueprint behavior against the shared loader registries.
+
+## Files Changed
+
+| File | Changes |
+|------|---------|
+| `tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php` | Added missing `'ai' => $aiRegistry` and `'blueprint' => $blueprintAIRegistry` destructuring entries in the main idempotency test; added explicit AI and blueprint manifest fixtures for enabled/disabled modules; added assertions verifying AI and blueprint registry population/exclusion using the same registries returned by `makeLoader()`. |
+| `issue-docs/issue-197.md` | Added issue implementation notes, changed files list, and next steps. |
+
+## Fixes Applied
+
+1. Updated the main `makeLoader()` destructuring block to include:
+   - `ai` → `$aiRegistry`
+   - `blueprint` → `$blueprintAIRegistry`
+2. Added AI manifest and blueprint AI fixture data to the main idempotency test for `RegistryTestModule`.
+3. Added disabled-module AI/blueprint fixture data and assertions to confirm disabled modules are excluded.
+4. Added assertions in the main idempotency test that validate AI manifest loading and blueprint loading using loader-provided registries.
+
+## Validation
+
+- Attempted to run (before and after code changes): `./vendor/bin/pest tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php`
+- Result in this sandbox: `./vendor/bin/pest` is unavailable because `vendor/` is not installed.
+- Dependency installation is blocked here because `composer install` fails on PHP 8.3.6 while `composer.json` requires PHP `^8.4`.
+
+## Next Steps
+
+1. Run `composer install` in a PHP 8.4+ environment.
+2. Run `./vendor/bin/pest tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php`.
+3. If green, run the broader module unit test slice in CI to confirm no regressions.
 # Issue 197 — Build GroundZero panel Filament resources
 
 ## Issue Summary
@@ -219,6 +422,9 @@ packs, export their own themes, and import themes shared by others.
 ---
 
 ## Next Steps
+- Consider adding coverage reporting (`npm run test:coverage`) and uploading the report as a CI artefact.
+- Card-span drag tests (`primary-card` / `secondary-card`) currently rely on the JSDOM `clientWidth = 0` fallback path; if realistic span arithmetic is required, `Object.defineProperty` on the `previewGrid` element can inject a mock pixel width.
+- Integrate `npm run lint` into the CI workflow once the pre-existing 4 000+ lint errors in the repository are resolved (they pre-date this issue and are unrelated to these changes).
 
 1. Run `php artisan migrate` to create the `shared_themes` table.
 2. Run `php artisan titan:theme:export` to test the CLI command.
