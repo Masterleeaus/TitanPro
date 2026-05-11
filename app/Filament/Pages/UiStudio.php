@@ -516,6 +516,9 @@ class UiStudio extends Page
                 'menu_items' => $this->menuItems,
                 'dashboard_layout' => $this->canvasWidgets,
             ])->save();
+
+            // Persist menu items into fmm_* tables (primary store, per-org).
+            $this->persistMenuItemsToFmm($orgId);
         } else {
             $settings->update([
                 'primary_color' => $validated['primaryColor'],
