@@ -37,8 +37,8 @@ return new class extends Migration
                 if (! Schema::hasColumn('calling_agent_usage_records', 'idempotency_key')) {
                     $blueprint->string('idempotency_key')->nullable()->after('tenant_id');
                     $blueprint->unique(
-                        'idempotency_key',
-                        'calling_agent_usage_records_idempotency_key_unique',
+                        ['tenant_id', 'idempotency_key'],
+                        'calling_agent_usage_records_tenant_idempotency_unique',
                     );
                 }
             });
@@ -73,7 +73,7 @@ return new class extends Migration
         if (Schema::hasTable('calling_agent_usage_records')
             && Schema::hasColumn('calling_agent_usage_records', 'idempotency_key')) {
             Schema::table('calling_agent_usage_records', function (Blueprint $blueprint): void {
-                $blueprint->dropUnique('calling_agent_usage_records_idempotency_key_unique');
+                $blueprint->dropUnique('calling_agent_usage_records_tenant_idempotency_unique');
                 $blueprint->dropColumn('idempotency_key');
             });
         }

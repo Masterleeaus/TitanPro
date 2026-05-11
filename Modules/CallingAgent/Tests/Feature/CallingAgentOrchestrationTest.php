@@ -225,7 +225,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agents', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->string('name');
             $table->string('phone_number')->nullable();
             $table->text('first_message')->nullable();
@@ -236,7 +236,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_phone_numbers', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('calling_agent_id')->nullable();
             $table->string('number')->unique();
             $table->timestamps();
@@ -244,7 +244,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_calls', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('calling_agent_id')->nullable();
             $table->string('provider')->default('twilio');
             $table->string('call_sid')->nullable()->index();
@@ -262,7 +262,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_active_calls', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('calling_agent_call_id')->nullable();
             $table->string('call_sid')->unique();
             $table->string('from')->nullable();
@@ -284,7 +284,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_caller_profiles', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->string('phone')->nullable()->index();
             $table->string('email')->nullable()->index();
             $table->string('name')->nullable();
@@ -301,7 +301,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_messages', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('calling_agent_id')->nullable();
             $table->string('provider')->default('twilio');
             $table->string('channel')->default('sms');
@@ -317,7 +317,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_webhook_idempotency', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->string('event_id')->unique();
             $table->string('source')->nullable();
             $table->timestamp('processed_at')->nullable();
@@ -327,7 +327,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_call_outcomes', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->string('call_sid')->nullable()->index();
             $table->string('intent')->nullable();
             $table->string('urgency')->nullable();
@@ -344,7 +344,7 @@ class CallingAgentOrchestrationTest extends TestCase
 
         Schema::create('calling_agent_missed_call_recovery_tasks', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('calling_agent_call_id')->nullable();
             $table->string('call_sid')->nullable()->index();
             $table->string('phone')->nullable();
