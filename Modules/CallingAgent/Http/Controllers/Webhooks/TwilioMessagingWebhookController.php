@@ -27,7 +27,7 @@ class TwilioMessagingWebhookController extends Controller
         $to         = (string) $request->input('To', '');
         $body       = (string) $request->input('Body', '');
         $channel    = str_starts_with($from, 'whatsapp:') ? 'whatsapp' : 'sms';
-        $lookupTo   = preg_replace('/^whatsapp:/i', '', $to) ?: $to;
+        $lookupTo   = TenantContext::normalizeAddress($to) ?? $to;
         $agent      = $this->orchestrator->resolveByNumber($lookupTo);
         $tenantId   = $agent?->tenant_id ?? TenantContext::id();
 
@@ -54,7 +54,7 @@ class TwilioMessagingWebhookController extends Controller
         // Enrich context with caller profile memory
         $context = [];
         $callerPhone = $channel === 'whatsapp'
-            ? preg_replace('/^whatsapp:/i', '', $from)
+            ? TenantContext::normalizeAddress($from)
             : $from;
 
         $profile = $this->orchestrator->recallCallerProfile($callerPhone);

@@ -203,13 +203,19 @@ class TenantContext
         }
     }
 
-    private static function normalizeAddress(mixed $value): ?string
+    public static function normalizeAddress(mixed $value): ?string
     {
         if (! is_string($value) || trim($value) === '') {
             return null;
         }
 
-        return preg_replace('/^(sms|whatsapp):/i', '', trim($value)) ?: null;
+        $normalized = preg_replace('/^(sms|whatsapp):/', '', trim(strtolower($value)));
+
+        if (! is_string($normalized) || trim($normalized) === '') {
+            return null;
+        }
+
+        return $normalized;
     }
 
     private static function toInt(mixed $value): ?int
