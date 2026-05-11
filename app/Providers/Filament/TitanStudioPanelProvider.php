@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -10,7 +11,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -31,15 +31,17 @@ class TitanStudioPanelProvider extends PanelProvider
         return $panel
             ->id('titanstudio')
             ->path('titanstudio')
-            ->brandName('TitanStudio')
-            ->colors([
-                'primary' => Color::Pink,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#ec4899'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
                     'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
-                    'Relaticle\\Flowforge\\FlowforgePlugin',
+                    'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
                 ]),
             ])
             ->resources([
@@ -70,6 +72,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

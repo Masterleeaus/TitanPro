@@ -21,6 +21,7 @@ const page = usePage<AppPageProps>();
 const roles = page.props.auth?.roles ?? [];
 const canAccessTitanGo = roles.some((role) => ['owner', 'admin', 'super_admin'].includes(role));
 const canAccessTitanStudio = roles.some((role) => ['owner', 'admin'].includes(role));
+const canAccessZeroFuss = roles.includes('customer');
 const canAccessTitanNexus = roles.some((role) => ['owner', 'admin'].includes(role));
 const canAccessTitanSolo = roles.includes('owner') && ['starter', 'solo', 'single_operator'].includes(page.props.plan?.current ?? '');
 
@@ -45,6 +46,15 @@ const mainNavItems: NavItem[] = [
                   title: 'TitanStudio Panel',
                   href: '/titanstudio',
                   icon: Paintbrush,
+              },
+          ]
+        : []),
+    ...(canAccessZeroFuss
+        ? [
+              {
+                  title: 'ZeroFuss Portal',
+                  href: '/zerofuss',
+                  icon: Smartphone,
               },
           ]
         : []),

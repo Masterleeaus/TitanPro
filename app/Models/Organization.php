@@ -59,6 +59,11 @@ class Organization extends Model
         return $this->hasOne(OrganizationSetting::class);
     }
 
+    public function branding(): HasOne
+    {
+        return $this->hasOne(OrganizationBranding::class);
+    }
+
     public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Subscription::class);

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,9 +29,11 @@ class TitanQuotesPanelProvider extends PanelProvider
         return $panel
             ->id('titanquotes')
             ->path('titanquotes')
-            ->brandName('TitanQuotes — Estimating')
-            ->colors([
-                'primary' => Color::Emerald,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanQuotes — Estimating'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#10b981'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
@@ -60,6 +63,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }
