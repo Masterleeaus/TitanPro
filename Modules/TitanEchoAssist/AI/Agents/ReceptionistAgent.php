@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
 class ReceptionistAgent
 {

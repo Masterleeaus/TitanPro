@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Search\Mappers;
+namespace Modules\TitanEchoAssist\Search\Mappers;
 
 class ConversationMapper
 {

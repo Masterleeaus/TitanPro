@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Automation\Triggers;
+namespace Modules\TitanEchoAssist\Automation\Triggers;
 
 class MissedCallTrigger
 {

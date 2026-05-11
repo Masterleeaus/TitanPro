@@ -1,7 +1,7 @@
 {
   "name": "titan-chatbot.generate_reply",
   "description": "Generate a chatbot reply through the module reply action",
-  "action": "Modules\\TitanChatbot\\Actions\\GenerateChatbotReply",
+  "action": "Modules\\TitanEchoAssist\\Actions\\GenerateChatbotReply",
   "input_schema": {
     "type": "object",
     "required": [

@@ -1,7 +1,7 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\AI\Core\TitanAgent;
+use Modules\TitanEchoAssist\AI\Core\TitanAgent;
 
 class TitanAgentTest extends TestCase
 {

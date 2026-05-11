@@ -1,16 +1,16 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Plugin;
+namespace Modules\TitanEchoAssist\Filament\Plugin;
 
-use Modules\TitanChatbot\Filament\Resources\ChatbotResource;
-use Modules\TitanChatbot\Filament\Resources\ChannelResource;
-use Modules\TitanChatbot\Filament\Resources\ConversationResource;
-use Modules\TitanChatbot\Filament\Resources\KnowledgeResource;
-use Modules\TitanChatbot\Filament\Widgets\ConversationStatsWidget;
-use Modules\TitanChatbot\Filament\Widgets\UsageWidget;
+use Modules\TitanEchoAssist\Filament\Resources\ChatbotResource;
+use Modules\TitanEchoAssist\Filament\Resources\ChannelResource;
+use Modules\TitanEchoAssist\Filament\Resources\ConversationResource;
+use Modules\TitanEchoAssist\Filament\Resources\KnowledgeResource;
+use Modules\TitanEchoAssist\Filament\Widgets\ConversationStatsWidget;
+use Modules\TitanEchoAssist\Filament\Widgets\UsageWidget;
 
 if (interface_exists(\Filament\Contracts\Plugin::class)) {
-    class TitanChatbotPlugin implements \Filament\Contracts\Plugin
+    class TitanEchoAssistPlugin implements \Filament\Contracts\Plugin
     {
         public static function make(): static
         {
@@ -40,7 +40,7 @@ if (interface_exists(\Filament\Contracts\Plugin::class)) {
         public function boot(\Filament\Panel $panel): void {}
     }
 } else {
-    class TitanChatbotPlugin
+    class TitanEchoAssistPlugin
     {
         public static function make(): static
         {

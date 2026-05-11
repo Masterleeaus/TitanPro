@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
@@ -15,23 +15,23 @@ class TitanChatbotStructureTest extends TestCase
     public static function requiredClassProvider(): array
     {
         return [
-            ['Modules\TitanChatbot\DTOs\MessagePayload'],
-            ['Modules\TitanChatbot\Services\ConversationRouter'],
-            ['Modules\TitanChatbot\Services\GeneratorBridge'],
-            ['Modules\TitanChatbot\Services\ChannelRouter'],
-            ['Modules\TitanChatbot\Services\WebchatChannel'],
-            ['Modules\TitanChatbot\Services\TrainingPipeline'],
-            ['Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter'],
-            ['Modules\TitanChatbot\Billing\Meters\ConversationMeter'],
-            ['Modules\TitanChatbot\Billing\Meters\EmbeddingMeter'],
-            ['Modules\TitanChatbot\AI\Agents\ConversationAgent'],
-            ['Modules\TitanChatbot\AI\Agents\VoiceAgent'],
-            ['Modules\TitanChatbot\AI\Pipelines\RagPipeline'],
-            ['Modules\TitanChatbot\Models\Chatbot'],
-            ['Modules\TitanChatbot\Models\Conversation'],
-            ['Modules\TitanChatbot\Models\ChatbotHistory'],
-            ['Modules\TitanChatbot\Models\ChatbotEmbedding'],
-            ['Modules\TitanChatbot\Providers\ModuleServiceProvider'],
+            ['Modules\TitanEchoAssist\DTOs\MessagePayload'],
+            ['Modules\TitanEchoAssist\Services\ConversationRouter'],
+            ['Modules\TitanEchoAssist\Services\GeneratorBridge'],
+            ['Modules\TitanEchoAssist\Services\ChannelRouter'],
+            ['Modules\TitanEchoAssist\Services\WebchatChannel'],
+            ['Modules\TitanEchoAssist\Services\TrainingPipeline'],
+            ['Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter'],
+            ['Modules\TitanEchoAssist\Billing\Meters\ConversationMeter'],
+            ['Modules\TitanEchoAssist\Billing\Meters\EmbeddingMeter'],
+            ['Modules\TitanEchoAssist\AI\Agents\ConversationAgent'],
+            ['Modules\TitanEchoAssist\AI\Agents\VoiceAgent'],
+            ['Modules\TitanEchoAssist\AI\Pipelines\RagPipeline'],
+            ['Modules\TitanEchoAssist\Models\Chatbot'],
+            ['Modules\TitanEchoAssist\Models\Conversation'],
+            ['Modules\TitanEchoAssist\Models\ChatbotHistory'],
+            ['Modules\TitanEchoAssist\Models\ChatbotEmbedding'],
+            ['Modules\TitanEchoAssist\Providers\ModuleServiceProvider'],
         ];
     }
 
@@ -41,7 +41,7 @@ class TitanChatbotStructureTest extends TestCase
         $this->assertTrue(class_exists($class), "Class {$class} does not exist");
         $this->assertTrue(
             in_array(
-                \Modules\TitanChatbot\Contracts\ChannelDriver::class,
+                \Modules\TitanEchoAssist\Contracts\ChannelDriver::class,
                 class_implements($class) ?: []
             ),
             "{$class} must implement ChannelDriver"
@@ -51,11 +51,11 @@ class TitanChatbotStructureTest extends TestCase
     public static function requiredInterfaceProvider(): array
     {
         return [
-            ['Modules\TitanChatbot\Services\WebchatChannel'],
-            ['Modules\TitanChatbot\Services\WhatsappChannel'],
-            ['Modules\TitanChatbot\Services\TelegramChannel'],
-            ['Modules\TitanChatbot\Services\MessengerChannel'],
-            ['Modules\TitanChatbot\Services\VoiceChannel'],
+            ['Modules\TitanEchoAssist\Services\WebchatChannel'],
+            ['Modules\TitanEchoAssist\Services\WhatsappChannel'],
+            ['Modules\TitanEchoAssist\Services\TelegramChannel'],
+            ['Modules\TitanEchoAssist\Services\MessengerChannel'],
+            ['Modules\TitanEchoAssist\Services\VoiceChannel'],
         ];
     }
 }

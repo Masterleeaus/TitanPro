@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Schedules;
+namespace Modules\TitanEchoAssist\Console\Schedules;
 
 class PruneConversationSchedule
 {

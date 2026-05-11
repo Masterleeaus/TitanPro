@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Data;
+namespace Modules\TitanEchoAssist\Data;
 
 class ChatbotData
 {

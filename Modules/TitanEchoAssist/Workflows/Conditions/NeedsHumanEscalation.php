@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Workflows\Conditions;
+namespace Modules\TitanEchoAssist\Workflows\Conditions;
 
 class NeedsHumanEscalation
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Workflows\Definitions;
+namespace Modules\TitanEchoAssist\Workflows\Definitions;
 
 class LeadToBookingWorkflow
 {

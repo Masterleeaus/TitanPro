@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Http\Controllers;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Http\Controllers;
 
 use App\Extensions\Chatbot\System\Helpers\ChatbotHelper;
 use App\Extensions\Chatbot\System\Http\Resources\Admin\ChatbotChannelResource;
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
-use App\Extensions\ChatbotMessenger\System\Http\Requests\MessengerChannelStoreRequest;
-use App\Extensions\ChatbotMessenger\System\Services\MessengerService;
+use Modules\TitanEchoAssist\Channels\Messenger\System\Http\Requests\MessengerChannelStoreRequest;
+use Modules\TitanEchoAssist\Channels\Messenger\System\Services\MessengerService;
 use App\Helpers\Classes\Helper;
 use App\Http\Controllers\Controller;
 use Exception;

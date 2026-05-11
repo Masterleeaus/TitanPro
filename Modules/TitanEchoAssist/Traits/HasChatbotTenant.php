@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Traits;
+namespace Modules\TitanEchoAssist\Traits;
 
 trait HasChatbotTenant
 {

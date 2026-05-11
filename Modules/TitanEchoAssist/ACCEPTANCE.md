@@ -97,4 +97,4 @@ Use this checklist to verify that the TitanChatbot module meets all AI-native re
 
 - [ ] All PHP files pass `php -l` syntax check
 - [ ] No undefined class references in new PHP files
-- [ ] Namespace consistency: `Modules\TitanChatbot\*` throughout
+- [ ] Namespace consistency: `Modules\TitanEchoAssist\*` throughout

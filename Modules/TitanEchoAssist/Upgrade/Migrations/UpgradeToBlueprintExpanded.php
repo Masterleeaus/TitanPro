@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Upgrade\Migrations;
+namespace Modules\TitanEchoAssist\Upgrade\Migrations;
 
 class UpgradeToBlueprintExpanded
 {

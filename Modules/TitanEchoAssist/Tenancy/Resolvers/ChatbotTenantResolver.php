@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Tenancy\Resolvers;
+namespace Modules\TitanEchoAssist\Tenancy\Resolvers;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ChatbotTenantResolver
 {

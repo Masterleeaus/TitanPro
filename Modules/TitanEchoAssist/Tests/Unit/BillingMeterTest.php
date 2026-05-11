@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Illuminate\Support\Facades\Cache;
@@ -15,7 +15,7 @@ class BillingMeterTest extends TestCase
 
     public function test_voice_seconds_build_key_format(): void
     {
-        $meter = new \Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter();
 
         $reflection = new \ReflectionClass($meter);
         $method     = $reflection->getMethod('buildKey');
@@ -28,7 +28,7 @@ class BillingMeterTest extends TestCase
 
     public function test_voice_seconds_build_key_contains_tenant_id(): void
     {
-        $meter = new \Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter();
 
         $reflection = new \ReflectionClass($meter);
         $method     = $reflection->getMethod('buildKey');
@@ -43,7 +43,7 @@ class BillingMeterTest extends TestCase
     public function test_voice_seconds_record_ceils_fractional_seconds(): void
     {
         // Verify record() correctly maps tenant_id context and ceils seconds
-        $meter = new \Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter();
         // record(90.5, ['tenant_id' => 42]) should call recordSeconds(42, 91)
         // We verify by checking the meter's record() signature accepts float + array
         $reflection = new \ReflectionMethod($meter, 'record');
@@ -62,7 +62,7 @@ class BillingMeterTest extends TestCase
     public function test_voice_seconds_record_uses_zero_tenant_when_missing(): void
     {
         // Verify: context without tenant_id → tenant 0
-        $meter = new \Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter();
         $reflection = new \ReflectionMethod($meter, 'record');
         // Calling record with empty context should not throw
         try {
@@ -77,7 +77,7 @@ class BillingMeterTest extends TestCase
 
     public function test_conversation_build_key_format(): void
     {
-        $meter = new \Modules\TitanChatbot\Billing\Meters\ConversationMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\ConversationMeter();
 
         $reflection = new \ReflectionClass($meter);
         $method     = $reflection->getMethod('buildKey');
@@ -90,7 +90,7 @@ class BillingMeterTest extends TestCase
 
     public function test_conversation_key_contains_tenant_id_and_date(): void
     {
-        $meter = new \Modules\TitanChatbot\Billing\Meters\ConversationMeter();
+        $meter = new \Modules\TitanEchoAssist\Billing\Meters\ConversationMeter();
 
         $reflection = new \ReflectionClass($meter);
         $method     = $reflection->getMethod('buildKey');
@@ -108,13 +108,13 @@ class BillingMeterTest extends TestCase
     public function test_embedding_meter_class_exists(): void
     {
         $this->assertTrue(
-            class_exists(\Modules\TitanChatbot\Billing\Meters\EmbeddingMeter::class)
+            class_exists(\Modules\TitanEchoAssist\Billing\Meters\EmbeddingMeter::class)
         );
     }
 
     public function test_embedding_meter_has_record_method(): void
     {
-        $reflection = new \ReflectionClass(\Modules\TitanChatbot\Billing\Meters\EmbeddingMeter::class);
+        $reflection = new \ReflectionClass(\Modules\TitanEchoAssist\Billing\Meters\EmbeddingMeter::class);
         $this->assertTrue($reflection->hasMethod('record'));
     }
 }

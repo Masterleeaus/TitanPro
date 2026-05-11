@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers;
+namespace Modules\TitanEchoAssist\Http\Controllers;
 
 class ChatbotController
 {

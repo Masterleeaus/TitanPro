@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Extensions\ChatbotWhatsapp\System\Http\Controllers\Webhook;
+namespace Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Controllers\Webhook;
 
 use App\Extensions\Chatbot\System\Models\ChatbotChannelWebhook;
-use App\Extensions\ChatbotWhatsapp\System\Services\Twillio\TwilioConversationService;
+use Modules\TitanEchoAssist\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

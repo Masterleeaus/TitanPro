@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
 
 class MessengerChannel implements ChannelDriver
 {
     public function handle(array $payload): string
     {
-        if (class_exists(\Modules\TitanChatbot\Channels\Messenger\System\Services\MessengerConversationService::class)) {
+        if (class_exists(\Modules\TitanEchoAssist\Channels\Messenger\System\Services\MessengerConversationService::class)) {
             return $this->handleViaMessengerService($payload);
         }
 
@@ -19,8 +19,8 @@ class MessengerChannel implements ChannelDriver
     private function handleViaMessengerService(array $payload): string
     {
         try {
-            /** @var \Modules\TitanChatbot\Channels\Messenger\System\Services\MessengerConversationService $service */
-            $service = app(\Modules\TitanChatbot\Channels\Messenger\System\Services\MessengerConversationService::class);
+            /** @var \Modules\TitanEchoAssist\Channels\Messenger\System\Services\MessengerConversationService $service */
+            $service = app(\Modules\TitanEchoAssist\Channels\Messenger\System\Services\MessengerConversationService::class);
 
             $service->setChatbotId((int) ($payload['chatbot_id'] ?? 0));
             $service->setPayload($payload['metadata'] ?? $payload);

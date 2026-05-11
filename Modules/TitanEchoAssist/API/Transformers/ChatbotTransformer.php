@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\API\Transformers;
+namespace Modules\TitanEchoAssist\API\Transformers;
 
 class ChatbotTransformer
 {

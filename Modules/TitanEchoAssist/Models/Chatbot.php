@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Models;
+namespace Modules\TitanEchoAssist\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

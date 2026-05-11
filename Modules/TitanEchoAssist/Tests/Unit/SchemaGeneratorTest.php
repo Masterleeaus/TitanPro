@@ -1,9 +1,9 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\AI\Tools\SchemaGenerator;
-use Modules\TitanChatbot\AI\Attributes\Tool;
-use Modules\TitanChatbot\AI\Attributes\Desc;
+use Modules\TitanEchoAssist\AI\Tools\SchemaGenerator;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Desc;
 
 class SchemaGeneratorTest extends TestCase
 {

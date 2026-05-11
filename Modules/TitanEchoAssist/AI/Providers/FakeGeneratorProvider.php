@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Providers;
+namespace Modules\TitanEchoAssist\AI\Providers;
 
 class FakeGeneratorProvider
 {

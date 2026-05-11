@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Widgets;
+namespace Modules\TitanEchoAssist\Filament\Widgets;
 
-use Modules\TitanChatbot\Models\Conversation;
+use Modules\TitanEchoAssist\Models\Conversation;
 
 if (class_exists(\Filament\Widgets\StatsOverviewWidget::class)) {
     class ConversationStatsWidget extends \Filament\Widgets\StatsOverviewWidget

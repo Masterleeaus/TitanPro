@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\Memory\Truncation;
+namespace Modules\TitanEchoAssist\AI\Memory\Truncation;
 
 class SimpleTruncationStrategy implements TruncationStrategyInterface
 {

@@ -6,7 +6,10 @@ namespace App\Filament\Pages;
 
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
+use App\Models\SharedTheme;
 use App\Support\OrganizationBrandingResolver;
+use App\Support\ThemeTokenManager;
+use App\Support\ThemePackManager;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Facades\Filament;
@@ -22,11 +25,10 @@ use Illuminate\Support\Str;
 
 /**
  * UI Studio — unified visual design surface merging the Dashboard Builder,
- * Widget Editor, Theme Engine, and Menu System into one three-panel interface.
+ * Widget Editor, Theme Engine, and Menu System into a split-screen interface.
  *
- * Left panel  : component tree / layer list (available widget types + current layout)
- * Centre panel: live admin preview canvas (sortable widget cards)
- * Right panel : context-sensitive property editor (theme, spacing, menus)
+ * Left side : component tree / controls / property editor
+ * Right side: live sandboxed panel preview
  */
 class UiStudio extends Page
 {
@@ -62,7 +64,6 @@ class UiStudio extends Page
     public string $panelName      = 'TITAN ZERO';
     public string $backgroundType = 'none';
     public ?string $backgroundValue = null;
-    public string $customCss      = '';
 
     // ── Dashboard / layout state ──────────────────────────────────────────────
 
@@ -79,7 +80,30 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'branding'; // branding | layout | menu | components
+    public string $activeTab = 'branding'; // branding | layout | menu | components | marketplace
+
+    // ── Marketplace state ─────────────────────────────────────────────────────
+
+    /** Sub-tab within the Marketplace tab. */
+    public string $marketplaceTab = 'browse'; // browse | install | share | import
+
+    /** Uploaded ZIP for the Install flow. */
+    public ?TemporaryUploadedFile $themeZipUpload = null;
+
+    /** Preview data parsed from an uploaded ZIP. */
+    public array $zipPreview = [];
+
+    /** Name override used when sharing the active theme. */
+    public string $shareThemeName = '';
+
+    /** Generated share URL after calling shareTheme(). */
+    public string $generatedShareUrl = '';
+
+    /** Share link URL pasted in the Import flow. */
+    public string $importUrl = '';
+
+    /** Theme preview resolved from an import URL. */
+    public array $importPreview = [];
 
     // ── Available widget catalogue ────────────────────────────────────────────
 
@@ -114,31 +138,55 @@ class UiStudio extends Page
      */
     public array $availablePresets = [];
 
+    /** Active panel id rendered in the live preview iframe. */
+    public string $previewPanel = 'titanstudio';
+
+    /** Desktop | tablet | mobile frame width preset. */
+    public string $previewFrameSize = 'desktop';
+
+    /** Keep controls scroll aligned with preview scroll. */
+    public bool $syncPreviewScroll = false;
+
+    /** @var array<string, string|null> */
+    private array $savedThemeSnapshot = [];
+
     // ─────────────────────────────────────────────────────────────────────────
 
     public function mount(): void
     {
         $settings = PlatformSetting::current();
         $branding = app(OrganizationBrandingResolver::class)->current();
+        $tokenState = app(ThemeTokenManager::class)->semanticEditorState($settings);
 
-        $this->primaryColor   = $branding['primary_color'] ?? '#2563eb';
-        $this->secondaryColor = $branding['secondary_color'] ?? '#0f172a';
-        $this->accentColor    = $settings->accent_color ?? '#14b8a6';
-        $this->surfaceColor   = $settings->surface_color ?? '#f8fafc';
-        $this->fontHeading    = $branding['font_family'] ?? ($settings->font_heading ?? 'Figtree');
-        $this->fontBody       = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
-        $this->fontFamily     = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
+        $this->primaryColor   = $branding['primary_color'] ?? $tokenState['primary_color'];
+        $this->secondaryColor = $branding['secondary_color'] ?? $tokenState['secondary_color'];
+        $this->accentColor    = $tokenState['accent_color'];
+        $this->surfaceColor   = $tokenState['surface_color'];
+        $this->fontHeading    = $branding['font_family'] ?? $tokenState['font_heading'];
+        $this->fontBody       = $branding['font_family'] ?? $tokenState['font_body'];
+        $this->fontFamily     = $branding['font_family'] ?? $tokenState['font_body'];
         $this->panelName      = $branding['panel_name'] ?? $settings->brandName();
         $this->backgroundType = $branding['background_type'] ?? 'none';
         $this->backgroundValue = $branding['background_value'] ?? null;
         $this->logoPath       = $this->storagePathFromUrl($branding['logo_url'] ?? null);
         $this->faviconPath    = $this->storagePathFromUrl($branding['favicon_url'] ?? null);
-        $this->customCss      = $settings->custom_css ?? '';
 
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
+        $currentPanel          = $this->resolveCurrentPanelId();
+        $this->previewPanel    = $currentPanel;
+        $this->componentPanel  = $currentPanel;
+        $this->savedThemeSnapshot = $this->themeSnapshot();
         $this->activeTab       = 'branding';
+
+        // If redirected from a share link, auto-open the import tab.
+        $importToken = request()->query('import_token');
+        if ($importToken) {
+            $this->activeTab      = 'marketplace';
+            $this->marketplaceTab = 'import';
+            $this->importUrl      = url('/theme/import/' . $importToken);
+        }
     }
 
     public static function canAccess(): bool
@@ -315,6 +363,64 @@ class UiStudio extends Page
         $this->menuItems = $reordered;
     }
 
+    public function setPreviewFrameSize(string $size): void
+    {
+        if (! in_array($size, ['desktop', 'tablet', 'mobile'], true)) {
+            return;
+        }
+
+        $this->previewFrameSize = $size;
+    }
+
+    public function previewPanelOptions(): array
+    {
+        $panels = config('titan_panels.panels', []);
+        $user = auth()->user();
+
+        if (! $user) {
+            return [];
+        }
+
+        return array_filter(
+            $panels,
+            fn (array $panel): bool => empty($panel['roles']) || $user->hasAnyRole($panel['roles'])
+        );
+    }
+
+    public function previewPanelUrl(): string
+    {
+        $panels = $this->previewPanelOptions();
+        $fallbackPanelId = $this->resolveCurrentPanelId();
+        $panel = $panels[$this->previewPanel] ?? ($panels[$fallbackPanelId] ?? null);
+
+        $path = trim((string) ($panel['path'] ?? ''), '/');
+
+        return $path === '' ? url('/') : url('/' . $path);
+    }
+
+    public function updatedPreviewPanel(string $panelId): void
+    {
+        if (! array_key_exists($panelId, $this->previewPanelOptions())) {
+            $this->previewPanel = $this->resolveCurrentPanelId();
+        }
+    }
+
+    public function previewCssVariables(): array
+    {
+        return [
+            '--color-primary-500' => $this->safeColor($this->primaryColor),
+            '--color-secondary-500' => $this->safeColor($this->secondaryColor),
+            '--color-accent-500' => $this->safeColor($this->accentColor),
+            '--color-surface-50' => $this->safeColor($this->surfaceColor),
+            '--font-family' => $this->safeFont($this->fontFamily),
+        ];
+    }
+
+    public function hasUnsavedThemeChanges(): bool
+    {
+        return $this->themeSnapshot() !== $this->savedThemeSnapshot;
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Component registry actions
     // ─────────────────────────────────────────────────────────────────────────
@@ -481,6 +587,244 @@ class UiStudio extends Page
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Marketplace actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Apply a built-in curated theme by its key (e.g. 'ocean', 'aurora').
+     */
+    public function applyBuiltinTheme(string $key): void
+    {
+        $themes = ThemePackManager::builtinThemes();
+
+        if (! isset($themes[$key])) {
+            Notification::make()->title('Unknown theme')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $themes[$key]['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        Notification::make()
+            ->title("Theme \"{$themes[$key]['name']}\" applied")
+            ->body('Click Publish to save the changes.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Validate an uploaded ZIP and store the preview info.
+     * Called when a file is selected in the Install tab.
+     */
+    public function previewZip(): void
+    {
+        $this->validate(['themeZipUpload' => 'required|file|mimes:zip|max:10240']);
+
+        $manager = new ThemePackManager();
+        $result  = $manager->validateZip($this->themeZipUpload->getRealPath());
+
+        if (! $result['ok']) {
+            Notification::make()->title('Invalid theme pack')->body($result['error'])->danger()->send();
+            $this->zipPreview = [];
+
+            return;
+        }
+
+        $this->zipPreview = [
+            'meta'   => $result['meta'],
+            'tokens' => $result['tokens'],
+        ];
+
+        Notification::make()->title('Theme pack validated')->success()->send();
+    }
+
+    /**
+     * Apply the previously validated ZIP theme preview to the branding state.
+     */
+    public function installFromZip(): void
+    {
+        if (empty($this->zipPreview['tokens'])) {
+            Notification::make()->title('Upload and validate a theme pack first.')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $this->zipPreview['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        $this->themeZipUpload = null;
+        $this->zipPreview     = [];
+
+        Notification::make()
+            ->title('Theme installed — click Publish to save.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Stream a ZIP of the current theme as a file download.
+     */
+    public function exportTheme(): mixed
+    {
+        $settings = PlatformSetting::current();
+        $name     = $settings->brandName();
+
+        $tokens = array_filter([
+            'primary_color'   => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color'    => $this->accentColor,
+            'surface_color'   => $this->surfaceColor,
+            'font_heading'    => $this->fontHeading ?: $this->fontFamily,
+            'font_body'       => $this->fontBody ?: $this->fontFamily,
+        ]);
+
+        try {
+            $manager = new ThemePackManager();
+            $tmpPath = $manager->buildExportZip($name, $tokens);
+        } catch (\RuntimeException $e) {
+            Notification::make()->title($e->getMessage())->danger()->send();
+
+            return null;
+        }
+
+        $fileName = Str::slug($name) . '-theme.zip';
+
+        return response()->download($tmpPath, $fileName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend();
+    }
+
+    /**
+     * Store the current theme tokens as a shared link and expose the URL.
+     */
+    public function shareTheme(): void
+    {
+        if (! Schema::hasTable('shared_themes')) {
+            Notification::make()
+                ->title('Run migrations first')
+                ->body('The shared_themes table does not exist yet.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $name = trim($this->shareThemeName) ?: PlatformSetting::current()->brandName();
+
+        $tokens = array_filter([
+            'primary_color'   => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color'    => $this->accentColor,
+            'surface_color'   => $this->surfaceColor,
+            'font_heading'    => $this->fontHeading ?: $this->fontFamily,
+            'font_body'       => $this->fontBody ?: $this->fontFamily,
+        ]);
+
+        $manager = new ThemePackManager();
+        $token   = $manager->createShareToken(
+            $name,
+            auth()->user()?->name,
+            $tokens
+        );
+
+        $this->generatedShareUrl = url('/theme/import/' . $token);
+
+        Notification::make()
+            ->title('Share link generated')
+            ->body('Copy the URL below and send it to anyone.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Fetch and preview a theme from a share URL.
+     */
+    public function previewImport(): void
+    {
+        $url = trim($this->importUrl);
+
+        if ($url === '') {
+            Notification::make()->title('Enter a share URL first.')->warning()->send();
+
+            return;
+        }
+
+        // Extract the token from the URL
+        $token = basename(parse_url($url, PHP_URL_PATH) ?? '');
+
+        if ($token === '') {
+            Notification::make()->title('Invalid share URL.')->danger()->send();
+
+            return;
+        }
+
+        if (! Schema::hasTable('shared_themes')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $manager = new ThemePackManager();
+        $data    = $manager->resolveShareToken($token);
+
+        if (! $data) {
+            Notification::make()->title('Theme not found or link has expired.')->danger()->send();
+            $this->importPreview = [];
+
+            return;
+        }
+
+        $this->importPreview = $data;
+
+        Notification::make()->title('Theme preview loaded.')->success()->send();
+    }
+
+    /**
+     * Apply the previewed import theme to the branding state.
+     */
+    public function installFromUrl(): void
+    {
+        if (empty($this->importPreview['tokens'])) {
+            Notification::make()->title('Preview a theme first.')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $this->importPreview['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        $this->importUrl     = '';
+        $this->importPreview = [];
+
+        Notification::make()
+            ->title('Theme installed — click Publish to save.')
+            ->success()
+            ->send();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Publish
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -492,6 +836,8 @@ class UiStudio extends Page
             'panelName' => 'nullable|string|max:255',
             'primaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'secondaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'accentColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'surfaceColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'fontFamily' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
             'backgroundType' => 'required|in:none,gradient,image',
             'backgroundValue' => 'nullable|string|max:500',
@@ -546,9 +892,11 @@ class UiStudio extends Page
                 'dashboard_layout' => $this->canvasWidgets,
             ])->save();
         } else {
-            $settings->update([
+            app(ThemeTokenManager::class)->savePlatformThemeTokens($settings, [
                 'primary_color' => $validated['primaryColor'],
                 'secondary_color' => $validated['secondaryColor'],
+                'accent_color' => $validated['accentColor'],
+                'surface_color' => $validated['surfaceColor'],
                 'font_heading' => $validated['fontFamily'] ?: 'Figtree',
                 'font_body' => $validated['fontFamily'] ?: 'Figtree',
             ]);
@@ -558,7 +906,6 @@ class UiStudio extends Page
         $settings->update([
             'accent_color' => $this->accentColor,
             'surface_color' => $this->surfaceColor,
-            'custom_css' => $this->customCss,
         ]);
         cache()->forget('platform_settings');
 
@@ -587,6 +934,8 @@ class UiStudio extends Page
             ->body('Branding, dashboard layout, and menu changes have been saved.')
             ->success()
             ->send();
+
+        $this->savedThemeSnapshot = $this->themeSnapshot();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -773,5 +1122,35 @@ class UiStudio extends Page
     private function getPanelOrNull(): ?string
     {
         return $this->componentPanel !== '' ? $this->componentPanel : null;
+    }
+
+    private function resolveCurrentPanelId(): string
+    {
+        $currentPath = trim((string) request()->segment(1), '/');
+        $panels = config('titan_panels.panels', []);
+
+        foreach ($panels as $id => $panel) {
+            if (($panel['path'] ?? null) === $currentPath) {
+                return (string) $id;
+            }
+        }
+
+        return array_key_first($panels) ?? 'titanpro';
+    }
+
+    /** @return array<string, string|null> */
+    private function themeSnapshot(): array
+    {
+        return [
+            'panelName' => $this->panelName,
+            'primaryColor' => $this->primaryColor,
+            'secondaryColor' => $this->secondaryColor,
+            'accentColor' => $this->accentColor,
+            'surfaceColor' => $this->surfaceColor,
+            'fontFamily' => $this->fontFamily,
+            'backgroundType' => $this->backgroundType,
+            'backgroundValue' => $this->backgroundValue,
+            'customCss' => $this->customCss,
+        ];
     }
 }

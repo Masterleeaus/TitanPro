@@ -1,7 +1,7 @@
 # TitanChatbot Health Report
 
 - Healthy: yes
-- Namespace: `Modules\TitanChatbot\`
+- Namespace: `Modules\TitanEchoAssist\`
 - Provider discovery: clean
 - Filament discovery: clean
 - Manifest discovery: clean

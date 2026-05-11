@@ -77,6 +77,7 @@ class GroundZeroPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 CheckSubscription::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Handlers;
+namespace Modules\TitanEchoAssist\Automation\Handlers;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Models\Conversation;
+use Modules\TitanEchoAssist\Models\Conversation;
 
 class EscalateToAgentHandler
 {

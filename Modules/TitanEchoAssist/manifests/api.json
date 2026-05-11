@@ -8,8 +8,8 @@
     "api.chatbots.train"
   ],
   "controllers": [
-    "Modules\\TitanChatbot\\Http\\Controllers\\TitanChatbotController",
-    "Modules\\TitanChatbot\\Http\\Controllers\\Api\\ConversationController",
-    "Modules\\TitanChatbot\\Http\\Controllers\\Api\\ModuleAgentController"
+    "Modules\\TitanEchoAssist\\Http\\Controllers\\TitanChatbotController",
+    "Modules\\TitanEchoAssist\\Http\\Controllers\\Api\\ConversationController",
+    "Modules\\TitanEchoAssist\\Http\\Controllers\\Api\\ModuleAgentController"
   ]
 }

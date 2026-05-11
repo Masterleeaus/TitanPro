@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

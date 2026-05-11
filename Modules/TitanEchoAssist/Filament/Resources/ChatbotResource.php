@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Resources;
+namespace Modules\TitanEchoAssist\Filament\Resources;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 if (class_exists(\Filament\Resources\Resource::class)) {
     class ChatbotResource extends \Filament\Resources\Resource
@@ -53,9 +53,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
         public static function getPages(): array
         {
             return [
-                'index'  => \Modules\TitanChatbot\Filament\Resources\ChatbotResource\Pages\ListChatbots::route('/'),
-                'create' => \Modules\TitanChatbot\Filament\Resources\ChatbotResource\Pages\CreateChatbot::route('/create'),
-                'edit'   => \Modules\TitanChatbot\Filament\Resources\ChatbotResource\Pages\EditChatbot::route('/{record}/edit'),
+                'index'  => \Modules\TitanEchoAssist\Filament\Resources\ChatbotResource\Pages\ListChatbots::route('/'),
+                'create' => \Modules\TitanEchoAssist\Filament\Resources\ChatbotResource\Pages\CreateChatbot::route('/create'),
+                'edit'   => \Modules\TitanEchoAssist\Filament\Resources\ChatbotResource\Pages\EditChatbot::route('/{record}/edit'),
             ];
         }
     }
