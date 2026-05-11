@@ -2,12 +2,29 @@
 
 namespace Modules\BookingModule\Filament;
 
-class BookingModulePlugin
+use Filament\Contracts\Plugin;
+use Filament\Panel;
+
+class BookingModulePlugin implements Plugin
 {
+    public static function make(): static
+    {
+        return new static();
+    }
+
     public function getId(): string
     {
         return 'bookingmodule';
     }
+
+    public function register(Panel $panel): void
+    {
+        $panel->resources($this->resources());
+        $panel->pages($this->pages());
+        $panel->widgets($this->widgets());
+    }
+
+    public function boot(Panel $panel): void {}
 
     public function resources(): array
     {

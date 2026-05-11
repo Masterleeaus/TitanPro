@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\PlatformSetting;
 use App\Support\BrandThemeGenerator;
+use App\Support\ThemeTokenManager;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -46,14 +47,15 @@ class SiteSettings extends Page implements HasSchemas
     public function mount(): void
     {
         $settings = PlatformSetting::current();
+        $tokenState = app(ThemeTokenManager::class)->semanticEditorState($settings);
         $this->form->fill([
             'app_name' => $settings->app_name,
             'site_name' => $settings->site_name ?: $settings->app_name,
             'logo_path' => $settings->logo_path ?: $settings->logo,
             'favicon_path' => $settings->favicon_path ?: $settings->favicon,
-            'primary_color' => $settings->primary_color,
-            'secondary_color' => $settings->secondary_color,
-            'accent_color' => $settings->accent_color,
+            'primary_color' => $tokenState['primary_color'],
+            'secondary_color' => $tokenState['secondary_color'],
+            'accent_color' => $tokenState['accent_color'],
             'support_email' => $settings->support_email,
             'billing_email' => $settings->billing_email,
             'contact_phone' => $settings->contact_phone,
@@ -66,27 +68,26 @@ class SiteSettings extends Page implements HasSchemas
             'cta_url' => $settings->cta_url,
             'enable_registration' => $settings->enable_registration,
             'maintenance_message' => $settings->maintenance_message,
-            'custom_css' => $settings->custom_css,
-            'font_heading' => $settings->font_heading,
-            'font_body' => $settings->font_body,
+            'font_heading' => $tokenState['font_heading'],
+            'font_body' => $tokenState['font_body'],
             'font_source_url' => $settings->font_source_url,
             'font_path' => $settings->font_path,
             'bg_image_path' => $settings->bg_image_path,
-            'surface_color' => $settings->surface_color,
+            'surface_color' => $tokenState['surface_color'],
         ]);
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Branding')->description('Controls the SaaS name, logo, favicon, theme colors, and shared UI branding.')->schema([
+            Section::make('Branding')->description('Controls the SaaS name, logo, favicon, and semantic design tokens that drive inherited component styling.')->schema([
                 Forms\Components\TextInput::make('app_name')->label('Application name')->required()->maxLength(80),
                 Forms\Components\TextInput::make('site_name')->label('Public site name')->maxLength(80),
                 Forms\Components\FileUpload::make('logo_path')->label('Logo')->disk('public')->directory('platform')->image()->imageEditor()->preserveFilenames()->downloadable()->openable(),
                 Forms\Components\FileUpload::make('favicon_path')->label('Favicon')->disk('public')->directory('platform')->image()->preserveFilenames()->downloadable()->openable(),
-                Forms\Components\ColorPicker::make('primary_color')->label('Primary color'),
-                Forms\Components\ColorPicker::make('secondary_color')->label('Secondary color'),
-                Forms\Components\ColorPicker::make('accent_color')->label('Accent color'),
+                Forms\Components\ColorPicker::make('primary_color')->label('Primary token (--color-primary)'),
+                Forms\Components\ColorPicker::make('secondary_color')->label('Secondary token (--color-secondary)'),
+                Forms\Components\ColorPicker::make('accent_color')->label('Accent token (--color-accent)'),
             ])->columns(2),
             Section::make('Brand Engine')
                 ->description('Upload logo/font/wallpaper, then generate a complete design system from your brand assets.')
@@ -113,9 +114,9 @@ class SiteSettings extends Page implements HasSchemas
                         ->preserveFilenames()
                         ->downloadable()
                         ->openable(),
-                    Forms\Components\TextInput::make('font_heading')->label('Heading font')->maxLength(120),
-                    Forms\Components\TextInput::make('font_body')->label('Body font')->maxLength(120),
-                    Forms\Components\ColorPicker::make('surface_color')->label('Surface color'),
+                    Forms\Components\TextInput::make('font_heading')->label('Heading token (--font-heading)')->maxLength(120),
+                    Forms\Components\TextInput::make('font_body')->label('Body token (--font-body)')->maxLength(120),
+                    Forms\Components\ColorPicker::make('surface_color')->label('Surface token (--color-surface)'),
                     Actions::make([
                         Action::make('generateFromBrand')
                             ->label('Generate from brand')
@@ -140,8 +141,10 @@ class SiteSettings extends Page implements HasSchemas
                 Forms\Components\Toggle::make('enable_registration')->label('Enable public registration')->default(true),
                 Forms\Components\Textarea::make('maintenance_message')->label('Maintenance / announcement banner')->rows(2)->maxLength(300),
             ])->columns(2),
-            Section::make('Advanced')->description('Optional CSS injected into the main Inertia app shell. Keep this for small brand tweaks only.')->schema([
-                Forms\Components\Textarea::make('custom_css')->label('Custom CSS')->rows(8)->columnSpanFull(),
+            Section::make('Design token engine')->description('Theme overrides are stored in `titan_theme_tokens` as semantic tokens, and component tokens inherit from them automatically.')->schema([
+                Forms\Components\Placeholder::make('token_exports')
+                    ->hiddenLabel()
+                    ->content('Use `php artisan titan:tokens:export` to export the current token set as CSS, Style Dictionary JSON, and Tailwind config.'),
             ]),
         ])->statePath('data');
     }
@@ -226,7 +229,9 @@ class SiteSettings extends Page implements HasSchemas
         $generator = app(BrandThemeGenerator::class);
         $state['font_source_url'] = $generator->sanitizeGoogleFontsUrl($state['font_source_url'] ?? null);
 
-        PlatformSetting::current()->update($state);
+        $settings = PlatformSetting::current();
+        $settings->update($state);
+        app(ThemeTokenManager::class)->savePlatformThemeTokens($settings->fresh(), $state);
         cache()->forget('platform_settings');
         cache()->forget('platform_settings_custom_css');
 

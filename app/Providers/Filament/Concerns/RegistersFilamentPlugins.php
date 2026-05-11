@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament\Concerns;
 
+use Modules\TitanNexus\UI\Themes\MotionRuntimeTheme;
+
 /**
  * Shared Filament plugin helpers for TitanPro panel providers.
  *
@@ -75,7 +77,9 @@ trait RegistersFilamentPlugins
     {
         return [
             'panels::body.end',
-            fn (): \Illuminate\Contracts\View\View => view('filament.ui-inspector'),
+            fn (): \Illuminate\Contracts\View\View => view('filament.ui-inspector', [
+                'motionRuntimeTheme' => MotionRuntimeTheme::make(),
+            ]),
         ];
     }
 }

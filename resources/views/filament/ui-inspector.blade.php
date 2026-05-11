@@ -25,6 +25,21 @@
     <style>{!! $layoutTokenCss !!}</style>
 @endif
 
+@if (! empty($motionRuntimeTheme['generated_css']))
+    <style id="titan-motion-runtime-theme-css">{!! $motionRuntimeTheme['generated_css'] !!}</style>
+    <script>
+        (function () {
+            const root = document.documentElement;
+            const fallbackPreset = @js($motionRuntimeTheme['default_preset'] ?? 'none');
+            const configuredPreset = getComputedStyle(root).getPropertyValue('--motion-preset').trim() || fallbackPreset;
+
+            if (configuredPreset) {
+                root.dataset.motionPreset = configuredPreset;
+            }
+        })();
+    </script>
+@endif
+
 {{-- Alpine.js inspector controller --}}
 <div
     x-data="titanUiInspector"

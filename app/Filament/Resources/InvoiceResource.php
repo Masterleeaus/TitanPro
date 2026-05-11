@@ -15,7 +15,15 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * InvoiceResource — TitanPro (super-admin) panel.
+ *
+ * Restricted to super_admin only. Finance operators should use the
+ * dedicated ZeroPay panel (/zeropay) where bookkeeper/owner/admin
+ * roles have access via App\Filament\ZeroPay\Resources\InvoiceResource.
+ */
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
@@ -29,6 +37,36 @@ class InvoiceResource extends Resource
     protected static ?string $modelLabel = 'Invoice';
 
     protected static ?int $navigationSort = 10;
+
+    public static function canViewAny(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canCreate(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
 
     public static function form(Schema $schema): Schema
     {

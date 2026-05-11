@@ -72,6 +72,30 @@ test('zeropay panel is accessible to bookkeeper role', function () {
         ->assertOk();
 });
 
+test('titanquotes panel is accessible to bookkeeper role', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $user = User::factory()->create();
+    $user->assignRole('bookkeeper');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/titanquotes')
+        ->assertOk();
+});
+
+test('titanquotes panel is not accessible to dispatcher role', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $user = User::factory()->create();
+    $user->assignRole('dispatcher');
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get('/titanquotes')
+        ->assertForbidden();
+});
+
 test('titannexus panel is restricted from super admin role', function () {
     $this->seed(RolesAndPermissionsSeeder::class);
 
@@ -97,6 +121,7 @@ test('owner can access TitanNexus verticals and training content pages', functio
         ->get('/titannexus/training-content')
         ->assertOk();
 });
+
 test('titansolo panel is accessible to owner on starter plan', function () {
     $this->seed(RolesAndPermissionsSeeder::class);
 
@@ -148,6 +173,7 @@ test('titansolo panel is forbidden for non-owner roles', function () {
         ->get('/titansolo')
         ->assertForbidden();
 });
+
 test('legacy panel aliases permanently redirect to canonical routes', function (string $alias, string $canonical) {
     $response = $this->get($alias);
 
