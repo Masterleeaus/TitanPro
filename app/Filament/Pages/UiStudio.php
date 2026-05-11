@@ -12,19 +12,19 @@ use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Features\SupportFileUploads\WithFileUploads;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 /**
  * UI Studio — unified visual design surface merging the Dashboard Builder,
  * Widget Editor, Theme Engine, and Menu System into one three-panel interface.
  *
  * Left panel  : component tree / layer list (available widget types + current layout)
- * Centre panel: live admin preview canvas (sortable widget cards)
+ * Centre panel: live admin preview canvas (sortable widget cards + iframe thumbnails)
  * Right panel : context-sensitive property editor (theme, spacing, menus)
  */
 class UiStudio extends Page
@@ -79,6 +79,10 @@ class UiStudio extends Page
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
     public string $activeTab = 'branding'; // branding | layout | menu | components
+
+    public string $previewPanel = '';
+
+    public int $previewNonce = 0;
 
     // ── Available widget catalogue ────────────────────────────────────────────
 
@@ -138,6 +142,12 @@ class UiStudio extends Page
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
         $this->activeTab       = 'branding';
+
+        $panelOptions = $this->previewPanelOptions();
+        $currentPanel = request()->segment(1);
+        $this->previewPanel = isset($panelOptions[$currentPanel])
+            ? $currentPanel
+            : (array_key_first($panelOptions) ?? 'titanpro');
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -229,6 +239,11 @@ class UiStudio extends Page
         }
 
         $this->canvasWidgets = $reordered;
+    }
+
+    public function refreshPreview(): void
+    {
+        $this->previewNonce++;
     }
 
     // ── Menu editing ──────────────────────────────────────────────────────────
@@ -600,6 +615,56 @@ class UiStudio extends Page
     }
 
     /** @return array<string, string> */
+    public function previewPanelOptions(): array
+    {
+        $labels = [];
+
+        foreach ($this->previewPanels() as $panelId => $panel) {
+            $labels[$panelId] = $panel['label'];
+        }
+
+        return $labels;
+    }
+
+    public function previewPanelUrl(?string $widgetId = null): string
+    {
+        $panels = $this->previewPanels();
+        $panelId = isset($panels[$this->previewPanel])
+            ? $this->previewPanel
+            : (array_key_first($panels) ?? 'titanpro');
+        $path = $panels[$panelId]['path'] ?? 'titanpro';
+        $query = [
+            'ui_studio_preview' => '1',
+            'preview_nonce' => $this->previewNonce,
+        ];
+
+        $organizationId = auth()->user()?->organization_id;
+        if ($organizationId !== null) {
+            $query['organization_id'] = $organizationId;
+        }
+
+        if ($widgetId !== null && $widgetId !== '') {
+            $query['widget_id'] = $widgetId;
+        }
+
+        return url('/'.$path).'?'.http_build_query($query);
+    }
+
+    /** @return array<string, string> */
+    public function previewCssVariables(): array
+    {
+        return [
+            '--ui-primary-color' => $this->safeColor($this->primaryColor, '#2563eb'),
+            '--ui-secondary-color' => $this->safeColor($this->secondaryColor, '#0f172a'),
+            '--ui-accent-color' => $this->safeColor($this->accentColor, '#14b8a6'),
+            '--ui-surface-color' => $this->safeColor($this->surfaceColor, '#f8fafc'),
+            '--ui-font-family' => $this->safeFont($this->fontFamily, 'Figtree'),
+            '--ui-font-heading' => $this->safeFont($this->fontHeading, 'Figtree'),
+            '--ui-font-body' => $this->safeFont($this->fontBody, 'Figtree'),
+        ];
+    }
+
+    /** @return array<string, string> */
     private function buildWidgetCatalogue(): array
     {
         return [
@@ -744,5 +809,42 @@ class UiStudio extends Page
     private function getPanelOrNull(): ?string
     {
         return $this->componentPanel !== '' ? $this->componentPanel : null;
+    }
+
+    /**
+     * @return array<string, array{label: string, path: string}>
+     */
+    private function previewPanels(): array
+    {
+        $panels = config('titan_panels.panels', []);
+        $user = auth()->user();
+        $allowed = [];
+
+        foreach ($panels as $panelId => $panel) {
+            if (! is_array($panel)) {
+                continue;
+            }
+
+            $path = trim((string) ($panel['path'] ?? $panelId), '/');
+            if ($path === '') {
+                continue;
+            }
+
+            $roles = $panel['roles'] ?? ['super_admin', 'admin', 'owner'];
+            if ($user && ! $user->hasRole($roles)) {
+                continue;
+            }
+
+            $allowed[$panelId] = [
+                'label' => (string) ($panel['label'] ?? Str::headline((string) $panelId)),
+                'path' => $path,
+            ];
+        }
+
+        if ($allowed === []) {
+            $allowed['titanpro'] = ['label' => 'TitanPro', 'path' => 'titanpro'];
+        }
+
+        return $allowed;
     }
 }

@@ -2,7 +2,7 @@
     {{--
         UI Studio — three-panel visual design surface.
         Left  : component tree / layer list
-        Centre: drag-and-drop canvas preview
+        Centre: drag-and-drop canvas preview with live iframe thumbnails
         Right : context-sensitive property editor
     --}}
 
@@ -124,9 +124,27 @@
 
         {{-- ── CENTRE PANEL: Canvas ─────────────────────────────────── --}}
         <main class="studio-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
-            <div class="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
+            <div class="flex items-center justify-between gap-2 px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
                 <span class="font-semibold">Canvas Preview</span>
-                <span class="text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
+                <div class="flex items-center gap-2">
+                    <select
+                        wire:model.live="previewPanel"
+                        class="text-[11px] rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-gray-600 dark:text-gray-300"
+                    >
+                        @foreach ($this->previewPanelOptions() as $panelId => $panelLabel)
+                            <option value="{{ $panelId }}">{{ $panelLabel }}</option>
+                        @endforeach
+                    </select>
+                    <button
+                        type="button"
+                        wire:click="refreshPreview"
+                        class="inline-flex items-center gap-1 rounded border border-gray-200 dark:border-white/10 px-2 py-1 text-[11px] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                    >
+                        <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                        Reload previews
+                    </button>
+                    <span class="hidden lg:inline text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
+                </div>
             </div>
 
             {{-- Widget canvas --}}
@@ -177,15 +195,28 @@
                                     </div>
                                 </div>
 
-                                {{-- Widget preview placeholder --}}
-                                <div class="mx-4 mb-4 h-16 rounded-lg bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 flex items-center justify-center">
-                                    <span class="text-xs text-gray-400">{{ $widget['label'] }} preview</span>
+                                {{-- Widget preview iframe --}}
+                                <div class="mx-4 mb-4 h-28 rounded-lg bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 overflow-hidden">
+                                    <iframe
+                                        class="ui-widget-preview-iframe h-full w-full border-0"
+                                        data-widget-id="{{ $widget['id'] }}"
+                                        src="{{ $this->previewPanelUrl($widget['id']) }}"
+                                        title="{{ $widget['label'] }} live preview"
+                                        sandbox="allow-same-origin allow-scripts"
+                                        referrerpolicy="same-origin"
+                                        loading="lazy"
+                                    ></iframe>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 @endif
             </div>
+            <div
+                id="ui-studio-preview-payload"
+                data-preview-css='@json($this->previewCssVariables())'
+                hidden
+            ></div>
         </main>
 
         {{-- ── RIGHT PANEL: Property editor ─────────────────────────── --}}
@@ -647,5 +678,107 @@
                 },
             };
         }
+    </script>
+    <script>
+        (() => {
+            const payload = document.getElementById('ui-studio-preview-payload');
+            if (!payload) {
+                return;
+            }
+
+            const frameSelector = '.ui-widget-preview-iframe';
+
+            const themePayload = () => {
+                try {
+                    return JSON.parse(payload.dataset.previewCss ?? '{}');
+                } catch (error) {
+                    return {};
+                }
+            };
+
+            const installBridge = (frame) => {
+                try {
+                    const doc = frame.contentDocument;
+                    if (!doc || !doc.head || !doc.documentElement || doc.getElementById('titan-preview-bridge')) {
+                        return;
+                    }
+
+                    const bridge = doc.createElement('script');
+                    bridge.id = 'titan-preview-bridge';
+                    bridge.textContent = `
+                        (function () {
+                            if (window.__titanPreviewBridgeInstalled) return;
+                            window.__titanPreviewBridgeInstalled = true;
+                            window.addEventListener('message', function (event) {
+                                if (event.origin !== window.location.origin) return;
+                                var data = event.data || {};
+                                if (data.type !== 'titan-ui-theme-vars' || !data.payload) return;
+                                var root = document.documentElement;
+                                Object.keys(data.payload).forEach(function (key) {
+                                    root.style.setProperty(key, String(data.payload[key]));
+                                });
+                            });
+                        })();
+                    `;
+                    doc.head.appendChild(bridge);
+                } catch (error) {
+                    // Ignore inaccessible frame documents.
+                }
+            };
+
+            const applyThemeToFrame = (frame) => {
+                const vars = themePayload();
+                installBridge(frame);
+
+                frame.contentWindow?.postMessage(
+                    {
+                        type: 'titan-ui-theme-vars',
+                        payload: vars,
+                    },
+                    window.location.origin,
+                );
+
+                try {
+                    const doc = frame.contentDocument;
+                    if (!doc?.documentElement) {
+                        return;
+                    }
+
+                    Object.keys(vars).forEach((key) => {
+                        doc.documentElement.style.setProperty(key, String(vars[key]));
+                    });
+                } catch (error) {
+                    // Ignore inaccessible frame documents.
+                }
+            };
+
+            const applyThemeToFrames = () => {
+                document.querySelectorAll(frameSelector).forEach((frame) => applyThemeToFrame(frame));
+            };
+
+            const bindFrameLoadListeners = () => {
+                document.querySelectorAll(frameSelector).forEach((frame) => {
+                    if (frame.dataset.previewListenerBound === '1') {
+                        return;
+                    }
+
+                    frame.dataset.previewListenerBound = '1';
+                    frame.addEventListener('load', () => applyThemeToFrame(frame));
+                });
+            };
+
+            const observer = new MutationObserver(() => {
+                bindFrameLoadListeners();
+                applyThemeToFrames();
+            });
+
+            observer.observe(payload, {
+                attributes: true,
+                attributeFilter: ['data-preview-css'],
+            });
+
+            bindFrameLoadListeners();
+            applyThemeToFrames();
+        })();
     </script>
 </x-filament-panels::page>
