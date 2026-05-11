@@ -18,6 +18,13 @@ use Illuminate\Support\Facades\Validator;
  */
 class UiInspectorController extends Controller
 {
+    public function __construct()
+    {
+        // Defence-in-depth: enforce the permission at the controller level even
+        // if the route middleware is misconfigured or bypassed.
+        $this->middleware('can:ui-inspector.manage');
+    }
+
     /** Return all overrides for the current user's organisation. */
     public function index(Request $request): JsonResponse
     {

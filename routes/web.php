@@ -199,8 +199,8 @@ Route::get('/health/ready', [HealthController::class, 'readiness'])->name('healt
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
     ->name('stripe.webhook');
 
-// ── Visual UI Inspector API — authenticated; accessible to admins & owners ──
-Route::middleware(['auth', 'role:super_admin|admin|owner'])
+// ── Visual UI Inspector API — authenticated; requires ui-inspector.manage permission ──
+Route::middleware(['auth', 'permission:ui-inspector.manage'])
     ->prefix('titan/ui-inspector')
     ->name('titan.ui-inspector.')
     ->group(function () {
