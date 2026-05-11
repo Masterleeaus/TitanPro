@@ -13,6 +13,18 @@
     Requires: Alpine.js (provided by Filament), csrf meta tag.
 --}}
 
+@php
+    $layoutTokenCss = cache()->remember(
+        'platform_settings_custom_css',
+        300,
+        fn () => \App\Models\PlatformSetting::query()->value('custom_css')
+    );
+@endphp
+
+@if (! empty($layoutTokenCss))
+    <style>{!! $layoutTokenCss !!}</style>
+@endif
+
 {{-- Alpine.js inspector controller --}}
 <div
     x-data="titanUiInspector"
@@ -385,6 +397,18 @@ body.titan-inspector-active #titan-ui-inspector-root * {
 }
 body.titan-inspector-active #titan-inspector-sidebar * {
     cursor: auto !important;
+}
+
+.fi-sidebar {
+    width: var(--sidebar-width, 16rem) !important;
+    max-width: var(--sidebar-width, 16rem) !important;
+}
+
+.fi-main,
+.fi-main-ctn {
+    width: 100%;
+    max-width: var(--content-max-width, 80rem);
+    margin-inline: auto;
 }
 </style>
 <script src="{{ asset('js/titan/ui-inspector.js') }}" defer></script>

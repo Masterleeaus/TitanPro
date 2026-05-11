@@ -532,6 +532,7 @@ class UiStudio extends Page
             'custom_css' => $this->customCss,
         ]);
         cache()->forget('platform_settings');
+        cache()->forget('platform_settings_custom_css');
 
         // Persist dashboard layout fallback row for legacy dashboard consumers.
         if (Schema::hasTable('layouts')) {

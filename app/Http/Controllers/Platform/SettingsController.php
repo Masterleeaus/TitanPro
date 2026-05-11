@@ -71,6 +71,7 @@ class SettingsController extends Controller
         ])->save();
 
         Cache::forget('platform_settings');
+        Cache::forget('platform_settings_custom_css');
 
         return back()->with('success', 'Platform settings updated.');
     }

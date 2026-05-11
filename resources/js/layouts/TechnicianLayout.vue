@@ -61,7 +61,9 @@ const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = u
             <div v-if="previewMode" class="border-b border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                 Preview Mode: technician actions and live location updates are disabled for this account.
             </div>
-            <slot />
+            <div class="mx-auto w-full" :style="{ maxWidth: 'var(--content-max-width, 80rem)' }">
+                <slot />
+            </div>
         </main>
 
         <!-- Bottom navigation — extends into iOS home bar safe area -->

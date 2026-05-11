@@ -34,6 +34,7 @@ function navClass(href: string): string {
         <aside
             class="fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 text-slate-100 flex flex-col transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            :style="{ width: 'var(--sidebar-width, 16rem)' }"
         >
             <div class="px-6 py-4 border-b border-slate-800 tracking-tight">
                 <img v-if="logoUrl" :src="logoUrl" :alt="appName" class="h-9 max-w-[190px] object-contain" />
@@ -102,7 +103,9 @@ function navClass(href: string): string {
 
             <!-- Page body -->
             <main class="flex-1 p-4 sm:p-6">
-                <slot />
+                <div class="mx-auto w-full" :style="{ maxWidth: 'var(--content-max-width, 80rem)' }">
+                    <slot />
+                </div>
             </main>
         </div>
     </div>

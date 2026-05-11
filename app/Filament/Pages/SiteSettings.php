@@ -200,6 +200,7 @@ class SiteSettings extends Page implements HasSchemas
         ]);
         $settings->update(['theme_snapshots' => array_slice($snapshots, 0, self::MAX_THEME_SNAPSHOTS)]);
         cache()->forget('platform_settings');
+        cache()->forget('platform_settings_custom_css');
 
         Notification::make()->title('Theme generated from brand assets')->success()->send();
     }
@@ -227,6 +228,7 @@ class SiteSettings extends Page implements HasSchemas
 
         PlatformSetting::current()->update($state);
         cache()->forget('platform_settings');
+        cache()->forget('platform_settings_custom_css');
 
         Notification::make()->title('Site settings saved')->success()->send();
     }
