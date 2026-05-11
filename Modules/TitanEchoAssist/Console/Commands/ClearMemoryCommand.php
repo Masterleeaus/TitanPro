@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Commands;
+namespace Modules\TitanEchoAssist\Console\Commands;
 
 use Illuminate\Console\Command;
-use Modules\TitanChatbot\AI\Memory\ConversationMemoryStore;
+use Modules\TitanEchoAssist\AI\Memory\ConversationMemoryStore;
 
 class ClearMemoryCommand extends Command
 {
@@ -18,8 +18,8 @@ class ClearMemoryCommand extends Command
             app(ConversationMemoryStore::class)->forget($sessionId);
             $this->info("Memory cleared for session: {$sessionId}");
         } else {
-            if (class_exists(\Modules\TitanChatbot\AI\Memory\Drivers\InMemoryMemoryDriver::class)) {
-                \Modules\TitanChatbot\AI\Memory\Drivers\InMemoryMemoryDriver::flush();
+            if (class_exists(\Modules\TitanEchoAssist\AI\Memory\Drivers\InMemoryMemoryDriver::class)) {
+                \Modules\TitanEchoAssist\AI\Memory\Drivers\InMemoryMemoryDriver::flush();
             }
             $this->info('In-memory conversation store cleared. Cache-backed sessions expire automatically.');
         }

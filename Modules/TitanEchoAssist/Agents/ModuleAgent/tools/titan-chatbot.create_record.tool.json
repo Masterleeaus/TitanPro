@@ -1,7 +1,7 @@
 {
   "name": "titan-chatbot.route_inbound_message",
   "description": "Route an inbound chatbot message through the channel router",
-  "action": "Modules\\TitanChatbot\\Actions\\RouteInboundMessage",
+  "action": "Modules\\TitanEchoAssist\\Actions\\RouteInboundMessage",
   "input_schema": {
     "type": "object",
     "required": [

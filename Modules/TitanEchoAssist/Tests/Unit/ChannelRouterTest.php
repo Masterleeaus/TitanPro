@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\Services\ChannelRouter;
-use Modules\TitanChatbot\Enums\ChannelType;
+use Modules\TitanEchoAssist\Services\ChannelRouter;
+use Modules\TitanEchoAssist\Enums\ChannelType;
 
 class ChannelRouterTest extends TestCase
 {
@@ -105,7 +105,7 @@ class ChannelRouterTest extends TestCase
 
         $this->assertTrue(
             in_array(
-                \Modules\TitanChatbot\Contracts\ChannelDriver::class,
+                \Modules\TitanEchoAssist\Contracts\ChannelDriver::class,
                 class_implements($driverClass) ?: []
             ),
             "{$driverClass} must implement ChannelDriver"
@@ -116,7 +116,7 @@ class ChannelRouterTest extends TestCase
 
     public function test_register_adds_custom_channel(): void
     {
-        $fakeDriver = \Modules\TitanChatbot\Services\WebchatChannel::class;
+        $fakeDriver = \Modules\TitanEchoAssist\Services\WebchatChannel::class;
         $this->router->register('sms', $fakeDriver);
 
         $reflection = new \ReflectionClass($this->router);
@@ -130,7 +130,7 @@ class ChannelRouterTest extends TestCase
 
     public function test_register_normalises_channel_to_lowercase(): void
     {
-        $this->router->register('SMS', \Modules\TitanChatbot\Services\WebchatChannel::class);
+        $this->router->register('SMS', \Modules\TitanEchoAssist\Services\WebchatChannel::class);
 
         $reflection = new \ReflectionClass($this->router);
         $prop       = $reflection->getProperty('channelMap');

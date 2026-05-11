@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
 
 class TelegramChannel implements ChannelDriver
 {
     public function handle(array $payload): string
     {
-        if (class_exists(\Modules\TitanChatbot\Channels\Telegram\System\Services\Telegram\TelegramConversationService::class)) {
+        if (class_exists(\Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram\TelegramConversationService::class)) {
             return $this->handleViaTelegramService($payload);
         }
 
@@ -19,8 +19,8 @@ class TelegramChannel implements ChannelDriver
     private function handleViaTelegramService(array $payload): string
     {
         try {
-            /** @var \Modules\TitanChatbot\Channels\Telegram\System\Services\Telegram\TelegramConversationService $service */
-            $service = app(\Modules\TitanChatbot\Channels\Telegram\System\Services\Telegram\TelegramConversationService::class);
+            /** @var \Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram\TelegramConversationService $service */
+            $service = app(\Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram\TelegramConversationService::class);
 
             $service->setChatbotId((int) ($payload['chatbot_id'] ?? 0));
             $service->setPayload($payload['metadata'] ?? $payload);

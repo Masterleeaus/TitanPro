@@ -1,7 +1,7 @@
 <?php
-namespace Modules\TitanChatbot\AI\Memory\Drivers;
+namespace Modules\TitanEchoAssist\AI\Memory\Drivers;
 
-use Modules\TitanChatbot\AI\Memory\MemoryDriverInterface;
+use Modules\TitanEchoAssist\AI\Memory\MemoryDriverInterface;
 
 class InMemoryMemoryDriver implements MemoryDriverInterface
 {

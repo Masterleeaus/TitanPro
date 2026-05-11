@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Tenancy\Policies;
+namespace Modules\TitanEchoAssist\Tenancy\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class TenantChatbotPolicy
 {

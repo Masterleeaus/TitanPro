@@ -1,7 +1,7 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\Billing\Usage\UsageRecord;
+use Modules\TitanEchoAssist\Billing\Usage\UsageRecord;
 
 class UsageRecordTest extends TestCase
 {

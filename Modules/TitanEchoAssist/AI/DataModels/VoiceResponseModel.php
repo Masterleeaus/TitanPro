@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\DataModels;
+namespace Modules\TitanEchoAssist\AI\DataModels;
 
 class VoiceResponseModel extends BaseDataModel
 {

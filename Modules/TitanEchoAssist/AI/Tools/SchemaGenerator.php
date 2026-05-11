@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Tools;
+namespace Modules\TitanEchoAssist\AI\Tools;
 
-use Modules\TitanChatbot\AI\Attributes\Tool;
-use Modules\TitanChatbot\AI\Attributes\Desc;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Desc;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;

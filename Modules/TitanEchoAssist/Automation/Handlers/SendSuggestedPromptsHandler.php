@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Handlers;
+namespace Modules\TitanEchoAssist\Automation\Handlers;
 
 use Illuminate\Support\Facades\Log;
 

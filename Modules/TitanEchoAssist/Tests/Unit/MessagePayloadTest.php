@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
 
 class MessagePayloadTest extends TestCase
 {

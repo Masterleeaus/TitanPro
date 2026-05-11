@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Providers;
+namespace Modules\TitanEchoAssist\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Modules\TitanChatbot\Models\Chatbot;
-use Modules\TitanChatbot\Policies\ChatbotPolicy;
+use Modules\TitanEchoAssist\Models\Chatbot;
+use Modules\TitanEchoAssist\Policies\ChatbotPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
