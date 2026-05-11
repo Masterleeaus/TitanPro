@@ -62,7 +62,8 @@
         "aos": "^2.3.4",
         "owl.carousel": "^2.3.4",
         "slick-slider": "^1.8.2",
-        "gsap": "^3.13.0"
+        "gsap": "^3.13.0",
+        "sortablejs": "^1.15.7"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.9.5",

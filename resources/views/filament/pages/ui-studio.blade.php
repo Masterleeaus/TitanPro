@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    @vite('resources/js/filament/ui-studio.js')
+
     {{--
         UI Studio — three-panel visual design surface.
         Left  : component tree / layer list
@@ -618,28 +620,46 @@
         function studioCanvas(wire) {
             return {
                 sortable: null,
+                sortableReadyHandler: null,
 
                 init() {
                     const el = document.getElementById('studio-canvas');
                     if (!el) return;
 
-                    // If SortableJS is available (loaded via a CDN or package), initialise it.
-                    if (typeof Sortable !== 'undefined') {
-                        this.sortable = Sortable.create(el, {
-                            animation: 150,
-                            handle: '.drag-handle',
-                            ghostClass: 'sortable-ghost',
-                            chosenClass: 'sortable-chosen',
-                            onEnd: (evt) => {
-                                const ids = Array.from(el.querySelectorAll('[data-id]'))
-                                    .map(el => el.dataset.id);
-                                wire.reorderWidgets(ids);
-                            },
-                        });
+                    this.sortableReadyHandler = () => this.initialiseSortable(el, wire);
+                    this.initialiseSortable(el, wire);
+
+                    if (! this.sortable) {
+                        window.addEventListener('titan-ui-studio:sortable-ready', this.sortableReadyHandler, { once: true });
                     }
                 },
 
+                initialiseSortable(el, wire) {
+                    const SortableLibrary = window.Sortable ?? globalThis.Sortable;
+
+                    if (! SortableLibrary || this.sortable) {
+                        return;
+                    }
+
+                    this.sortable = new SortableLibrary(el, {
+                        animation: 150,
+                        handle: '.drag-handle',
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        onEnd: () => {
+                            const ids = Array.from(el.querySelectorAll('[data-id]'))
+                                .map(el => el.dataset.id);
+                            wire.reorderWidgets(ids);
+                        },
+                    });
+                },
+
                 destroy() {
+                    if (this.sortableReadyHandler) {
+                        window.removeEventListener('titan-ui-studio:sortable-ready', this.sortableReadyHandler);
+                        this.sortableReadyHandler = null;
+                    }
+
                     if (this.sortable) {
                         this.sortable.destroy();
                         this.sortable = null;
