@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 const CreateLeadScoring = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateLeadScoring.url(options),
@@ -11,13 +11,13 @@ const CreateLeadScoring = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 CreateLeadScoring.definition = {
     methods: ["get","head"],
-    url: '/titanpro/lead-scorings/create',
+    url: '/admin/lead-scorings/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 CreateLeadScoring.url = (options?: RouteQueryOptions) => {
     return CreateLeadScoring.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateLeadScoring.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 CreateLeadScoring.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateLeadScoring.url(options),
@@ -36,7 +36,7 @@ CreateLeadScoring.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 CreateLeadScoring.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateLeadScoring.url(options),
@@ -46,7 +46,7 @@ CreateLeadScoring.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 const CreateLeadScoringForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateLeadScoring.url(options),
@@ -56,7 +56,7 @@ const CreateLeadScoringForm = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 CreateLeadScoringForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateLeadScoring.url(options),
@@ -66,7 +66,7 @@ CreateLeadScoringForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\CreateLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/CreateLeadScoring.php:7
-* @route '/titanpro/lead-scorings/create'
+* @route '/admin/lead-scorings/create'
 */
 CreateLeadScoringForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateLeadScoring.url({

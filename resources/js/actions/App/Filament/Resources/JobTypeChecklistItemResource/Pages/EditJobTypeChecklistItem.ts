@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 const EditJobTypeChecklistItem = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJobTypeChecklistItem.url(args, options),
@@ -11,13 +11,13 @@ const EditJobTypeChecklistItem = (args: { record: string | number } | [record: s
 
 EditJobTypeChecklistItem.definition = {
     methods: ["get","head"],
-    url: '/titanstudio/job-type-checklist-items/{record}/edit',
+    url: '/admin/job-type-checklist-items/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 EditJobTypeChecklistItem.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditJobTypeChecklistItem.url = (args: { record: string | number } | [record: str
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 EditJobTypeChecklistItem.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJobTypeChecklistItem.url(args, options),
@@ -54,7 +54,7 @@ EditJobTypeChecklistItem.get = (args: { record: string | number } | [record: str
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 EditJobTypeChecklistItem.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditJobTypeChecklistItem.url(args, options),
@@ -64,7 +64,7 @@ EditJobTypeChecklistItem.head = (args: { record: string | number } | [record: st
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 const EditJobTypeChecklistItemForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobTypeChecklistItem.url(args, options),
@@ -74,7 +74,7 @@ const EditJobTypeChecklistItemForm = (args: { record: string | number } | [recor
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 EditJobTypeChecklistItemForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobTypeChecklistItem.url(args, options),
@@ -84,7 +84,7 @@ EditJobTypeChecklistItemForm.get = (args: { record: string | number } | [record:
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\EditJobTypeChecklistItem::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/EditJobTypeChecklistItem.php:7
-* @route '/titanstudio/job-type-checklist-items/{record}/edit'
+* @route '/admin/job-type-checklist-items/{record}/edit'
 */
 EditJobTypeChecklistItemForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobTypeChecklistItem.url(args, {

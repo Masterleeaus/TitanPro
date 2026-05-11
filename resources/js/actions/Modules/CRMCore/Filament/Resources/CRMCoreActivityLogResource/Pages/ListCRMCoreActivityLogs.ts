@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 const ListCRMCoreActivityLogs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCRMCoreActivityLogs.url(options),
@@ -11,13 +11,13 @@ const ListCRMCoreActivityLogs = (options?: RouteQueryOptions): RouteDefinition<'
 
 ListCRMCoreActivityLogs.definition = {
     methods: ["get","head"],
-    url: '/titanpro/c-r-m-core-activity-logs',
+    url: '/admin/c-r-m-core-activity-logs',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 ListCRMCoreActivityLogs.url = (options?: RouteQueryOptions) => {
     return ListCRMCoreActivityLogs.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListCRMCoreActivityLogs.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 ListCRMCoreActivityLogs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCRMCoreActivityLogs.url(options),
@@ -36,7 +36,7 @@ ListCRMCoreActivityLogs.get = (options?: RouteQueryOptions): RouteDefinition<'ge
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 ListCRMCoreActivityLogs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListCRMCoreActivityLogs.url(options),
@@ -46,7 +46,7 @@ ListCRMCoreActivityLogs.head = (options?: RouteQueryOptions): RouteDefinition<'h
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 const ListCRMCoreActivityLogsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCRMCoreActivityLogs.url(options),
@@ -56,7 +56,7 @@ const ListCRMCoreActivityLogsForm = (options?: RouteQueryOptions): RouteFormDefi
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 ListCRMCoreActivityLogsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCRMCoreActivityLogs.url(options),
@@ -66,7 +66,7 @@ ListCRMCoreActivityLogsForm.get = (options?: RouteQueryOptions): RouteFormDefini
 /**
 * @see \Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource\Pages\ListCRMCoreActivityLogs::__invoke
 * @see Modules/CRMCore/Filament/Resources/CRMCoreActivityLogResource/Pages/ListCRMCoreActivityLogs.php:7
-* @route '/titanpro/c-r-m-core-activity-logs'
+* @route '/admin/c-r-m-core-activity-logs'
 */
 ListCRMCoreActivityLogsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCRMCoreActivityLogs.url({
