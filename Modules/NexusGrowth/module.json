@@ -1,0 +1,18 @@
+{
+  "name": "NexusGrowth",
+  "description": "Growth analytics engine for the TitanNexus panel. Provides pipeline funnel visualisation, conversion rate analytics, customer lifetime value modelling, churn prediction dashboard, A/B test result views, expansion opportunity scoring, and ROI reporting — the analytics layer that sits above the TitanNexus domain module.",
+  "active": 1,
+  "filament_panel": "titannexus",
+  "providers": [
+    "Modules\\\\NexusGrowth\\\\Providers\\\\NexusGrowthServiceProvider"
+  ],
+  "keywords": [
+    "growth",
+    "analytics",
+    "pipeline",
+    "clv",
+    "churn",
+    "funnel",
+    "roi"
+  ]
+}

@@ -1,13 +1,14 @@
 {
-    "name": "Biometric",
-    "active": 1,
-    "alias": "biometric",
-    "description": "",
-    "keywords": [],
-    "priority": 0,
-    "providers": [
-        "Modules\\Biometric\\Providers\\BiometricServiceProvider",
-        "Modules\\Biometric\\Providers\\EventServiceProvider"
-    ],
-    "files": []
+  "name": "Biometric",
+  "alias": "biometric",
+  "description": "",
+  "keywords": [],
+  "priority": 0,
+  "providers": [
+    "Modules\\Biometric\\Providers\\BiometricServiceProvider",
+    "Modules\\Biometric\\Providers\\EventServiceProvider"
+  ],
+  "files": [],
+  "filament_panel": "titango",
+  "active": 1
 }
