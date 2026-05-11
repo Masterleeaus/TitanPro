@@ -18,15 +18,33 @@
   - add item persistence + ordered nav retrieval
   - delete item removal from nav query
   - slug column availability for migration compatibility
+- Updated `config/filament-shield.php` to the current Filament Shield v4 config schema so Laravel package discovery no longer crashes on `auth_provider_model` during PHP 8.4 bootstrap.
 
 ## Tests Added or Updated
 - Added `tests/Feature/MenuStudioPersistenceTest.php` with 3 feature tests.
 - Attempted baseline validation in this environment:
-  - `composer run test` failed before execution because `vendor/autoload.php` is missing.
-  - `npm run lint` failed because `eslint` is not installed (dependencies not installed).
+  - `npm install` succeeded.
+  - `npm run lint` is still red at baseline with thousands of pre-existing ESLint errors unrelated to Menu Studio.
+  - A PHP 8.4 containerized Composer install now resolves dependencies and populates `vendor/`, but Laravel bootstrap remains blocked by additional pre-existing app issues after the Shield config fix.
+  - GitHub Actions `Production Readiness Gate` on `main` (`run_id=25670690049`) fails on the same Composer/package discovery bootstrap path, confirming the baseline is currently red upstream as well.
+
+## Follow-up Verification Attempt (2026-05-11)
+- Files changed in this follow-up:
+  - `config/filament-shield.php`
+  - `issue-docs/issue-155.md`
+- Fixes applied in this follow-up:
+  - Migrated the published Shield config from the older nested `auth_provider_model` format to the current schema expected by the installed package.
+  - Restored Shield config sections (`panel_user`, `permissions`, `policies`, `resources`, `pages`, `widgets`, `custom_permissions`, `register_role_policy`) required by the current package version.
+- Verification findings:
+  - The Menu Studio slug migration is still present in code:
+    - `database/migrations/2026_04_28_053533_create_menus_table.php` defines the nullable `slug` column.
+    - `database/migrations/2026_04_28_064358_make_menus_slug_unique.php` adds the unique index on `slug`.
+  - After the Shield config update, package discovery proceeds past the prior `ShieldConfig` object-to-string crash but now stops on a separate pre-existing Filament v4 compatibility issue in `app/Filament/ZeroPay/Pages/StripeSettings.php` (`$navigationGroup` type mismatch).
+  - Because the app still cannot fully bootstrap under PHP 8.4, end-to-end Menu Studio CRUD verification in the admin panel could not be completed in this session.
 
 ## Next Steps
-- In CI or a PHP 8.4 + installed dependencies environment, run:
+- Resolve the remaining PHP 8.4 / Filament bootstrap blocker in `app/Filament/ZeroPay/Pages/StripeSettings.php`.
+- Once the app boots cleanly, re-run in a PHP 8.4 environment with installed dependencies:
   - `composer run test`
   - `vendor/bin/pint`
   - `npm run lint`

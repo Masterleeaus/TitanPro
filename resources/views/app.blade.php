@@ -2,11 +2,8 @@
     $brand = $platformBranding ?? [];
     $appTitle = $brand['meta_title'] ?? $brand['app_name'] ?? config('app.name', 'TITAN ZERO');
     $faviconUrl = $brand['favicon_url'] ?? null;
-    $themeColor = $brand['primary_color'] ?? '#0f172a';
+    $themeColor = $brand['theme_color'] ?? '#0f172a';
     $headingFont = $brand['font_heading'] ?? 'Figtree';
-    $bodyFont = $brand['font_body'] ?? 'Figtree';
-    $headingFontCss = str_replace(' ', '\\ ', $headingFont);
-    $bodyFontCss = str_replace(' ', '\\ ', $bodyFont);
     $fontSourceUrl = $brand['font_source_url'] ?? null;
     $fontPath = $brand['font_path'] ?? null;
     $bgImagePath = $brand['bg_image_path'] ?? null;
@@ -49,14 +46,7 @@
         @endif
 
         <style>
-            :root {
-                --color-primary: {{ $brand['primary_color'] ?? '#2563eb' }};
-                --color-secondary: {{ $brand['secondary_color'] ?? '#0f172a' }};
-                --color-surface: {{ $brand['surface_color'] ?? '#f8fafc' }};
-                --font-heading: {{ e($headingFontCss) }};
-                --font-body: {{ e($bodyFontCss) }};
-                --bg-image: {{ $bgImageUrl ? 'url("'.e($bgImageUrl).'")' : 'none' }};
-            }
+{!! $brand['theme_tokens_css'] ?? ':root {}' !!}
             @if ($fontPath)
                 @font-face {
                     font-family: "{{ e($headingFont) }}";
@@ -65,8 +55,8 @@
                 }
             @endif
             body {
-                font-family: var(--font-body), sans-serif;
-                background-color: var(--color-surface);
+                font-family: var(--app-body-font), sans-serif;
+                background-color: var(--app-bg);
                 @if ($bgImageUrl)
                     background-image: var(--bg-image);
                     background-size: cover;
@@ -74,7 +64,7 @@
                 @endif
             }
             h1, h2, h3, h4, h5, h6 {
-                font-family: var(--font-heading), sans-serif;
+                font-family: var(--app-heading-font), sans-serif;
             }
         </style>
         @if (! empty($brand['custom_css']))
