@@ -370,6 +370,82 @@
                                         <p class="text-xs font-mono text-gray-500 bg-gray-50 dark:bg-white/5 rounded px-2 py-1.5">{{ $selectedWidget['type'] }}</p>
                                     </div>
 
+                                    {{-- ── Per-widget property fields ─────────────────── --}}
+                                    @php($widgetSchema = \App\Filament\Pages\UiStudio\WidgetPropertyRegistry::schema($selectedWidget['type']))
+                                    @if (count($widgetSchema) > 0)
+                                        <div class="border-t border-gray-200 dark:border-white/10 pt-4 space-y-3">
+                                            <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Properties</p>
+
+                                            @foreach ($widgetSchema as $field)
+                                                <div>
+                                                    <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">
+                                                        {{ $field['label'] }}
+                                                    </label>
+
+                                                    @if ($field['type'] === 'textarea')
+                                                        <textarea
+                                                            rows="{{ $field['rows'] ?? 3 }}"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300 resize-y"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        >{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}</textarea>
+                                                        @if (! empty($field['helper']))
+                                                            <p class="mt-1 text-[10px] text-gray-400">{{ $field['helper'] }}</p>
+                                                        @endif
+
+                                                    @elseif ($field['type'] === 'select')
+                                                        <select
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                        >
+                                                            @foreach ($field['options'] as $optVal => $optLabel)
+                                                                <option
+                                                                    value="{{ $optVal }}"
+                                                                    @selected(($widgetPropertyValues[$field['key']] ?? $field['default']) == $optVal)
+                                                                >{{ $optLabel }}</option>
+                                                            @endforeach
+                                                        </select>
+
+                                                    @elseif ($field['type'] === 'toggle')
+                                                        <label class="flex items-center gap-2 cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                                wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.checked)"
+                                                                @checked((bool)($widgetPropertyValues[$field['key']] ?? $field['default']))
+                                                                class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                                            />
+                                                            <span class="text-xs text-gray-500 dark:text-gray-400">Enabled</span>
+                                                        </label>
+
+                                                    @elseif ($field['type'] === 'number')
+                                                        <input
+                                                            type="number"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            value="{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        />
+
+                                                    @else
+                                                        {{-- text (default) --}}
+                                                        <input
+                                                            type="text"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            value="{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        />
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
                                     <button
                                         type="button"
                                         wire:click="removeWidget('{{ $selectedWidget['id'] }}')"
