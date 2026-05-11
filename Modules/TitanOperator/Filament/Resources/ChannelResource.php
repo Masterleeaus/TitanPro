@@ -41,13 +41,6 @@ if (class_exists(\Filament\Resources\Resource::class)) {
             ]);
         }
 
-        public static function mutateFormDataBeforeCreate(array $data): array
-        {
-            $data['user_id'] ??= auth()->id() ?? 0;
-
-            return $data;
-        }
-
         public static function getPages(): array
         {
             return [

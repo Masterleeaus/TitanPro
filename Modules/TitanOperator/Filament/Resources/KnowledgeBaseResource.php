@@ -35,21 +35,6 @@ if (class_exists(\Filament\Resources\Resource::class)) {
             ]);
         }
 
-        public static function mutateFormDataBeforeCreate(array $data): array
-        {
-            $data['user_id'] ??= auth()->id() ?? 0;
-            $data['operators'] = array_values(array_filter((array) ($data['operators'] ?? [])));
-
-            return $data;
-        }
-
-        public static function mutateFormDataBeforeSave(array $data): array
-        {
-            $data['operators'] = array_values(array_filter((array) ($data['operators'] ?? [])));
-
-            return $data;
-        }
-
         public static function getPages(): array
         {
             return [

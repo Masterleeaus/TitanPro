@@ -2,7 +2,6 @@
 
 namespace Modules\TitanOperator\Filament\Resources;
 
-use Illuminate\Support\Str;
 use Modules\TitanOperator\Models\Operator;
 
 if (class_exists(\Filament\Resources\Resource::class)) {
@@ -33,14 +32,6 @@ if (class_exists(\Filament\Resources\Resource::class)) {
                 \Filament\Tables\Columns\IconColumn::make('active')->boolean(),
                 \Filament\Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable(),
             ]);
-        }
-
-        public static function mutateFormDataBeforeCreate(array $data): array
-        {
-            $data['uuid'] ??= (string) Str::uuid();
-            $data['user_id'] ??= auth()->id() ?? 0;
-
-            return $data;
         }
 
         public static function getPages(): array

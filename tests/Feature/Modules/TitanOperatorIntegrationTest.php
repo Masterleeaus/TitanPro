@@ -25,7 +25,7 @@ beforeEach(function () {
             $table->id();
             $table->unsignedBigInteger('operator_id');
             $table->string('session_id');
-            $table->unsignedBigInteger('chatbot_channel_id')->nullable();
+            $table->unsignedBigInteger('operator_channel_id')->nullable();
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
         });
@@ -87,7 +87,7 @@ test('webhook dispatch route creates operator conversation', function () {
     $this->assertDatabaseHas('tz_portal_operator_conversations', [
         'operator_id' => 33,
         'session_id' => 'abc-123',
-        'chatbot_channel_id' => 8,
+        'operator_channel_id' => 8,
     ]);
 });
 
@@ -123,6 +123,6 @@ test('echoassist conversations are associated to operator by channel', function 
     $this->assertDatabaseHas('tz_portal_operator_conversations', [
         'operator_id' => 45,
         'session_id' => 'sess-999',
-        'chatbot_channel_id' => 9,
+        'operator_channel_id' => 9,
     ]);
 });

@@ -12,7 +12,7 @@ class Conversation extends Model
     protected $fillable = [
         'operator_id',
         'session_id',
-        'chatbot_channel_id',
+        'operator_channel_id',
         'chatbot_customer_id',
         'last_activity_at',
     ];

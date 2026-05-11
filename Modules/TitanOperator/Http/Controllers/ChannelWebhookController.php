@@ -17,7 +17,7 @@ class ChannelWebhookController extends Controller
             'operator_id' => $operatorId,
             'session_id' => $sessionId,
         ], [
-            'chatbot_channel_id' => $channelId,
+            'operator_channel_id' => $channelId,
             'last_activity_at' => now(),
         ]);
 

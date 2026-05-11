@@ -21,8 +21,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('tz_portal_operator_customers') || ! Schema::hasColumn('tz_portal_operator_customers', 'enabled_sound')) {
+            return;
+        }
+
         Schema::table('tz_portal_operator_customers', function (Blueprint $table) {
-            $table->boolean('enabled_sound');
+            $table->dropColumn('enabled_sound');
         });
     }
 };

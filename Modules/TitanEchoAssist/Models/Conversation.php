@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Modules\TitanOperator\Models\Channel as OperatorChannel;
+use Modules\TitanOperator\Models\Conversation as OperatorConversation;
 
 class Conversation extends Model
 {
@@ -55,24 +57,45 @@ class Conversation extends Model
                 return;
             }
 
-            $operatorId = DB::table('tz_portal_operator_channels')
-                ->where('id', $conversation->chatbot_channel_id)
-                ->value('operator_id');
+            $channel = OperatorChannel::query()
+                ->select(['operator_id', 'user_id'])
+                ->find($conversation->chatbot_channel_id);
 
-            if (! is_numeric($operatorId)) {
+            $operatorId = filter_var($channel?->operator_id, FILTER_VALIDATE_INT);
+
+            if ($channel === null || $operatorId === false) {
                 return;
             }
 
-            DB::table('tz_portal_operator_conversations')->updateOrInsert(
+            if (
+                $conversation->company_id !== null
+                && Schema::hasTable('users')
+                && filter_var($channel->user_id, FILTER_VALIDATE_INT) !== false
+            ) {
+                $channelUserCompanyId = DB::table('users')
+                    ->where('id', $channel->user_id)
+                    ->value('organization_id');
+
+                $channelCompanyId = filter_var($channelUserCompanyId, FILTER_VALIDATE_INT);
+                $conversationCompanyId = filter_var($conversation->company_id, FILTER_VALIDATE_INT);
+
+                if (
+                    $channelCompanyId === false
+                    || $conversationCompanyId === false
+                    || $channelCompanyId !== $conversationCompanyId
+                ) {
+                    return;
+                }
+            }
+
+            OperatorConversation::query()->updateOrCreate(
                 [
-                    'operator_id' => (int) $operatorId,
+                    'operator_id' => $operatorId,
                     'session_id' => $conversation->session_id,
                 ],
                 [
-                    'chatbot_channel_id' => $conversation->chatbot_channel_id,
+                    'operator_channel_id' => $conversation->chatbot_channel_id,
                     'last_activity_at' => $conversation->last_activity_at ?? now(),
-                    'updated_at' => now(),
-                    'created_at' => now(),
                 ]
             );
         });
