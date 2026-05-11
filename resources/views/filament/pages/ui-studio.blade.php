@@ -635,7 +635,7 @@
                 },
 
                 initialiseSortable(el, wire) {
-                    const SortableLibrary = window.Sortable ?? globalThis.Sortable;
+                    const SortableLibrary = window.Sortable;
 
                     if (! SortableLibrary || this.sortable) {
                         return;
@@ -648,7 +648,7 @@
                         chosenClass: 'sortable-chosen',
                         onEnd: () => {
                             const ids = Array.from(el.querySelectorAll('[data-id]'))
-                                .map(el => el.dataset.id);
+                                .map(item => item.dataset.id);
                             wire.reorderWidgets(ids);
                         },
                     });
