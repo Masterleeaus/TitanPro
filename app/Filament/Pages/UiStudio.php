@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Models\AiThemeSnapshot;
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
 use App\Models\SharedTheme;
+use App\Services\AiThemeGenerator;
 use App\Support\OrganizationBrandingResolver;
 use App\Support\ThemeTokenManager;
 use App\Support\ThemePackManager;
@@ -149,6 +151,30 @@ class UiStudio extends Page
     /** @var array<string, string|null> */
     private array $savedThemeSnapshot = [];
 
+    // ── AI Theme Generator modal state ────────────────────────────────────────
+
+    /** Whether the AI theme modal is visible. */
+    public bool $showAiModal = false;
+
+    /**
+     * Current step in the AI generation flow.
+     * Values: 'prompt' | 'generating' | 'preview'
+     */
+    public string $aiModalStep = 'prompt';
+
+    /** The user-typed natural-language prompt. */
+    public string $aiPrompt = '';
+
+    /**
+     * Token values returned by the AI generator.
+     *
+     * @var array<string, string>
+     */
+    public array $aiGeneratedTheme = [];
+
+    /** Error message shown when generation fails. */
+    public string $aiErrorMessage = '';
+
     // ─────────────────────────────────────────────────────────────────────────
 
     public function mount(): void
@@ -195,6 +221,11 @@ class UiStudio extends Page
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('aiGenerate')
+                ->label('AI Generate')
+                ->icon('heroicon-m-sparkles')
+                ->color('warning')
+                ->action('openAiModal'),
             Action::make('publish')
                 ->label('Publish')
                 ->icon('heroicon-m-arrow-up-tray')
@@ -213,6 +244,125 @@ class UiStudio extends Page
     public function selectTab(string $tab): void
     {
         $this->activeTab = $tab;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // AI Theme Generator
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Open the AI Theme Generator modal and reset its state. */
+    public function openAiModal(): void
+    {
+        $this->aiPrompt         = '';
+        $this->aiGeneratedTheme = [];
+        $this->aiErrorMessage   = '';
+        $this->aiModalStep      = 'prompt';
+        $this->showAiModal      = true;
+    }
+
+    /** Close the AI Theme Generator modal without applying any changes. */
+    public function closeAiModal(): void
+    {
+        $this->showAiModal      = false;
+        $this->aiModalStep      = 'prompt';
+        $this->aiGeneratedTheme = [];
+        $this->aiErrorMessage   = '';
+    }
+
+    /**
+     * Call the Claude AI API with the user's prompt and transition to the preview step.
+     *
+     * Rate-limited to a maximum of 5 generations per organisation per day.
+     */
+    public function generateAiTheme(): void
+    {
+        $prompt = trim($this->aiPrompt);
+
+        if ($prompt === '') {
+            $this->aiErrorMessage = 'Please describe the design you want to generate.';
+
+            return;
+        }
+
+        $orgId = auth()->user()?->organization_id;
+
+        if ($orgId !== null && Schema::hasTable('ai_theme_snapshots')) {
+            $dailyCount = AiThemeSnapshot::todayCountForOrg($orgId);
+
+            if ($dailyCount >= 5) {
+                $this->aiErrorMessage = 'Daily limit reached (5 generations per organisation per day). Try again tomorrow.';
+
+                return;
+            }
+        }
+
+        $this->aiErrorMessage = '';
+        $this->aiModalStep    = 'generating';
+
+        try {
+            $this->aiGeneratedTheme = app(AiThemeGenerator::class)->generate($prompt);
+            $this->aiModalStep      = 'preview';
+        } catch (\RuntimeException $e) {
+            $this->aiErrorMessage = $e->getMessage();
+            $this->aiModalStep    = 'prompt';
+        }
+    }
+
+    /** Return to the prompt step to refine and regenerate. */
+    public function regenerateAiTheme(): void
+    {
+        $this->aiGeneratedTheme = [];
+        $this->aiErrorMessage   = '';
+        $this->aiModalStep      = 'prompt';
+    }
+
+    /**
+     * Apply the generated theme to the active UiStudio state and save a snapshot.
+     * The snapshot is named "AI: {short prompt} — {date}".
+     */
+    public function acceptAiTheme(): void
+    {
+        $theme = $this->aiGeneratedTheme;
+
+        if (empty($theme)) {
+            return;
+        }
+
+        // Apply core colours to the live editor state.
+        $this->primaryColor   = $theme['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $theme['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $theme['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $theme['surface_color']   ?? $this->surfaceColor;
+        $this->fontHeading    = $theme['font_heading']    ?? $this->fontHeading;
+        $this->fontBody       = $theme['font_body']       ?? $this->fontBody;
+        $this->fontFamily     = $theme['font_heading']    ?? $this->fontFamily;
+
+        // Persist as a named snapshot.
+        if (Schema::hasTable('ai_theme_snapshots')) {
+            $orgId  = auth()->user()?->organization_id;
+            $userId = (int) (auth()->id() ?? 0) ?: null;
+
+            AiThemeSnapshot::createFromGeneration(
+                $orgId,
+                $userId,
+                $this->aiPrompt,
+                $theme
+            );
+        }
+
+        $this->closeAiModal();
+
+        Notification::make()
+            ->title('AI theme applied')
+            ->body('Review the colours and typography in the Branding panel, then click Publish to save.')
+            ->success()
+            ->send();
+    }
+
+    /** Discard the generated theme and close the modal. */
+    public function discardAiTheme(): void
+    {
+        $this->closeAiModal();
     }
 
     public function selectWidget(?string $id): void
