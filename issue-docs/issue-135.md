@@ -14,6 +14,16 @@ Merged the Dashboard Builder, Widget Editor, Theme Engine, and Menu System into 
 | `resources/views/filament/pages/ui-studio.blade.php` | Blade view rendering the studio shell with Alpine.js + optional SortableJS drag-and-drop. |
 | `issue-docs/issue-135.md` | This file. |
 
+### Follow-up: SortableJS enablement
+
+| File | Change |
+|------|--------|
+| `package.json` | Added the `sortablejs` frontend dependency. |
+| `vite.config.ts` | Registered a dedicated `resources/js/filament/ui-studio.js` Vite entry for the Filament studio page. |
+| `resources/js/filament/ui-studio.js` | Imports `sortablejs`, assigns it to `window.Sortable`, and emits a readiness event for the canvas. |
+| `resources/views/filament/pages/ui-studio.blade.php` | Loads the Vite entry and initializes SortableJS when the asset is available so drag handles reorder widgets and call `reorderWidgets()`. |
+| `tests/Unit/UiStudioSortableAssetsTest.php` | Adds regression coverage for the SortableJS asset wiring and publish persistence source path. |
+
 ### Files read / referenced (no changes required)
 
 | File | Reason |
@@ -48,9 +58,15 @@ Merged the Dashboard Builder, Widget Editor, Theme Engine, and Menu System into 
 
 ## Next Steps
 
-1. **PHP 8.4 environment** — run `./vendor/bin/pest tests/Feature` to confirm no regressions (current sandbox has PHP 8.3 and no `vendor/`).
-2. **SortableJS** — add `@cdn` or `npm install sortablejs` + import in `vite.config.js` to enable drag-and-drop reordering on the canvas.
-3. **Per-widget property forms** — expand the Layout tab to render the widget's own Filament form (loaded from a `WidgetPropertyRegistry`) when a card is selected.
-4. **Iframe preview** — replace the placeholder thumbnails with a sandboxed `<iframe>` rendering the live admin panel URL so edits are reflected in real-time.
-5. **Menu persistence** — wire the menu save path to the `FilamentMenuBuilder` plugin tables or a dedicated `ui_studio_menus` table.
-6. **Multi-panel access** — register `UiStudio` in `TitanStudioPanelProvider`, `TitanNexusPanelProvider`, etc. via their respective `discoverPages` paths or explicit `pages([UiStudio::class])`.
+1. **Fix Filament Shield config bootstrap** — `config/filament-shield.php` currently sets `auth_provider_model` as an array, which breaks `php artisan`-backed build/test commands until corrected.
+2. **Per-widget property forms** — expand the Layout tab to render the widget's own Filament form (loaded from a `WidgetPropertyRegistry`) when a card is selected.
+3. **Iframe preview** — replace the placeholder thumbnails with a sandboxed `<iframe>` rendering the live admin panel URL so edits are reflected in real-time.
+4. **Menu persistence** — wire the menu save path to the `FilamentMenuBuilder` plugin tables or a dedicated `ui_studio_menus` table.
+5. **Multi-panel access** — register `UiStudio` in `TitanStudioPanelProvider`, `TitanNexusPanelProvider`, etc. via their respective `discoverPages` paths or explicit `pages([UiStudio::class])`.
+
+## Follow-up Validation
+
+- ✅ `./vendor/bin/pest tests/Unit/UiStudioSortableAssetsTest.php`
+- ✅ `node --input-type=module ... import('./resources/js/filament/ui-studio.js')` confirms the entry exports a working `window.Sortable`
+- ✅ Manual smoke test on a temporary harness confirmed drag reorder updates the published order (`["widget-two","widget-one"]`)
+- ⚠️ `npm run build` and Feature tests are currently blocked by the pre-existing Filament Shield config error noted above

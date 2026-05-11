@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,9 +32,11 @@ class TitanStudioPanelProvider extends PanelProvider
         return $panel
             ->id('titanstudio')
             ->path('titanstudio')
-            ->brandName('TitanStudio — Creative Hub')
-            ->colors([
-                'primary' => Color::Pink,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio — Creative Hub'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#ec4899'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
@@ -63,6 +66,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

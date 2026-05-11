@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\TitanQuotes\Pages\QuotePipelineDashboard;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -11,7 +12,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -29,9 +29,11 @@ class TitanQuotesPanelProvider extends PanelProvider
         return $panel
             ->id('titanquotes')
             ->path('titanquotes')
-            ->brandName('TitanQuotes')
-            ->colors([
-                'primary' => Color::Emerald,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanQuotes'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#10b981'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
@@ -62,6 +64,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

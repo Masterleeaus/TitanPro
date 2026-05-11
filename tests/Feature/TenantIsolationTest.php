@@ -3,10 +3,13 @@
 use App\Contracts\TenantAware;
 use App\Models\Customer;
 use App\Models\Estimate;
+use App\Models\EstimatePackage;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Job;
+use App\Models\JobMessage;
 use App\Models\JobType;
+use App\Models\JobTypeChecklistItem;
 use App\Models\MessageTemplate;
 use App\Models\Organization;
 use App\Models\Payment;
@@ -108,6 +111,9 @@ test('TenantAware models have TenantScope registered', function (string $modelCl
     Item::class,
     Payment::class,
     MessageTemplate::class,
+    JobMessage::class,
+    EstimatePackage::class,
+    JobTypeChecklistItem::class,
 ]);
 
 test('TenantScope is a no-op when unauthenticated', function () {
@@ -266,3 +272,164 @@ test('org A customer index never includes org B customers', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page->has('customers.data', 2));
 });
+
+// ── Cross-tenant isolation: JobMessage ────────────────────────────────────────
+
+test('authenticated user only sees their own job messages', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $customerA = Customer::factory()->create(['organization_id' => $orgA->id]);
+    $customerB = Customer::factory()->create(['organization_id' => $orgB->id]);
+    $jobA = Job::factory()->create(['organization_id' => $orgA->id, 'customer_id' => $customerA->id]);
+    $jobB = Job::factory()->create(['organization_id' => $orgB->id, 'customer_id' => $customerB->id]);
+
+    JobMessage::factory()->count(2)->create(['organization_id' => $orgA->id, 'job_id' => $jobA->id, 'customer_id' => $customerA->id]);
+    JobMessage::factory()->count(3)->create(['organization_id' => $orgB->id, 'job_id' => $jobB->id, 'customer_id' => $customerB->id]);
+
+    $this->actingAs($userA);
+
+    $messages = JobMessage::all();
+
+    expect($messages)->toHaveCount(2);
+    expect($messages->pluck('organization_id')->unique()->all())->toBe([$orgA->id]);
+});
+
+test('authenticated user cannot find a job message belonging to another org', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $customerB = Customer::factory()->create(['organization_id' => $orgB->id]);
+    $jobB = Job::factory()->create(['organization_id' => $orgB->id, 'customer_id' => $customerB->id]);
+    $messageB = JobMessage::factory()->create(['organization_id' => $orgB->id, 'job_id' => $jobB->id, 'customer_id' => $customerB->id]);
+
+    $this->actingAs($userA);
+
+    $found = JobMessage::find($messageB->id);
+
+    expect($found)->toBeNull();
+});
+
+test('job message organization_id is set automatically from auth user on create', function () {
+    [$userA, $orgA] = isolationPair();
+
+    $customerA = Customer::factory()->create(['organization_id' => $orgA->id]);
+    $jobA = Job::factory()->create(['organization_id' => $orgA->id, 'customer_id' => $customerA->id]);
+
+    $this->actingAs($userA);
+
+    $message = JobMessage::withoutGlobalScope(TenantScope::class)->create([
+        'job_id'      => $jobA->id,
+        'customer_id' => $customerA->id,
+        'channel'     => 'email',
+        'event'       => 'job_scheduled',
+        'recipient'   => 'test@example.com',
+        'body'        => 'Test body',
+        'status'      => 'sent',
+    ]);
+
+    expect($message->organization_id)->toBe($orgA->id);
+});
+
+// ── Cross-tenant isolation: EstimatePackage ───────────────────────────────────
+
+test('authenticated user only sees their own estimate packages', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $customerA = Customer::factory()->create(['organization_id' => $orgA->id]);
+    $customerB = Customer::factory()->create(['organization_id' => $orgB->id]);
+    $estimateA = Estimate::factory()->create(['organization_id' => $orgA->id, 'customer_id' => $customerA->id]);
+    $estimateB = Estimate::factory()->create(['organization_id' => $orgB->id, 'customer_id' => $customerB->id]);
+
+    EstimatePackage::factory()->count(2)->create(['organization_id' => $orgA->id, 'estimate_id' => $estimateA->id, 'tier' => 'good']);
+    EstimatePackage::factory()->count(4)->create(['organization_id' => $orgB->id, 'estimate_id' => $estimateB->id, 'tier' => 'good']);
+
+    $this->actingAs($userA);
+
+    $packages = EstimatePackage::all();
+
+    expect($packages)->toHaveCount(2);
+    expect($packages->pluck('organization_id')->unique()->all())->toBe([$orgA->id]);
+});
+
+test('authenticated user cannot find an estimate package belonging to another org', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $customerB = Customer::factory()->create(['organization_id' => $orgB->id]);
+    $estimateB = Estimate::factory()->create(['organization_id' => $orgB->id, 'customer_id' => $customerB->id]);
+    $packageB = EstimatePackage::factory()->create(['organization_id' => $orgB->id, 'estimate_id' => $estimateB->id, 'tier' => 'good']);
+
+    $this->actingAs($userA);
+
+    $found = EstimatePackage::find($packageB->id);
+
+    expect($found)->toBeNull();
+});
+
+test('estimate package organization_id is set automatically from auth user on create', function () {
+    [$userA, $orgA] = isolationPair();
+
+    $customerA = Customer::factory()->create(['organization_id' => $orgA->id]);
+    $estimateA = Estimate::factory()->create(['organization_id' => $orgA->id, 'customer_id' => $customerA->id]);
+
+    $this->actingAs($userA);
+
+    $package = EstimatePackage::withoutGlobalScope(TenantScope::class)->create([
+        'estimate_id' => $estimateA->id,
+        'tier'        => 'better',
+        'label'       => 'Standard',
+        'subtotal'    => 500.00,
+        'tax_amount'  => 50.00,
+        'total'       => 550.00,
+    ]);
+
+    expect($package->organization_id)->toBe($orgA->id);
+});
+
+// ── Cross-tenant isolation: JobTypeChecklistItem ──────────────────────────────
+
+test('authenticated user only sees their own job type checklist items', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $jobTypeA = JobType::factory()->create(['organization_id' => $orgA->id]);
+    $jobTypeB = JobType::factory()->create(['organization_id' => $orgB->id]);
+
+    JobTypeChecklistItem::factory()->count(2)->create(['organization_id' => $orgA->id, 'job_type_id' => $jobTypeA->id]);
+    JobTypeChecklistItem::factory()->count(5)->create(['organization_id' => $orgB->id, 'job_type_id' => $jobTypeB->id]);
+
+    $this->actingAs($userA);
+
+    $items = JobTypeChecklistItem::all();
+
+    expect($items)->toHaveCount(2);
+    expect($items->pluck('organization_id')->unique()->all())->toBe([$orgA->id]);
+});
+
+test('authenticated user cannot find a job type checklist item belonging to another org', function () {
+    [$userA, $orgA, $userB, $orgB] = isolationPair();
+
+    $jobTypeB = JobType::factory()->create(['organization_id' => $orgB->id]);
+    $itemB = JobTypeChecklistItem::factory()->create(['organization_id' => $orgB->id, 'job_type_id' => $jobTypeB->id]);
+
+    $this->actingAs($userA);
+
+    $found = JobTypeChecklistItem::find($itemB->id);
+
+    expect($found)->toBeNull();
+});
+
+test('job type checklist item organization_id is set automatically from auth user on create', function () {
+    [$userA, $orgA] = isolationPair();
+
+    $jobTypeA = JobType::factory()->create(['organization_id' => $orgA->id]);
+
+    $this->actingAs($userA);
+
+    $item = JobTypeChecklistItem::withoutGlobalScope(TenantScope::class)->create([
+        'job_type_id' => $jobTypeA->id,
+        'label'       => 'Test task',
+        'sort_order'  => 0,
+        'is_required' => false,
+    ]);
+
+    expect($item->organization_id)->toBe($orgA->id);
+});
+
