@@ -43,7 +43,7 @@
 
     const COMPONENT_SELECTORS = [
         { selector: '[data-ui-key]',              label: (el) => COMPONENT_LABELS[el.dataset.uiKey] ?? el.dataset.uiKey },
-        { selector: '.fi-wi-stats-overview-stat', label: () => 'Stats Card' },
+        { selector: '.fi-wi-stats-overview-stat', label: () => 'Stat Card' },
         { selector: '.fi-wi',                     label: (el) => el.querySelector('[class*="fi-wi-"]')?.className.match(/fi-wi-([\w-]+)/)?.[1] ?? 'Widget' },
         { selector: '.fi-ta',                     label: () => 'Table' },
         { selector: '.fi-fo',                     label: () => 'Form' },
@@ -159,7 +159,7 @@
         }
     }
 
-    /** Find a component element by stable key. */
+    /** Find the first component element by stable key (component-level overrides are shared). */
     function findComponentByKey(key) {
         if (!key) return null;
         return document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
