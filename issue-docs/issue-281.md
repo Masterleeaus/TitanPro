@@ -18,7 +18,7 @@
    - GroundZero
    - ZeroPay
 2. Confirmed TitanStudio already discovers its own `UiStudio` page via `app/Filament/TitanStudio/Pages`.
-3. Added `UiStudio::canAccess()` role gating based on `config('titan_panels')` so registered tenant panels enforce their owner/admin role subset for UI Studio access.
+3. Added `UiStudio::canAccess()` role gating based on `config('titan_panels')` so registered tenant panels enforce their owner/admin role subset for UI Studio access, while `titanpro` remains `super_admin` and unknown/misconfigured panel contexts fail closed.
 4. Added Pest feature coverage for:
    - owner/admin access in registered panels
    - dispatcher/bookkeeper denial where panel access exists but UI Studio should remain owner/admin-only

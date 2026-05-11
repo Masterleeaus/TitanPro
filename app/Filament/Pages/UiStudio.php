@@ -152,17 +152,21 @@ class UiStudio extends Page
         $panelId = Filament::getCurrentPanel()?->getId();
 
         if (! $panelId) {
-            return true;
+            return false;
+        }
+
+        if ($panelId === 'titanpro') {
+            return $user->hasRole('super_admin');
         }
 
         $panelRoles = config("titan_panels.panels.{$panelId}.roles", []);
         $uiStudioRoles = array_values(array_intersect($panelRoles, ['owner', 'admin']));
 
-        if ($uiStudioRoles !== []) {
-            return $user->hasRole($uiStudioRoles);
+        if ($uiStudioRoles === []) {
+            return false;
         }
 
-        return true;
+        return $user->hasRole($uiStudioRoles);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
