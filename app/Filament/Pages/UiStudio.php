@@ -10,6 +10,7 @@ use App\Support\OrganizationBrandingResolver;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,8 @@ class UiStudio extends Page
     use WithFileUploads;
 
     private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
+    private const DEFAULT_PREVIEW_PANEL = 'titanpro';
+    private const DEFAULT_PANEL_ROLES = ['super_admin', 'admin', 'owner'];
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
 
@@ -117,6 +120,9 @@ class UiStudio extends Page
      */
     public array $availablePresets = [];
 
+    /** @var array<string, array{label: string, path: string}>|null */
+    private ?array $cachedPreviewPanels = null;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     public function mount(): void
@@ -144,10 +150,10 @@ class UiStudio extends Page
         $this->activeTab       = 'branding';
 
         $panelOptions = $this->previewPanelOptions();
-        $currentPanel = request()->segment(1);
+        $currentPanel = Filament::getCurrentPanel()?->getId();
         $this->previewPanel = isset($panelOptions[$currentPanel])
             ? $currentPanel
-            : (array_key_first($panelOptions) ?? 'titanpro');
+            : (array_key_first($panelOptions) ?? self::DEFAULT_PREVIEW_PANEL);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -631,17 +637,12 @@ class UiStudio extends Page
         $panels = $this->previewPanels();
         $panelId = isset($panels[$this->previewPanel])
             ? $this->previewPanel
-            : (array_key_first($panels) ?? 'titanpro');
-        $path = $panels[$panelId]['path'] ?? 'titanpro';
+            : (array_key_first($panels) ?? self::DEFAULT_PREVIEW_PANEL);
+        $path = $panels[$panelId]['path'] ?? self::DEFAULT_PREVIEW_PANEL;
         $query = [
             'ui_studio_preview' => '1',
             'preview_nonce' => $this->previewNonce,
         ];
-
-        $organizationId = auth()->user()?->organization_id;
-        if ($organizationId !== null) {
-            $query['organization_id'] = $organizationId;
-        }
 
         if ($widgetId !== null && $widgetId !== '') {
             $query['widget_id'] = $widgetId;
@@ -816,9 +817,29 @@ class UiStudio extends Page
      */
     private function previewPanels(): array
     {
+        if ($this->cachedPreviewPanels !== null) {
+            return $this->cachedPreviewPanels;
+        }
+
         $panels = config('titan_panels.panels', []);
         $user = auth()->user();
         $allowed = [];
+
+        if (! $user) {
+            $defaultPanel = is_array($panels[self::DEFAULT_PREVIEW_PANEL] ?? null)
+                ? $panels[self::DEFAULT_PREVIEW_PANEL]
+                : [];
+            $defaultPath = trim((string) ($defaultPanel['path'] ?? self::DEFAULT_PREVIEW_PANEL), '/');
+
+            $this->cachedPreviewPanels = [
+                self::DEFAULT_PREVIEW_PANEL => [
+                    'label' => (string) ($defaultPanel['label'] ?? 'TitanPro'),
+                    'path' => $defaultPath !== '' ? $defaultPath : self::DEFAULT_PREVIEW_PANEL,
+                ],
+            ];
+
+            return $this->cachedPreviewPanels;
+        }
 
         foreach ($panels as $panelId => $panel) {
             if (! is_array($panel)) {
@@ -830,8 +851,11 @@ class UiStudio extends Page
                 continue;
             }
 
-            $roles = $panel['roles'] ?? ['super_admin', 'admin', 'owner'];
-            if ($user && ! $user->hasRole($roles)) {
+            $roles = $panel['roles'] ?? self::DEFAULT_PANEL_ROLES;
+            $isAllowed = is_array($roles)
+                ? $user->hasAnyRole($roles)
+                : $user->hasRole($roles);
+            if (! $isAllowed) {
                 continue;
             }
 
@@ -842,9 +866,11 @@ class UiStudio extends Page
         }
 
         if ($allowed === []) {
-            $allowed['titanpro'] = ['label' => 'TitanPro', 'path' => 'titanpro'];
+            $allowed[self::DEFAULT_PREVIEW_PANEL] = ['label' => 'TitanPro', 'path' => self::DEFAULT_PREVIEW_PANEL];
         }
 
-        return $allowed;
+        $this->cachedPreviewPanels = $allowed;
+
+        return $this->cachedPreviewPanels;
     }
 }

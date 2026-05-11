@@ -138,6 +138,7 @@
                     <button
                         type="button"
                         wire:click="refreshPreview"
+                        aria-label="Reload previews"
                         class="inline-flex items-center gap-1 rounded border border-gray-200 dark:border-white/10 px-2 py-1 text-[11px] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                         <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
@@ -692,6 +693,7 @@
                 try {
                     return JSON.parse(payload.dataset.previewCss ?? '{}');
                 } catch (error) {
+                    console.warn('UI Studio preview payload parse failed.', error);
                     return {};
                 }
             };
@@ -707,10 +709,11 @@
                     bridge.id = 'titan-preview-bridge';
                     bridge.textContent = `
                         (function () {
-                            if (window.__titanPreviewBridgeInstalled) return;
-                            window.__titanPreviewBridgeInstalled = true;
+                            if (window.titanPreviewBridgeInstalled) return;
+                            window.titanPreviewBridgeInstalled = true;
                             window.addEventListener('message', function (event) {
                                 if (event.origin !== window.location.origin) return;
+                                if (event.source !== window.parent) return;
                                 var data = event.data || {};
                                 if (data.type !== 'titan-ui-theme-vars' || !data.payload) return;
                                 var root = document.documentElement;
@@ -748,7 +751,7 @@
                         doc.documentElement.style.setProperty(key, String(vars[key]));
                     });
                 } catch (error) {
-                    // Ignore inaccessible frame documents.
+                    console.debug('UI Studio preview iframe style sync skipped.', error);
                 }
             };
 

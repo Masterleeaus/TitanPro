@@ -15,6 +15,7 @@
 4. Added studio header controls for panel selection and manual preview refresh.
 5. Added iframe theme syncing with `postMessage` + CSS variable application to reflect unsaved theme edits in live previews.
 6. Updated iframe sandbox policy to exclude `allow-forms` and `allow-modals`.
+7. Hardened preview plumbing by using current Filament panel id detection, cached panel option resolution, and parent-window source checks for theme bridge messages.
 
 ## Validation Notes
 
