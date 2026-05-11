@@ -46,6 +46,8 @@ All tests live in `tests/Browser/MotionBrowserTest.php`:
 | `test_reduced_motion_override_disables_animation_effects` | Injecting the reduced-motion override stylesheet produces `animation-name: none` on `.motion-target` |
 | `test_motion_meta_element_exposes_token_data_attributes` | `#motion-meta` carries all preset slugs in `data-presets` and `data-live-preview=true` |
 | `test_preview_elements_for_each_motion_class_are_present` | All six `#preview-*` elements exist in the DOM |
+| `test_motion_meta_element_exposes_token_data_attributes` | `#motion-meta` carries all preset slugs in `data-presets` and `data-live-preview=true` |
+| `test_preview_elements_for_each_motion_class_are_present` | All six `#preview-*` elements exist in the DOM |
 
 ## Next Steps
 

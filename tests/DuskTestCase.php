@@ -33,7 +33,7 @@ abstract class DuskTestCase extends BaseTestCase
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
             '--disable-search-engine-choice-screen',
             '--disable-smooth-scrolling',
-            $this->hasHeadlessDisabled() ? '' : '--headless=new',
+            $this->hasHeadlessDisabled() ? null : '--headless=new',
         ]));
 
         return RemoteWebDriver::create(

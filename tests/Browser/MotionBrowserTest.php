@@ -25,7 +25,11 @@ class MotionBrowserTest extends DuskTestCase
         $this->url = route('ui-studio.motion-preview');
     }
 
-    /** The motion preview page loads and the page title is correct. */
+    /**
+     * @test
+     *
+     * The motion preview page loads and the page title is correct.
+     */
     public function test_motion_preview_page_loads(): void
     {
         $this->browse(function (Browser $browser) {
@@ -35,7 +39,11 @@ class MotionBrowserTest extends DuskTestCase
         });
     }
 
-    /** All three control selects (preset, speed, easing) are present. */
+    /**
+     * @test
+     *
+     * All three control selects (preset, speed, easing) are present.
+     */
     public function test_motion_tab_controls_render(): void
     {
         $this->browse(function (Browser $browser) {
