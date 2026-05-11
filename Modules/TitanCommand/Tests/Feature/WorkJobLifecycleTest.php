@@ -203,9 +203,12 @@ class WorkJobLifecycleTest extends TestCase
     /** @test */
     public function jobs_from_another_company_are_not_returned_in_tenant_scope(): void
     {
+        $otherCompanyId = 999;
+        $otherUserId = 999;
+
         WorkJob::create([
-            'company_id' => 999,
-            'user_id'    => 999,
+            'company_id' => $otherCompanyId,
+            'user_id'    => $otherUserId,
             'title'      => 'Other company job',
             'status'     => 'open',
             'priority'   => 'normal',
@@ -219,7 +222,7 @@ class WorkJobLifecycleTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals($myJob->id, $results->first()->id);
         // Confirm the other-tenant job is not included
-        $this->assertNotEquals(999, $results->first()->company_id);
+        $this->assertNotEquals($otherCompanyId, $results->first()->company_id);
     }
 
     // -----------------------------------------------------------------------

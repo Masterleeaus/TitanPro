@@ -8,7 +8,7 @@ return new class extends Migration
     public function up(): void
     {
         // Rebrand: rename legacy social_media_* tables to ext_titan_command_* names.
-        // Safe + idempotent: only renames when old table exists and new name does not.
+        // Safe + idempotent: only renames when old table exists and new table does not exist.
 
         if (Schema::hasTable('social_media_agents') && !Schema::hasTable('ext_titan_command_agents')) {
             Schema::rename('social_media_agents', 'ext_titan_command_agents');
