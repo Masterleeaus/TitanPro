@@ -85,6 +85,6 @@ class JobMessageResource extends Resource
         }
 
         return parent::getEloquentQuery()
-            ->whereHas('job', fn (Builder $q) => $q->where('organization_id', $organizationId));
+            ->where('organization_id', $organizationId);
     }
 }

@@ -2,14 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Customer;
 use App\Models\Estimate;
 use App\Models\EstimatePackage;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EstimatePackage>
+ * @extends Factory<EstimatePackage>
  */
 class EstimatePackageFactory extends Factory
 {
@@ -17,23 +16,32 @@ class EstimatePackageFactory extends Factory
 
     public function definition(): array
     {
+        $subtotal = fake()->randomFloat(2, 100, 2000);
+
         return [
-            'estimate_id'    => Estimate::factory(),
-            'tier'           => 'good',
-            'label'          => 'Basic',
-            'description'    => null,
-            'subtotal'       => 0,
-            'tax_amount'     => 0,
-            'total'          => 0,
-            'is_recommended' => false,
+            'organization_id' => Organization::factory(),
+            'estimate_id'     => Estimate::factory(),
+            'tier'            => fake()->randomElement(['good', 'better', 'best']),
+            'label'           => fake()->randomElement(['Basic', 'Standard', 'Premium']),
+            'description'     => fake()->optional()->sentence(),
+            'subtotal'        => $subtotal,
+            'tax_amount'      => round($subtotal * 0.1, 2),
+            'total'           => round($subtotal * 1.1, 2),
+            'is_recommended'  => false,
         ];
+    }
+
+    public function recommended(): static
+    {
+        return $this->state(['is_recommended' => true]);
     }
 
     public function forEstimate(Estimate $estimate, string $tier = 'good'): static
     {
         return $this->state([
-            'estimate_id' => $estimate->id,
-            'tier'        => $tier,
+            'organization_id' => $estimate->organization_id,
+            'estimate_id'     => $estimate->id,
+            'tier'            => $tier,
         ]);
     }
 }
