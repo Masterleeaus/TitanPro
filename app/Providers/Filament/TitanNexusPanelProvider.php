@@ -3,10 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\UiStudio;
-use App\Filament\TitanNexus\Pages\LeadPipeline;
-use App\Filament\TitanNexus\Pages\MarketingCampaigns;
-use App\Filament\TitanNexus\Pages\TrainingContent;
-use App\Filament\TitanNexus\Pages\Verticals;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
@@ -56,10 +52,6 @@ class TitanNexusPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/TitanNexus/Pages'), for: 'App\\Filament\\TitanNexus\\Pages')
             ->pages([
                 Pages\Dashboard::class,
-                Verticals::class,
-                LeadPipeline::class,
-                TrainingContent::class,
-                MarketingCampaigns::class,
                 UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanNexus/Widgets'), for: 'App\\Filament\\TitanNexus\\Widgets')
