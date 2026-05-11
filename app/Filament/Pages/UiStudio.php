@@ -8,6 +8,7 @@ use App\Filament\Pages\UiStudio\WidgetPropertyRegistry;
 use App\Models\AiThemeSnapshot;
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
+use App\Models\RoleUIProfile;
 use App\Models\SharedTheme;
 use App\Services\AiThemeGenerator;
 use App\Support\OrganizationBrandingResolver;
@@ -91,7 +92,15 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'branding'; // branding | layout | menu | components | marketplace
+    public string $activeTab = 'branding'; // branding | layout | menu | roles | components | marketplace
+
+    // ── Role Profiles state ───────────────────────────────────────────────────
+
+    /** @var array<string, array{primary_color: string, secondary_color: string, accent_color: string, surface_color: string, hidden_nav_items: list<string>, widget_layout: list<string>}> */
+    public array $roleProfiles = [];
+
+    /** Currently selected role slug in the Role Profiles tab. */
+    public ?string $selectedRole = null;
 
     // ── Marketplace state ─────────────────────────────────────────────────────
 
@@ -209,6 +218,7 @@ class UiStudio extends Page
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
+        $this->roleProfiles    = $this->loadRoleProfiles();
         $currentPanel          = $this->resolveCurrentPanelId();
         $this->previewPanel    = $currentPanel;
         $this->componentPanel  = $currentPanel;
@@ -551,6 +561,77 @@ class UiStudio extends Page
         }
 
         $this->menuItems = $reordered;
+    }
+
+    // ── Role Profiles ─────────────────────────────────────────────────────────
+
+    public function selectRole(?string $role): void
+    {
+        if ($role !== null && ! array_key_exists($role, RoleUIProfile::SUPPORTED_ROLES)) {
+            return;
+        }
+        $this->selectedRole = $role;
+    }
+
+    public function updateRoleProfile(string $role, string $field, string $value): void
+    {
+        if (! array_key_exists($role, RoleUIProfile::SUPPORTED_ROLES)) {
+            return;
+        }
+
+        $allowed = ['primary_color', 'secondary_color', 'accent_color', 'surface_color'];
+        if (! in_array($field, $allowed, true)) {
+            return;
+        }
+
+        if (! isset($this->roleProfiles[$role])) {
+            $this->roleProfiles[$role] = $this->defaultRoleProfile();
+        }
+
+        $this->roleProfiles[$role][$field] = $value;
+    }
+
+    public function toggleNavItem(string $role, string $item): void
+    {
+        if (! array_key_exists($role, RoleUIProfile::SUPPORTED_ROLES)) {
+            return;
+        }
+
+        if (! isset($this->roleProfiles[$role])) {
+            $this->roleProfiles[$role] = $this->defaultRoleProfile();
+        }
+
+        $hidden = $this->roleProfiles[$role]['hidden_nav_items'] ?? [];
+
+        if (in_array($item, $hidden, true)) {
+            $this->roleProfiles[$role]['hidden_nav_items'] = array_values(
+                array_filter($hidden, fn ($i) => $i !== $item)
+            );
+        } else {
+            $hidden[] = $item;
+            $this->roleProfiles[$role]['hidden_nav_items'] = $hidden;
+        }
+    }
+
+    public function updateRoleWidgetLayout(string $role, string $widgetType, bool $enabled): void
+    {
+        if (! array_key_exists($role, RoleUIProfile::SUPPORTED_ROLES)) {
+            return;
+        }
+
+        if (! isset($this->roleProfiles[$role])) {
+            $this->roleProfiles[$role] = $this->defaultRoleProfile();
+        }
+
+        $layout = $this->roleProfiles[$role]['widget_layout'] ?? [];
+
+        if ($enabled && ! in_array($widgetType, $layout, true)) {
+            $layout[] = $widgetType;
+        } elseif (! $enabled) {
+            $layout = array_values(array_filter($layout, fn ($t) => $t !== $widgetType));
+        }
+
+        $this->roleProfiles[$role]['widget_layout'] = $layout;
     }
 
     public function setPreviewFrameSize(string $size): void
@@ -1125,9 +1206,32 @@ class UiStudio extends Page
             );
         }
 
+        // 4. Persist role UI profiles
+        $orgId = auth()->user()?->organization_id;
+        if ($orgId && Schema::hasTable('role_ui_profiles')) {
+            foreach ($this->roleProfiles as $role => $data) {
+                if (! array_key_exists($role, RoleUIProfile::SUPPORTED_ROLES)) {
+                    continue;
+                }
+                RoleUIProfile::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+                    ->updateOrCreate(
+                        ['organization_id' => $orgId, 'role' => $role],
+                        [
+                            'primary_color'    => $this->safeColor($data['primary_color'] ?? '', '') ?: null,
+                            'secondary_color'  => $this->safeColor($data['secondary_color'] ?? '', '') ?: null,
+                            'accent_color'     => $this->safeColor($data['accent_color'] ?? '', '') ?: null,
+                            'surface_color'    => $this->safeColor($data['surface_color'] ?? '', '') ?: null,
+                            'hidden_nav_items' => $data['hidden_nav_items'] ?? [],
+                            'widget_layout'    => $data['widget_layout'] ?? [],
+                        ]
+                    );
+                cache()->forget("role_ui_profile.{$orgId}.{$role}");
+            }
+        }
+
         Notification::make()
             ->title('UI Studio layout published')
-            ->body('Branding, dashboard layout, and menu changes have been saved.')
+            ->body('Branding, dashboard layout, menu, and role profile changes have been saved.')
             ->success()
             ->send();
 
@@ -1288,6 +1392,57 @@ class UiStudio extends Page
     private function brandingDirectory(int $organizationId): string
     {
         return "organization-branding/{$organizationId}";
+    }
+
+    /**
+     * Load persisted role UI profiles for the current organisation, keyed by
+     * role slug.  Returns default structures for roles that have no saved record.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function loadRoleProfiles(): array
+    {
+        $profiles = [];
+
+        if (! Schema::hasTable('role_ui_profiles')) {
+            return $profiles;
+        }
+
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId) {
+            return $profiles;
+        }
+
+        $rows = RoleUIProfile::withoutGlobalScope(\App\Models\Scopes\TenantScope::class)
+            ->where('organization_id', $orgId)
+            ->get();
+
+        foreach ($rows as $row) {
+            $profiles[$row->role] = [
+                'primary_color'    => $row->primary_color    ?? '',
+                'secondary_color'  => $row->secondary_color  ?? '',
+                'accent_color'     => $row->accent_color     ?? '',
+                'surface_color'    => $row->surface_color    ?? '',
+                'hidden_nav_items' => $row->hidden_nav_items ?? [],
+                'widget_layout'    => $row->widget_layout    ?? [],
+            ];
+        }
+
+        return $profiles;
+    }
+
+    /** @return array<string, mixed> */
+    private function defaultRoleProfile(): array
+    {
+        return [
+            'primary_color'    => '',
+            'secondary_color'  => '',
+            'accent_color'     => '',
+            'surface_color'    => '',
+            'hidden_nav_items' => [],
+            'widget_layout'    => [],
+        ];
     }
 
     /**
