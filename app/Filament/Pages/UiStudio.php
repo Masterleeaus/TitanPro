@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\UiStudio\WidgetPropertyRegistry;
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
 use App\Support\OrganizationBrandingResolver;
@@ -70,6 +71,14 @@ class UiStudio extends Page
 
     /** Currently selected widget id on the canvas (for right-panel property edit) */
     public ?string $selectedWidgetId = null;
+
+    /**
+     * Live property values for the selected widget (property_key => value).
+     * Mirrors the same editing-state pattern used by componentTokenValues.
+     *
+     * @var array<string, mixed>
+     */
+    public array $widgetPropertyValues = [];
 
     // ── Menu state ────────────────────────────────────────────────────────────
 
@@ -172,6 +181,9 @@ class UiStudio extends Page
         $this->selectedWidgetId = $id;
         if ($id !== null) {
             $this->activeTab = 'layout';
+            $this->loadWidgetPropertyValues($id);
+        } else {
+            $this->widgetPropertyValues = [];
         }
     }
 
@@ -180,11 +192,12 @@ class UiStudio extends Page
         $label = $this->widgetCatalogue[$type] ?? ucwords(str_replace(['-', '_'], ' ', $type));
 
         $this->canvasWidgets[] = [
-            'id'      => 'w_' . Str::ulid(),
-            'type'    => $type,
-            'label'   => $label,
-            'columns' => 12,
-            'order'   => count($this->canvasWidgets),
+            'id'         => 'w_' . Str::ulid(),
+            'type'       => $type,
+            'label'      => $label,
+            'columns'    => 12,
+            'order'      => count($this->canvasWidgets),
+            'properties' => WidgetPropertyRegistry::defaults($type),
         ];
     }
 
@@ -205,6 +218,33 @@ class UiStudio extends Page
         foreach ($this->canvasWidgets as &$widget) {
             if ($widget['id'] === $id) {
                 $widget['columns'] = $columns;
+                break;
+            }
+        }
+        unset($widget);
+    }
+
+    /**
+     * Update a single property value for the selected widget.
+     * The value is written both to the live $widgetPropertyValues editor state
+     * and back into the matching entry in $canvasWidgets.
+     */
+    public function updateWidgetProperty(string $key, mixed $value): void
+    {
+        if ($this->selectedWidgetId === null) {
+            return;
+        }
+
+        // Update in-memory editor state.
+        $this->widgetPropertyValues[$key] = $value;
+
+        // Write through to the canvas widget so publish() always has fresh data.
+        foreach ($this->canvasWidgets as &$widget) {
+            if ($widget['id'] === $this->selectedWidgetId) {
+                if (! isset($widget['properties']) || ! is_array($widget['properties'])) {
+                    $widget['properties'] = [];
+                }
+                $widget['properties'][$key] = $value;
                 break;
             }
         }
@@ -537,7 +577,13 @@ class UiStudio extends Page
         if (Schema::hasTable('layouts')) {
             $slug = 'ui-studio-layout';
             $userId = (int) (auth()->id() ?? DB::table('users')->min('id') ?? 1);
-            $widgets = array_map(fn ($w) => ['type' => $w['type'], 'data' => ['title' => $w['label']]], $this->canvasWidgets);
+            $widgets = array_map(fn ($w) => [
+                'type' => $w['type'],
+                'data' => array_merge(
+                    ['title' => $w['label']],
+                    $w['properties'] ?? [],
+                ),
+            ], $this->canvasWidgets);
 
             DB::table('layouts')->updateOrInsert(
                 ['layout_slug' => $slug],
@@ -648,13 +694,24 @@ class UiStudio extends Page
         $widgets = json_decode($row->widgets ?? '[]', true) ?: [];
 
         return array_values(
-            array_map(fn (array $w, int $i) => [
-                'id'      => 'w_' . Str::ulid(),
-                'type'    => $w['type'] ?? 'html-card',
-                'label'   => $w['data']['title'] ?? ucwords(str_replace(['-', '_'], ' ', $w['type'] ?? 'Widget')),
-                'columns' => 12,
-                'order'   => $i,
-            ], $widgets, array_keys($widgets))
+            array_map(function (array $w, int $i) {
+                $type       = $w['type'] ?? 'html-card';
+                $savedData  = is_array($w['data'] ?? null) ? $w['data'] : [];
+
+                // Merge registry defaults with saved data so the editor always has
+                // a complete set of keys even when new fields are added later.
+                $defaults   = WidgetPropertyRegistry::defaults($type);
+                $properties = array_merge($defaults, array_diff_key($savedData, ['title' => true]));
+
+                return [
+                    'id'         => 'w_' . Str::ulid(),
+                    'type'       => $type,
+                    'label'      => $savedData['title'] ?? ucwords(str_replace(['-', '_'], ' ', $type)),
+                    'columns'    => $w['columns'] ?? 12,
+                    'order'      => $i,
+                    'properties' => $properties,
+                ];
+            }, $widgets, array_keys($widgets))
         );
     }
 
@@ -744,5 +801,28 @@ class UiStudio extends Page
     private function getPanelOrNull(): ?string
     {
         return $this->componentPanel !== '' ? $this->componentPanel : null;
+    }
+
+    /**
+     * Populate $widgetPropertyValues from the canvas widget matching $id.
+     * Registry defaults fill in any keys not yet saved.
+     */
+    private function loadWidgetPropertyValues(string $id): void
+    {
+        foreach ($this->canvasWidgets as $widget) {
+            if ($widget['id'] !== $id) {
+                continue;
+            }
+
+            $type     = $widget['type'] ?? '';
+            $saved    = is_array($widget['properties'] ?? null) ? $widget['properties'] : [];
+            $defaults = WidgetPropertyRegistry::defaults($type);
+
+            $this->widgetPropertyValues = array_merge($defaults, $saved);
+
+            return;
+        }
+
+        $this->widgetPropertyValues = [];
     }
 }
