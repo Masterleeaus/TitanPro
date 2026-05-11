@@ -3,7 +3,6 @@
 namespace Modules\Accountings\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 
 class AccountingsServiceProvider extends ServiceProvider
 {
@@ -22,7 +21,7 @@ class AccountingsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -54,9 +53,8 @@ class AccountingsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
         $this->app->singleton(
             \Modules\Accountings\Services\FinancialYearService::class,
             \Modules\Accountings\Services\FinancialYearService::class

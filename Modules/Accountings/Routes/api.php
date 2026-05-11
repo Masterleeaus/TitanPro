@@ -6,12 +6,15 @@ use Modules\Accountings\Actions\PostInvoiceJournalAction;
 
 Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'accountings'], function () {
     Route::get('ledger', function (LookupLedgerAction $action) {
-        return response()->json($action->execute(request()->only(['company_id', 'limit'])));
+        $data = request()->validate([
+            'limit' => ['nullable', 'integer', 'min:1', 'max:200'],
+        ]);
+
+        return response()->json($action->execute($data));
     })->name('accountings.api.ledger');
 
     Route::post('invoice-journals', function (PostInvoiceJournalAction $action) {
         $data = request()->validate([
-            'company_id' => ['nullable', 'integer'],
             'invoice_id' => ['nullable'],
             'amount' => ['nullable', 'numeric'],
             'reference' => ['nullable', 'string'],

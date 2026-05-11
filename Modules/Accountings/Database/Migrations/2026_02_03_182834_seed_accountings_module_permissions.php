@@ -21,7 +21,10 @@ return new class extends Migration {
 
         $hasGuardName = Schema::hasColumn('permissions', 'guard_name');
 
-        $perms = ['accountings.view', 'accountings.create', 'accountings.edit', 'accountings.delete'];
+        $perms = array_values(array_unique(array_filter(array_merge(
+            config('accountings.permissions', []),
+            ['accountings.view', 'accountings.create', 'accountings.update', 'accountings.delete']
+        ), static fn ($permission) => is_string($permission) && trim($permission) !== '')));
         foreach ($perms as $p) {
             $perm = DB::table('permissions')->where('name', $p)->first();
             if (!$perm) {

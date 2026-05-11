@@ -2,6 +2,7 @@
 
 namespace Modules\Accountings\Actions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accountings\Entities\Journal;
 
@@ -9,11 +10,12 @@ class PostInvoiceJournalAction
 {
     public function execute(array $invoicePayload): Journal
     {
+        $companyId = $this->resolveCompanyId(isset($invoicePayload['company_id']) ? (int) $invoicePayload['company_id'] : null);
         $invoiceId = $invoicePayload['invoice_id'] ?? null;
         $reference = $invoicePayload['reference'] ?? ($invoiceId ? 'INV-'.$invoiceId : 'EINVOICE');
 
         $data = [
-            'company_id' => $invoicePayload['company_id'] ?? null,
+            'company_id' => $companyId,
             'no_journal' => $invoicePayload['journal_number'] ?? ('EINV-'.now()->format('YmdHis')),
             'journal_date' => $invoicePayload['date'] ?? now()->toDateString(),
             'reff_journal' => $reference,
@@ -41,5 +43,24 @@ class PostInvoiceJournalAction
         }
 
         return $journal;
+    }
+
+    private function resolveCompanyId(?int $requestedCompanyId = null): int
+    {
+        $authCompanyId = auth()->user()->company_id ?? null;
+
+        if ($authCompanyId !== null) {
+            if ($requestedCompanyId !== null && $requestedCompanyId !== (int) $authCompanyId) {
+                throw new AuthorizationException('Cross-tenant journal posting is not allowed.');
+            }
+
+            return (int) $authCompanyId;
+        }
+
+        if ($requestedCompanyId !== null) {
+            return $requestedCompanyId;
+        }
+
+        throw new AuthorizationException('Company context is required.');
     }
 }
