@@ -1,18 +1,18 @@
 <?php
 
-namespace Modules\TitanChatbot\Providers;
+namespace Modules\TitanEchoAssist\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Modules\TitanChatbot\Automation\Handlers\EscalateToAgentHandler;
-use Modules\TitanChatbot\Automation\Handlers\SendSuggestedPromptsHandler;
-use Modules\TitanChatbot\Automation\Handlers\SendWelcomeBannerHandler;
-use Modules\TitanChatbot\Events\ConversationEscalated;
-use Modules\TitanChatbot\Events\ConversationStarted;
-use Modules\TitanChatbot\Events\IntentDetected;
-use Modules\TitanChatbot\Events\MessageReceived;
-use Modules\TitanChatbot\Events\VoiceSessionDurationRecorded;
-use Modules\TitanChatbot\Events\VoiceSessionStarted;
-use Modules\TitanChatbot\Listeners\RecordVoiceSessionBillingListener;
+use Modules\TitanEchoAssist\Automation\Handlers\EscalateToAgentHandler;
+use Modules\TitanEchoAssist\Automation\Handlers\SendSuggestedPromptsHandler;
+use Modules\TitanEchoAssist\Automation\Handlers\SendWelcomeBannerHandler;
+use Modules\TitanEchoAssist\Events\ConversationEscalated;
+use Modules\TitanEchoAssist\Events\ConversationStarted;
+use Modules\TitanEchoAssist\Events\IntentDetected;
+use Modules\TitanEchoAssist\Events\MessageReceived;
+use Modules\TitanEchoAssist\Events\VoiceSessionDurationRecorded;
+use Modules\TitanEchoAssist\Events\VoiceSessionStarted;
+use Modules\TitanEchoAssist\Listeners\RecordVoiceSessionBillingListener;
 
 class EventServiceProvider extends ServiceProvider
 {

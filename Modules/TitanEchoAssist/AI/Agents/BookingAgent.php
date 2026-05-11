@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
-use Modules\TitanChatbot\AI\Memory\ConversationMemoryStore;
-use Modules\TitanChatbot\Services\GeneratorBridge;
+use Modules\TitanEchoAssist\AI\Memory\ConversationMemoryStore;
+use Modules\TitanEchoAssist\Services\GeneratorBridge;
 use Throwable;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Search\Transformers;
+namespace Modules\TitanEchoAssist\Search\Transformers;
 
 class ConversationSearchTransformer
 {

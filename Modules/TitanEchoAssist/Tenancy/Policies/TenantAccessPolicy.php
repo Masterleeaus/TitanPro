@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Tenancy\Policies;
+namespace Modules\TitanEchoAssist\Tenancy\Policies;
 
 class TenantAccessPolicy
 {

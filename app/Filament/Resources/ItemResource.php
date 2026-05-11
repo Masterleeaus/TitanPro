@@ -103,6 +103,12 @@ class ItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class])->where('organization_id', auth()->user()?->organization_id);
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class])->where('organization_id', $organizationId);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\API\Serializers;
+namespace Modules\TitanEchoAssist\API\Serializers;
 
 class ApiSerializer
 {

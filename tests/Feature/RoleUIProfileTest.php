@@ -3,7 +3,10 @@
 use App\Models\Organization;
 use App\Models\RoleUIProfile;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Support\Facades\Cache;
+
+beforeEach(fn () => (new RolesAndPermissionsSeeder)->run());
 
 // ── Model / DB ────────────────────────────────────────────────────────────────
 

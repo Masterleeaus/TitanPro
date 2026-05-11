@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
+use App\Support\ThemeTokenManager;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -16,6 +17,7 @@ class HandleAppearance
     {
         $appearance = $request->cookie('appearance');
         $settings = Cache::remember('platform_settings', 300, fn () => PlatformSetting::current());
+        $themeTokens = app(ThemeTokenManager::class)->exportPayload($settings);
 
         $brandName = $this->settingValue($settings, 'brand_name')
             ?? $this->settingValue($settings, 'brandName')
@@ -40,12 +42,14 @@ class HandleAppearance
             'meta_title' => $this->settingValue($settings, 'meta_title') ?: $brandName,
             'meta_description' => $this->settingValue($settings, 'meta_description'),
             'custom_css' => $this->settingValue($settings, 'custom_css'),
+            'theme_tokens_css' => $themeTokens['css'],
+            'theme_color' => $themeTokens['resolved']['--color-primary'] ?? '#2563eb',
         ];
 
         // Apply role-specific theme overrides when a RoleUIProfile exists.
         $user = $request->user();
         if ($user && $user->organization_id) {
-            $role = $user->getRoleNames()->first();
+            $role = RoleUIProfile::resolvePrimaryRole($user);
             if ($role) {
                 $profile = Cache::remember(
                     "role_ui_profile.{$user->organization_id}.{$role}",

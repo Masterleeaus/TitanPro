@@ -3,17 +3,17 @@
   "tools": [
     {
       "name": "titan-chatbot.generate_reply",
-      "action": "Modules\\TitanChatbot\\Actions\\GenerateChatbotReply",
-      "service": "Modules\\TitanChatbot\\Services\\GeneratorBridge",
-      "repository": "Modules\\TitanChatbot\\Repositories\\ChatbotRepository",
-      "model": "Modules\\TitanChatbot\\Models\\Chatbot"
+      "action": "Modules\\TitanEchoAssist\\Actions\\GenerateChatbotReply",
+      "service": "Modules\\TitanEchoAssist\\Services\\GeneratorBridge",
+      "repository": "Modules\\TitanEchoAssist\\Repositories\\ChatbotRepository",
+      "model": "Modules\\TitanEchoAssist\\Models\\Chatbot"
     },
     {
       "name": "titan-chatbot.route_inbound_message",
-      "action": "Modules\\TitanChatbot\\Actions\\RouteInboundMessage",
-      "service": "Modules\\TitanChatbot\\Services\\ChannelRouter",
-      "repository": "Modules\\TitanChatbot\\Repositories\\ChatbotRepository",
-      "model": "Modules\\TitanChatbot\\Models\\Chatbot"
+      "action": "Modules\\TitanEchoAssist\\Actions\\RouteInboundMessage",
+      "service": "Modules\\TitanEchoAssist\\Services\\ChannelRouter",
+      "repository": "Modules\\TitanEchoAssist\\Repositories\\ChatbotRepository",
+      "model": "Modules\\TitanEchoAssist\\Models\\Chatbot"
     }
   ]
 }

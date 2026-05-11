@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Web;
+namespace Modules\TitanEchoAssist\Http\Controllers\Web;
 
 class WidgetController
 {

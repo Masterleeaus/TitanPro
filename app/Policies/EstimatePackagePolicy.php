@@ -19,7 +19,7 @@ class EstimatePackagePolicy
 
     public function view(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class EstimatePackagePolicy
 
     public function update(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -42,7 +42,7 @@ class EstimatePackagePolicy
 
     public function delete(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -56,7 +56,7 @@ class EstimatePackagePolicy
 
     public function restore(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class EstimatePackagePolicy
 
     public function forceDelete(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class EstimatePackagePolicy
 
     public function replicate(AuthUser $authUser, EstimatePackage $estimatePackage): bool
     {
-        if ((int) $estimatePackage->estimate?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $estimatePackage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 

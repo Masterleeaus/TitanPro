@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Attributes;
+namespace Modules\TitanEchoAssist\AI\Attributes;
 
 use Attribute;
 

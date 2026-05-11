@@ -3,50 +3,50 @@
   "manifest": "ai",
   "version": "2.1.0",
   "enabled": true,
-  "base_class": "Modules\\TitanChatbot\\AI\\Core\\TitanAgent",
+  "base_class": "Modules\\TitanEchoAssist\\AI\\Core\\TitanAgent",
   "agents": [
-    "Modules\\TitanChatbot\\AI\\Agents\\ConversationAgent",
-    "Modules\\TitanChatbot\\AI\\Agents\\BookingAgent",
-    "Modules\\TitanChatbot\\AI\\Agents\\SupportAgent",
-    "Modules\\TitanChatbot\\AI\\Agents\\VoiceAgent",
-    "Modules\\TitanChatbot\\AI\\Agents\\ReceptionistAgent",
-    "Modules\\TitanChatbot\\AI\\Agents\\CleaningBusinessAgent"
+    "Modules\\TitanEchoAssist\\AI\\Agents\\ConversationAgent",
+    "Modules\\TitanEchoAssist\\AI\\Agents\\BookingAgent",
+    "Modules\\TitanEchoAssist\\AI\\Agents\\SupportAgent",
+    "Modules\\TitanEchoAssist\\AI\\Agents\\VoiceAgent",
+    "Modules\\TitanEchoAssist\\AI\\Agents\\ReceptionistAgent",
+    "Modules\\TitanEchoAssist\\AI\\Agents\\CleaningBusinessAgent"
   ],
   "pipelines": [
-    "Modules\\TitanChatbot\\AI\\Pipelines\\RagPipeline",
-    "Modules\\TitanChatbot\\AI\\Pipelines\\RagAnswerPipeline",
-    "Modules\\TitanChatbot\\AI\\Pipelines\\VoiceConversationPipeline"
+    "Modules\\TitanEchoAssist\\AI\\Pipelines\\RagPipeline",
+    "Modules\\TitanEchoAssist\\AI\\Pipelines\\RagAnswerPipeline",
+    "Modules\\TitanEchoAssist\\AI\\Pipelines\\VoiceConversationPipeline"
   ],
   "tools": [
-    "Modules\\TitanChatbot\\AI\\Tools\\EmbeddingResolver",
-    "Modules\\TitanChatbot\\AI\\Tools\\QuoteEstimatorTool",
-    "Modules\\TitanChatbot\\AI\\Tools\\SchemaGenerator",
-    "Modules\\TitanChatbot\\AI\\Tools\\ToolRegistry"
+    "Modules\\TitanEchoAssist\\AI\\Tools\\EmbeddingResolver",
+    "Modules\\TitanEchoAssist\\AI\\Tools\\QuoteEstimatorTool",
+    "Modules\\TitanEchoAssist\\AI\\Tools\\SchemaGenerator",
+    "Modules\\TitanEchoAssist\\AI\\Tools\\ToolRegistry"
   ],
   "tool_attributes": [
-    "Modules\\TitanChatbot\\AI\\Attributes\\Tool",
-    "Modules\\TitanChatbot\\AI\\Attributes\\Desc"
+    "Modules\\TitanEchoAssist\\AI\\Attributes\\Tool",
+    "Modules\\TitanEchoAssist\\AI\\Attributes\\Desc"
   ],
   "memory": [
-    "Modules\\TitanChatbot\\AI\\Memory\\ConversationMemoryStore",
-    "Modules\\TitanChatbot\\AI\\Memory\\StorageManager"
+    "Modules\\TitanEchoAssist\\AI\\Memory\\ConversationMemoryStore",
+    "Modules\\TitanEchoAssist\\AI\\Memory\\StorageManager"
   ],
   "memory_drivers": [
-    "Modules\\TitanChatbot\\AI\\Memory\\Drivers\\CacheMemoryDriver",
-    "Modules\\TitanChatbot\\AI\\Memory\\Drivers\\DatabaseMemoryDriver",
-    "Modules\\TitanChatbot\\AI\\Memory\\Drivers\\FileMemoryDriver",
-    "Modules\\TitanChatbot\\AI\\Memory\\Drivers\\InMemoryMemoryDriver"
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Drivers\\CacheMemoryDriver",
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Drivers\\DatabaseMemoryDriver",
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Drivers\\FileMemoryDriver",
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Drivers\\InMemoryMemoryDriver"
   ],
   "truncation_strategies": [
-    "Modules\\TitanChatbot\\AI\\Memory\\Truncation\\SimpleTruncationStrategy",
-    "Modules\\TitanChatbot\\AI\\Memory\\Truncation\\SummarizationStrategy"
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Truncation\\SimpleTruncationStrategy",
+    "Modules\\TitanEchoAssist\\AI\\Memory\\Truncation\\SummarizationStrategy"
   ],
   "data_models": [
-    "Modules\\TitanChatbot\\AI\\DataModels\\BookingIntentModel",
-    "Modules\\TitanChatbot\\AI\\DataModels\\EscalationDecisionModel",
-    "Modules\\TitanChatbot\\AI\\DataModels\\QuoteRequestModel",
-    "Modules\\TitanChatbot\\AI\\DataModels\\TrainingResultModel",
-    "Modules\\TitanChatbot\\AI\\DataModels\\VoiceResponseModel"
+    "Modules\\TitanEchoAssist\\AI\\DataModels\\BookingIntentModel",
+    "Modules\\TitanEchoAssist\\AI\\DataModels\\EscalationDecisionModel",
+    "Modules\\TitanEchoAssist\\AI\\DataModels\\QuoteRequestModel",
+    "Modules\\TitanEchoAssist\\AI\\DataModels\\TrainingResultModel",
+    "Modules\\TitanEchoAssist\\AI\\DataModels\\VoiceResponseModel"
   ],
   "providers": [
     "openai",

@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Billing\Usage\UsageRecord;
-use Modules\TitanChatbot\Billing\Usage\UsageTracker;
-use Modules\TitanChatbot\Events\AI\EngineError;
+use Modules\TitanEchoAssist\Billing\Usage\UsageRecord;
+use Modules\TitanEchoAssist\Billing\Usage\UsageTracker;
+use Modules\TitanEchoAssist\Events\AI\EngineError;
 
 class GeneratorBridge
 {

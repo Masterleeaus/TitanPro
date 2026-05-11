@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotWhatsapp\System\Http\Requests;
+namespace Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

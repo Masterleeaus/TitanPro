@@ -105,7 +105,7 @@ class HandleInertiaRequests extends Middleware
         // frontend can apply menu and layout overrides without an extra request.
         $roleUi = null;
         if ($user && $user->organization_id) {
-            $role = $user->getRoleNames()->first();
+            $role = RoleUIProfile::resolvePrimaryRole($user);
             if ($role) {
                 $profile = Cache::remember(
                     "role_ui_profile.{$user->organization_id}.{$role}",
@@ -125,6 +125,9 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+            'name'        => config('app.name'),
+            'quote'       => ['message' => '', 'author' => ''],
+            'sidebarOpen' => $request->cookie('sidebar_state') === 'true',
             'auth' => [
                 'user'  => $user,
                 'roles' => $user?->getRoleNames() ?? [],

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Events\AI;
+namespace Modules\TitanEchoAssist\Events\AI;
 
 class AfterToolExecution
 {

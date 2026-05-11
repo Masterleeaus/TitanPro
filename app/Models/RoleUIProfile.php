@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * resolves their primary role, loads any matching profile, and merges the
  * overrides on top of the platform defaults.
  *
- * @property int|null  $organization_id
+ * @property int       $organization_id
  * @property string    $role
  * @property string|null $primary_color
  * @property string|null $secondary_color
@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RoleUIProfile extends Model implements TenantAware
 {
     use BelongsToTenant;
+
+    /** Regex matching valid CSS hex colours: #rgb or #rrggbb. */
+    private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
 
     protected $fillable = [
         'organization_id',
@@ -50,7 +53,11 @@ class RoleUIProfile extends Model implements TenantAware
 
     // ── Roles that may have a profile ──────────────────────────────────────────
 
-    /** Canonical role slugs the UI studio exposes. */
+    /**
+     * Canonical role slugs the UI studio exposes (slug => label).
+     *
+     * @var array<string, string>
+     */
     public const SUPPORTED_ROLES = [
         'admin'       => 'Admin',
         'owner'       => 'Owner',
@@ -58,6 +65,14 @@ class RoleUIProfile extends Model implements TenantAware
         'bookkeeper'  => 'Bookkeeper / Finance',
         'technician'  => 'Technician (Mobile)',
     ];
+
+    /**
+     * Role priority order used when a user holds multiple roles.
+     * The first match in this list wins.
+     *
+     * @var list<string>
+     */
+    private const ROLE_PRIORITY = ['admin', 'owner', 'dispatcher', 'bookkeeper', 'technician'];
 
     // ── Relationships ──────────────────────────────────────────────────────────
 
@@ -80,10 +95,35 @@ class RoleUIProfile extends Model implements TenantAware
             ->first();
     }
 
+    /**
+     * Resolve the single "primary" role for a user deterministically.
+     *
+     * Users may hold multiple roles. Rather than relying on the non-deterministic
+     * ordering of Spatie's `getRoleNames()`, we pick the first role that appears
+     * in ROLE_PRIORITY. Falls back to the user's first assigned role if none
+     * match the priority list (e.g. custom roles).
+     *
+     * @param  \App\Models\User|\Illuminate\Contracts\Auth\Authenticatable $user
+     */
+    public static function resolvePrimaryRole(mixed $user): ?string
+    {
+        $userRoles = $user->getRoleNames()->all();
+
+        foreach (self::ROLE_PRIORITY as $priorityRole) {
+            if (in_array($priorityRole, $userRoles, true)) {
+                return $priorityRole;
+            }
+        }
+
+        return $userRoles[0] ?? null;
+    }
+
     // ── Theme helpers ──────────────────────────────────────────────────────────
 
     /**
      * Return only the non-null colour overrides as an associative array.
+     * Values are validated against the hex-colour pattern; invalid values are
+     * silently dropped to prevent CSS injection.
      *
      * @return array<string, string>
      */
@@ -92,8 +132,9 @@ class RoleUIProfile extends Model implements TenantAware
         $overrides = [];
 
         foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $field) {
-            if ($this->{$field} !== null) {
-                $overrides[$field] = $this->{$field};
+            $value = $this->{$field};
+            if ($value !== null && preg_match(self::HEX_COLOR_REGEX, $value)) {
+                $overrides[$field] = $value;
             }
         }
 

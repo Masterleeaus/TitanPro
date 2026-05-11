@@ -4,7 +4,7 @@
   "name": "TitanChatbot Booking Agent",
   "description": "AI-native cleaning business booking agent embedded in TitanChatbot module",
   "version": "1.0.0",
-  "agent_class": "Modules\\TitanChatbot\\AI\\Agents\\BookingAgent",
+  "agent_class": "Modules\\TitanEchoAssist\\AI\\Agents\\BookingAgent",
   "capabilities": ["quote_capture", "booking_flow", "knowledge_qa", "escalation", "channel_aware"],
   "channels": ["webchat", "whatsapp", "telegram", "messenger", "voice"],
   "tools": [

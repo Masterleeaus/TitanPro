@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('role_ui_profiles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('organization_id')->nullable()->index();
+            $table->unsignedBigInteger('organization_id')->index();
             $table->string('role', 64);
             $table->string('primary_color', 20)->nullable();
             $table->string('secondary_color', 20)->nullable();
