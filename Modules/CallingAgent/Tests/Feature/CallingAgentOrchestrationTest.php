@@ -2,7 +2,8 @@
 
 namespace Modules\CallingAgent\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Modules\CallingAgent\AI\Agents\ReceptionistAgent;
 use Modules\CallingAgent\Models\CallingAgent;
 use Modules\CallingAgent\Models\CallingAgentCall;
@@ -14,17 +15,18 @@ use Tests\TestCase;
 
 class CallingAgentOrchestrationTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->app->register(\Modules\CallingAgent\Providers\ModuleServiceProvider::class);
         TenantContext::clear();
+        $this->setUpCallingAgentTables();
     }
 
     protected function tearDown(): void
     {
+        $this->tearDownCallingAgentTables();
         TenantContext::clear();
 
         parent::tearDown();
@@ -202,5 +204,177 @@ class CallingAgentOrchestrationTest extends TestCase
             'direction' => 'outbound',
             'body' => 'We can help with your booking.',
         ]);
+    }
+
+    private function setUpCallingAgentTables(): void
+    {
+        foreach ([
+            'calling_agent_missed_call_recovery_tasks',
+            'calling_agent_call_outcomes',
+            'calling_agent_webhook_idempotency',
+            'calling_agent_messages',
+            'calling_agent_caller_profiles',
+            'calling_agent_transcripts',
+            'calling_agent_active_calls',
+            'calling_agent_calls',
+            'calling_agent_phone_numbers',
+            'calling_agents',
+        ] as $table) {
+            Schema::dropIfExists($table);
+        }
+
+        Schema::create('calling_agents', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->string('name');
+            $table->string('phone_number')->nullable();
+            $table->text('first_message')->nullable();
+            $table->longText('instructions')->nullable();
+            $table->json('settings')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_phone_numbers', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('calling_agent_id')->nullable();
+            $table->string('number')->unique();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_calls', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('calling_agent_id')->nullable();
+            $table->string('provider')->default('twilio');
+            $table->string('call_sid')->nullable()->index();
+            $table->string('direction')->nullable();
+            $table->string('from')->nullable();
+            $table->string('to')->nullable();
+            $table->string('status')->default('queued');
+            $table->integer('duration')->default(0);
+            $table->string('recording_url')->nullable();
+            $table->json('metadata')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('ended_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_active_calls', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('calling_agent_call_id')->nullable();
+            $table->string('call_sid')->unique();
+            $table->string('from')->nullable();
+            $table->string('to')->nullable();
+            $table->string('state')->default('ringing');
+            $table->json('context')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_transcripts', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('calling_agent_call_id');
+            $table->string('role')->default('user');
+            $table->longText('text');
+            $table->string('source')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_caller_profiles', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->string('phone')->nullable()->index();
+            $table->string('email')->nullable()->index();
+            $table->string('name')->nullable();
+            $table->string('company')->nullable();
+            $table->json('tags')->nullable();
+            $table->json('preferences')->nullable();
+            $table->json('last_outcome')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
+            $table->timestamp('last_call_at')->nullable();
+            $table->unsignedInteger('call_count')->default(0);
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_messages', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('calling_agent_id')->nullable();
+            $table->string('provider')->default('twilio');
+            $table->string('channel')->default('sms');
+            $table->string('message_sid')->nullable()->index();
+            $table->string('from')->nullable();
+            $table->string('to')->nullable();
+            $table->longText('body')->nullable();
+            $table->string('direction')->nullable();
+            $table->string('status')->nullable();
+            $table->json('metadata')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_webhook_idempotency', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->string('event_id')->unique();
+            $table->string('source')->nullable();
+            $table->timestamp('processed_at')->nullable();
+            $table->string('payload_hash')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_call_outcomes', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->string('call_sid')->nullable()->index();
+            $table->string('intent')->nullable();
+            $table->string('urgency')->nullable();
+            $table->string('lead_quality')->nullable();
+            $table->boolean('handoff_required')->default(false);
+            $table->boolean('booking_requested')->default(false);
+            $table->string('sentiment')->nullable();
+            $table->json('entities')->nullable();
+            $table->json('next_actions')->nullable();
+            $table->text('summary')->nullable();
+            $table->json('raw')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('calling_agent_missed_call_recovery_tasks', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->unsignedBigInteger('calling_agent_call_id')->nullable();
+            $table->string('call_sid')->nullable()->index();
+            $table->string('phone')->nullable();
+            $table->string('channel')->default('sms');
+            $table->string('status')->default('pending');
+            $table->integer('attempts')->default(0);
+            $table->timestamp('scheduled_at')->nullable();
+            $table->timestamp('last_attempted_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->json('metadata')->nullable();
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    private function tearDownCallingAgentTables(): void
+    {
+        foreach ([
+            'calling_agent_missed_call_recovery_tasks',
+            'calling_agent_call_outcomes',
+            'calling_agent_webhook_idempotency',
+            'calling_agent_messages',
+            'calling_agent_caller_profiles',
+            'calling_agent_transcripts',
+            'calling_agent_active_calls',
+            'calling_agent_calls',
+            'calling_agent_phone_numbers',
+            'calling_agents',
+        ] as $table) {
+            Schema::dropIfExists($table);
+        }
     }
 }

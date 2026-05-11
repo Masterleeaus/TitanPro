@@ -15,6 +15,13 @@ use Tests\TestCase;
 
 class CallingAgentProviderWiringTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->register(\Modules\CallingAgent\Providers\ModuleServiceProvider::class);
+    }
+
     public function test_module_provider_registers_telephony_and_voice_drivers(): void
     {
         $manager = $this->app->make(VoiceProviderManager::class);
