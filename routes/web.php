@@ -199,6 +199,17 @@ Route::get('/health/ready', [HealthController::class, 'readiness'])->name('healt
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
     ->name('stripe.webhook');
 
+// ── Visual UI Inspector API — authenticated; accessible to admins & owners ──
+Route::middleware(['auth', 'role:super_admin|admin|owner'])
+    ->prefix('titan/ui-inspector')
+    ->name('titan.ui-inspector.')
+    ->group(function () {
+        Route::get('/overrides',            [\App\Http\Controllers\UiInspectorController::class, 'index'])->name('index');
+        Route::post('/overrides',           [\App\Http\Controllers\UiInspectorController::class, 'upsert'])->name('upsert');
+        Route::delete('/overrides/{key}',   [\App\Http\Controllers\UiInspectorController::class, 'reset'])->name('reset');
+        Route::delete('/overrides',         [\App\Http\Controllers\UiInspectorController::class, 'resetAll'])->name('reset-all');
+    });
+
 
 
 // Public Titan BOS marketing, app, Service Mode, and CMS pages.
