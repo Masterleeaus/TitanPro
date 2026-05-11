@@ -8,6 +8,7 @@
       glassmorphism, animation preset.
     • Changes are applied instantly via CSS custom-property injection (no reload).
     • Overrides are persisted to localStorage + the /titan/ui-inspector/overrides API.
+    • Floating actions support exporting and importing override JSON files.
     • "Reset component" reverts to theme defaults.
 
     Requires: Alpine.js (provided by Filament), csrf meta tag.
@@ -374,19 +375,45 @@
     </aside>
 
     {{-- ── Floating toggle button ───────────────────────────────────────── --}}
-    <button
-        @click="toggle()"
-        title="Toggle UI Inspector"
-        class="fixed flex items-center justify-center rounded-full shadow-xl transition-all"
-        :class="{ 'ring-2 ring-indigo-400 ring-offset-2': active }"
-        style="bottom:1.5rem;right:1.5rem;z-index:10001;width:44px;height:44px;background:#6366f1;color:#fff;border:0;cursor:pointer"
-        :style="{ background: active ? '#4f46e5' : '#6366f1' }"
-    >
-        {{-- Wrench / paint-brush icon --}}
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
-        </svg>
-    </button>
+    <div class="fixed flex flex-col gap-2" style="bottom:1.5rem;right:1.5rem;z-index:10001">
+        <button
+            @click="exportOverrides()"
+            type="button"
+            class="rounded-lg px-3 py-2 text-[11px] font-semibold shadow transition-colors"
+            style="background:#313244;color:#cdd6f4;border:1px solid rgba(255,255,255,0.12)"
+        >
+            Export overrides
+        </button>
+        <button
+            @click="$refs.importOverridesInput.click()"
+            type="button"
+            class="rounded-lg px-3 py-2 text-[11px] font-semibold shadow transition-colors"
+            style="background:#313244;color:#cdd6f4;border:1px solid rgba(255,255,255,0.12)"
+        >
+            Import overrides
+        </button>
+        <input
+            x-ref="importOverridesInput"
+            type="file"
+            accept="application/json,.json"
+            class="hidden"
+            @change="importOverrides($event)"
+        >
+
+        <button
+            @click="toggle()"
+            title="Toggle UI Inspector"
+            class="self-end flex items-center justify-center rounded-full shadow-xl transition-all"
+            :class="{ 'ring-2 ring-indigo-400 ring-offset-2': active }"
+            style="width:44px;height:44px;background:#6366f1;color:#fff;border:0;cursor:pointer"
+            :style="{ background: active ? '#4f46e5' : '#6366f1' }"
+        >
+            {{-- Wrench / paint-brush icon --}}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+            </svg>
+        </button>
+    </div>
 
 </div>
 

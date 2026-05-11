@@ -206,6 +206,8 @@ Route::middleware(['auth', 'role:super_admin|admin|owner'])
     ->group(function () {
         Route::get('/overrides',            [\App\Http\Controllers\UiInspectorController::class, 'index'])->name('index');
         Route::post('/overrides',           [\App\Http\Controllers\UiInspectorController::class, 'upsert'])->name('upsert');
+        Route::get('/export',               [\App\Http\Controllers\UiInspectorController::class, 'export'])->name('export');
+        Route::post('/import',              [\App\Http\Controllers\UiInspectorController::class, 'import'])->name('import');
         Route::delete('/overrides/{key}',   [\App\Http\Controllers\UiInspectorController::class, 'reset'])->name('reset');
         Route::delete('/overrides',         [\App\Http\Controllers\UiInspectorController::class, 'resetAll'])->name('reset-all');
     });
