@@ -26,7 +26,10 @@ class SignalEmitter
     public static function emit(string $event, ?string $subjectType = null, ?int $subjectId = null, array $payload = [], array $opts = []): int
     {
         $user = Auth::user();
-        $teamId = $opts['team_id'] ?? ($user->team_id ?? $user->organization_id ?? $user->company_id ?? null);
+        $teamId = $opts['team_id']
+            ?? data_get($user, 'team_id')
+            ?? data_get($user, 'organization_id')
+            ?? data_get($user, 'company_id');
         if (!$teamId) {
             throw new \RuntimeException('SignalEmitter: team_id is required');
         }
