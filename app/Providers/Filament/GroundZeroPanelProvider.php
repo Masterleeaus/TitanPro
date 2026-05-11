@@ -78,6 +78,7 @@ class GroundZeroPanelProvider extends PanelProvider
                 Authenticate::class,
                 CheckSubscription::class,
             ])
+            ->renderHook(...$this->uiOverrideSsrHook())
             ->renderHook(...$this->uiInspectorHook());
     }
 }
