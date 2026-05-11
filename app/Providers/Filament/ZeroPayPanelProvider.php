@@ -76,6 +76,7 @@ class ZeroPayPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->renderHook(...$this->uiOverrideSsrHook())
             ->renderHook(...$this->uiInspectorHook());
     }
 }

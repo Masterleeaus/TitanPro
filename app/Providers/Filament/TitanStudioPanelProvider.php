@@ -73,6 +73,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->renderHook(...$this->uiOverrideSsrHook())
             ->renderHook(...$this->uiInspectorHook());
     }
 }
