@@ -35,8 +35,6 @@ Route::middleware(['web', 'auth'])
         Route::get('/history/docs', [AiTemplateController::class, 'historyDocs'])->name('titan.docs.history.docs');
         Route::get('/history/swms', [AiTemplateController::class, 'historySwms'])->name('titan.docs.history.swms');
         Route::get('/history', [AiTemplateController::class, 'historyDocs'])->name('titan.docs.history');
-        Route::get('/history', [AiTemplateController::class, 'history'])->name('titan-docs.document.history');
-        Route::get('/history', [AiTemplateController::class, 'history'])->name('aidocument.document.history');
 
         Route::match(['get', 'post'], '/show/{doc_id}/{id}', [AiTemplateController::class, 'show'])->name('titan.docs.document.view');
         Route::match(['get', 'post'], '/show/{doc_id}/{id}', [AiTemplateController::class, 'show'])->name('titan-docs.document.show');
@@ -54,6 +52,6 @@ Route::middleware(['web', 'auth'])
         Route::post('/regenerate/response', [AiTemplateController::class, 'regenerate_response'])->name('aidocument.document.regenerate.response');
         Route::get('/export/response/{id}', [AiTemplateController::class, 'exportresponsecontent'])->name('titan.docs.export.response');
         Route::get('/export/all/{id}', [AiTemplateController::class, 'exportallresponsecontent'])->name('titan.docs.export.all');
-        Route::get('/exportresponsecontent', [AiTemplateController::class, 'exportresponsecontent'])->name('aidocument.document.export.response');
-        Route::get('/exportallresponsecontent', [AiTemplateController::class, 'exportallresponsecontent'])->name('aidocument.document.export.allresponse');
+        Route::post('/exportresponsecontent', [AiTemplateController::class, 'exportresponsecontent'])->name('aidocument.document.export.response');
+        Route::post('/exportallresponsecontent', [AiTemplateController::class, 'exportallresponsecontent'])->name('aidocument.document.export.allresponse');
     });

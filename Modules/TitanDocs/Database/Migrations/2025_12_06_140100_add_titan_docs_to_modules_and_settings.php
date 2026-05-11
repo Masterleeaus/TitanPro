@@ -26,27 +26,44 @@ return new class extends Migration
         }
 
         if (Schema::hasTable('module_settings') && Schema::hasTable('companies')) {
-            $companies = DB::table('companies')->select('id')->get();
+            $companyIds = DB::table('companies')->pluck('id')->all();
 
-            foreach ($companies as $company) {
-                foreach (['admin', 'employee'] as $type) {
-                    $exists = DB::table('module_settings')
-                        ->where('company_id', $company->id)
-                        ->where('module_name', 'Titan Docs')
-                        ->where('type', $type)
-                        ->exists();
+            if ($companyIds !== []) {
+                $types = ['admin', 'employee'];
+                $existingRows = DB::table('module_settings')
+                    ->where('module_name', 'Titan Docs')
+                    ->whereIn('company_id', $companyIds)
+                    ->whereIn('type', $types)
+                    ->get(['company_id', 'type']);
 
-                    if (! $exists) {
-                        DB::table('module_settings')->insert([
-                            'company_id'  => $company->id,
+                $existingKeys = [];
+                foreach ($existingRows as $existingRow) {
+                    $existingKeys[$existingRow->company_id.'|'.$existingRow->type] = true;
+                }
+
+                $rowsToInsert = [];
+                foreach ($companyIds as $companyId) {
+                    foreach ($types as $type) {
+                        $key = $companyId.'|'.$type;
+
+                        if (isset($existingKeys[$key])) {
+                            continue;
+                        }
+
+                        $rowsToInsert[] = [
+                            'company_id'  => $companyId,
                             'module_name' => 'Titan Docs',
                             'status'      => 'active',
                             'type'        => $type,
                             'is_allowed'  => 1,
                             'created_at'  => now(),
                             'updated_at'  => now(),
-                        ]);
+                        ];
                     }
+                }
+
+                foreach (array_chunk($rowsToInsert, 500) as $chunk) {
+                    DB::table('module_settings')->insert($chunk);
                 }
             }
         }

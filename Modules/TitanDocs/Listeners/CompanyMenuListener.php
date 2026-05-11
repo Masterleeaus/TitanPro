@@ -63,7 +63,7 @@ class CompanyMenuListener
             'order' => 10,
             'ignore_if' => [],
             'depend_on' => [],
-            'route' => 'titan-docs.document.history',
+            'route' => 'titan.docs.history',
             'module' => $module,
             'permission' => 'document history manage'
         ]);

@@ -33,7 +33,7 @@ class GeneratorWizardController extends AccountBaseController
 
     public function step(Request $request, int $session, int $step)
     {
-        $wiz = WizardSession::query()->where('id', $session)->firstOrFail();
+        $wiz = $this->resolveSession($session);
 
         $step = max(1, min(4, $step));
         $wiz->current_step = $step;
@@ -50,7 +50,7 @@ class GeneratorWizardController extends AccountBaseController
 
     public function save(Request $request, int $session, int $step)
     {
-        $wiz = WizardSession::query()->where('id', $session)->firstOrFail();
+        $wiz = $this->resolveSession($session);
 
         $payload = $wiz->payload_json ?? [];
         $incoming = $request->except(['_token']);
@@ -96,7 +96,7 @@ class GeneratorWizardController extends AccountBaseController
 
     public function review(int $session)
     {
-        $wiz = WizardSession::query()->where('id', $session)->firstOrFail();
+        $wiz = $this->resolveSession($session);
         $data = $wiz->payload_json ?? [];
 
         return view('titandocs::generator.review', $this->data + [
@@ -107,11 +107,22 @@ class GeneratorWizardController extends AccountBaseController
 
     public function complete(Request $request, int $session)
     {
-        $wiz = WizardSession::query()->where('id', $session)->firstOrFail();
+        $wiz = $this->resolveSession($session);
         $wiz->status = 'complete';
         $wiz->save();
 
         // Hand off to existing generator UI; it can read ?wizard=<id> later if desired
         return redirect()->route('titan.docs.index', ['wizard' => $wiz->id])->with('success', __('Wizard complete. Choose a template to generate your document.'));
+    }
+
+    protected function resolveSession(int $sessionId): WizardSession
+    {
+        $user = auth()->user();
+
+        return WizardSession::query()
+            ->whereKey($sessionId)
+            ->where('user_id', $user?->id)
+            ->where('company_id', $user?->organization_id)
+            ->firstOrFail();
     }
 }

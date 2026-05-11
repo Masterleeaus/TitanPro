@@ -72,7 +72,11 @@ class AiTemplateController extends AccountBaseController
             
             $wizard = null;
             if ($request->filled('wizard')) {
-                $wizard = \Modules\TitanDocs\Models\WizardSession::query()->where('id', $request->wizard)->first();
+                $wizard = \Modules\TitanDocs\Models\WizardSession::query()
+                    ->where('id', $request->wizard)
+                    ->where('user_id', auth()->id())
+                    ->where('company_id', auth()->user()?->organization_id)
+                    ->first();
             }
 
             return view('titandocs::document.index', compact('template', 'content', 'blog', 'website', 'social', 'email', 'video', 'other' , 'wizard'));
@@ -618,7 +622,7 @@ class AiTemplateController extends AccountBaseController
                 $response=AiPromptResponse::where('history_prompt_id',$id)->delete();
 
                 $data->delete();
-                return redirect()->route('titan-docs.document.history')->with('success', __('Document successfully deleted .'));
+                return redirect()->route('titan.docs.history')->with('success', __('Document successfully deleted .'));
             } else {
                 return redirect()->back()->with('error', __('Something is wrong.'));
             }

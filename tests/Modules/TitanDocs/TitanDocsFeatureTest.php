@@ -11,6 +11,7 @@ use Modules\TitanDocs\Entities\AiTemplate;
 use Modules\TitanDocs\Entities\AiTemplateCategory;
 use Modules\TitanDocs\Entities\AiTemplatePrompt;
 use Modules\TitanDocs\Filament\Pages\TitanDocsControlPanel;
+use Modules\TitanDocs\Models\WizardSession;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
@@ -37,10 +38,47 @@ class TitanDocsFeatureTest extends TestCase
         $reflection = new \ReflectionClass(TitanDocsControlPanel::class);
 
         $this->assertTrue($this->app['router']->getRoutes()->hasNamedRoute('titan.docs.generator.start'));
+        $this->assertSame('aidocument/history', route('titan.docs.history', absolute: false));
+        $this->assertSame(['POST'], $this->app['router']->getRoutes()->getByName('aidocument.document.export.response')->methods());
+        $this->assertSame(['POST'], $this->app['router']->getRoutes()->getByName('aidocument.document.export.allresponse')->methods());
         $this->assertSame('Documents', $reflection->getStaticPropertyValue('navigationGroup'));
         $this->assertSame('TitanDocs', $reflection->getStaticPropertyValue('navigationLabel'));
         $this->assertSame('titan-docs', $reflection->getStaticPropertyValue('slug'));
         $this->assertFileExists(base_path('Modules/TitanDocs/Resources/views/filament/pages/control-panel.blade.php'));
+    }
+
+    public function test_wizard_routes_are_scoped_to_the_authenticated_user(): void
+    {
+        $owner = User::factory()->create([
+            'organization_id' => 7,
+        ]);
+        $intruder = User::factory()->create([
+            'organization_id' => 9,
+        ]);
+
+        $session = WizardSession::create([
+            'company_id' => $owner->organization_id,
+            'user_id' => $owner->id,
+            'doc_kind' => 'doc',
+            'current_step' => 1,
+            'status' => 'draft',
+            'payload_json' => [],
+        ]);
+
+        $this->actingAs($intruder)
+            ->get(route('titan.docs.generator.step', ['session' => $session->id, 'step' => 1]))
+            ->assertNotFound();
+    }
+
+    public function test_review_template_uses_current_step_keys(): void
+    {
+        $reviewTemplate = (string) file_get_contents(base_path('Modules/TitanDocs/Resources/views/generator/review.blade.php'));
+
+        $this->assertStringContainsString("data_get(\$s2, 'site_context', '-')", $reviewTemplate);
+        $this->assertStringContainsString("data_get(\$s2, 'scope', '-')", $reviewTemplate);
+        $this->assertStringContainsString("data_get(\$s4, 'notes', '-')", $reviewTemplate);
+        $this->assertStringNotContainsString("data_get(\$s2, 'site_name', '-')", $reviewTemplate);
+        $this->assertStringNotContainsString("data_get(\$s4, 'length', '-')", $reviewTemplate);
     }
 
     public function test_wizard_start_creates_session_and_ai_generation_persists_history(): void

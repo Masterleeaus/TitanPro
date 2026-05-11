@@ -43,8 +43,8 @@
 
                     <h6 class="mb-2">{{ __('Job / Context') }}</h6>
                     <div class="text-muted small mb-2">{{ __('Trade') }}: <span class="text-body">{{ data_get($s2, 'trade', '-') }}</span></div>
-                    <div class="text-muted small mb-2">{{ __('Site / Project') }}: <span class="text-body">{{ data_get($s2, 'site_name', '-') }}</span></div>
-                    <div class="text-muted small mb-0">{{ __('Notes') }}: <span class="text-body">{{ data_get($s2, 'notes', '-') }}</span></div>
+                    <div class="text-muted small mb-2">{{ __('Site / Project') }}: <span class="text-body">{{ data_get($s2, 'site_context', '-') }}</span></div>
+                    <div class="text-muted small mb-0">{{ __('Scope / Tasks') }}: <span class="text-body">{{ data_get($s2, 'scope', '-') }}</span></div>
 
                     <hr>
 
@@ -80,7 +80,7 @@
 
                     <h6 class="mb-2">{{ __('Output preferences') }}</h6>
                     <div class="text-muted small mb-2">{{ __('Tone') }}: <span class="text-body">{{ data_get($s4, 'tone', '-') }}</span></div>
-                    <div class="text-muted small mb-0">{{ __('Length') }}: <span class="text-body">{{ data_get($s4, 'length', '-') }}</span></div>
+                    <div class="text-muted small mb-0">{{ __('Extra details / notes') }}: <span class="text-body">{{ data_get($s4, 'notes', '-') }}</span></div>
                 </div>
 
                 <div class="card-footer d-flex justify-content-between">
