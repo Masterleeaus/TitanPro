@@ -296,13 +296,10 @@
                     </section>
 
                     <section>
-                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Custom CSS</h4>
-                        <textarea
-                            wire:model.live="customCss"
-                            rows="6"
-                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300 resize-y"
-                            placeholder="/* custom overrides */"
-                        ></textarea>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Design token engine</h4>
+                        <div class="rounded-lg border border-dashed border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-white/5 px-3 py-3 text-xs text-gray-600 dark:text-gray-300">
+                            Theme overrides are stored as semantic tokens in <code>titan_theme_tokens</code>. Component tokens inherit from those values, and you can export the full token set with <code>php artisan titan:tokens:export</code>.
+                        </div>
                     </section>
 
                     {{-- Live preview swatch --}}
