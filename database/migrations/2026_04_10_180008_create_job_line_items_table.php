@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('unit_price', 10, 2)->default(0);
             $table->decimal('quantity', 10, 3)->default(1);
-            $table->decimal('total', 10, 2)->storedAs('unit_price * quantity');
+            $table->decimal('total', 10, 2)->default(0);
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
 

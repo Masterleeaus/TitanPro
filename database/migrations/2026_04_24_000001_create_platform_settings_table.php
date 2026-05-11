@@ -82,11 +82,13 @@ return new class extends Migration
         }
 
         if (Schema::hasTable('platform_settings') && DB::table('platform_settings')->count() === 0) {
-            DB::table('platform_settings')->insert([
-                ...PlatformSetting::defaults(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $defaults = PlatformSetting::defaults();
+            $row = array_filter(
+                array_merge($defaults, ['created_at' => now(), 'updated_at' => now()]),
+                fn ($col) => Schema::hasColumn('platform_settings', $col),
+                ARRAY_FILTER_USE_KEY,
+            );
+            DB::table('platform_settings')->insert($row);
         }
 
         if (Schema::hasTable('platform_settings')) {

@@ -51,6 +51,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Job::class, 'assigned_to');
     }
 
+    public function hasConfirmedTwoFactor(): bool
+    {
+        return ! empty($this->two_factor_confirmed_at)
+            || ! empty($this->two_factor_secret)
+            || ! empty($this->two_factor_enabled_at);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'titansolo') {
