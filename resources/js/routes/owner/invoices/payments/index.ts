@@ -1,10 +1,10 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:145
+* @see app/Http/Controllers/Owner/InvoiceController.php:135
 * @route '/owner/invoices/{invoice}/payments'
 */
-export const store = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -16,10 +16,10 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:145
+* @see app/Http/Controllers/Owner/InvoiceController.php:135
 * @route '/owner/invoices/{invoice}/payments'
 */
-store.url = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+store.url = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { invoice: args }
     }
@@ -49,30 +49,30 @@ store.url = (args: { invoice: string | number | { id: string | number } } | [inv
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:145
+* @see app/Http/Controllers/Owner/InvoiceController.php:135
 * @route '/owner/invoices/{invoice}/payments'
 */
-store.post = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+store.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:145
+* @see app/Http/Controllers/Owner/InvoiceController.php:135
 * @route '/owner/invoices/{invoice}/payments'
 */
-const storeForm = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const storeForm = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:145
+* @see app/Http/Controllers/Owner/InvoiceController.php:135
 * @route '/owner/invoices/{invoice}/payments'
 */
-storeForm.post = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+storeForm.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })

@@ -85,7 +85,7 @@ index.form = indexForm
 * @see app/Http/Controllers/Platform/DashboardController.php:67
 * @route '/platform/organizations/{organization}'
 */
-export const updateOrganization = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const updateOrganization = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateOrganization.url(args, options),
     method: 'patch',
 })
@@ -100,7 +100,7 @@ updateOrganization.definition = {
 * @see app/Http/Controllers/Platform/DashboardController.php:67
 * @route '/platform/organizations/{organization}'
 */
-updateOrganization.url = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+updateOrganization.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { organization: args }
     }
@@ -133,7 +133,7 @@ updateOrganization.url = (args: { organization: string | number | { id: string |
 * @see app/Http/Controllers/Platform/DashboardController.php:67
 * @route '/platform/organizations/{organization}'
 */
-updateOrganization.patch = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+updateOrganization.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateOrganization.url(args, options),
     method: 'patch',
 })
@@ -143,7 +143,7 @@ updateOrganization.patch = (args: { organization: string | number | { id: string
 * @see app/Http/Controllers/Platform/DashboardController.php:67
 * @route '/platform/organizations/{organization}'
 */
-const updateOrganizationForm = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateOrganizationForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateOrganization.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -158,7 +158,7 @@ const updateOrganizationForm = (args: { organization: string | number | { id: st
 * @see app/Http/Controllers/Platform/DashboardController.php:67
 * @route '/platform/organizations/{organization}'
 */
-updateOrganizationForm.patch = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateOrganizationForm.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateOrganization.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -175,7 +175,7 @@ updateOrganization.form = updateOrganizationForm
 * @see app/Http/Controllers/Platform/DashboardController.php:82
 * @route '/platform/organizations/{organization}/subscription'
 */
-export const updateSubscription = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const updateSubscription = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateSubscription.url(args, options),
     method: 'patch',
 })
@@ -190,7 +190,7 @@ updateSubscription.definition = {
 * @see app/Http/Controllers/Platform/DashboardController.php:82
 * @route '/platform/organizations/{organization}/subscription'
 */
-updateSubscription.url = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+updateSubscription.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { organization: args }
     }
@@ -223,7 +223,7 @@ updateSubscription.url = (args: { organization: string | number | { id: string |
 * @see app/Http/Controllers/Platform/DashboardController.php:82
 * @route '/platform/organizations/{organization}/subscription'
 */
-updateSubscription.patch = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+updateSubscription.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: updateSubscription.url(args, options),
     method: 'patch',
 })
@@ -233,7 +233,7 @@ updateSubscription.patch = (args: { organization: string | number | { id: string
 * @see app/Http/Controllers/Platform/DashboardController.php:82
 * @route '/platform/organizations/{organization}/subscription'
 */
-const updateSubscriptionForm = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateSubscriptionForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateSubscription.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -248,7 +248,7 @@ const updateSubscriptionForm = (args: { organization: string | number | { id: st
 * @see app/Http/Controllers/Platform/DashboardController.php:82
 * @route '/platform/organizations/{organization}/subscription'
 */
-updateSubscriptionForm.patch = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateSubscriptionForm.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateSubscription.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -265,7 +265,7 @@ updateSubscription.form = updateSubscriptionForm
 * @see app/Http/Controllers/Platform/DashboardController.php:106
 * @route '/platform/organizations/{organization}/extend-trial'
 */
-export const extendTrial = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const extendTrial = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: extendTrial.url(args, options),
     method: 'post',
 })
@@ -280,7 +280,7 @@ extendTrial.definition = {
 * @see app/Http/Controllers/Platform/DashboardController.php:106
 * @route '/platform/organizations/{organization}/extend-trial'
 */
-extendTrial.url = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+extendTrial.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { organization: args }
     }
@@ -313,7 +313,7 @@ extendTrial.url = (args: { organization: string | number | { id: string | number
 * @see app/Http/Controllers/Platform/DashboardController.php:106
 * @route '/platform/organizations/{organization}/extend-trial'
 */
-extendTrial.post = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+extendTrial.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: extendTrial.url(args, options),
     method: 'post',
 })
@@ -323,7 +323,7 @@ extendTrial.post = (args: { organization: string | number | { id: string | numbe
 * @see app/Http/Controllers/Platform/DashboardController.php:106
 * @route '/platform/organizations/{organization}/extend-trial'
 */
-const extendTrialForm = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const extendTrialForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: extendTrial.url(args, options),
     method: 'post',
 })
@@ -333,7 +333,7 @@ const extendTrialForm = (args: { organization: string | number | { id: string | 
 * @see app/Http/Controllers/Platform/DashboardController.php:106
 * @route '/platform/organizations/{organization}/extend-trial'
 */
-extendTrialForm.post = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+extendTrialForm.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: extendTrial.url(args, options),
     method: 'post',
 })
@@ -345,7 +345,7 @@ extendTrial.form = extendTrialForm
 * @see app/Http/Controllers/Platform/DashboardController.php:127
 * @route '/platform/organizations/{organization}/activate'
 */
-export const activate = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const activate = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: activate.url(args, options),
     method: 'post',
 })
@@ -360,7 +360,7 @@ activate.definition = {
 * @see app/Http/Controllers/Platform/DashboardController.php:127
 * @route '/platform/organizations/{organization}/activate'
 */
-activate.url = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+activate.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { organization: args }
     }
@@ -393,7 +393,7 @@ activate.url = (args: { organization: string | number | { id: string | number } 
 * @see app/Http/Controllers/Platform/DashboardController.php:127
 * @route '/platform/organizations/{organization}/activate'
 */
-activate.post = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+activate.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: activate.url(args, options),
     method: 'post',
 })
@@ -403,7 +403,7 @@ activate.post = (args: { organization: string | number | { id: string | number }
 * @see app/Http/Controllers/Platform/DashboardController.php:127
 * @route '/platform/organizations/{organization}/activate'
 */
-const activateForm = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const activateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: activate.url(args, options),
     method: 'post',
 })
@@ -413,7 +413,7 @@ const activateForm = (args: { organization: string | number | { id: string | num
 * @see app/Http/Controllers/Platform/DashboardController.php:127
 * @route '/platform/organizations/{organization}/activate'
 */
-activateForm.post = (args: { organization: string | number | { id: string | number } } | [organization: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+activateForm.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: activate.url(args, options),
     method: 'post',
 })

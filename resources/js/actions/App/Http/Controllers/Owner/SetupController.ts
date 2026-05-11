@@ -197,7 +197,7 @@ addJobType.form = addJobTypeForm
 * @see app/Http/Controllers/Owner/SetupController.php:114
 * @route '/owner/setup/job-types/{jobType}'
 */
-export const removeJobType = (args: { jobType: string | number | { id: string | number } } | [jobType: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const removeJobType = (args: { jobType: number | { id: number } } | [jobType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeJobType.url(args, options),
     method: 'delete',
 })
@@ -212,7 +212,7 @@ removeJobType.definition = {
 * @see app/Http/Controllers/Owner/SetupController.php:114
 * @route '/owner/setup/job-types/{jobType}'
 */
-removeJobType.url = (args: { jobType: string | number | { id: string | number } } | [jobType: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+removeJobType.url = (args: { jobType: number | { id: number } } | [jobType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { jobType: args }
     }
@@ -245,7 +245,7 @@ removeJobType.url = (args: { jobType: string | number | { id: string | number } 
 * @see app/Http/Controllers/Owner/SetupController.php:114
 * @route '/owner/setup/job-types/{jobType}'
 */
-removeJobType.delete = (args: { jobType: string | number | { id: string | number } } | [jobType: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+removeJobType.delete = (args: { jobType: number | { id: number } } | [jobType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: removeJobType.url(args, options),
     method: 'delete',
 })
@@ -255,7 +255,7 @@ removeJobType.delete = (args: { jobType: string | number | { id: string | number
 * @see app/Http/Controllers/Owner/SetupController.php:114
 * @route '/owner/setup/job-types/{jobType}'
 */
-const removeJobTypeForm = (args: { jobType: string | number | { id: string | number } } | [jobType: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const removeJobTypeForm = (args: { jobType: number | { id: number } } | [jobType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: removeJobType.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -270,7 +270,7 @@ const removeJobTypeForm = (args: { jobType: string | number | { id: string | num
 * @see app/Http/Controllers/Owner/SetupController.php:114
 * @route '/owner/setup/job-types/{jobType}'
 */
-removeJobTypeForm.delete = (args: { jobType: string | number | { id: string | number } } | [jobType: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+removeJobTypeForm.delete = (args: { jobType: number | { id: number } } | [jobType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: removeJobType.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 const EditCmsPage = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCmsPage.url(args, options),
@@ -11,13 +11,13 @@ const EditCmsPage = (args: { record: string | number } | [record: string | numbe
 
 EditCmsPage.definition = {
     methods: ["get","head"],
-    url: '/titanstudio/cms-pages/{record}/edit',
+    url: '/admin/cms-pages/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 EditCmsPage.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditCmsPage.url = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 EditCmsPage.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCmsPage.url(args, options),
@@ -54,7 +54,7 @@ EditCmsPage.get = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 EditCmsPage.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditCmsPage.url(args, options),
@@ -64,7 +64,7 @@ EditCmsPage.head = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 const EditCmsPageForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCmsPage.url(args, options),
@@ -74,7 +74,7 @@ const EditCmsPageForm = (args: { record: string | number } | [record: string | n
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 EditCmsPageForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCmsPage.url(args, options),
@@ -84,7 +84,7 @@ EditCmsPageForm.get = (args: { record: string | number } | [record: string | num
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\EditCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php:7
-* @route '/titanstudio/cms-pages/{record}/edit'
+* @route '/admin/cms-pages/{record}/edit'
 */
 EditCmsPageForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCmsPage.url(args, {
