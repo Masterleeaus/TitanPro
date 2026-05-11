@@ -63,6 +63,16 @@ class OrganizationSetting extends Model
     }
 
     /**
+     * Return the existing settings row for the given organization, or create a
+     * fresh one.  This is the canonical way to obtain a settings record so that
+     * callers never accidentally produce a second row for the same org.
+     */
+    public static function firstOrCreateForOrganization(int $organizationId): static
+    {
+        return static::firstOrCreate(['organization_id' => $organizationId]);
+    }
+
+    /**
      * Returns a masked version of a secret key for display (shows last 4 chars).
      */
     public static function mask(?string $value): ?string
