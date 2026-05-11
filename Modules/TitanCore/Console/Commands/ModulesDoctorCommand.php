@@ -130,11 +130,11 @@ class ModulesDoctorCommand extends Command
         $order = $graph->resolveLoadOrder();
         $nodes = $graph->getNodes();
 
-        $enabledOrder = array_values(
+        $enabledModulesOrder = array_values(
             array_filter($order, fn (string $name) => isset($nodes[$name]) && $nodes[$name]['enabled'])
         );
 
-        foreach ($enabledOrder as $i => $name) {
+        foreach ($enabledModulesOrder as $i => $name) {
             $num = str_pad((string) ($i + 1), 3, ' ', STR_PAD_LEFT);
             $this->line("  {$num}. <fg=cyan>{$name}</> [<fg=green>enabled</>]");
         }
