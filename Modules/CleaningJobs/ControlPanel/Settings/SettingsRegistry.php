@@ -2,43 +2,30 @@
 
 namespace Modules\CleaningJobs\ControlPanel\Settings;
 
-/**
- * SettingsRegistry defines configurable options surfaced in the TitanWork control panel.
- *
- * These settings allow administrators or supervisors to adjust module behaviour
- * without modifying code, such as enabling automatic checklist generation or
- * toggling supply tracking.
- */
 class SettingsRegistry
 {
-    /**
-     * Return an array of configurable settings.
-     *
-     * Each setting should include a unique key, a label for the UI and the
-     * current value (which would normally be persisted via the database or config file).
-     */
     public static function getSettings(): array
     {
         return [
             [
-                'key' => 'checklist_templates',
-                'label' => 'Checklist Templates',
-                'value' => false,
+                'key' => 'auto_convert_on_complete',
+                'label' => 'Auto Convert Completed Jobs',
+                'value' => (bool) config('cleaningjobs.automation.auto_convert_on_complete', false),
             ],
             [
-                'key' => 'inspection_rules',
-                'label' => 'Inspection Rules',
-                'value' => false,
+                'key' => 'daily_job_reminders',
+                'label' => 'Daily Job Reminders',
+                'value' => true,
             ],
             [
-                'key' => 'supply_tracking',
-                'label' => 'Supply Tracking',
-                'value' => false,
+                'key' => 'tenant_scope_enforced',
+                'label' => 'Tenant Scope Enforced',
+                'value' => true,
             ],
             [
-                'key' => 'automation_policies',
-                'label' => 'Automation Policies',
-                'value' => false,
+                'key' => 'knowledge_checklists',
+                'label' => 'Knowledge-Driven Checklists',
+                'value' => true,
             ],
         ];
     }

@@ -5,6 +5,7 @@ namespace Modules\CleaningJobs\Http\Controllers;
 use Modules\CleaningJobs\Models\ServicePart;
 use Modules\CleaningJobs\Models\ServiceTask;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class ServicePartController extends Controller
 {
