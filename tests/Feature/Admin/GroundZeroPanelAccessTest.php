@@ -1,14 +1,15 @@
 <?php
 
 use App\Models\Organization;
-use App\Models\Subscription;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
+beforeEach(function () {
+    (new RolesAndPermissionsSeeder)->run();
+});
+
 function groundZeroUser(string $role): User
 {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole($role);
@@ -57,8 +58,6 @@ test('GroundZero panel renders brand name as GroundZero', function () {
 // ── Subscription gating (CheckSubscription middleware) ───────────────────────
 
 test('owner without an active subscription is redirected by CheckSubscription', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->withoutSubscription()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole('owner');
@@ -69,8 +68,6 @@ test('owner without an active subscription is redirected by CheckSubscription', 
 });
 
 test('admin without an active subscription is redirected by CheckSubscription', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->withoutSubscription()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole('admin');
@@ -81,8 +78,6 @@ test('admin without an active subscription is redirected by CheckSubscription', 
 });
 
 test('dispatcher passes through CheckSubscription even without an active subscription', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->withoutSubscription()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole('dispatcher');
@@ -94,8 +89,6 @@ test('dispatcher passes through CheckSubscription even without an active subscri
 });
 
 test('bookkeeper passes through CheckSubscription even without an active subscription', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->withoutSubscription()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole('bookkeeper');
