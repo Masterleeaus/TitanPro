@@ -14,7 +14,7 @@ class RuleEngine
         }
 
         $event = $this->signalEvent($signal);
-        $payload = $this->enrichPayload($this->signalEvent($signal), $this->signalPayload($signal));
+        $payload = $this->enrichPayload($event, $this->signalPayload($signal));
 
         $subjectType = $this->subjectType($signal);
         $subjectId = $this->subjectId($signal);
