@@ -1,0 +1,12 @@
+ACCEPTANCE — Pass 2
+
+PASS if:
+- Migrations run with no errors and tables exist.
+- /dashboard/user/command/jobs returns JSON with jobs list (even if empty).
+- Creating a job returns JSON with created job payload.
+- /jobs/{id} returns job + events + tasks.
+- Adding tasks/checklists/parts works and is tenant-scoped.
+
+FAIL if:
+- Any route 500s after migrate.
+- Any query returns data across tenants (company_id/user_id leakage).

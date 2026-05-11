@@ -1,0 +1,8 @@
+{
+  "name": "TitanCommand",
+  "type": "extension",
+  "version": "1.2.1",
+  "description": "Titan Command (Jobs Core) \u2014 PWA-first owner workspace (Jobs, Dispatch, Evidence, Reports).",
+  "slug": "titancommand",
+  "provider": "App\\Extensions\\TitanCommand\\System\\TitanCommandServiceProvider"
+}

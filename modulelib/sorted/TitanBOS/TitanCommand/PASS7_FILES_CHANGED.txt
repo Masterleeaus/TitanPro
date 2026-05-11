@@ -1,0 +1,1 @@
+Pass 7: Remove remaining social media wording from migration CONTENT and UI strings; tables created as ext_titan_command_* on fresh installs; rename migration remains as safety net.

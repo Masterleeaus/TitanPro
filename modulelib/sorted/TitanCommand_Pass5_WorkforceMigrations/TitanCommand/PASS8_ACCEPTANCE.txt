@@ -1,0 +1,2 @@
+- No PHP file content contains 'SocialMedia' or 'SocialMediaAgent' tokens.
+- TitanCommandServiceProvider routes + views load as before.

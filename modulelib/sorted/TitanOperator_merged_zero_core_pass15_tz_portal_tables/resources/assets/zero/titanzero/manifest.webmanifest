@@ -1,0 +1,19 @@
+{
+  "name": "TitanZero",
+  "short_name": "TitanZero",
+  "description": "Titan Boss, Go, Dispatch and QC inside one installable PWA shell.",
+  "start_url": "/dashboard/user/titanzero",
+  "scope": "/dashboard/user/titanzero",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }
+  ],
+  "shortcuts": [
+    { "name": "Titan Boss", "short_name": "Boss", "url": "/dashboard/user/titanzero/boss" },
+    { "name": "Titan Go", "short_name": "Go", "url": "/dashboard/user/titanzero/go" },
+    { "name": "Titan Dispatch", "short_name": "Dispatch", "url": "/dashboard/user/titanzero/dispatch" },
+    { "name": "Titan QC", "short_name": "QC", "url": "/dashboard/user/titanzero/qc" }
+  ]
+}

@@ -1,0 +1,299 @@
+{
+  "copied_count": 91,
+  "missing_count": 0,
+  "groups": {
+    "core_models": [
+      "Entities/Provider.php",
+      "Entities/ProviderSetting.php",
+      "Entities/BankDetail.php",
+      "Entities/SubscribedService.php",
+      "Entities/ProvidersWithdrawMethodsData.php",
+      "Entities/WithdrawRequest.php"
+    ],
+    "admin_team_management": [
+      "Http/Controllers/Web/Admin/ProviderController.php",
+      "Http/Controllers/Web/Admin/SubscriptionController.php",
+      "Http/Controllers/Web/Admin/CollectCashController.php",
+      "Http/Controllers/Api/V1/Admin/ProviderController.php"
+    ],
+    "provider_ops_portal": [
+      "Http/Controllers/Web/Provider/ProviderController.php",
+      "Http/Controllers/Web/Provider/WithdrawController.php",
+      "Http/Controllers/Web/Provider/LanguageController.php",
+      "Http/Controllers/Api/V1/Provider/ProviderController.php",
+      "Http/Controllers/Api/V1/Provider/ServiceController.php",
+      "Http/Controllers/Api/V1/Provider/TimeScheduleController.php",
+      "Http/Controllers/Api/V1/Provider/AccountController.php",
+      "Http/Controllers/Api/V1/Provider/WithdrawController.php",
+      "Http/Controllers/Api/V1/Provider/ConfigController.php"
+    ],
+    "operator_reporting": [
+      "Http/Controllers/Api/V1/Provider/Report/BookingReportController.php",
+      "Http/Controllers/Api/V1/Provider/Report/BusinessReportController.php",
+      "Http/Controllers/Api/V1/Provider/Report/TransactionReportController.php",
+      "Http/Controllers/Web/Provider/Report/BookingReportController.php",
+      "Http/Controllers/Web/Provider/Report/Business/OverviewReportController.php",
+      "Http/Controllers/Web/Provider/Report/Business/EarningReportController.php",
+      "Http/Controllers/Web/Provider/Report/Business/ExpenseReportController.php",
+      "Http/Controllers/Web/Provider/Report/TransactionReportController.php"
+    ],
+    "schema_and_validation": [
+      "Http/Middleware/ProviderMiddleware.php",
+      "Http/Requests/ProviderStoreRequest.php",
+      "Http/Requests/ProviderUpdateRequest.php",
+      "Traits/WithdrawTrait.php"
+    ],
+    "views_for_team_ops": [
+      "Resources/views/admin/provider/index.blade.php",
+      "Resources/views/admin/provider/onboarding.blade.php",
+      "Resources/views/admin/provider/create.blade.php",
+      "Resources/views/admin/provider/edit.blade.php",
+      "Resources/views/admin/provider/detail/overview.blade.php",
+      "Resources/views/admin/provider/detail/settings.blade.php",
+      "Resources/views/admin/provider/detail/serviceman-list.blade.php",
+      "Resources/views/admin/provider/detail/onboarding-details.blade.php",
+      "Resources/views/admin/provider/detail/subscription.blade.php",
+      "Resources/views/admin/provider/detail/reviews.blade.php",
+      "Resources/views/admin/provider/detail/bookings.blade.php",
+      "Resources/views/admin/provider/detail/bank-information.blade.php",
+      "Resources/views/admin/provider/detail/subscribed-services.blade.php",
+      "Resources/views/admin/account/collect-cash.blade.php",
+      "Resources/views/admin/partials/details/_serviceman-data.blade.php",
+      "Resources/views/admin/partials/details/provider-info-modal-data.blade.php",
+      "Resources/views/admin/partials/details/subscription-modal.blade.php",
+      "Resources/views/dashboard.blade.php",
+      "Resources/views/profile-update.blade.php",
+      "Resources/views/bank-info.blade.php",
+      "Resources/views/available-services.blade.php",
+      "Resources/views/subscribedSubCategory.blade.php",
+      "Resources/views/provider/_advance_search.blade.php",
+      "Resources/views/provider/account/overview.blade.php",
+      "Resources/views/provider/account/commission.blade.php",
+      "Resources/views/provider/account/review.blade.php",
+      "Resources/views/provider/account/withdraw.blade.php",
+      "Resources/views/provider/account/promotional-cost.blade.php",
+      "Resources/views/provider/report/booking.blade.php",
+      "Resources/views/provider/report/transaction.blade.php",
+      "Resources/views/provider/report/business/overview.blade.php",
+      "Resources/views/provider/report/business/earning.blade.php",
+      "Resources/views/provider/report/business/expense.blade.php"
+    ],
+    "routes_and_boot": [
+      "Routes/web.php",
+      "Routes/api/v1/api.php",
+      "Providers/RouteServiceProvider.php",
+      "Providers/ProviderManagementServiceProvider.php",
+      "Config/config.php"
+    ]
+  },
+  "controller_methods_sample": {
+    "Http/Controllers/Web/Admin/ProviderController.php": [
+      "__construct",
+      "index",
+      "create",
+      "store",
+      "details",
+      "updateAccountInfo",
+      "deleteAccountInfo",
+      "updateSubscription",
+      "edit",
+      "update",
+      "destroy",
+      "statusUpdate",
+      "serviceAvailability",
+      "suspendUpdate",
+      "commissionUpdate",
+      "onboardingRequest",
+      "onboardingDetails",
+      "updateApproval",
+      "download",
+      "reviewsDownload",
+      "availableProviderList",
+      "providerInfo",
+      "reassignProvider",
+      "updateBooking",
+      "updateRepeatBookings",
+      "updateBookingRepeat",
+      "sendProviderNotification",
+      "fetchProviders",
+      "getProviderInfo"
+    ],
+    "Http/Controllers/Web/Admin/SubscriptionController.php": [
+      "__construct",
+      "cancel",
+      "ajaxRenewPackage",
+      "ajaxShiftPackage",
+      "ajaxPurchasePackage",
+      "renewPayment",
+      "shiftPayment",
+      "purchasePayment",
+      "toCommission"
+    ],
+    "Http/Controllers/Web/Admin/CollectCashController.php": [
+      "__construct",
+      "collectCash",
+      "index"
+    ],
+    "Http/Controllers/Web/Provider/ProviderController.php": [
+      "__construct",
+      "getUpdatedData",
+      "dashboard",
+      "updateDashboardEarningGraph",
+      "subscribedSubCategories",
+      "statusUpdate",
+      "accountInfo",
+      "adjust",
+      "bankInfo",
+      "updateBankInfo",
+      "availableServices",
+      "profileInfo",
+      "updateProfile",
+      "download",
+      "reviewsDownload",
+      "getPaymentMethods",
+      "deleteProvider",
+      "routeFullUrl",
+      "searchRouting",
+      "filterRoute",
+      "storeClickedRoute",
+      "recentSearch",
+      "setModalClosed",
+      "subscribeToTopic",
+      "refreshSetupGuideUI"
+    ],
+    "Http/Controllers/Web/Provider/WithdrawController.php": [
+      "__construct",
+      "index",
+      "withdraw",
+      "download"
+    ],
+    "Http/Controllers/Web/Provider/LanguageController.php": [
+      "__construct",
+      "lang"
+    ],
+    "Http/Controllers/Api/V1/Admin/ProviderController.php": [
+      "__construct",
+      "overview",
+      "index",
+      "reviews",
+      "subscribedSubCategories",
+      "store",
+      "bookings",
+      "edit",
+      "update",
+      "updateSubscription",
+      "servicemanList",
+      "settingsUpdate",
+      "destroy",
+      "removeImage",
+      "statusUpdate",
+      "providerRequest",
+      "searchRequest",
+      "collectCash"
+    ],
+    "Http/Controllers/Api/V1/Provider/ProviderController.php": [
+      "__construct",
+      "dashboard",
+      "earningStatistics",
+      "index",
+      "getBankDetails",
+      "deleteProvider",
+      "updateBankDetails",
+      "updateProfile",
+      "updatePassword",
+      "forgotPassword",
+      "otpVerification",
+      "resetPassword",
+      "updateFcmToken",
+      "notifications",
+      "subscribedSubCategories",
+      "review",
+      "changeLanguage",
+      "adjust",
+      "transaction",
+      "updateTutorial"
+    ],
+    "Http/Controllers/Api/V1/Provider/ServiceController.php": [
+      "__construct",
+      "updateSubscription"
+    ],
+    "Http/Controllers/Api/V1/Provider/TimeScheduleController.php": [
+      "__construct",
+      "getAvailableTimeSchedule",
+      "setAvailableTimeSchedule"
+    ],
+    "Http/Controllers/Api/V1/Provider/AccountController.php": [
+      "__construct",
+      "overview",
+      "accountEdit",
+      "accountUpdate",
+      "commissionInfo"
+    ],
+    "Http/Controllers/Api/V1/Provider/WithdrawController.php": [
+      "__construct",
+      "index",
+      "store",
+      "paymentInformationIndex",
+      "paymentInformationStore",
+      "paymentInformationEdit",
+      "paymentInformationUpdate",
+      "paymentInformationStatusUpdate",
+      "paymentInformationDefaultStatusUpdate",
+      "paymentInformationDelete"
+    ],
+    "Http/Controllers/Api/V1/Provider/ConfigController.php": [
+      "__construct",
+      "getRoutes",
+      "config",
+      "pageDetails",
+      "getPaymentMethods"
+    ],
+    "Http/Controllers/Api/V1/Provider/Report/BookingReportController.php": [
+      "__construct",
+      "getBookingReport",
+      "getBookingReportDownload",
+      "filterQuery"
+    ],
+    "Http/Controllers/Api/V1/Provider/Report/BusinessReportController.php": [
+      "__construct",
+      "getBusinessOverviewReport",
+      "getBusinessEarningReport",
+      "getBusinessExpenseReport",
+      "filterQuery"
+    ],
+    "Http/Controllers/Api/V1/Provider/Report/TransactionReportController.php": [
+      "__construct",
+      "getTransactionReport",
+      "downloadTransactionReport"
+    ],
+    "Http/Controllers/Web/Provider/Report/BookingReportController.php": [
+      "__construct",
+      "getBookingReport",
+      "getBookingReportDownload",
+      "filterQuery"
+    ],
+    "Http/Controllers/Web/Provider/Report/Business/OverviewReportController.php": [
+      "__construct",
+      "getBusinessOverviewReport",
+      "getBusinessOverviewReportDownload",
+      "filterQuery"
+    ],
+    "Http/Controllers/Web/Provider/Report/Business/EarningReportController.php": [
+      "__construct",
+      "getBusinessEarningReport",
+      "getBusinessEarningReportDownload",
+      "filterQuery"
+    ],
+    "Http/Controllers/Web/Provider/Report/Business/ExpenseReportController.php": [
+      "__construct",
+      "getBusinessExpenseReport",
+      "getBusinessExpenseReportDownload",
+      "filterQuery"
+    ],
+    "Http/Controllers/Web/Provider/Report/TransactionReportController.php": [
+      "__construct",
+      "getTransactionReport",
+      "downloadTransactionReport"
+    ]
+  }
+}

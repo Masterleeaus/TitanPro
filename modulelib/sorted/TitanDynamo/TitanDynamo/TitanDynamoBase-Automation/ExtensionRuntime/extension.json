@@ -1,0 +1,9 @@
+{
+  "name": "Titan Pulse",
+  "type": "extension",
+  "version": "1.0.0",
+  "description": "Universal automation runtime that consumes tz_signals and creates safe automation outputs.",
+  "providers": [
+    "App\\Extensions\\TitanPulse\\System\\TitanPulseServiceProvider"
+  ]
+}
