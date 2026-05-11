@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\TitanTokensExportCommand;
 use App\Events\JobCreated;
 use App\Events\JobStatusChanged;
+use App\Listeners\AlertOnFailedMailJob;
 use App\Listeners\SendJobConfirmationEmail;
 use App\Listeners\SendJobConfirmationSms;
 use App\Listeners\SendJobStatusMessages;
@@ -14,6 +16,7 @@ use App\Services\MessageDispatcher;
 use App\Services\SmsService;
 use App\Services\TemplateRenderer;
 use App\Services\TwilioSmsService;
+use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
@@ -41,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                TitanTokensExportCommand::class,
+            ]);
+        }
+
         // Bind the DynamicDashboard Layout model to our LayoutPolicy so that
         // FilamentShield permission checks work for non-super_admin roles.
         if (class_exists(Layout::class)) {
@@ -59,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(JobCreated::class, SendJobConfirmationEmail::class);
         Event::listen(JobCreated::class, SendJobConfirmationSms::class);
         Event::listen(JobStatusChanged::class, SendJobStatusMessages::class);
+        Event::listen(JobFailed::class, AlertOnFailedMailJob::class);
 
         if (class_exists(FilamentCMS::class)
             && class_exists(CmsType::class)) {

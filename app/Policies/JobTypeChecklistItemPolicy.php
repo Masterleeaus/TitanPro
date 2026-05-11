@@ -19,7 +19,7 @@ class JobTypeChecklistItemPolicy
 
     public function view(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class JobTypeChecklistItemPolicy
 
     public function update(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -42,7 +42,7 @@ class JobTypeChecklistItemPolicy
 
     public function delete(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -56,7 +56,7 @@ class JobTypeChecklistItemPolicy
 
     public function restore(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class JobTypeChecklistItemPolicy
 
     public function forceDelete(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class JobTypeChecklistItemPolicy
 
     public function replicate(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
-        if ((int) $jobTypeChecklistItem->jobType?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 

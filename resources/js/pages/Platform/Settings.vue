@@ -18,6 +18,11 @@ type PlatformSettings = {
     logo_url: string | null;
     favicon_url: string | null;
     primary_color: string;
+    secondary_color: string;
+    accent_color: string;
+    surface_color: string;
+    font_heading: string;
+    font_body: string;
     support_email: string | null;
     footer_text: string | null;
     custom_css: string | null;
@@ -36,6 +41,11 @@ const faviconPreview = ref<string | null>(props.settings.favicon_url);
 const form = useForm({
     app_name: props.settings.app_name ?? 'FieldOps Hub',
     primary_color: props.settings.primary_color ?? '#2563eb',
+    secondary_color: props.settings.secondary_color ?? '#0f172a',
+    accent_color: props.settings.accent_color ?? '#14b8a6',
+    surface_color: props.settings.surface_color ?? '#f8fafc',
+    font_heading: props.settings.font_heading ?? 'Figtree',
+    font_body: props.settings.font_body ?? 'Figtree',
     support_email: props.settings.support_email ?? '',
     footer_text: props.settings.footer_text ?? '',
     custom_css: props.settings.custom_css ?? '',
@@ -294,7 +304,7 @@ onBeforeUnmount(() => {
         <div class="mx-auto max-w-5xl space-y-6">
             <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 class="text-lg font-semibold text-slate-900">Global SaaS branding</h2>
-                <p class="mt-1 text-sm text-slate-500">Control the platform name, logo, favicon, support contact, and primary theme color.</p>
+                <p class="mt-1 text-sm text-slate-500">Control the platform name, logo, favicon, support contact, and semantic design tokens for the shared theme engine.</p>
 
                 <div v-if="flashSuccess" class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                     {{ flashSuccess }}
@@ -314,13 +324,56 @@ onBeforeUnmount(() => {
                             </label>
 
                             <label class="block text-sm">
-                                <span class="font-medium text-slate-700">Primary color</span>
+                                <span class="font-medium text-slate-700">Primary token (--color-primary)</span>
                                 <div class="mt-1 flex gap-3">
                                     <input v-model="form.primary_color" type="color" class="h-10 w-14 rounded-md border border-slate-300 p-1" />
                                     <input v-model="form.primary_color" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="#2563eb" />
                                 </div>
                                 <span v-if="form.errors.primary_color" class="mt-1 block text-xs text-rose-600">{{ form.errors.primary_color }}</span>
                             </label>
+
+                            <div class="grid gap-5 sm:grid-cols-2">
+                                <label class="block text-sm">
+                                    <span class="font-medium text-slate-700">Secondary token (--color-secondary)</span>
+                                    <div class="mt-1 flex gap-3">
+                                        <input v-model="form.secondary_color" type="color" class="h-10 w-14 rounded-md border border-slate-300 p-1" />
+                                        <input v-model="form.secondary_color" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="#0f172a" />
+                                    </div>
+                                    <span v-if="form.errors.secondary_color" class="mt-1 block text-xs text-rose-600">{{ form.errors.secondary_color }}</span>
+                                </label>
+
+                                <label class="block text-sm">
+                                    <span class="font-medium text-slate-700">Accent token (--color-accent)</span>
+                                    <div class="mt-1 flex gap-3">
+                                        <input v-model="form.accent_color" type="color" class="h-10 w-14 rounded-md border border-slate-300 p-1" />
+                                        <input v-model="form.accent_color" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="#14b8a6" />
+                                    </div>
+                                    <span v-if="form.errors.accent_color" class="mt-1 block text-xs text-rose-600">{{ form.errors.accent_color }}</span>
+                                </label>
+                            </div>
+
+                            <label class="block text-sm">
+                                <span class="font-medium text-slate-700">Surface token (--color-surface)</span>
+                                <div class="mt-1 flex gap-3">
+                                    <input v-model="form.surface_color" type="color" class="h-10 w-14 rounded-md border border-slate-300 p-1" />
+                                    <input v-model="form.surface_color" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="#f8fafc" />
+                                </div>
+                                <span v-if="form.errors.surface_color" class="mt-1 block text-xs text-rose-600">{{ form.errors.surface_color }}</span>
+                            </label>
+
+                            <div class="grid gap-5 sm:grid-cols-2">
+                                <label class="block text-sm">
+                                    <span class="font-medium text-slate-700">Heading token (--font-heading)</span>
+                                    <input v-model="form.font_heading" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" placeholder="Figtree" />
+                                    <span v-if="form.errors.font_heading" class="mt-1 block text-xs text-rose-600">{{ form.errors.font_heading }}</span>
+                                </label>
+
+                                <label class="block text-sm">
+                                    <span class="font-medium text-slate-700">Body token (--font-body)</span>
+                                    <input v-model="form.font_body" class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2" placeholder="Figtree" />
+                                    <span v-if="form.errors.font_body" class="mt-1 block text-xs text-rose-600">{{ form.errors.font_body }}</span>
+                                </label>
+                            </div>
 
                             <label class="block text-sm">
                                 <span class="font-medium text-slate-700">Support email</span>
@@ -520,7 +573,7 @@ onBeforeUnmount(() => {
 
                             <aside class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                                 <h4 class="text-sm font-semibold text-slate-900">Design token output</h4>
-                                <p class="mt-1 text-xs text-slate-500">Saved to the existing <code>custom_css</code> token storage block.</p>
+                                <p class="mt-1 text-xs text-slate-500">Layout tokens still serialize to the scoped <code>custom_css</code> block; shared theme tokens now live in <code>titan_theme_tokens</code>.</p>
 
                                 <dl class="mt-4 space-y-3 text-sm">
                                     <div v-for="[token, value] in tokenSummary" :key="token" class="rounded-xl border border-white bg-white px-3 py-2 shadow-sm">

@@ -45,7 +45,7 @@ return [
             'path'        => 'titanquotes',
             'color'       => 'emerald',
             'icon'        => 'heroicon-o-document-text',
-            'roles'       => ['owner', 'admin', 'dispatcher'],
+            'roles'       => ['owner', 'admin', 'bookkeeper'],
         ],
 
         'zeropay' => [
@@ -86,7 +86,7 @@ return [
 
         'titanstudio' => [
             'label'       => 'TitanStudio',
-            'description' => 'Creative hub — branding, content and collateral',
+            'description' => 'Workflow builder, automation config, CMS editing, and template management studio',
             'path'        => 'titanstudio',
             'color'       => 'pink',
             'icon'        => 'heroicon-o-paint-brush',
