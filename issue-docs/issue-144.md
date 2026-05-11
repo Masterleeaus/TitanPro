@@ -42,3 +42,31 @@ The existing branding settings only allowed manual color/logo edits and had no a
 - Run migrations in a PHP 8.4 environment.
 - Run full validation (`composer run test`, `vendor/bin/pint`, `npm run build`) after installing PHP dependencies.
 - Manually verify in Filament Site Settings by uploading assets, generating theme preview, confirming snapshot creation, and applying the generated theme.
+
+## Follow-up verification attempt (2026-05-11)
+
+### Files changed in this follow-up
+- `issue-docs/issue-144.md`
+
+### Verification steps executed
+- `composer run test` → failed because `vendor/autoload.php` is missing.
+- `vendor/bin/pint` → failed because `vendor/` is not installed.
+- `npm run build` → failed because Vite is not installed before Node dependencies are installed.
+- `npm install --no-audit --no-fund` → succeeded.
+- `npm run build` (after Node install) → failed because Wayfinder calls `php artisan`, which still requires missing `vendor/autoload.php`.
+- `composer install --no-interaction --no-progress` → failed because the workspace runtime is PHP 8.3.6 while `composer.json` requires PHP `^8.4`.
+
+### Fixes applied
+- No product code changes were applied in this follow-up. This run only re-validated the execution environment and documented blockers.
+
+### Current blocker
+- End-to-end Filament manual verification cannot be completed in this runner because PHP 8.4 is required to install Composer dependencies and bootstrap Laravel.
+
+### Next steps
+- Re-run this follow-up in a PHP 8.4+ environment with Composer dependencies installed.
+- Then execute the manual acceptance flow in Filament Site Settings and capture UI evidence for:
+  - generated token population,
+  - preview rendering with wallpaper/fonts,
+  - WCAG warning behavior,
+  - `theme_snapshots` persistence,
+  - emitted CSS variables and font loading on next page load.
