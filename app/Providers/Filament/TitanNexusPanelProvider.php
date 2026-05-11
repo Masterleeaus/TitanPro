@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanNexus\Pages\LeadPipeline;
+use App\Filament\TitanNexus\Pages\MarketingCampaigns;
+use App\Filament\TitanNexus\Pages\TrainingContent;
+use App\Filament\TitanNexus\Pages\Verticals;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -20,7 +24,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * TitanNexus — Growth and expansion intelligence panel.
+ * TitanNexus — vertical pack management, lead generation,
+ * niche training content, and marketing automation panel.
  */
 class TitanNexusPanelProvider extends PanelProvider
 {
@@ -47,6 +52,10 @@ class TitanNexusPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/TitanNexus/Pages'), for: 'App\\Filament\\TitanNexus\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                Verticals::class,
+                LeadPipeline::class,
+                TrainingContent::class,
+                MarketingCampaigns::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanNexus/Widgets'), for: 'App\\Filament\\TitanNexus\\Widgets')
             ->widgets([

@@ -204,7 +204,6 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
 // Public Titan BOS marketing, app, Service Mode, and CMS pages.
 Route::get('/platform', fn () => app(CmsPageController::class)->show('platform'))->name('platform.public');
 Route::get('/platform-overview', fn () => redirect('/platform'))->name('platform.overview');
-Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
 Route::get('/apps', fn () => app(CmsPageController::class)->show('apps'))->name('apps.index');
 Route::get('/apps/{slug}', fn (string $slug) => app(CmsPageController::class)->show('app-'.$slug))->name('apps.show');
 Route::get('/service-modes', fn () => app(CmsPageController::class)->show('service-modes'))->name('service-modes.index');
@@ -228,6 +227,7 @@ Route::redirect('/ground-zero', '/groundzero', 301)->name('groundzero.alias');
 Route::redirect('/titan-go', '/titango', 301)->name('titango.alias');
 Route::redirect('/titan-quotes', '/titanquotes', 301)->name('titanquotes.alias');
 Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
+Route::redirect('/titan-nexus', '/titannexus', 301)->name('titannexus.hyphen.alias');
 Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.index');
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');
