@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\TitanTokensExportCommand;
 use App\Events\JobCreated;
 use App\Events\JobStatusChanged;
 use App\Listeners\SendJobConfirmationEmail;
@@ -40,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                TitanTokensExportCommand::class,
+            ]);
+        }
 
         // Bind the DynamicDashboard Layout model to our LayoutPolicy so that
         // FilamentShield permission checks work for non-super_admin roles.

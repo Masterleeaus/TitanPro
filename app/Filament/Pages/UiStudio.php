@@ -7,6 +7,7 @@ namespace App\Filament\Pages;
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
 use App\Support\OrganizationBrandingResolver;
+use App\Support\ThemeTokenManager;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
@@ -61,7 +62,6 @@ class UiStudio extends Page
     public string $panelName      = 'TITAN ZERO';
     public string $backgroundType = 'none';
     public ?string $backgroundValue = null;
-    public string $customCss      = '';
 
     // ── Dashboard / layout state ──────────────────────────────────────────────
 
@@ -119,20 +119,20 @@ class UiStudio extends Page
     {
         $settings = PlatformSetting::current();
         $branding = app(OrganizationBrandingResolver::class)->current();
+        $tokenState = app(ThemeTokenManager::class)->semanticEditorState($settings);
 
-        $this->primaryColor   = $branding['primary_color'] ?? '#2563eb';
-        $this->secondaryColor = $branding['secondary_color'] ?? '#0f172a';
-        $this->accentColor    = $settings->accent_color ?? '#14b8a6';
-        $this->surfaceColor   = $settings->surface_color ?? '#f8fafc';
-        $this->fontHeading    = $branding['font_family'] ?? ($settings->font_heading ?? 'Figtree');
-        $this->fontBody       = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
-        $this->fontFamily     = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
+        $this->primaryColor   = $branding['primary_color'] ?? $tokenState['primary_color'];
+        $this->secondaryColor = $branding['secondary_color'] ?? $tokenState['secondary_color'];
+        $this->accentColor    = $tokenState['accent_color'];
+        $this->surfaceColor   = $tokenState['surface_color'];
+        $this->fontHeading    = $branding['font_family'] ?? $tokenState['font_heading'];
+        $this->fontBody       = $branding['font_family'] ?? $tokenState['font_body'];
+        $this->fontFamily     = $branding['font_family'] ?? $tokenState['font_body'];
         $this->panelName      = $branding['panel_name'] ?? $settings->brandName();
         $this->backgroundType = $branding['background_type'] ?? 'none';
         $this->backgroundValue = $branding['background_value'] ?? null;
         $this->logoPath       = $this->storagePathFromUrl($branding['logo_url'] ?? null);
         $this->faviconPath    = $this->storagePathFromUrl($branding['favicon_url'] ?? null);
-        $this->customCss      = $settings->custom_css ?? '';
 
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
@@ -463,6 +463,8 @@ class UiStudio extends Page
             'panelName' => 'nullable|string|max:255',
             'primaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'secondaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'accentColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'surfaceColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'fontFamily' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
             'backgroundType' => 'required|in:none,gradient,image',
             'backgroundValue' => 'nullable|string|max:500',
@@ -517,9 +519,11 @@ class UiStudio extends Page
                 'dashboard_layout' => $this->canvasWidgets,
             ])->save();
         } else {
-            $settings->update([
+            app(ThemeTokenManager::class)->savePlatformThemeTokens($settings, [
                 'primary_color' => $validated['primaryColor'],
                 'secondary_color' => $validated['secondaryColor'],
+                'accent_color' => $validated['accentColor'],
+                'surface_color' => $validated['surfaceColor'],
                 'font_heading' => $validated['fontFamily'] ?: 'Figtree',
                 'font_body' => $validated['fontFamily'] ?: 'Figtree',
             ]);
@@ -529,7 +533,6 @@ class UiStudio extends Page
         $settings->update([
             'accent_color' => $this->accentColor,
             'surface_color' => $this->surfaceColor,
-            'custom_css' => $this->customCss,
         ]);
         cache()->forget('platform_settings');
 
