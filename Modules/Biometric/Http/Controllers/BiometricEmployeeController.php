@@ -70,7 +70,6 @@ class BiometricEmployeeController extends AccountBaseController
         foreach ($biometricEmployeeIds as $userId => $biometricEmployeeId) {
 
             if (! empty($biometricEmployeeId)) {
-                \Log::info('$request->force_biometric_clockin[$userId]'.$userId.' :'.$request->force_biometric_clockin[$userId]);
                 BiometricEmployee::updateOrCreate(
                     ['user_id' => $userId],
                     [
