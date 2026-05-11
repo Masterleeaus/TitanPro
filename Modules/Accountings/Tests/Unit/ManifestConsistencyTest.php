@@ -36,7 +36,7 @@ class ManifestConsistencyTest extends TestCase
 
         $this->assertSame($actionKeys, $toolNames);
 
-        $agent = new MoneyAgent();
+        $agent = new MoneyAgent;
         $registeredToolNames = array_map(function (string $toolClass): string {
             return app($toolClass)->name();
         }, $agent->tools());

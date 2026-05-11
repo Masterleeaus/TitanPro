@@ -4,11 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up()
     {
         $module = DB::table('modules')->where('module_name', 'accountings')->first();
-        if (!$module) {
+        if (! $module) {
             $id = DB::table('modules')->insertGetId([
                 'module_name' => 'accountings',
                 'status' => 1,
@@ -27,7 +28,7 @@ return new class extends Migration {
         ), static fn ($permission) => is_string($permission) && trim($permission) !== '')));
         foreach ($perms as $p) {
             $perm = DB::table('permissions')->where('name', $p)->first();
-            if (!$perm) {
+            if (! $perm) {
                 $row = [
                     'name' => $p,
                     'module_id' => $id,

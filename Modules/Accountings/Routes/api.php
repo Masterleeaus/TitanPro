@@ -21,6 +21,7 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'accountings'
             'description' => ['nullable', 'string'],
             'date' => ['nullable', 'date'],
         ]);
+
         return response()->json($action->execute($data));
     })->name('accountings.api.invoice-journals.store');
 
