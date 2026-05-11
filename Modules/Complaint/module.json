@@ -1,5 +1,6 @@
 {
     "name": "Complaint",
+    "active": 1,
     "alias": "complaint",
     "description": "",
     "keywords": [],
