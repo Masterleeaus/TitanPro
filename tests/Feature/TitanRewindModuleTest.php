@@ -53,7 +53,7 @@ test('tracked user mutations create rewind case and events', function () {
         ->toContain('created', 'updated');
 });
 
-test('rewind case lifecycle supports event attachment ai suggestion fix apply and close', function () {
+test('rewind case lifecycle supports event attachment AI suggestion fix apply and close', function () {
     [$owner, $organization] = titanRewindUser('owner');
 
     $caseService = app(RewindCaseService::class);
