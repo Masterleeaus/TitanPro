@@ -21,43 +21,49 @@ function adminTestUser(string $role): User
     return $user;
 }
 
-// ── Authentication gate ───────────────────────────────────────────────────────
+// ── Legacy /admin alias ───────────────────────────────────────────────────────
 
-test('unauthenticated users are redirected to admin login', function () {
-    $this->get('/admin')->assertRedirect('/admin/login');
+test('unauthenticated users hitting /admin are permanently redirected to /titanpro', function () {
+    $this->get('/admin')->assertRedirect('/titanpro');
 });
 
-test('admin login page renders', function () {
-    $this->get('/admin/login')->assertOk();
+// ── TitanPro panel authentication gate ───────────────────────────────────────
+
+test('titanpro login page renders', function () {
+    $this->get('/titanpro/login')->assertOk();
 });
 
-// ── Role-based access: allowed roles ─────────────────────────────────────────
+// ── Role-based access: allowed role ──────────────────────────────────────────
 
-test('admin role can access the admin panel', function () {
-    $this->actingAs(adminTestUser('admin'))->get('/admin')->assertOk();
-});
-
-test('owner role can access the admin panel', function () {
-    $this->actingAs(adminTestUser('owner'))->get('/admin')->assertOk();
+test('super_admin can access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('super_admin'))->get('/titanpro')->assertOk();
 });
 
 // ── Role-based access: denied roles ──────────────────────────────────────────
 
-test('dispatcher cannot access the admin panel', function () {
-    $this->actingAs(adminTestUser('dispatcher'))->get('/admin')->assertForbidden();
+test('admin role cannot access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('admin'))->get('/titanpro')->assertForbidden();
 });
 
-test('technician cannot access the admin panel', function () {
-    $this->actingAs(adminTestUser('technician'))->get('/admin')->assertForbidden();
+test('owner role cannot access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('owner'))->get('/titanpro')->assertForbidden();
 });
 
-test('bookkeeper cannot access the admin panel', function () {
-    $this->actingAs(adminTestUser('bookkeeper'))->get('/admin')->assertForbidden();
+test('dispatcher cannot access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('dispatcher'))->get('/titanpro')->assertForbidden();
 });
 
-test('authenticated user with no role cannot access the admin panel', function () {
+test('technician cannot access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('technician'))->get('/titanpro')->assertForbidden();
+});
+
+test('bookkeeper cannot access the titanpro panel', function () {
+    $this->actingAs(adminTestUser('bookkeeper'))->get('/titanpro')->assertForbidden();
+});
+
+test('authenticated user with no role cannot access the titanpro panel', function () {
     (new RolesAndPermissionsSeeder)->run();
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get('/admin')->assertForbidden();
+    $this->actingAs($user)->get('/titanpro')->assertForbidden();
 });
