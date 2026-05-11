@@ -21,11 +21,10 @@ use Illuminate\Support\Str;
 
 /**
  * UI Studio — unified visual design surface merging the Dashboard Builder,
- * Widget Editor, Theme Engine, and Menu System into one three-panel interface.
+ * Widget Editor, Theme Engine, and Menu System into a split-screen interface.
  *
- * Left panel  : component tree / layer list (available widget types + current layout)
- * Centre panel: live admin preview canvas (sortable widget cards)
- * Right panel : context-sensitive property editor (theme, spacing, menus)
+ * Left side : component tree / controls / property editor
+ * Right side: live sandboxed panel preview
  */
 class UiStudio extends Page
 {
@@ -113,6 +112,18 @@ class UiStudio extends Page
      */
     public array $availablePresets = [];
 
+    /** Active panel id rendered in the live preview iframe. */
+    public string $previewPanel = 'titanstudio';
+
+    /** Desktop | tablet | mobile frame width preset. */
+    public string $previewFrameSize = 'desktop';
+
+    /** Keep controls scroll aligned with preview scroll. */
+    public bool $syncPreviewScroll = false;
+
+    /** @var array<string, string|null> */
+    private array $savedThemeSnapshot = [];
+
     // ─────────────────────────────────────────────────────────────────────────
 
     public function mount(): void
@@ -137,6 +148,10 @@ class UiStudio extends Page
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
+        $currentPanel          = $this->resolveCurrentPanelId();
+        $this->previewPanel    = $currentPanel;
+        $this->componentPanel  = $currentPanel;
+        $this->savedThemeSnapshot = $this->themeSnapshot();
         $this->activeTab       = 'branding';
     }
 
@@ -284,6 +299,59 @@ class UiStudio extends Page
         }
 
         $this->menuItems = $reordered;
+    }
+
+    public function setPreviewFrameSize(string $size): void
+    {
+        if (! in_array($size, ['desktop', 'tablet', 'mobile'], true)) {
+            return;
+        }
+
+        $this->previewFrameSize = $size;
+    }
+
+    public function previewPanelOptions(): array
+    {
+        $panels = config('titan_panels.panels', []);
+        $user = auth()->user();
+
+        if (! $user) {
+            return $panels;
+        }
+
+        return array_filter(
+            $panels,
+            fn (array $panel): bool => empty($panel['roles']) || $user->hasRole($panel['roles'])
+        );
+    }
+
+    public function previewPanelUrl(): string
+    {
+        $panel = $this->previewPanelOptions()[$this->previewPanel] ?? null;
+        $path = $panel['path'] ?? trim($this->previewPanel, '/');
+
+        return url('/' . trim((string) $path, '/'));
+    }
+
+    public function previewCssVariables(): array
+    {
+        return [
+            '--color-primary-500' => $this->safeColor($this->primaryColor),
+            '--color-primary-600' => $this->safeColor($this->primaryColor),
+            '--color-secondary-500' => $this->safeColor($this->secondaryColor),
+            '--color-accent-500' => $this->safeColor($this->accentColor),
+            '--color-surface-50' => $this->safeColor($this->surfaceColor),
+            '--font-family' => $this->safeFont($this->fontFamily),
+            '--ui-studio-primary' => $this->safeColor($this->primaryColor),
+            '--ui-studio-secondary' => $this->safeColor($this->secondaryColor),
+            '--ui-studio-accent' => $this->safeColor($this->accentColor),
+            '--ui-studio-surface' => $this->safeColor($this->surfaceColor),
+        ];
+    }
+
+    public function hasUnsavedThemeChanges(): bool
+    {
+        return $this->themeSnapshot() !== $this->savedThemeSnapshot;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -558,6 +626,8 @@ class UiStudio extends Page
             ->body('Branding, dashboard layout, and menu changes have been saved.')
             ->success()
             ->send();
+
+        $this->savedThemeSnapshot = $this->themeSnapshot();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -744,5 +814,35 @@ class UiStudio extends Page
     private function getPanelOrNull(): ?string
     {
         return $this->componentPanel !== '' ? $this->componentPanel : null;
+    }
+
+    private function resolveCurrentPanelId(): string
+    {
+        $currentPath = trim((string) request()->segment(1), '/');
+        $panels = config('titan_panels.panels', []);
+
+        foreach ($panels as $id => $panel) {
+            if (($panel['path'] ?? null) === $currentPath) {
+                return (string) $id;
+            }
+        }
+
+        return array_key_first($panels) ?? 'titanpro';
+    }
+
+    /** @return array<string, string|null> */
+    private function themeSnapshot(): array
+    {
+        return [
+            'panelName' => $this->panelName,
+            'primaryColor' => $this->primaryColor,
+            'secondaryColor' => $this->secondaryColor,
+            'accentColor' => $this->accentColor,
+            'surfaceColor' => $this->surfaceColor,
+            'fontFamily' => $this->fontFamily,
+            'backgroundType' => $this->backgroundType,
+            'backgroundValue' => $this->backgroundValue,
+            'customCss' => $this->customCss,
+        ];
     }
 }
