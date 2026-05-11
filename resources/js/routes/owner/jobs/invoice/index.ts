@@ -1,10 +1,10 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::generate
-* @see app/Http/Controllers/Owner/InvoiceController.php:64
+* @see app/Http/Controllers/Owner/InvoiceController.php:62
 * @route '/owner/jobs/{job}/invoice'
 */
-export const generate = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const generate = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: generate.url(args, options),
     method: 'post',
 })
@@ -16,10 +16,10 @@ generate.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::generate
-* @see app/Http/Controllers/Owner/InvoiceController.php:64
+* @see app/Http/Controllers/Owner/InvoiceController.php:62
 * @route '/owner/jobs/{job}/invoice'
 */
-generate.url = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+generate.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { job: args }
     }
@@ -49,30 +49,30 @@ generate.url = (args: { job: string | number | { id: string | number } } | [job:
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::generate
-* @see app/Http/Controllers/Owner/InvoiceController.php:64
+* @see app/Http/Controllers/Owner/InvoiceController.php:62
 * @route '/owner/jobs/{job}/invoice'
 */
-generate.post = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+generate.post = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: generate.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::generate
-* @see app/Http/Controllers/Owner/InvoiceController.php:64
+* @see app/Http/Controllers/Owner/InvoiceController.php:62
 * @route '/owner/jobs/{job}/invoice'
 */
-const generateForm = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const generateForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: generate.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::generate
-* @see app/Http/Controllers/Owner/InvoiceController.php:64
+* @see app/Http/Controllers/Owner/InvoiceController.php:62
 * @route '/owner/jobs/{job}/invoice'
 */
-generateForm.post = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+generateForm.post = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: generate.url(args, options),
     method: 'post',
 })
