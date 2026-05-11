@@ -16,5 +16,9 @@
   "priority": 10,
   "providers": [
     "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider"
-  ]
+  ],
+  "filament_panel": "titanpro",
+  "filament": {
+    "plugin": "Modules\\TitanChatbot\\Filament\\Plugin\\TitanChatbotPlugin"
+  }
 }

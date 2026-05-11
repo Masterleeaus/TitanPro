@@ -9,6 +9,7 @@
         "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
     ],
     "files": [],
+    "filament_panel": "titanpro",
     "manifest": {
         "retrieval": "AI/Retrieval/retrieval.policy.json",
         "guardrails": "AI/Guardrails/guardrails.json",

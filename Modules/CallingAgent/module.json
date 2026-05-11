@@ -11,6 +11,7 @@
     "twilio/sdk",
     "guzzlehttp/guzzle"
   ],
+  "filament_panel": "groundzero",
   "source_extensions": [
     "ExternalChatbot",
     "ChatbotWhatsapp",
