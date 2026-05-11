@@ -45,7 +45,7 @@ return [
             'path'        => 'titanquotes',
             'color'       => 'emerald',
             'icon'        => 'heroicon-o-document-text',
-            'roles'       => ['owner', 'admin', 'dispatcher'],
+            'roles'       => ['owner', 'admin', 'bookkeeper'],
         ],
 
         'zeropay' => [
