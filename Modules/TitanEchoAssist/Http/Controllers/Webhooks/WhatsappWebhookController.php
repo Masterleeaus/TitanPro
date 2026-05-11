@@ -8,21 +8,32 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\TitanEchoAssist\DTOs\MessagePayload;
 use Modules\TitanEchoAssist\Services\ConversationRouter;
+use Modules\TitanTalk\Services\ConversationThreadService;
 
 class WhatsappWebhookController extends Controller
 {
     public function handle(Request $request, int $channelId): Response
     {
         try {
+            $sessionId = (string) $request->input('WaId', $request->input('From', 'unknown'));
+            $incoming = (string) $request->input('Body', '');
+
             $payload = MessagePayload::fromArray([
                 'chatbot_id' => $this->resolveChatbotId($channelId),
-                'session_id' => $request->input('WaId', $request->input('From', 'unknown')),
+                'session_id' => $sessionId,
                 'channel'    => 'whatsapp',
-                'message'    => $request->input('Body', ''),
+                'message'    => $incoming,
                 'metadata'   => $request->all(),
             ]);
 
-            app(ConversationRouter::class)->route($payload);
+            if (class_exists(ConversationThreadService::class)) {
+                $thread = app(ConversationThreadService::class);
+                $conversation = $thread->recordInbound('whatsapp', $sessionId, $incoming, $request->all());
+                $reply = (string) app(ConversationRouter::class)->route($payload);
+                $thread->recordOutbound($conversation, $reply, ['channel_id' => $channelId, 'source' => 'TitanEchoAssist']);
+            } else {
+                app(ConversationRouter::class)->route($payload);
+            }
         } catch (\Throwable $e) {
             Log::error('WhatsappWebhook: failed', [
                 'channel_id' => $channelId,
