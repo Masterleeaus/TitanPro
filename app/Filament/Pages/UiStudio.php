@@ -6,7 +6,9 @@ namespace App\Filament\Pages;
 
 use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
+use App\Models\SharedTheme;
 use App\Support\OrganizationBrandingResolver;
+use App\Support\ThemePackManager;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
@@ -78,7 +80,30 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'branding'; // branding | layout | menu | components
+    public string $activeTab = 'branding'; // branding | layout | menu | components | marketplace
+
+    // ── Marketplace state ─────────────────────────────────────────────────────
+
+    /** Sub-tab within the Marketplace tab. */
+    public string $marketplaceTab = 'browse'; // browse | install | share | import
+
+    /** Uploaded ZIP for the Install flow. */
+    public ?TemporaryUploadedFile $themeZipUpload = null;
+
+    /** Preview data parsed from an uploaded ZIP. */
+    public array $zipPreview = [];
+
+    /** Name override used when sharing the active theme. */
+    public string $shareThemeName = '';
+
+    /** Generated share URL after calling shareTheme(). */
+    public string $generatedShareUrl = '';
+
+    /** Share link URL pasted in the Import flow. */
+    public string $importUrl = '';
+
+    /** Theme preview resolved from an import URL. */
+    public array $importPreview = [];
 
     // ── Available widget catalogue ────────────────────────────────────────────
 
@@ -138,6 +163,14 @@ class UiStudio extends Page
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
         $this->activeTab       = 'branding';
+
+        // If redirected from a share link, auto-open the import tab.
+        $importToken = request()->query('import_token');
+        if ($importToken) {
+            $this->activeTab      = 'marketplace';
+            $this->marketplaceTab = 'import';
+            $this->importUrl      = url('/theme/import/' . $importToken);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -447,6 +480,244 @@ class UiStudio extends Page
 
         Notification::make()
             ->title('Component reset to theme defaults')
+            ->success()
+            ->send();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Marketplace actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Apply a built-in curated theme by its key (e.g. 'ocean', 'aurora').
+     */
+    public function applyBuiltinTheme(string $key): void
+    {
+        $themes = ThemePackManager::builtinThemes();
+
+        if (! isset($themes[$key])) {
+            Notification::make()->title('Unknown theme')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $themes[$key]['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        Notification::make()
+            ->title("Theme \"{$themes[$key]['name']}\" applied")
+            ->body('Click Publish to save the changes.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Validate an uploaded ZIP and store the preview info.
+     * Called when a file is selected in the Install tab.
+     */
+    public function previewZip(): void
+    {
+        $this->validate(['themeZipUpload' => 'required|file|mimes:zip|max:10240']);
+
+        $manager = new ThemePackManager();
+        $result  = $manager->validateZip($this->themeZipUpload->getRealPath());
+
+        if (! $result['ok']) {
+            Notification::make()->title('Invalid theme pack')->body($result['error'])->danger()->send();
+            $this->zipPreview = [];
+
+            return;
+        }
+
+        $this->zipPreview = [
+            'meta'   => $result['meta'],
+            'tokens' => $result['tokens'],
+        ];
+
+        Notification::make()->title('Theme pack validated')->success()->send();
+    }
+
+    /**
+     * Apply the previously validated ZIP theme preview to the branding state.
+     */
+    public function installFromZip(): void
+    {
+        if (empty($this->zipPreview['tokens'])) {
+            Notification::make()->title('Upload and validate a theme pack first.')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $this->zipPreview['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        $this->themeZipUpload = null;
+        $this->zipPreview     = [];
+
+        Notification::make()
+            ->title('Theme installed — click Publish to save.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Stream a ZIP of the current theme as a file download.
+     */
+    public function exportTheme(): mixed
+    {
+        $settings = PlatformSetting::current();
+        $name     = $settings->brandName();
+
+        $tokens = array_filter([
+            'primary_color'   => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color'    => $this->accentColor,
+            'surface_color'   => $this->surfaceColor,
+            'font_heading'    => $this->fontHeading ?: $this->fontFamily,
+            'font_body'       => $this->fontBody ?: $this->fontFamily,
+        ]);
+
+        try {
+            $manager = new ThemePackManager();
+            $tmpPath = $manager->buildExportZip($name, $tokens);
+        } catch (\RuntimeException $e) {
+            Notification::make()->title($e->getMessage())->danger()->send();
+
+            return null;
+        }
+
+        $fileName = Str::slug($name) . '-theme.zip';
+
+        return response()->download($tmpPath, $fileName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend();
+    }
+
+    /**
+     * Store the current theme tokens as a shared link and expose the URL.
+     */
+    public function shareTheme(): void
+    {
+        if (! Schema::hasTable('shared_themes')) {
+            Notification::make()
+                ->title('Run migrations first')
+                ->body('The shared_themes table does not exist yet.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $name = trim($this->shareThemeName) ?: PlatformSetting::current()->brandName();
+
+        $tokens = array_filter([
+            'primary_color'   => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color'    => $this->accentColor,
+            'surface_color'   => $this->surfaceColor,
+            'font_heading'    => $this->fontHeading ?: $this->fontFamily,
+            'font_body'       => $this->fontBody ?: $this->fontFamily,
+        ]);
+
+        $manager = new ThemePackManager();
+        $token   = $manager->createShareToken(
+            $name,
+            auth()->user()?->name,
+            $tokens
+        );
+
+        $this->generatedShareUrl = url('/theme/import/' . $token);
+
+        Notification::make()
+            ->title('Share link generated')
+            ->body('Copy the URL below and send it to anyone.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Fetch and preview a theme from a share URL.
+     */
+    public function previewImport(): void
+    {
+        $url = trim($this->importUrl);
+
+        if ($url === '') {
+            Notification::make()->title('Enter a share URL first.')->warning()->send();
+
+            return;
+        }
+
+        // Extract the token from the URL
+        $token = basename(parse_url($url, PHP_URL_PATH) ?? '');
+
+        if ($token === '') {
+            Notification::make()->title('Invalid share URL.')->danger()->send();
+
+            return;
+        }
+
+        if (! Schema::hasTable('shared_themes')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $manager = new ThemePackManager();
+        $data    = $manager->resolveShareToken($token);
+
+        if (! $data) {
+            Notification::make()->title('Theme not found or link has expired.')->danger()->send();
+            $this->importPreview = [];
+
+            return;
+        }
+
+        $this->importPreview = $data;
+
+        Notification::make()->title('Theme preview loaded.')->success()->send();
+    }
+
+    /**
+     * Apply the previewed import theme to the branding state.
+     */
+    public function installFromUrl(): void
+    {
+        if (empty($this->importPreview['tokens'])) {
+            Notification::make()->title('Preview a theme first.')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $this->importPreview['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        $this->importUrl     = '';
+        $this->importPreview = [];
+
+        Notification::make()
+            ->title('Theme installed — click Publish to save.')
             ->success()
             ->send();
     }
