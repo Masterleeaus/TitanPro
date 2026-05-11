@@ -1,0 +1,8 @@
+POST STEPS (Pass 1)
+
+1) Upload & unzip the extension.
+2) Log in and open:
+   /dashboard/user/jobs
+3) Click through the sidebar pages to confirm all routes resolve.
+
+No migrations are required for Pass 1.

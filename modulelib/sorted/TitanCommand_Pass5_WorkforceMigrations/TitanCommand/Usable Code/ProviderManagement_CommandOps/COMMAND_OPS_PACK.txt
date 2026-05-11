@@ -1,0 +1,3 @@
+ProviderManagement command-ops donor pack added for Titan Command.
+Finance/payout/subscription files were stripped in prior pass.
+Use for team providers, workers, skills, schedules, zones, onboarding, approval, suspension, and ops reports.

@@ -1,0 +1,19 @@
+{
+    "name": "Job Manager",
+    "alias": "jobmanager",
+    "description": "Comprehensive job and field service management module built on Worksuite.",
+    "active": 1,
+    "order": 310,
+    "providers": [
+        "Modules\\JobManager\\Providers\\JobManagerServiceProvider",
+        "Modules\\JobManager\\Providers\\JobManagerEventServiceProvider",
+        "Modules\\JobManager\\Providers\\ModuleServiceProvider",
+        "Modules\\JobManager\\Providers\\ClientPortalServiceProvider"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\Job Manager\\": ""
+        }
+    },
+    "version": "1.0.1"
+}

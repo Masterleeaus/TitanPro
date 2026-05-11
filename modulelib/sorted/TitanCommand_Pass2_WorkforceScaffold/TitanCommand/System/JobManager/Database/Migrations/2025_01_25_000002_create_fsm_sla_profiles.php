@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Extensions\TitanCommand\System\JobManager\Database\Migrations;
+
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{if(!Schema::hasTable('fsm_sla_profiles')) Schema::create('fsm_sla_profiles', function(Blueprint $t){$t->id();$t->string('vertical')->unique();$t->integer('arrival_minutes')->default(240);$t->integer('completion_minutes')->default(1440);$t->timestamps();});}public function down():void{/* reverse omitted */}};

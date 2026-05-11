@@ -1,0 +1,6 @@
+Acceptance:
+- Migration runs without errors even if menus table differs (menus/menu_items/sidebar_menus).
+- Jobs sidebar entries appear under a parent "Jobs Manager" (where menu table supports parent_id).
+- Dispatch endpoint returns jobs with assignments and scheduled start/end.
+- Assign/unassign endpoints create/delete assignments and write corresponding work_jobs_events.
+- scheduleSet/reschedule update scheduled_start/end on work_jobs and write events.

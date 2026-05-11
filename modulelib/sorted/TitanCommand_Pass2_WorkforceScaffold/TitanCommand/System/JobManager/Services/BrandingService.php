@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Extensions\TitanCommand\System\JobManager\Services;
+
+
+
+
+namespace App\Extensions\TitanCommand\System\JobManager\Services;use Illuminate\Support\Facades\DB;class BrandingService{public static function get():array{$row=DB::table('fsm_settings')->orderBy('id','desc')->first();$branding=(array) data_get($row,'branding',[]);return ['logo'=>$branding['logo_path']??null,'header'=>$branding['pdf_header']??'','footer'=>$branding['pdf_footer']??'','vertical'=>$row->vertical ?? 'general_trades'];}}

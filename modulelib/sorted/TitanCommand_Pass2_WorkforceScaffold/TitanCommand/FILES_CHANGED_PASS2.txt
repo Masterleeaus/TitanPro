@@ -1,0 +1,31 @@
+PASS 2 — DB + first real reads (Jobs)
+
+MODIFIED
+- TitanCommand/System/Titan CommandAgentServiceProvider.php
+- TitanCommand/System/Http/Controllers/JobsController.php
+
+CREATED
+- TitanCommand/System/Models/Work/WorkAsset.php
+- TitanCommand/System/Models/Work/WorkJob.php
+- TitanCommand/System/Models/Work/WorkJobAssignment.php
+- TitanCommand/System/Models/Work/WorkJobChecklist.php
+- TitanCommand/System/Models/Work/WorkJobChecklistItem.php
+- TitanCommand/System/Models/Work/WorkJobEvent.php
+- TitanCommand/System/Models/Work/WorkJobItem.php
+- TitanCommand/System/Models/Work/WorkJobLink.php
+- TitanCommand/System/Models/Work/WorkJobPart.php
+- TitanCommand/System/Models/Work/WorkPermit.php
+- TitanCommand/database/migrations/2026_02_18_000100_create_work_jobs_table.php
+- TitanCommand/database/migrations/2026_02_18_000110_create_work_jobs_events_table.php
+- TitanCommand/database/migrations/2026_02_18_000120_create_work_jobs_items_table.php
+- TitanCommand/database/migrations/2026_02_18_000130_create_work_jobs_assignments_table.php
+- TitanCommand/database/migrations/2026_02_18_000140_create_work_jobs_checklists_table.php
+- TitanCommand/database/migrations/2026_02_18_000150_create_work_jobs_checklist_items_table.php
+- TitanCommand/database/migrations/2026_02_18_000160_create_work_jobs_parts_table.php
+- TitanCommand/database/migrations/2026_02_18_000170_create_work_assets_table.php
+- TitanCommand/database/migrations/2026_02_18_000180_create_work_permits_table.php
+- TitanCommand/database/migrations/2026_02_18_000190_create_work_jobs_links_table.php
+
+NOTES
+- Added Titan work schema tables for Jobs (work_jobs* and related).
+- Added Eloquent models under App\Extensions\TitanCommand\System\Models\Work\*

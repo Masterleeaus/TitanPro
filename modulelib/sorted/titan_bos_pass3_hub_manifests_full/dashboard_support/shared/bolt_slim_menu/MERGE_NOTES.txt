@@ -1,0 +1,12 @@
+
+Merged Bolt slim menu into Titan BOS hubs while preserving the existing large menu from panel.layout.app.
+
+What was added:
+- dashboard_support/shared/bolt_slim_menu/hub-rail.blade.php
+- dashboard_support/shared/bolt_slim_menu/hub-rail.css
+- extracted original Bolt sidebar/navbar source files for future reuse
+
+How merged:
+- Existing large menu remains from the main app layout
+- New slim menu is an in-page BOS hub rail injected into each dashboard blade
+- Hub nav expanded to 8 final hubs on every dashboard

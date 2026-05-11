@@ -1,0 +1,10 @@
+
+namespace Modules\JobManager\Resources\views\workorders;
+
+
+<x-app-layout><h1 class='text-2xl font-bold'>Job #{{ $order->id }}</h1><p>Status: {{ $order->status }}</p><p>Priority: {{ $order->priority }}</p><form method="POST" action="{{ route('jobmanager.orders.convert', $order->id) }}" class="mt-4">
+  @csrf
+  <button class="px-3 py-2 bg-blue-600 text-white rounded">Convert to Project</button>
+</form>
+
+</x-app-layout>

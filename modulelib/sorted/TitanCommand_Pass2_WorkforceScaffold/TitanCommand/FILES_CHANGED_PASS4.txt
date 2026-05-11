@@ -1,0 +1,14 @@
+ACCEPTANCE_PASS4.txt
+CHANGELOG_PASS4.md
+FILES_CHANGED_PASS4.txt
+System/Http/Controllers/JobsController.php
+System/Models/Work/WorkJobEvidence.php
+System/Models/Work/WorkJobInspection.php
+System/Models/Work/WorkJobInspectionItem.php
+System/Models/Work/WorkJobReport.php
+System/Models/Work/WorkJobState.php
+database/migrations/2026_02_18_000200_create_work_jobs_evidence_table.php
+database/migrations/2026_02_18_000210_create_work_jobs_inspections_table.php
+database/migrations/2026_02_18_000220_create_work_jobs_inspection_items_table.php
+database/migrations/2026_02_18_000230_create_work_jobs_states_table.php
+database/migrations/2026_02_18_000240_create_work_jobs_reports_table.php
