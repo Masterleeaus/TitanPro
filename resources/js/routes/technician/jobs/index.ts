@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::index
-* @see app/Http/Controllers/Technician/JobController.php:26
+* @see app/Http/Controllers/Technician/JobController.php:25
 * @route '/technician/jobs'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,10 +82,10 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-export const show = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -97,10 +97,10 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-show.url = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { job: args }
     }
@@ -130,50 +130,50 @@ show.url = (args: { job: string | number | { id: string | number } } | [job: str
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-show.get = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-show.head = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-const showForm = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-showForm.get = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:42
+* @see app/Http/Controllers/Technician/JobController.php:38
 * @route '/technician/jobs/{job}'
 */
-showForm.head = (args: { job: string | number | { id: string | number } } | [job: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',

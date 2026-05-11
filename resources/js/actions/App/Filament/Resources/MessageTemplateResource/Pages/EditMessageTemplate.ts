@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 const EditMessageTemplate = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditMessageTemplate.url(args, options),
@@ -11,13 +11,13 @@ const EditMessageTemplate = (args: { record: string | number } | [record: string
 
 EditMessageTemplate.definition = {
     methods: ["get","head"],
-    url: '/titanstudio/message-templates/{record}/edit',
+    url: '/admin/message-templates/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 EditMessageTemplate.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditMessageTemplate.url = (args: { record: string | number } | [record: string |
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 EditMessageTemplate.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditMessageTemplate.url(args, options),
@@ -54,7 +54,7 @@ EditMessageTemplate.get = (args: { record: string | number } | [record: string |
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 EditMessageTemplate.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditMessageTemplate.url(args, options),
@@ -64,7 +64,7 @@ EditMessageTemplate.head = (args: { record: string | number } | [record: string 
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 const EditMessageTemplateForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditMessageTemplate.url(args, options),
@@ -74,7 +74,7 @@ const EditMessageTemplateForm = (args: { record: string | number } | [record: st
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 EditMessageTemplateForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditMessageTemplate.url(args, options),
@@ -84,7 +84,7 @@ EditMessageTemplateForm.get = (args: { record: string | number } | [record: stri
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\EditMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/EditMessageTemplate.php:7
-* @route '/titanstudio/message-templates/{record}/edit'
+* @route '/admin/message-templates/{record}/edit'
 */
 EditMessageTemplateForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditMessageTemplate.url(args, {

@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/Owner/StripeController.php:14
 * @route '/owner/invoices/{invoice}/checkout'
 */
-export const createCheckoutSession = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const createCheckoutSession = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: createCheckoutSession.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ createCheckoutSession.definition = {
 * @see app/Http/Controllers/Owner/StripeController.php:14
 * @route '/owner/invoices/{invoice}/checkout'
 */
-createCheckoutSession.url = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+createCheckoutSession.url = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { invoice: args }
     }
@@ -52,7 +52,7 @@ createCheckoutSession.url = (args: { invoice: string | number | { id: string | n
 * @see app/Http/Controllers/Owner/StripeController.php:14
 * @route '/owner/invoices/{invoice}/checkout'
 */
-createCheckoutSession.post = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+createCheckoutSession.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: createCheckoutSession.url(args, options),
     method: 'post',
 })
@@ -62,7 +62,7 @@ createCheckoutSession.post = (args: { invoice: string | number | { id: string | 
 * @see app/Http/Controllers/Owner/StripeController.php:14
 * @route '/owner/invoices/{invoice}/checkout'
 */
-const createCheckoutSessionForm = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const createCheckoutSessionForm = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: createCheckoutSession.url(args, options),
     method: 'post',
 })
@@ -72,7 +72,7 @@ const createCheckoutSessionForm = (args: { invoice: string | number | { id: stri
 * @see app/Http/Controllers/Owner/StripeController.php:14
 * @route '/owner/invoices/{invoice}/checkout'
 */
-createCheckoutSessionForm.post = (args: { invoice: string | number | { id: string | number } } | [invoice: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+createCheckoutSessionForm.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: createCheckoutSession.url(args, options),
     method: 'post',
 })

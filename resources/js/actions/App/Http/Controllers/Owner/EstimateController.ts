@@ -222,7 +222,7 @@ store.form = storeForm
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-export const show = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -237,7 +237,7 @@ show.definition = {
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-show.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -270,7 +270,7 @@ show.url = (args: { estimate: string | number | { id: string | number } } | [est
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-show.get = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -280,7 +280,7 @@ show.get = (args: { estimate: string | number | { id: string | number } } | [est
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-show.head = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -290,7 +290,7 @@ show.head = (args: { estimate: string | number | { id: string | number } } | [es
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-const showForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const showForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -300,7 +300,7 @@ const showForm = (args: { estimate: string | number | { id: string | number } } 
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-showForm.get = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.get = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
     method: 'get',
 })
@@ -310,7 +310,7 @@ showForm.get = (args: { estimate: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/Owner/EstimateController.php:52
 * @route '/owner/estimates/{estimate}'
 */
-showForm.head = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+showForm.head = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -327,7 +327,7 @@ show.form = showForm
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-export const edit = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -342,7 +342,7 @@ edit.definition = {
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-edit.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+edit.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -375,7 +375,7 @@ edit.url = (args: { estimate: string | number | { id: string | number } } | [est
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-edit.get = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -385,7 +385,7 @@ edit.get = (args: { estimate: string | number | { id: string | number } } | [est
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-edit.head = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -395,7 +395,7 @@ edit.head = (args: { estimate: string | number | { id: string | number } } | [es
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-const editForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const editForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -405,7 +405,7 @@ const editForm = (args: { estimate: string | number | { id: string | number } } 
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-editForm.get = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.get = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -415,7 +415,7 @@ editForm.get = (args: { estimate: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/Owner/EstimateController.php:133
 * @route '/owner/estimates/{estimate}/edit'
 */
-editForm.head = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.head = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -432,7 +432,7 @@ edit.form = editForm
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-export const update = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -447,7 +447,7 @@ update.definition = {
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-update.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -480,7 +480,7 @@ update.url = (args: { estimate: string | number | { id: string | number } } | [e
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-update.put = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -490,7 +490,7 @@ update.put = (args: { estimate: string | number | { id: string | number } } | [e
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-update.patch = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -500,7 +500,7 @@ update.patch = (args: { estimate: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-const updateForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -515,7 +515,7 @@ const updateForm = (args: { estimate: string | number | { id: string | number } 
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-updateForm.put = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.put = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -530,7 +530,7 @@ updateForm.put = (args: { estimate: string | number | { id: string | number } } 
 * @see app/Http/Controllers/Owner/EstimateController.php:158
 * @route '/owner/estimates/{estimate}'
 */
-updateForm.patch = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.patch = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -544,10 +544,10 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:260
+* @see app/Http/Controllers/Owner/EstimateController.php:261
 * @route '/owner/estimates/{estimate}'
 */
-export const destroy = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -559,10 +559,10 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:260
+* @see app/Http/Controllers/Owner/EstimateController.php:261
 * @route '/owner/estimates/{estimate}'
 */
-destroy.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -592,20 +592,20 @@ destroy.url = (args: { estimate: string | number | { id: string | number } } | [
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:260
+* @see app/Http/Controllers/Owner/EstimateController.php:261
 * @route '/owner/estimates/{estimate}'
 */
-destroy.delete = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:260
+* @see app/Http/Controllers/Owner/EstimateController.php:261
 * @route '/owner/estimates/{estimate}'
 */
-const destroyForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -617,10 +617,10 @@ const destroyForm = (args: { estimate: string | number | { id: string | number }
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:260
+* @see app/Http/Controllers/Owner/EstimateController.php:261
 * @route '/owner/estimates/{estimate}'
 */
-destroyForm.delete = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -637,7 +637,7 @@ destroy.form = destroyForm
 * @see app/Http/Controllers/Owner/EstimateController.php:203
 * @route '/owner/estimates/{estimate}/send'
 */
-export const send = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const send = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: send.url(args, options),
     method: 'post',
 })
@@ -652,7 +652,7 @@ send.definition = {
 * @see app/Http/Controllers/Owner/EstimateController.php:203
 * @route '/owner/estimates/{estimate}/send'
 */
-send.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+send.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -685,7 +685,7 @@ send.url = (args: { estimate: string | number | { id: string | number } } | [est
 * @see app/Http/Controllers/Owner/EstimateController.php:203
 * @route '/owner/estimates/{estimate}/send'
 */
-send.post = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+send.post = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: send.url(args, options),
     method: 'post',
 })
@@ -695,7 +695,7 @@ send.post = (args: { estimate: string | number | { id: string | number } } | [es
 * @see app/Http/Controllers/Owner/EstimateController.php:203
 * @route '/owner/estimates/{estimate}/send'
 */
-const sendForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const sendForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: send.url(args, options),
     method: 'post',
 })
@@ -705,7 +705,7 @@ const sendForm = (args: { estimate: string | number | { id: string | number } } 
 * @see app/Http/Controllers/Owner/EstimateController.php:203
 * @route '/owner/estimates/{estimate}/send'
 */
-sendForm.post = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+sendForm.post = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: send.url(args, options),
     method: 'post',
 })
@@ -717,7 +717,7 @@ send.form = sendForm
 * @see app/Http/Controllers/Owner/EstimateController.php:220
 * @route '/owner/estimates/{estimate}/convert'
 */
-export const convertToJob = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const convertToJob = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: convertToJob.url(args, options),
     method: 'post',
 })
@@ -732,7 +732,7 @@ convertToJob.definition = {
 * @see app/Http/Controllers/Owner/EstimateController.php:220
 * @route '/owner/estimates/{estimate}/convert'
 */
-convertToJob.url = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+convertToJob.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { estimate: args }
     }
@@ -765,7 +765,7 @@ convertToJob.url = (args: { estimate: string | number | { id: string | number } 
 * @see app/Http/Controllers/Owner/EstimateController.php:220
 * @route '/owner/estimates/{estimate}/convert'
 */
-convertToJob.post = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+convertToJob.post = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: convertToJob.url(args, options),
     method: 'post',
 })
@@ -775,7 +775,7 @@ convertToJob.post = (args: { estimate: string | number | { id: string | number }
 * @see app/Http/Controllers/Owner/EstimateController.php:220
 * @route '/owner/estimates/{estimate}/convert'
 */
-const convertToJobForm = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const convertToJobForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: convertToJob.url(args, options),
     method: 'post',
 })
@@ -785,7 +785,7 @@ const convertToJobForm = (args: { estimate: string | number | { id: string | num
 * @see app/Http/Controllers/Owner/EstimateController.php:220
 * @route '/owner/estimates/{estimate}/convert'
 */
-convertToJobForm.post = (args: { estimate: string | number | { id: string | number } } | [estimate: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+convertToJobForm.post = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: convertToJob.url(args, options),
     method: 'post',
 })
