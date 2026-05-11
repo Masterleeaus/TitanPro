@@ -33,8 +33,8 @@ class PlatformHealthDashboard extends Page
             ? DB::table('failed_jobs')->where('failed_at', '>=', now()->subHour())->count()
             : 0;
 
-        $totalTracked = max(1, $pendingJobs + $failedJobs);
-        $errorRate = round(($failedJobs / $totalTracked) * 100, 2);
+        $totalTracked = $pendingJobs + $failedJobs;
+        $errorRate = $totalTracked === 0 ? null : round(($failedJobs / $totalTracked) * 100, 2);
 
         return [
             'queue_depth' => $pendingJobs,

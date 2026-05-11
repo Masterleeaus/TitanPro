@@ -128,14 +128,32 @@ class UserResource extends Resource
                     ->label('Role')
                     ->relationship('roles', 'name'),
             ])
+            ->headerActions([
+                Action::make('stopImpersonating')
+                    ->label('Stop Impersonating')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('gray')
+                    ->visible(fn (): bool => session()->has('titanpro.impersonator_id'))
+                    ->action(function () {
+                        $impersonator = User::query()->find(session('titanpro.impersonator_id'));
+                        session()->forget('titanpro.impersonator_id');
+
+                        if ($impersonator) {
+                            Auth::login($impersonator);
+                        }
+
+                        return redirect('/titanpro/users');
+                    }),
+            ])
             ->recordActions([
                 Action::make('impersonate')
                     ->icon('heroicon-o-user-circle')
                     ->visible(fn (User $record): bool => static::isSuperAdmin() && Auth::id() !== $record->id)
                     ->requiresConfirmation()
-                    ->action(function (User $record): void {
+                    ->action(function (User $record) {
                         session(['titanpro.impersonator_id' => Auth::id()]);
                         Auth::login($record);
+                        return redirect('/');
                     }),
                 EditAction::make(),
                 DeleteAction::make(),

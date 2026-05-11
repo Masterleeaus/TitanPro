@@ -19,7 +19,13 @@
 
         <x-filament::section>
             <x-slot name="heading">Error rate</x-slot>
-            <div class="text-3xl font-bold text-gray-950 dark:text-white">{{ number_format($health['error_rate_percent'], 2) }}%</div>
+            <div class="text-3xl font-bold text-gray-950 dark:text-white">
+                @if ($health['error_rate_percent'] === null)
+                    N/A
+                @else
+                    {{ number_format($health['error_rate_percent'], 2) }}%
+                @endif
+            </div>
         </x-filament::section>
     </div>
 </x-filament-panels::page>
