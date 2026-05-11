@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanPro\Widgets\ActiveOrganizationsWidget;
+use App\Filament\TitanPro\Widgets\FailedJobsWidget;
+use App\Filament\TitanPro\Widgets\PlatformRevenueWidget;
+use App\Filament\TitanPro\Widgets\UsageMetricsWidget;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -92,6 +96,10 @@ class TitanProPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                ActiveOrganizationsWidget::class,
+                PlatformRevenueWidget::class,
+                UsageMetricsWidget::class,
+                FailedJobsWidget::class,
                 \App\Filament\Widgets\CleaningOperationsOverview::class,
                 \App\Filament\Widgets\DispatchOverviewWidget::class,
                 \App\Filament\Widgets\RevenueReportingSnapshot::class,
