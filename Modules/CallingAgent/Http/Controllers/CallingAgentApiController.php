@@ -85,6 +85,7 @@ class CallingAgentApiController extends Controller
             ]);
             // Still persist the attempt
             $this->persistTransferAttempt($callSid, $validated['target'], 'sdk-unavailable');
+            $this->mirrorEscalationToTitanHello($callSid, $validated['target'], 'sdk-unavailable');
             return response()->json([
                 'success' => false,
                 'error'   => 'Twilio SDK or credentials not available',
@@ -106,6 +107,7 @@ class CallingAgentApiController extends Controller
 
         // Persist transfer attempt
         $this->persistTransferAttempt($callSid, $validated['target'], 'initiated');
+        $this->mirrorEscalationToTitanHello($callSid, $validated['target'], 'initiated');
 
         return response()->json(['success' => true, 'call_sid' => $callSid, 'target' => $validated['target']]);
     }
@@ -150,6 +152,48 @@ class CallingAgentApiController extends Controller
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ]);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
+
+    private function mirrorEscalationToTitanHello(string $callSid, string $target, string $status): void
+    {
+        if (! class_exists(\Modules\TitanHello\Models\Call::class)) {
+            return;
+        }
+
+        try {
+            /** @var CallingAgentCall|null $callingAgentCall */
+            $callingAgentCall = CallingAgentCall::query()->where('call_sid', $callSid)->first();
+
+            /** @var \Modules\TitanHello\Models\Call $titanHelloCall */
+            $titanHelloCall = \Modules\TitanHello\Models\Call::query()->firstOrNew([
+                'provider' => 'twilio',
+                'provider_call_sid' => $callSid,
+            ]);
+
+            $existingMeta = is_array($titanHelloCall->meta) ? $titanHelloCall->meta : [];
+
+            $titanHelloCall->fill([
+                'company_id' => $callingAgentCall?->company_id ?? auth()->user()?->organization_id,
+                'direction' => $callingAgentCall?->direction ?? 'inbound',
+                'from_number' => $callingAgentCall?->from,
+                'to_number' => $callingAgentCall?->to ?? $target,
+                'status' => 'escalated',
+                'call_outcome' => 'human_escalation',
+                'meta' => array_merge($existingMeta, [
+                    'escalation_target' => $target,
+                    'calling_agent_transfer_status' => $status,
+                    'source' => 'calling-agent-transfer',
+                ]),
+            ]);
+
+            $titanHelloCall->save();
+
+            if (class_exists(\Modules\TitanHello\Events\CallStatusUpdated::class)) {
+                event(new \Modules\TitanHello\Events\CallStatusUpdated($titanHelloCall));
+            }
         } catch (\Throwable $e) {
             report($e);
         }

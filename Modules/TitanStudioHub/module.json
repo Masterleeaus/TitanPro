@@ -1,0 +1,18 @@
+{
+  "name": "TitanStudioHub",
+  "description": "Creative hub shell for the TitanStudio panel. Provides a content calendar, brand asset library, social media post scheduler, campaign performance tracker, creative brief builder, and AI content generation hub — the creative operations layer not covered by InstantAds or ProShots.",
+  "active": 1,
+  "filament_panel": "titanstudio",
+  "providers": [
+    "Modules\\\\TitanStudioHub\\\\Providers\\\\TitanStudioHubServiceProvider"
+  ],
+  "keywords": [
+    "studio",
+    "content",
+    "calendar",
+    "brand",
+    "social",
+    "campaign",
+    "creative"
+  ]
+}

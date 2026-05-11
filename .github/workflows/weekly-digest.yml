@@ -1,0 +1,183 @@
+name: 📊 Weekly Pipeline Health Digest
+
+on:
+  schedule:
+    - cron: '0 9 * * 6'   # Every Saturday at 09:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+concurrency:
+  group: weekly-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    name: Create weekly pipeline health issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Gather pipeline metrics
+        id: metrics
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+        run: |
+          # Date range: last 7 days
+          SINCE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null \
+                  || date -u -v-7d +%Y-%m-%dT%H:%M:%SZ)
+          WEEK=$(date -u +%Y-%m-%d)
+
+          echo "Gathering metrics since $SINCE..."
+
+          # ── Open issues ────────────────────────────────────────────────────────
+          OPEN_TOTAL=$(gh issue list --repo "$REPO" --state open --limit 500 \
+            --json number --jq 'length')
+
+          AGENT_ASSIGNED=$(gh issue list --repo "$REPO" --state open \
+            --label "agent-assigned" --limit 500 --json number --jq 'length')
+
+          AGENT_FAILED=$(gh issue list --repo "$REPO" --state open \
+            --label "agent-failed" --limit 500 --json number --jq 'length')
+
+          # ── Completed this week ────────────────────────────────────────────────
+          COMPLETED_WEEK=$(gh issue list --repo "$REPO" --state open \
+            --label "agent-completed" --limit 500 \
+            --json number,updatedAt \
+            --jq "[.[] | select(.updatedAt >= \"${SINCE}\")] | length")
+
+          # ── Closed this week ──────────────────────────────────────────────────
+          CLOSED_WEEK=$(gh issue list --repo "$REPO" --state closed --limit 500 \
+            --json number,closedAt \
+            --jq "[.[] | select(.closedAt != null and .closedAt >= \"${SINCE}\")] | length")
+
+          # ── Opened this week ──────────────────────────────────────────────────
+          OPENED_WEEK=$(gh issue list --repo "$REPO" --state all --limit 500 \
+            --json number,createdAt \
+            --jq "[.[] | select(.createdAt >= \"${SINCE}\")] | length")
+
+          # ── PRs ───────────────────────────────────────────────────────────────
+          OPEN_PRS=$(gh pr list --repo "$REPO" --state open --limit 100 \
+            --json number --jq 'length')
+
+          DRAFT_PRS=$(gh pr list --repo "$REPO" --state open --limit 100 \
+            --json number,isDraft --jq '[.[] | select(.isDraft == true)] | length')
+
+          MERGED_WEEK=$(gh pr list --repo "$REPO" --state merged --limit 200 \
+            --json number,mergedAt \
+            --jq "[.[] | select(.mergedAt != null and .mergedAt >= \"${SINCE}\")] | length")
+
+          CONFLICTED_PRS=$(gh pr list --repo "$REPO" --state open --limit 100 \
+            --json number,mergeStateStatus \
+            --jq '[.[] | select(.mergeStateStatus == "DIRTY")] | length')
+
+          # ── Write outputs ─────────────────────────────────────────────────────
+          echo "week=$WEEK"              >> "$GITHUB_OUTPUT"
+          echo "open_total=$OPEN_TOTAL"  >> "$GITHUB_OUTPUT"
+          echo "assigned=$AGENT_ASSIGNED" >> "$GITHUB_OUTPUT"
+          echo "failed=$AGENT_FAILED"    >> "$GITHUB_OUTPUT"
+          echo "completed=$COMPLETED_WEEK" >> "$GITHUB_OUTPUT"
+          echo "closed=$CLOSED_WEEK"     >> "$GITHUB_OUTPUT"
+          echo "opened=$OPENED_WEEK"     >> "$GITHUB_OUTPUT"
+          echo "open_prs=$OPEN_PRS"      >> "$GITHUB_OUTPUT"
+          echo "draft_prs=$DRAFT_PRS"    >> "$GITHUB_OUTPUT"
+          echo "merged=$MERGED_WEEK"     >> "$GITHUB_OUTPUT"
+          echo "conflicted=$CONFLICTED_PRS" >> "$GITHUB_OUTPUT"
+
+      - name: Create digest issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          WEEK:            ${{ steps.metrics.outputs.week }}
+          OPEN_TOTAL:      ${{ steps.metrics.outputs.open_total }}
+          ASSIGNED:        ${{ steps.metrics.outputs.assigned }}
+          FAILED:          ${{ steps.metrics.outputs.failed }}
+          COMPLETED:       ${{ steps.metrics.outputs.completed }}
+          CLOSED:          ${{ steps.metrics.outputs.closed }}
+          OPENED:          ${{ steps.metrics.outputs.opened }}
+          OPEN_PRS:        ${{ steps.metrics.outputs.open_prs }}
+          DRAFT_PRS:       ${{ steps.metrics.outputs.draft_prs }}
+          MERGED:          ${{ steps.metrics.outputs.merged }}
+          CONFLICTED:      ${{ steps.metrics.outputs.conflicted }}
+        run: |
+          # Health score heuristic (0–100)
+          # Penalise: failed issues, conflicted PRs, high open count
+          # Reward: merges this week, completions
+          SCORE=$(python3 -c "
+failed = int('$FAILED')
+conflicted = int('$CONFLICTED')
+merged = int('$MERGED')
+completed = int('$COMPLETED')
+open_total = int('$OPEN_TOTAL')
+
+base = 100
+base -= failed * 5          # each failed issue costs 5pts
+base -= conflicted * 3      # each conflicted PR costs 3pts
+base -= max(0, (open_total - 50) // 10)  # penalty for > 50 open issues
+base += min(20, merged * 2)  # bonus for merges (max +20)
+base += min(10, completed)   # bonus for completions (max +10)
+print(max(0, min(100, base)))
+")
+
+          if [ "$SCORE" -ge 80 ]; then
+            HEALTH_EMOJI="🟢"
+            HEALTH_LABEL="Healthy"
+          elif [ "$SCORE" -ge 50 ]; then
+            HEALTH_EMOJI="🟡"
+            HEALTH_LABEL="Needs attention"
+          else
+            HEALTH_EMOJI="🔴"
+            HEALTH_LABEL="Critical"
+          fi
+
+          BODY_FILE=$(mktemp)
+          cat > "$BODY_FILE" << EOF
+## ${HEALTH_EMOJI} Overall Health: ${HEALTH_LABEL} (${SCORE}/100)
+
+> Auto-generated every Saturday. Covers the last 7 days ending **${WEEK}**.
+
+---
+
+### 📋 Issues
+
+| Metric | Count |
+|--------|-------|
+| Open issues (total) | ${OPEN_TOTAL} |
+| Currently agent-assigned | ${ASSIGNED} |
+| Agent-failed (needs reset) | ${FAILED} |
+| Opened this week | ${OPENED} |
+| Completed this week | ${COMPLETED} |
+| Closed this week | ${CLOSED} |
+
+### 🔀 Pull Requests
+
+| Metric | Count |
+|--------|-------|
+| Open PRs | ${OPEN_PRS} |
+| Draft PRs | ${DRAFT_PRS} |
+| Merged this week | ${MERGED} |
+| Conflicted (need resolution) | ${CONFLICTED} |
+
+---
+
+### Action items
+
+$([ "$FAILED" -gt 0 ]   && echo "- [ ] **$FAILED agent-failed issue(s)** — review and re-queue or close")
+$([ "$CONFLICTED" -gt 0 ] && echo "- [ ] **$CONFLICTED conflicted PR(s)** — auto-conflict-resolver should handle these within 20 min")
+$([ "$DRAFT_PRS" -gt 0 ] && echo "- [ ] **$DRAFT_PRS draft PR(s)** — waiting for CI to pass before auto-undraft")
+$([ "$FAILED" -eq 0 ] && [ "$CONFLICTED" -eq 0 ] && echo "- ✅ No immediate action required")
+
+---
+*Generated by [weekly-digest workflow](https://github.com/${REPO}/actions/workflows/weekly-digest.yml)*
+EOF
+
+          gh issue create \
+            --repo "$REPO" \
+            --title "📊 Weekly Digest — ${WEEK} — Health ${SCORE}/100" \
+            --label "documentation" \
+            --body-file "$BODY_FILE"
+
+          rm -f "$BODY_FILE"
+          echo "✓ Weekly digest issue created."

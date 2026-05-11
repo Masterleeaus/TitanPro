@@ -35,5 +35,7 @@
     "voice_personas",
     "full_duplex_helpers",
     "builder_ui_preserved"
-  ]
+  ],
+  "filament_panel": "groundzero",
+  "active": 1
 }
