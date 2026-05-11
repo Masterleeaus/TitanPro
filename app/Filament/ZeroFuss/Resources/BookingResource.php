@@ -16,7 +16,7 @@ class BookingResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationGroup = 'My Account';
+    protected static string|\UnitEnum|null $navigationGroup = 'My Account';
 
     protected static ?string $navigationLabel = 'Bookings';
 
