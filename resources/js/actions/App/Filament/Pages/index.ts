@@ -1,7 +1,11 @@
-import UiStudio from './UiStudio'
+import OperationsReports from './OperationsReports'
+import Reports from './Reports'
+import SiteSettings from './SiteSettings'
 
 const Pages = {
-    UiStudio: Object.assign(UiStudio, UiStudio),
+    OperationsReports: Object.assign(OperationsReports, OperationsReports),
+    Reports: Object.assign(Reports, Reports),
+    SiteSettings: Object.assign(SiteSettings, SiteSettings),
 }
 
 export default Pages
