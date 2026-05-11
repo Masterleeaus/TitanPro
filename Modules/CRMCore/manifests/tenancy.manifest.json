@@ -1,4 +1,5 @@
 {
   "schema": "titan.tenancy.manifest.v1",
+  "module": "CRMCore",
   "company_key": "company_id"
 }
