@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\DataModels;
+namespace Modules\TitanEchoAssist\AI\DataModels;
 
 abstract class BaseDataModel implements DataModelInterface
 {

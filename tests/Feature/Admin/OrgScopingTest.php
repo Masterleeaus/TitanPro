@@ -4,7 +4,10 @@ use App\Models\Customer;
 use App\Models\DriverLocation;
 use App\Models\Item;
 use App\Models\Job;
+use App\Models\JobChecklistItem;
 use App\Models\JobType;
+use App\Models\JobTypeChecklistItem;
+use App\Models\MessageTemplate;
 use App\Models\Organization;
 use App\Models\Property;
 use App\Models\User;
@@ -85,4 +88,43 @@ test('organization-settings edit page 404s for other-org record', function () {
     $record = \App\Models\OrganizationSetting::factory()->create(['organization_id' => $other->id]);
 
     $this->actingAs($user)->get("/admin/organization-settings/{$record->id}/edit")->assertNotFound();
+});
+
+// ── Issue 197: null-safe guard audit ─────────────────────────────────────────
+
+test('job-type-checklist-items edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $jobType = JobType::factory()->create(['organization_id' => $other->id]);
+    $record  = JobTypeChecklistItem::factory()->create(['job_type_id' => $jobType->id]);
+
+    $this->actingAs($user)->get("/admin/job-type-checklist-items/{$record->id}/edit")->assertNotFound();
+});
+
+test('job-checklist-items edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $customer = Customer::factory()->create(['organization_id' => $other->id]);
+    $job      = Job::factory()->forCustomer($customer)->create();
+    $record   = JobChecklistItem::create([
+        'organization_id' => $other->id,
+        'job_id'          => $job->id,
+        'label'           => 'Other org task',
+        'sort_order'      => 1,
+        'is_required'     => false,
+        'requires_photo'  => false,
+    ]);
+
+    $this->actingAs($user)->get("/admin/job-checklist-items/{$record->id}/edit")->assertNotFound();
+});
+
+test('message-templates edit page 404s for other-org record', function () {
+    [$user, , $other] = scopedOwner();
+    $record = MessageTemplate::create([
+        'organization_id' => $other->id,
+        'event'           => 'job_scheduled',
+        'channel'         => 'email',
+        'subject'         => 'Test',
+        'body'            => 'Test body',
+    ]);
+
+    $this->actingAs($user)->get("/admin/message-templates/{$record->id}/edit")->assertNotFound();
 });

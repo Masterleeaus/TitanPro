@@ -11,7 +11,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -21,7 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * TitanStudio — Creative and content production panel.
+ * TitanStudio — Workflow builder, automation, and CMS studio panel.
  */
 class TitanStudioPanelProvider extends PanelProvider
 {
@@ -32,7 +31,7 @@ class TitanStudioPanelProvider extends PanelProvider
         return $panel
             ->id('titanstudio')
             ->path('titanstudio')
-            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio — Creative Hub'))
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio'))
             ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
             ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
             ->colors(fn (): array => [
@@ -42,7 +41,14 @@ class TitanStudioPanelProvider extends PanelProvider
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
                     'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
                 ]),
+            ])
+            ->resources([
+                \App\Filament\Resources\MessageTemplateResource::class,
+                \App\Filament\Resources\CmsPageResource::class,
+                \App\Filament\Resources\JobTypeChecklistItemResource::class,
+                \App\Filament\Resources\JobChecklistItemResource::class,
             ])
             ->discoverResources(in: app_path('Filament/TitanStudio/Resources'), for: 'App\\Filament\\TitanStudio\\Resources')
             ->discoverPages(in: app_path('Filament/TitanStudio/Pages'), for: 'App\\Filament\\TitanStudio\\Pages')

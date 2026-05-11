@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Resources;
+namespace Modules\TitanEchoAssist\Filament\Resources;
 
-use Modules\TitanChatbot\Models\Conversation;
+use Modules\TitanEchoAssist\Models\Conversation;
 
 if (class_exists(\Filament\Resources\Resource::class)) {
     class ConversationResource extends \Filament\Resources\Resource
@@ -57,8 +57,8 @@ if (class_exists(\Filament\Resources\Resource::class)) {
         public static function getPages(): array
         {
             return [
-                'index' => \Modules\TitanChatbot\Filament\Resources\ConversationResource\Pages\ListConversations::route('/'),
-                'view'  => \Modules\TitanChatbot\Filament\Resources\ConversationResource\Pages\ViewConversation::route('/{record}'),
+                'index' => \Modules\TitanEchoAssist\Filament\Resources\ConversationResource\Pages\ListConversations::route('/'),
+                'view'  => \Modules\TitanEchoAssist\Filament\Resources\ConversationResource\Pages\ViewConversation::route('/{record}'),
             ];
         }
     }

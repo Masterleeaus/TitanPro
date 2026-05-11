@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Actions;
+namespace Modules\TitanEchoAssist\Actions;
 
-use Modules\TitanChatbot\Services\ChannelRouter;
+use Modules\TitanEchoAssist\Services\ChannelRouter;
 
 class RouteInboundMessage
 {

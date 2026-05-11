@@ -1,3 +1,316 @@
+# Issue 197 — Audit Filament relation managers and custom list pages for tenant-scoping bypass
+
+## Summary
+
+Follow-up to issue 129. All Filament resources, relation managers, and custom list pages were
+audited for tenant-scoping correctness. Five resources were missing the null-safe guard pattern
+(`$organizationId === null → whereRaw('1 = 0')`) that prevents potential data leakage when
+the authenticated user has no `organization_id` (e.g. a super-admin or an unauthenticated
+queue context). Three new HTTP-level 404 tests were added covering the fixed resources.
+
+## Audit Results
+
+### Relation managers
+
+`app/Filament/Resources/*/RelationManagers/` — **no relation manager files exist in this
+codebase**. The directory does not exist. This audit criterion is vacuously satisfied.
+
+### Custom list pages overriding `getTableQuery()`
+
+Checked all files under `app/Filament/Resources/*/Pages/`, `app/Filament/TitanSolo/Resources/*/Pages/`,
+`app/Filament/ZeroPay/Resources/*/Pages/`, and `app/Filament/ZeroFuss/Resources/*/Pages/`.
+**No list page overrides `getTableQuery()`**. This criterion is also vacuously satisfied.
+
+### Resource-level `getEloquentQuery()` audit
+
+| Resource | Has `getEloquentQuery()` | Null-safe guard | Status |
+|---|---|---|---|
+| `CustomerResource` | ✅ | ✅ | OK |
+| `PropertyResource` | ✅ | ✅ | OK |
+| `JobResource` | ✅ | ✅ | OK |
+| `DriverLocationResource` | ✅ | ✅ | OK |
+| `InvoiceResource` | ✅ | ✅ | OK |
+| `PaymentResource` | ✅ | ✅ | OK |
+| `EstimateResource` | ✅ | ✅ | OK |
+| `AttachmentResource` | ✅ | ✅ | OK |
+| `OrganizationSettingResource` | ✅ | ✅ | OK |
+| `EstimatePackageResource` | ✅ | ✅ | OK |
+| `JobMessageResource` | ✅ | ✅ | OK |
+| `ItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobTypeResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `MessageTemplateResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobChecklistItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `JobTypeChecklistItemResource` | ✅ | ❌ → ✅ fixed | **Fixed** |
+| `CmsPageResource` | ❌ (not needed) | N/A | OK — `CmsPage` has no `organization_id`; it is a global system resource |
+| `TitanSolo/CustomerResource` | ✅ | ✅ | OK |
+| `TitanSolo/JobResource` | ✅ | ✅ | OK |
+| `TitanSolo/InvoiceResource` | ✅ | ✅ | OK |
+| `ZeroPay/InvoiceResource` | ✅ | ✅ | OK |
+| `ZeroPay/PaymentResource` | ✅ | ✅ | OK |
+| `ZeroFuss/BookingResource` | ✅ | ✅ | OK |
+
+## Files Changed
+
+| File | Fix Applied |
+|------|-------------|
+| `app/Filament/Resources/ItemResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/JobTypeResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/MessageTemplateResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `app/Filament/Resources/JobChecklistItemResource.php` | Added null-safe guard; extracted `$organizationId` variable to avoid double call to `auth()->user()?->organization_id` inside the closure |
+| `app/Filament/Resources/JobTypeChecklistItemResource.php` | Added null-safe guard to `getEloquentQuery()` |
+| `tests/Feature/Admin/OrgScopingTest.php` | Added 3 new 404-level cross-org tests for `job-type-checklist-items`, `job-checklist-items`, and `message-templates` |
+
+## Fixes Applied
+
+All five resources now follow the established null-safe guard pattern from issue 129:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    $organizationId = auth()->user()?->organization_id;
+
+    if ($organizationId === null) {
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+
+    return parent::getEloquentQuery()->where('organization_id', $organizationId);
+}
+```
+
+`JobChecklistItemResource` retains its intentional `OR` logic (items are visible if either
+their own `organization_id` or their parent job's `organization_id` matches) but now passes
+the resolved `$organizationId` into the closure rather than calling `auth()->user()?->organization_id`
+twice — and returns an empty set when no org context is present.
+
+## Next Steps
+
+- Add a `HasFactory` trait and `JobChecklistItemFactory` / `MessageTemplateFactory` to enable
+  richer factory-based tests for these models.
+- Consider adding `TenantAware` / `BelongsToTenant` to `JobChecklistItem` so TenantScope is
+  applied automatically at the model level, reducing reliance on manual resource-level guards.
+- Monitor for any new Filament resources added to the codebase — enforce the null-safe pattern
+  as a code-review checklist item.
+# Issue 197 – Vue component test infrastructure for grid editor drag interactions
+
+**Source:** Follow-up to issue-148.md (visual grid editor delivered in `Settings.vue` / `layoutTokens.ts`).
+
+---
+
+## Summary
+
+Established Vitest + Vue Test Utils frontend testing infrastructure and wrote initial coverage for the grid editor's drag-driven flows that were explicitly flagged as a gap in issue-148.
+
+---
+
+## Changes Made
+
+### New devDependencies (`package.json`)
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `vitest` | ^4.1.5 | Test runner (Vite-native, fast) |
+| `@vue/test-utils` | ^2.4.10 | Vue 3 component mounting & assertions |
+| `happy-dom` | ^20.9.0 | DOM simulation environment (patched; ≥ 20.8.9 fixes advisory CVEs) |
+| `@vitest/coverage-v8` | ^4.1.5 | Optional coverage support (`npm run test:coverage`) |
+
+### New scripts (`package.json`)
+
+```json
+"test":          "vitest run",
+"test:watch":    "vitest",
+"test:coverage": "vitest run --coverage"
+```
+
+### New file – `vitest.config.ts`
+
+Minimal Vitest configuration:
+- Uses `@vitejs/plugin-vue` (already in devDependencies) to transform `.vue` SFCs.
+- Resolves the `@/` alias to `resources/js/` (matching `tsconfig.json`).
+- Sets the test environment to `happy-dom`.
+- Scans `resources/js/**/*.spec.ts` for test files.
+
+### New file – `resources/js/pages/Platform/__tests__/layoutTokens.spec.ts`
+
+33 pure-unit tests covering every exported function in `layoutTokens.ts`:
+
+- `snapValue` – rounding to grid multiples, clamping, zero-delta identity.
+- `cloneLayoutTokens` – shallow copy, mutation isolation.
+- `sanitizeLayoutTokens` – defaults fill, all clamp ranges, `cardMinHeight` derivation.
+- `extractLayoutTokens` – null/undefined/missing-block fallbacks, full parse, custom value, out-of-range sanitisation, user CSS outside the block.
+- `buildLayoutTokenCss` – sentinel markers, all CSS custom properties, sanitisation, round-trip stability.
+- `mergeLayoutTokenCss` – no-existing-CSS case, block replacement, user CSS preservation, no block duplication on repeated merges.
+- `layoutPreviewStyles` – property strings, sanitisation.
+- **Token round-trip** – extract → build → extract identity, modified tokens, multi-save stability.
+
+### New file – `resources/js/pages/Platform/__tests__/Settings.spec.ts`
+
+23 Vue component tests covering the grid editor's interactive behaviours.
+Dependencies (`@inertiajs/vue3`, `PlatformLayout`) are stubbed at the module level so the component mounts in isolation.
+
+| Group | Tests |
+|-------|-------|
+| **Sidebar width drag** | increases on rightward drag, decreases on leftward drag, clamps to 192px min, clamps to 384px max, history pushed on `pointerup` |
+| **Content width drag** | increases on rightward drag, clamps to 720px min, clamps to 1440px max |
+| **Snap-to-grid** | 8px snap (default), 4px snap after `<select>` change, row-gap snapped on resize-rows drag |
+| **Undo / redo** | undo restores previous value, redo re-applies, Undo disabled at initial state, Redo disabled at initial state, Redo disabled after new drag (future history pruned), `Ctrl+Z` keyboard undo, `Ctrl+Y` keyboard redo |
+| **Reset** | restores all tokens to defaults, pushes undo-able history entry, works when `custom_css` had persisted custom values |
+| **Token initialisation** | reads persisted tokens from `custom_css` on mount, falls back to defaults when `custom_css` is `null` |
+
+### Updated file – `.github/workflows/production-check.yml`
+
+Added a new `frontend-tests` job that:
+1. Checks out code.
+2. Installs Node 22.
+3. Runs `npm install`.
+4. Runs `npm run test`.
+
+This job runs in parallel with (not gating) the existing `production-check` job.
+
+---
+
+# Issue 197 — ModuleManifestRegistryLoaderTest AI/Blueprint Destructuring Fix
+
+## Issue Summary
+
+`tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php` had a `makeLoader()` destructuring site in the main idempotency test that did not include the `ai` and `blueprint` keys returned by `makeLoader()`. This left the AI registries unavailable in that test and prevented asserting AI/blueprint behavior against the shared loader registries.
+
+## Files Changed
+
+| File | Changes |
+|------|---------|
+| `tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php` | Added missing `'ai' => $aiRegistry` and `'blueprint' => $blueprintAIRegistry` destructuring entries in the main idempotency test; added explicit AI and blueprint manifest fixtures for enabled/disabled modules; added assertions verifying AI and blueprint registry population/exclusion using the same registries returned by `makeLoader()`. |
+| `issue-docs/issue-197.md` | Added issue implementation notes, changed files list, and next steps. |
+
+## Fixes Applied
+
+1. Updated the main `makeLoader()` destructuring block to include:
+   - `ai` → `$aiRegistry`
+   - `blueprint` → `$blueprintAIRegistry`
+2. Added AI manifest and blueprint AI fixture data to the main idempotency test for `RegistryTestModule`.
+3. Added disabled-module AI/blueprint fixture data and assertions to confirm disabled modules are excluded.
+4. Added assertions in the main idempotency test that validate AI manifest loading and blueprint loading using loader-provided registries.
+
+## Validation
+
+- Attempted to run (before and after code changes): `./vendor/bin/pest tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php`
+- Result in this sandbox: `./vendor/bin/pest` is unavailable because `vendor/` is not installed.
+- Dependency installation is blocked here because `composer install` fails on PHP 8.3.6 while `composer.json` requires PHP `^8.4`.
+
+## Next Steps
+
+1. Run `composer install` in a PHP 8.4+ environment.
+2. Run `./vendor/bin/pest tests/Unit/Modules/ModuleManifestRegistryLoaderTest.php`.
+3. If green, run the broader module unit test slice in CI to confirm no regressions.
+# Issue 197 — Build GroundZero panel Filament resources
+
+## Issue Summary
+
+The `/groundzero` Filament panel was scaffolded in issue-119 with panel routing, role gating,
+and resource discovery, but contained no resources under `app/Filament/GroundZero/Resources/`.
+This issue builds the complete GroundZero resource layer: Jobs, Customers, Properties, Invoices,
+Estimates, Dispatch Board, Calendar, Reports, Settings, and Team.
+
+## Files Changed
+
+### New Resources
+
+| File | Purpose |
+|------|---------|
+| `app/Filament/GroundZero/Resources/JobResource.php` | Full job management with org-scoped query |
+| `app/Filament/GroundZero/Resources/JobResource/Pages/ListJobs.php` | Job list page |
+| `app/Filament/GroundZero/Resources/JobResource/Pages/CreateJob.php` | Create job + org_id injection |
+| `app/Filament/GroundZero/Resources/JobResource/Pages/EditJob.php` | Edit job with workflow validation |
+| `app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php` | View job detail |
+| `app/Filament/GroundZero/Resources/CustomerResource.php` | Customer management, org-scoped |
+| `app/Filament/GroundZero/Resources/CustomerResource/Pages/ListCustomers.php` | Customer list |
+| `app/Filament/GroundZero/Resources/CustomerResource/Pages/CreateCustomer.php` | Create customer |
+| `app/Filament/GroundZero/Resources/CustomerResource/Pages/EditCustomer.php` | Edit customer |
+| `app/Filament/GroundZero/Resources/PropertyResource.php` | Property management, org-scoped |
+| `app/Filament/GroundZero/Resources/PropertyResource/Pages/ListProperties.php` | Property list |
+| `app/Filament/GroundZero/Resources/PropertyResource/Pages/CreateProperty.php` | Create property |
+| `app/Filament/GroundZero/Resources/PropertyResource/Pages/EditProperty.php` | Edit property |
+| `app/Filament/GroundZero/Resources/InvoiceResource.php` | Invoice management, org-scoped |
+| `app/Filament/GroundZero/Resources/InvoiceResource/Pages/ListInvoices.php` | Invoice list |
+| `app/Filament/GroundZero/Resources/InvoiceResource/Pages/CreateInvoice.php` | Create invoice |
+| `app/Filament/GroundZero/Resources/InvoiceResource/Pages/EditInvoice.php` | Edit invoice |
+| `app/Filament/GroundZero/Resources/EstimateResource.php` | Estimate management, org-scoped |
+| `app/Filament/GroundZero/Resources/EstimateResource/Pages/ListEstimates.php` | Estimate list |
+| `app/Filament/GroundZero/Resources/EstimateResource/Pages/CreateEstimate.php` | Create estimate |
+| `app/Filament/GroundZero/Resources/EstimateResource/Pages/EditEstimate.php` | Edit estimate |
+| `app/Filament/GroundZero/Resources/TeamResource.php` | Technician roster, org-scoped, read-only, slug=team |
+| `app/Filament/GroundZero/Resources/TeamResource/Pages/ListTeam.php` | Team list |
+
+### New Custom Pages
+
+| File | Purpose |
+|------|---------|
+| `app/Filament/GroundZero/Pages/DispatchBoard.php` | Live job board / driver assignment overview |
+| `app/Filament/GroundZero/Pages/CalendarPage.php` | 30-day job scheduling calendar view |
+| `app/Filament/GroundZero/Pages/ReportsPage.php` | Operational reports (jobs, revenue, quotes) |
+| `app/Filament/GroundZero/Pages/SettingsPage.php` | Panel-scoped org settings (name/phone/email/tax rate) |
+
+### New Blade Views
+
+| File | Purpose |
+|------|---------|
+| `resources/views/filament/groundzero/pages/dispatch-board.blade.php` | Dispatch board UI |
+| `resources/views/filament/groundzero/pages/calendar.blade.php` | Calendar UI |
+| `resources/views/filament/groundzero/pages/reports.blade.php` | Reports UI |
+| `resources/views/filament/groundzero/pages/settings.blade.php` | Settings form UI |
+
+### Tests
+
+| File | Purpose |
+|------|---------|
+| `tests/Feature/GroundZero/GroundZeroResourcesTest.php` | Route accessibility + tenant scoping tests |
+
+## Fixes Applied
+
+### Tenant scoping pattern
+All five CRUD resources use the null-safe `getEloquentQuery()` guard pattern already established
+across the codebase (e.g. `app/Filament/Resources/InvoiceResource.php`):
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    $organizationId = auth()->user()?->organization_id;
+
+    if ($organizationId === null) {
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+
+    return parent::getEloquentQuery()
+        ->where('organization_id', $organizationId);
+}
+```
+
+When `organization_id` is null (no authenticated user or super-admin with no org context), the
+query returns an empty result set — never leaking cross-org records.
+
+### TeamResource slug
+`TeamResource` uses model `User`. Without an explicit `$slug`, Filament would derive the URL
+from the plural model name (`users`). A `$slug = 'team'` is declared to give it a clean, panel-
+appropriate URL at `/groundzero/team`.
+
+### Create page organization injection
+All create pages inject `organization_id` via `mutateFormDataBeforeCreate()`, consistent with
+the existing admin panel resources.
+
+### SettingsPage fields
+Settings form uses the correct `OrganizationSetting` column names (`company_name`, `company_phone`,
+`company_email`, `company_address`, `default_tax_rate`) rather than non-existent `business_*`
+or `*_prefix` columns.
+
+## Next Steps
+
+- Add role-level visibility guards to restrict certain resources to specific roles within the
+  panel (e.g. bookkeeper sees invoices/estimates only; dispatcher sees jobs/dispatch/calendar).
+- Wire up the DispatchBoard to real-time Livewire polling for live job status updates.
+- Implement Calendar as a proper calendar grid using a Filament calendar plugin or custom
+  Livewire component once a calendar library is available.
+- Add invoice line-item management via Filament relation managers on InvoiceResource.
+- Add estimate line-item management via Filament relation managers on EstimateResource.
+- Consider adding a `TeamResource` create/invite flow once a user-invitation system is built.
 # Issue 197 — [FOLLOW-UP] Add ZeroPay SubscriptionResource for billing subscription management
 
 ## Issue Summary
@@ -109,6 +422,9 @@ packs, export their own themes, and import themes shared by others.
 ---
 
 ## Next Steps
+- Consider adding coverage reporting (`npm run test:coverage`) and uploading the report as a CI artefact.
+- Card-span drag tests (`primary-card` / `secondary-card`) currently rely on the JSDOM `clientWidth = 0` fallback path; if realistic span arithmetic is required, `Object.defineProperty` on the `previewGrid` element can inject a mock pixel width.
+- Integrate `npm run lint` into the CI workflow once the pre-existing 4 000+ lint errors in the repository are resolved (they pre-date this issue and are unrelated to these changes).
 
 1. Run `php artisan migrate` to create the `shared_themes` table.
 2. Run `php artisan titan:theme:export` to test the CLI command.
@@ -308,3 +624,57 @@ No new automated tests were required.
 3. **Set `OPS_LOG_CHANNELS=ops_daily,slack`** (and `LOG_SLACK_WEBHOOK_URL`) in production `.env` to get real-time Slack alerts on mail failures.
 4. **Consider Laravel Horizon** if the queue workload grows: the `mail` supervisor block in Horizon mirrors the same `--queue=mail --tries=3 --timeout=90` configuration and adds a web dashboard.
 5. **Ensure `failed_jobs` table exists** — run `php artisan queue:failed-table && php artisan migrate` if it has not been created yet.
+# Issue 197
+
+## Issue Summary
+
+Follow-up to issue #131: add a unique constraint on
+`organization_settings.organization_id` (one row per org), deduplicate any
+existing rows, and guard the Filament Create page against creating a second row.
+
+## Problem
+
+The `organization_settings` table had no unique index on `organization_id`, so
+multiple rows could accumulate for the same organization.  Depending on which
+row Filament happened to load, integration credentials (Stripe, Twilio,
+SendGrid) and panel branding could silently differ between requests.
+
+## Changes Made
+
+### `database/migrations/2026_05_11_000001_add_unique_organization_id_to_organization_settings_table.php`
+- **New migration.**
+- Deduplicates existing rows: for each `organization_id`, keeps the row with
+  the highest `id` (i.e., the most recently inserted) and deletes the rest.
+  Uses a portable `WHERE id NOT IN (SELECT MAX(id) … GROUP BY organization_id)`
+  approach that works on both SQLite (test) and MySQL (production).
+- Adds `UNIQUE(organization_id)` index after deduplication.
+- `down()` drops the unique index so the migration is reversible.
+
+### `app/Models/OrganizationSetting.php`
+- Added `firstOrCreateForOrganization(int $organizationId): static` — a static
+  helper that wraps `firstOrCreate(['organization_id' => $organizationId])`.
+  Callers that need a settings record should use this instead of plain `create`,
+  ensuring they never produce a second row for the same org.
+
+### `app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php`
+- Added `mount()` override.  Before delegating to `parent::mount()`, it checks
+  whether the authenticated user's organization already has a settings row.  If
+  one exists, it calls `$this->redirect(…)` to send the user to the existing
+  row's edit page, preventing any possibility of creating a duplicate through
+  the UI.
+
+### `tests/Feature/Admin/OrganizationSettingUniqueTest.php`
+- **New test file** with four Pest tests:
+  1. `firstOrCreateForOrganization returns existing row without creating a duplicate`
+  2. `firstOrCreateForOrganization creates a row when none exists`
+  3. `create page redirects to edit when org already has a settings row`
+  4. `create page renders normally when org has no settings row`
+
+## Next Steps
+
+- Run the full Pest suite in a PHP 8.4 environment (`composer run test`) once
+  vendor dependencies are installed.
+- Consider hiding the "New Organization Setting" / "Create" button in
+  `ListOrganizationSettings` when the current org already has a row, to give
+  a cleaner UX (the redirect guard already prevents data corruption, but the
+  button is still visible).

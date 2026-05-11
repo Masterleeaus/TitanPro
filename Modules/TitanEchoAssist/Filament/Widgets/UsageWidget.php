@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Widgets;
+namespace Modules\TitanEchoAssist\Filament\Widgets;
 
-use Modules\TitanChatbot\Billing\Meters\ConversationMeter;
-use Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter;
+use Modules\TitanEchoAssist\Billing\Meters\ConversationMeter;
+use Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter;
 
 if (class_exists(\Filament\Widgets\StatsOverviewWidget::class)) {
     class UsageWidget extends \Filament\Widgets\StatsOverviewWidget

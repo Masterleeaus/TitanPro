@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\Tools;
+namespace Modules\TitanEchoAssist\AI\Tools;
 
 class QuoteEstimatorTool
 {

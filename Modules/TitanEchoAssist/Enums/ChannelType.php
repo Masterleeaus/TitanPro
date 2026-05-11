@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Enums;
+namespace Modules\TitanEchoAssist\Enums;
 
 enum ChannelType: string
 {

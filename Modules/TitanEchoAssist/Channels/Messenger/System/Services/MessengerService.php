@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Services;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Services;
 
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
 
@@ -12,7 +12,7 @@ class MessengerService
     {
         $access_token = data_get($this->chatbotChannel['credentials'], 'access_token', '');
 
-        $simpleMessengerBot = new \App\Extensions\ChatbotMessenger\System\Helpers\SimpleMessengerBot($access_token);
+        $simpleMessengerBot = new \Modules\TitanEchoAssist\Channels\Messenger\System\Helpers\SimpleMessengerBot($access_token);
 
         $simpleMessengerBot->sendMessage($receiver, $message);
     }

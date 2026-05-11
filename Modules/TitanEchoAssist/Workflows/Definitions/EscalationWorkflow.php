@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Workflows\Definitions;
+namespace Modules\TitanEchoAssist\Workflows\Definitions;
 
-use Modules\TitanChatbot\Workflows\Guards\ConfidenceThresholdGuard;
-use Modules\TitanChatbot\Workflows\Guards\HumanFallbackGuard;
+use Modules\TitanEchoAssist\Workflows\Guards\ConfidenceThresholdGuard;
+use Modules\TitanEchoAssist\Workflows\Guards\HumanFallbackGuard;
 
 class EscalationWorkflow
 {

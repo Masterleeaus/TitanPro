@@ -111,11 +111,11 @@ Always be concise, professional, and factual.
 ### 3. Create the PHP class
 
 ```php
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
-use Modules\TitanChatbot\AI\Core\TitanAgent;
-use Modules\TitanChatbot\AI\Attributes\Tool;
-use Modules\TitanChatbot\AI\Attributes\Desc;
+use Modules\TitanEchoAssist\AI\Core\TitanAgent;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Desc;
 
 class MyAgent extends TitanAgent
 {

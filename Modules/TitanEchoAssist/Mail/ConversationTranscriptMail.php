@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Mail;
+namespace Modules\TitanEchoAssist\Mail;
 
 class ConversationTranscriptMail
 {

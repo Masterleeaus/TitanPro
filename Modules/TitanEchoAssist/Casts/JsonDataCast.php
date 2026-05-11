@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Casts;
+namespace Modules\TitanEchoAssist\Casts;
 
 class JsonDataCast
 {

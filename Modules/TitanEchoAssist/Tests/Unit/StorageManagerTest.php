@@ -1,8 +1,8 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\AI\Memory\StorageManager;
-use Modules\TitanChatbot\AI\Memory\Drivers\InMemoryMemoryDriver;
+use Modules\TitanEchoAssist\AI\Memory\StorageManager;
+use Modules\TitanEchoAssist\AI\Memory\Drivers\InMemoryMemoryDriver;
 
 class StorageManagerTest extends TestCase
 {
@@ -58,7 +58,7 @@ class StorageManagerTest extends TestCase
     public function test_file_driver_stores_and_retrieves()
     {
         $storageDir = dirname(__DIR__, 2) . '/Tests/storage_test_' . uniqid();
-        $driver     = new \Modules\TitanChatbot\AI\Memory\Drivers\FileMemoryDriver($storageDir);
+        $driver     = new \Modules\TitanEchoAssist\AI\Memory\Drivers\FileMemoryDriver($storageDir);
 
         $driver->push('fs1', 'user', 'File message');
         $messages = $driver->get('fs1');

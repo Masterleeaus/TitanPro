@@ -16,6 +16,11 @@ class InspectionPolicy
 
     public function view(User $user, Inspection $inspection): bool
     {
+        $userTenantId = $user->company_id ?? $user->organization_id;
+        if ((int) ($inspection->company_id ?? 0) !== (int) ($userTenantId ?? 0)) {
+            return false;
+        }
+
         return $this->viewAny($user);
     }
 
@@ -27,14 +32,23 @@ class InspectionPolicy
 
     public function update(User $user, Inspection $inspection): bool
     {
+        $userTenantId = $user->company_id ?? $user->organization_id;
+        if ((int) ($inspection->company_id ?? 0) !== (int) ($userTenantId ?? 0)) {
+            return false;
+        }
+
         return $user->hasPermissionTo(InspectionPermissions::UPDATE)
             || $user->hasPermissionTo(InspectionPermissions::LEGACY_UPDATE);
     }
 
     public function delete(User $user, Inspection $inspection): bool
     {
+        $userTenantId = $user->company_id ?? $user->organization_id;
+        if ((int) ($inspection->company_id ?? 0) !== (int) ($userTenantId ?? 0)) {
+            return false;
+        }
+
         return $user->hasPermissionTo(InspectionPermissions::DELETE)
             || $user->hasPermissionTo(InspectionPermissions::LEGACY_DELETE);
     }
 }
-

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Workflows\Transitions;
+namespace Modules\TitanEchoAssist\Workflows\Transitions;
 
 class ConversationTransition
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Api;
+namespace Modules\TitanEchoAssist\Http\Controllers\Api;
 
 use Illuminate\Routing\Controller;
-use Modules\TitanChatbot\Services\TitanChatbotService;
+use Modules\TitanEchoAssist\Services\TitanChatbotService;
 
 class TitanChatbotApiController extends Controller
 {

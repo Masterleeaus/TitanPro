@@ -3,6 +3,7 @@
 namespace Modules\TitanNexus\Tests\UI;
 
 use Modules\TitanNexus\UI\Forms\ModuleSettingsForm;
+use Modules\TitanNexus\UI\Themes\MotionRuntimeTheme;
 use Modules\TitanNexus\UI\Themes\UiTokens;
 use PHPUnit\Framework\TestCase;
 
@@ -53,6 +54,18 @@ final class UiKitStructureTest extends TestCase
         }
 
         $this->assertSame(['motion_preset', 'motion_speed', 'motion_ease'], $fieldNames);
+    }
+
+    public function test_runtime_theme_uses_motion_tab_css_for_renderer_injection(): void
+    {
+        $schema = ModuleSettingsForm::schema();
+        $motionTab = $this->findTabById($schema, 'motion');
+        $runtimeTheme = MotionRuntimeTheme::make();
+
+        $this->assertNotNull($motionTab);
+        $this->assertSame($motionTab['generated_css'], $runtimeTheme['generated_css']);
+        $this->assertSame($motionTab['reduced_motion_media_query'], $runtimeTheme['reduced_motion_media_query']);
+        $this->assertSame(UiTokens::make()['tokens']['--motion-preset'], $runtimeTheme['default_preset']);
     }
 
     private function findTabById(array $schema, string $tabId): ?array

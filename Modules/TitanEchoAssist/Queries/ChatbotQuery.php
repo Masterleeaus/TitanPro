@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Queries;
+namespace Modules\TitanEchoAssist\Queries;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ChatbotQuery
 {
