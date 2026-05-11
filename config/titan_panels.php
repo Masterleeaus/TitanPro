@@ -95,7 +95,7 @@ return [
 
         'titannexus' => [
             'label'       => 'TitanNexus',
-            'description' => 'Growth intelligence',
+            'description' => 'Vertical packs, lead pipeline, training content, and marketing automation',
             'path'        => 'titannexus',
             'color'       => 'indigo',
             'icon'        => 'heroicon-o-arrow-trending-up',
