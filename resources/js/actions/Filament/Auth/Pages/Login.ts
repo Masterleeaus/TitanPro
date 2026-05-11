@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 const Login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: Login.url(options),
@@ -11,13 +11,13 @@ const Login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 Login.definition = {
     methods: ["get","head"],
-    url: '/admin/login',
+    url: '/titanpro/login',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 Login.url = (options?: RouteQueryOptions) => {
     return Login.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ Login.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 Login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: Login.url(options),
@@ -36,7 +36,7 @@ Login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 Login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: Login.url(options),
@@ -46,7 +46,7 @@ Login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 const LoginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Login.url(options),
@@ -56,7 +56,7 @@ const LoginForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 LoginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Login.url(options),
@@ -66,7 +66,7 @@ LoginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 /**
 * @see \Filament\Auth\Pages\Login::__invoke
 * @see vendor/filament/filament/src/Auth/Pages/Login.php:7
-* @route '/admin/login'
+* @route '/titanpro/login'
 */
 LoginForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Login.url({
