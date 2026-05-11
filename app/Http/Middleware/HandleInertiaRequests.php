@@ -102,6 +102,9 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+            'name'        => config('app.name'),
+            'quote'       => ['message' => '', 'author' => ''],
+            'sidebarOpen' => $request->cookie('sidebar_state') === 'true',
             'auth' => [
                 'user'  => $user,
                 'roles' => $user?->getRoleNames() ?? [],

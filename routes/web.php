@@ -243,5 +243,18 @@ Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.i
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');
 
+// Theme share import — resolves a share token and redirects to UI Studio
+Route::get('/theme/import/{token}', \App\Http\Controllers\Platform\ThemeImportController::class)
+    ->name('theme.import')
+    ->middleware('auth');
+
 require __DIR__.'/esoft.php';
 require __DIR__.'/auth.php';
+
+// UI Studio motion preview — only available in local and testing environments
+if (app()->isLocal() || app()->runningUnitTests()) {
+    Route::get(
+        '/titan-ui-studio/motion-preview',
+        \App\Http\Controllers\UiStudio\MotionPreviewController::class
+    )->name('ui-studio.motion-preview');
+}
