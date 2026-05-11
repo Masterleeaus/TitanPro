@@ -53,6 +53,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
+        if ($panel->getId() === 'titanpro') {
+            return $this->hasRole('super_admin');
+        }
+
         if ($panel->getId() === 'groundzero') {
             return $this->hasRole(['super_admin', 'admin', 'owner', 'dispatcher', 'bookkeeper']);
         }
@@ -61,13 +65,17 @@ class User extends Authenticatable implements FilamentUser
             return $this->hasRole(['admin', 'owner', 'bookkeeper']);
         }
 
+        if ($panel->getId() === 'titansolo') {
+            return $this->hasRole('owner')
+                && in_array($this->organization?->plan, ['starter', 'solo', 'single_operator'], true);
+        }
+
         if ($panel->getId() === 'zeropay') {
             return $this->hasRole(['super_admin', 'admin', 'owner', 'bookkeeper']);
         }
 
-        if ($panel->getId() === 'titansolo') {
-            return $this->hasRole('owner')
-                && in_array($this->organization?->plan, ['starter', 'solo', 'single_operator'], true);
+        if ($panel->getId() === 'titannexus') {
+            return $this->hasRole(['admin', 'owner']);
         }
 
         return $this->hasRole(['super_admin', 'admin', 'owner']);

@@ -28,3 +28,9 @@ test('titan grow alias permanently redirects to titannexus panel path', function
         ->assertRedirect('/titannexus')
         ->assertStatus(301);
 });
+
+test('titan nexus alias permanently redirects to titannexus panel path', function () {
+    $this->get('/titan-nexus')
+        ->assertRedirect('/titannexus')
+        ->assertStatus(301);
+});
