@@ -23,7 +23,6 @@
   ],
   "active": 1,
   "order": 0,
-  "filament_panel": "titanquotes",
   "blueprint": {
     "standard": "titan-ai-native-module",
     "version": "master-aligned-v9",
