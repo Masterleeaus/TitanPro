@@ -14,7 +14,7 @@ class InboundIngestService
      *
      * Expected keys: channel, from, body, user_id (optional)
      */
-    public function ingest(array $event): void
+    public static function ingest(array $event): void
     {
         $channel = $event['channel'] ?? 'unknown';
         $from    = $event['from'] ?? null;
