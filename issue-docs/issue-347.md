@@ -4,6 +4,8 @@
 
 Primary scope: install the full TitanDocs module from `modulelib/sorted/TitanDocs_WIZARD_STANDARDS_HISTORY_v17/TitanDocs`, remove the live `Modules/Docs` stub manifest, and wire TitanDocs into the TitanPro panel with a lightweight Filament control page that links to the wizard, template library, and history screens. Secondary scope: patch vulnerable in-repo `axios` manifest declarations that were touched while integrating TitanDocs sources.
 
+![TitanDocs UI preview](./issue-347-ui-preview.png)
+
 ## Files Changed
 
 | File | Change |
