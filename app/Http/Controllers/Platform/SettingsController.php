@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Platform;
 
 use App\Http\Controllers\Controller;
 use App\Models\PlatformSetting;
+use App\Support\ThemeTokenManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -16,9 +17,10 @@ class SettingsController extends Controller
     public function edit(): Response
     {
         $settings = $this->settings();
+        $tokenState = app(ThemeTokenManager::class)->semanticEditorState($settings);
 
         return Inertia::render('Platform/Settings', [
-            'settings' => $this->payload($settings),
+            'settings' => $this->payload($settings, $tokenState),
         ]);
     }
 
@@ -29,6 +31,11 @@ class SettingsController extends Controller
         $data = $request->validate([
             'app_name' => ['required', 'string', 'max:255'],
             'primary_color' => ['nullable', 'string', 'max:20'],
+            'secondary_color' => ['nullable', 'string', 'max:20'],
+            'accent_color' => ['nullable', 'string', 'max:20'],
+            'surface_color' => ['nullable', 'string', 'max:20'],
+            'font_heading' => ['nullable', 'string', 'max:120'],
+            'font_body' => ['nullable', 'string', 'max:120'],
             'support_email' => ['nullable', 'email', 'max:255'],
             'footer_text' => ['nullable', 'string', 'max:255'],
             'custom_css' => ['nullable', 'string'],
@@ -64,11 +71,19 @@ class SettingsController extends Controller
 
         $settings->fill([
             'app_name' => $data['app_name'],
-            'primary_color' => $data['primary_color'] ?: '#2563eb',
             'support_email' => $data['support_email'] ?? null,
             'footer_text' => $data['footer_text'] ?? null,
             'custom_css' => $data['custom_css'] ?? null,
         ])->save();
+
+        app(ThemeTokenManager::class)->savePlatformThemeTokens($settings, [
+            'primary_color' => $data['primary_color'] ?? null,
+            'secondary_color' => $data['secondary_color'] ?? null,
+            'accent_color' => $data['accent_color'] ?? null,
+            'surface_color' => $data['surface_color'] ?? null,
+            'font_heading' => $data['font_heading'] ?? null,
+            'font_body' => $data['font_body'] ?? null,
+        ]);
 
         Cache::forget('platform_settings');
 
@@ -83,11 +98,16 @@ class SettingsController extends Controller
         ]);
     }
 
-    private function payload(PlatformSetting $settings): array
+    private function payload(PlatformSetting $settings, array $tokenState): array
     {
         return [
             'app_name' => $settings->app_name,
-            'primary_color' => $settings->primary_color,
+            'primary_color' => $tokenState['primary_color'],
+            'secondary_color' => $tokenState['secondary_color'],
+            'accent_color' => $tokenState['accent_color'],
+            'surface_color' => $tokenState['surface_color'],
+            'font_heading' => $tokenState['font_heading'],
+            'font_body' => $tokenState['font_body'],
             'support_email' => $settings->support_email,
             'footer_text' => $settings->footer_text,
             'logo_url' => $settings->logo_url,

@@ -79,4 +79,24 @@ class OrganizationSetting extends Model
 
         return str_repeat('•', $len - 4) . substr($value, -4);
     }
+
+    /**
+     * Returns a prefix-masked version of a key for display (shows first 12 chars then ****).
+     * Suitable for publishable keys where the prefix (e.g. pk_live_) is informative but
+     * exposing the full value is a fingerprinting risk.
+     */
+    public static function maskPrefix(?string $value, int $prefixLength = 12): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        $len = strlen($value);
+
+        if ($len <= $prefixLength) {
+            return substr($value, 0, $len) . '****';
+        }
+
+        return substr($value, 0, $prefixLength) . '****';
+    }
 }

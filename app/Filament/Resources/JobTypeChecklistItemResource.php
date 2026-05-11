@@ -91,6 +91,7 @@ class JobTypeChecklistItemResource extends Resource
             return parent::getEloquentQuery()->whereRaw('1 = 0');
         }
 
-        return parent::getEloquentQuery()->whereHas('jobType', fn (Builder $query) => $query->where('organization_id', $organizationId));
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

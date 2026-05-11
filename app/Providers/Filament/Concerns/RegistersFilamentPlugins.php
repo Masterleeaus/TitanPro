@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament\Concerns;
 
+use Modules\TitanNexus\UI\Themes\MotionRuntimeTheme;
+
 /**
  * Shared Filament plugin helpers for TitanPro panel providers.
  *
@@ -59,6 +61,25 @@ trait RegistersFilamentPlugins
                     slug: 'my-profile',
                 )
                 ->enableTwoFactorAuthentication(),
+        ];
+    }
+
+    /**
+     * Register the Visual UI Inspector render hook so the floating inspector
+     * button and property sidebar are available on every page in this panel.
+     *
+     * Inject into a panel via:
+     *   ->renderHook(...$this->uiInspectorHook())
+     *
+     * @return array{0: string, 1: \Closure}
+     */
+    private function uiInspectorHook(): array
+    {
+        return [
+            'panels::body.end',
+            fn (): \Illuminate\Contracts\View\View => view('filament.ui-inspector', [
+                'motionRuntimeTheme' => MotionRuntimeTheme::make(),
+            ]),
         ];
     }
 }
