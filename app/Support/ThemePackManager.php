@@ -353,8 +353,8 @@ final class ThemePackManager
     // Helpers
     // ─────────────────────────────────────────────────────────────────────────
 
-    private const HEX_REGEX  = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
-    private const FONT_REGEX  = '/^[\w\s\-]+$/';
+    private const HEX_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
+    private const FONT_REGEX = '/^[\w\s\-]+$/';
 
     /**
      * Sanitize a raw token map — only hex colors and safe font names pass through.
