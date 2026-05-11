@@ -10,6 +10,8 @@
  *
  * Persistence: CSS property overrides are persisted via
  *   POST /titan/ui-inspector/overrides  (upsert)
+ *   GET  /titan/ui-inspector/export     (download all)
+ *   POST /titan/ui-inspector/import     (bulk import)
  *   DELETE /titan/ui-inspector/overrides/{key}  (reset)
  *
  * They are also written to localStorage for instant reload-free application.
@@ -21,6 +23,8 @@
 
     const STORAGE_KEY = 'titan_ui_overrides';
     const API_BASE    = '/titan/ui-inspector/overrides';
+    const EXPORT_API  = '/titan/ui-inspector/export';
+    const IMPORT_API  = '/titan/ui-inspector/import';
 
     /**
      * Filament component selectors and human-readable labels.
@@ -215,6 +219,21 @@
                 headers: { 'X-CSRF-TOKEN': csrfToken() },
             });
         } catch { /* offline */ }
+    }
+
+    async function apiImport(payload) {
+        const response = await fetch(IMPORT_API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error('Import failed');
+        }
     }
 
     /* ── Apply persisted overrides on page load ─────────────────────────── */
@@ -468,6 +487,51 @@
 
                 // Reload from computed style
                 this._loadComponentProps(this.selectedEl, this.selectedKey);
+            },
+
+            async exportOverrides() {
+                try {
+                    const response = await fetch(EXPORT_API, { method: 'GET' });
+                    if (!response.ok) return;
+
+                    const disposition = response.headers.get('content-disposition') ?? '';
+                    const match = disposition.match(/filename="?([^"]+)"?/i);
+                    const filename = match?.[1] ?? `ui-overrides-${new Date().toISOString().slice(0, 10)}.json`;
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = url;
+                    anchor.download = filename;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                    URL.revokeObjectURL(url);
+                } catch { /* noop */ }
+            },
+
+            async importOverrides(event) {
+                const file = event?.target?.files?.[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    const parsed = JSON.parse(text);
+                    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                        return;
+                    }
+
+                    await apiImport(parsed);
+                    this.store = parsed;
+                    saveStorage(this.store);
+                    applyAllStoredOverrides();
+
+                    if (this.selectedEl && this.selectedKey) {
+                        this._loadComponentProps(this.selectedEl, this.selectedKey);
+                    }
+                } catch { /* noop */ }
+                finally {
+                    event.target.value = '';
+                }
             },
 
             closeSidebar() {
