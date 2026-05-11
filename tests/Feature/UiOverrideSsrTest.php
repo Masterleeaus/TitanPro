@@ -82,7 +82,6 @@ test('render expands --glass to backdrop-filter and background-color', function 
         ->toContain('-webkit-backdrop-filter: blur(8px)')
         ->toContain('background-color: rgba(255,255,255,0.15)');
 });
-
 test('render expands --animation to transition property', function () {
     $org = Organization::factory()->create();
 
@@ -149,4 +148,34 @@ test('buildDeclarations returns direct CSS property mapping for standard props',
         'border-radius' => '0.75rem',
         'color'         => '#111827',
     ]);
+});
+
+test('buildDeclarations strips invalid property names to prevent CSS injection', function () {
+    $declarations = UiOverrideCssRenderer::buildDeclarations([
+        'color'             => '#ffffff',
+        'bad property!'     => 'injected',
+        '1invalid'          => 'bad',
+    ]);
+
+    expect($declarations)
+        ->toHaveKey('color', '#ffffff')
+        ->not->toHaveKey('bad property!')
+        ->not->toHaveKey('1invalid');
+});
+
+test('buildDeclarations strips CSS comment syntax from values', function () {
+    $declarations = UiOverrideCssRenderer::buildDeclarations([
+        'color' => '/* injected */ red',
+    ]);
+
+    expect($declarations['color'])->not->toContain('/*')
+        ->and($declarations['color'])->toContain('red');
+});
+
+test('buildDeclarations prevents </style> tag injection in values', function () {
+    $declarations = UiOverrideCssRenderer::buildDeclarations([
+        'color' => 'red</style><script>alert(1)</script>',
+    ]);
+
+    expect($declarations['color'])->not->toContain('</style>');
 });
