@@ -662,6 +662,32 @@ class UiStudio extends Page
     private function loadMenuItems(): array
     {
         $orgId = auth()->user()?->organization_id;
+
+        // Primary: load from fmm_* tables when available.
+        if ($orgId && Schema::hasTable('fmm_menus') && Schema::hasTable('fmm_menu_items')) {
+            $slug = 'ui-studio-org-' . $orgId;
+            $menu = DB::table('fmm_menus')->where('slug', $slug)->first();
+
+            if ($menu) {
+                $rows = DB::table('fmm_menu_items')
+                    ->where('menu_id', $menu->id)
+                    ->where('enabled', true)
+                    ->orderBy('order')
+                    ->get(['id', 'title', 'url', 'icon', 'order']);
+
+                if ($rows->isNotEmpty()) {
+                    return $rows->values()->map(fn ($row) => [
+                        'id'    => 'm_' . $row->id,
+                        'label' => $row->title,
+                        'url'   => $row->url ?? '/',
+                        'icon'  => $row->icon ?? 'heroicon-o-link',
+                        'order' => (int) $row->order,
+                    ])->all();
+                }
+            }
+        }
+
+        // Secondary: fall back to the branding JSON column (legacy / non-fmm installs).
         if ($orgId) {
             $branding = OrganizationBranding::query()
                 ->where('organization_id', $orgId)
@@ -674,12 +700,80 @@ class UiStudio extends Page
 
         // Default nav items that mirror the main admin sidebar sections.
         return [
-            ['id' => 'm_0', 'label' => 'Dashboard',    'url' => '/titanpro',                   'icon' => 'heroicon-o-home',           'order' => 0],
-            ['id' => 'm_1', 'label' => 'Jobs',          'url' => '/titanpro/jobs',              'icon' => 'heroicon-o-briefcase',      'order' => 1],
-            ['id' => 'm_2', 'label' => 'Customers',     'url' => '/titanpro/customers',         'icon' => 'heroicon-o-users',          'order' => 2],
-            ['id' => 'm_3', 'label' => 'Invoices',      'url' => '/titanpro/invoices',          'icon' => 'heroicon-o-document-text',  'order' => 3],
-            ['id' => 'm_4', 'label' => 'Site Settings', 'url' => '/titanpro/site-settings',     'icon' => 'heroicon-o-paint-brush',    'order' => 4],
+            ['id' => 'm_0', 'label' => 'Dashboard',    'url' => '/titanpro',               'icon' => 'heroicon-o-home',          'order' => 0],
+            ['id' => 'm_1', 'label' => 'Jobs',          'url' => '/titanpro/jobs',          'icon' => 'heroicon-o-briefcase',     'order' => 1],
+            ['id' => 'm_2', 'label' => 'Customers',     'url' => '/titanpro/customers',     'icon' => 'heroicon-o-users',         'order' => 2],
+            ['id' => 'm_3', 'label' => 'Invoices',      'url' => '/titanpro/invoices',      'icon' => 'heroicon-o-document-text', 'order' => 3],
+            ['id' => 'm_4', 'label' => 'Site Settings', 'url' => '/titanpro/site-settings', 'icon' => 'heroicon-o-paint-brush',   'order' => 4],
         ];
+    }
+
+    /**
+     * Sync $this->menuItems into the fmm_* tables for the given org.
+     * Creates the UI-Studio menu location and per-org menu row when absent,
+     * then replaces all existing items with the current state.
+     */
+    private function persistMenuItemsToFmm(int $orgId): void
+    {
+        if (! Schema::hasTable('fmm_menu_locations') || ! Schema::hasTable('fmm_menus') || ! Schema::hasTable('fmm_menu_items')) {
+            return;
+        }
+
+        $prefix       = config('filament-menu-manager.table_prefix', 'fmm_');
+        $locationHandle = 'ui-studio';
+        $menuSlug     = 'ui-studio-org-' . $orgId;
+        $now          = now();
+
+        // Ensure the shared "UI Studio" location exists.
+        $locationId = DB::table($prefix . 'menu_locations')
+            ->where('handle', $locationHandle)
+            ->value('id');
+
+        if (! $locationId) {
+            $locationId = DB::table($prefix . 'menu_locations')->insertGetId([
+                'handle'     => $locationHandle,
+                'name'       => 'UI Studio',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        // Ensure a per-org menu row exists.
+        $menuId = DB::table($prefix . 'menus')
+            ->where('slug', $menuSlug)
+            ->value('id');
+
+        if (! $menuId) {
+            $menuId = DB::table($prefix . 'menus')->insertGetId([
+                'menu_location_id' => $locationId,
+                'name'             => 'UI Studio – Org ' . $orgId,
+                'slug'             => $menuSlug,
+                'is_active'        => true,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        } else {
+            DB::table($prefix . 'menus')->where('id', $menuId)->update(['updated_at' => $now]);
+        }
+
+        // Replace all items: delete then re-insert in current order.
+        DB::table($prefix . 'menu_items')->where('menu_id', $menuId)->delete();
+
+        foreach ($this->menuItems as $index => $item) {
+            DB::table($prefix . 'menu_items')->insert([
+                'menu_id'    => $menuId,
+                'parent_id'  => null,
+                'title'      => $item['label'] ?? 'Item',
+                'url'        => $item['url'] ?? '/',
+                'icon'       => $item['icon'] ?? null,
+                'target'     => '_self',
+                'type'       => 'custom',
+                'order'      => $index,
+                'enabled'    => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
     }
 
     private function storagePathFromUrl(?string $url): ?string
