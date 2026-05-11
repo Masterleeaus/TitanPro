@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 trait HasCompany
@@ -36,8 +37,11 @@ trait HasCompany
                 }
 
                 $builder->where($model->getTable().'.company_id', (int) Auth::user()->company_id);
-            } catch (\Throwable) {
-                // Fail-open during early boot / migration windows.
+            } catch (\Throwable $exception) {
+                Log::debug('HasCompany global scope skipped due to schema/auth resolution error.', [
+                    'model' => get_class($builder->getModel()),
+                    'error' => $exception->getMessage(),
+                ]);
             }
         });
     }

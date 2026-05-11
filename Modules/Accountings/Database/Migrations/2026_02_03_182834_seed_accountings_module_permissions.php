@@ -22,10 +22,14 @@ return new class extends Migration
 
         $hasGuardName = Schema::hasColumn('permissions', 'guard_name');
 
-        $perms = array_values(array_unique(array_filter(array_merge(
-            config('accountings.permissions', []),
-            ['accountings.view', 'accountings.create', 'accountings.update', 'accountings.delete']
-        ), static fn ($permission) => is_string($permission) && trim($permission) !== '')));
+        $configPerms = config('accountings.permissions', []);
+        $legacyPerms = ['accountings.view', 'accountings.create', 'accountings.update', 'accountings.delete'];
+        $mergedPerms = array_merge($configPerms, $legacyPerms);
+
+        $perms = array_values(array_unique(array_filter(
+            $mergedPerms,
+            static fn ($permission) => is_string($permission) && trim($permission) !== ''
+        )));
         foreach ($perms as $p) {
             $perm = DB::table('permissions')->where('name', $p)->first();
             if (! $perm) {
