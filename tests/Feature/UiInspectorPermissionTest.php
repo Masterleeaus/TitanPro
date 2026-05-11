@@ -3,18 +3,19 @@
 use App\Models\Organization;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
-use Spatie\Permission\Models\Permission;
+
+beforeEach(function () {
+    (new RolesAndPermissionsSeeder)->run();
+});
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /**
- * Create an authenticated user with the given Spatie permission assigned
- * directly (no role required) so we can test permission-only access.
+ * Create an org-scoped user and give them the named permission directly
+ * (no role required) to test permission-only access.
  */
 function uiInspectorUserWithPermission(string $permission): User
 {
-    (new RolesAndPermissionsSeeder)->run();
-
     $org  = Organization::factory()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->givePermissionTo($permission);
@@ -23,15 +24,25 @@ function uiInspectorUserWithPermission(string $permission): User
 }
 
 /**
- * Create an authenticated user with no role and no special permissions.
+ * Create an org-scoped user with no roles and no special permissions.
  */
 function uiInspectorUserWithoutPermission(): User
 {
-    (new RolesAndPermissionsSeeder)->run();
-
-    $org  = Organization::factory()->create();
+    $org = Organization::factory()->create();
 
     return User::factory()->create(['organization_id' => $org->id]);
+}
+
+/**
+ * Create an org-scoped user and assign the given role.
+ */
+function uiInspectorUserWithRole(string $role): User
+{
+    $org  = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $org->id]);
+    $user->assignRole($role);
+
+    return $user;
 }
 
 // ── Permission allows access (no admin role) ──────────────────────────────────
@@ -109,40 +120,22 @@ test('unauthenticated user is redirected from GET overrides', function () {
         ->assertUnauthorized();
 });
 
-// ── Privileged roles still have access ───────────────────────────────────────
+// ── Privileged roles still have access (backward compatibility) ───────────────
 
 test('super_admin role can GET overrides', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
-    $org  = Organization::factory()->create();
-    $user = User::factory()->create(['organization_id' => $org->id]);
-    $user->assignRole('super_admin');
-
-    $this->actingAs($user)
+    $this->actingAs(uiInspectorUserWithRole('super_admin'))
         ->getJson('/titan/ui-inspector/overrides')
         ->assertOk();
 });
 
 test('admin role can GET overrides', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
-    $org  = Organization::factory()->create();
-    $user = User::factory()->create(['organization_id' => $org->id]);
-    $user->assignRole('admin');
-
-    $this->actingAs($user)
+    $this->actingAs(uiInspectorUserWithRole('admin'))
         ->getJson('/titan/ui-inspector/overrides')
         ->assertOk();
 });
 
 test('owner role can GET overrides', function () {
-    (new RolesAndPermissionsSeeder)->run();
-
-    $org  = Organization::factory()->create();
-    $user = User::factory()->create(['organization_id' => $org->id]);
-    $user->assignRole('owner');
-
-    $this->actingAs($user)
+    $this->actingAs(uiInspectorUserWithRole('owner'))
         ->getJson('/titan/ui-inspector/overrides')
         ->assertOk();
 });
