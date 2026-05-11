@@ -67,21 +67,26 @@ class Conversation extends Model
                 return;
             }
 
-            if (
-                $conversation->company_id !== null
-                && Schema::hasTable('users')
-                && filter_var($channel->user_id, FILTER_VALIDATE_INT) !== false
-            ) {
+            if ($conversation->company_id !== null) {
+                if (! Schema::hasTable('users')) {
+                    return;
+                }
+
+                $channelUserId = filter_var($channel->user_id, FILTER_VALIDATE_INT);
+                $conversationCompanyId = filter_var($conversation->company_id, FILTER_VALIDATE_INT);
+
+                if ($channelUserId === false || $conversationCompanyId === false) {
+                    return;
+                }
+
                 $channelUserCompanyId = DB::table('users')
-                    ->where('id', $channel->user_id)
+                    ->where('id', $channelUserId)
                     ->value('organization_id');
 
                 $channelCompanyId = filter_var($channelUserCompanyId, FILTER_VALIDATE_INT);
-                $conversationCompanyId = filter_var($conversation->company_id, FILTER_VALIDATE_INT);
 
                 if (
                     $channelCompanyId === false
-                    || $conversationCompanyId === false
                     || $channelCompanyId !== $conversationCompanyId
                 ) {
                     return;

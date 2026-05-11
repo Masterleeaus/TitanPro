@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -13,9 +12,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        }
+        Schema::disableForeignKeyConstraints();
 
         $map = [
             'ext_operator_bots' => 'tz_portal_operator_bots',
@@ -56,16 +53,12 @@ return new class extends Migration
             }
         }
 
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-        }
+        Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void
     {
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        }
+        Schema::disableForeignKeyConstraints();
 
         $map = [
             'tz_portal_operator_bots' => 'ext_titan_operator_bots',
@@ -95,8 +88,6 @@ return new class extends Migration
             }
         }
 
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-        }
+        Schema::enableForeignKeyConstraints();
     }
 };

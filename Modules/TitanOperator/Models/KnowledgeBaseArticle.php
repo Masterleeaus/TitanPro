@@ -33,8 +33,14 @@ class KnowledgeBaseArticle extends Model
                 return;
             }
 
+            $operatorId = (int) $operatorId;
+
+            if (! Operator::query()->whereKey($operatorId)->exists()) {
+                return;
+            }
+
             app(KnowledgeBaseEmbeddingPipeline::class)->ingest(
-                (int) $operatorId,
+                $operatorId,
                 (string) ($article->title ?? ''),
                 $article->content
             );

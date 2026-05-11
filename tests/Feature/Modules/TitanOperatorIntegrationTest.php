@@ -12,10 +12,21 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     app()->register(TitanOperatorServiceProvider::class);
 
+    if (! Schema::hasTable('tz_portal_operator_bots')) {
+        Schema::create('tz_portal_operator_bots', function (Blueprint $table): void {
+            $table->id();
+            $table->string('title')->nullable();
+            $table->timestamps();
+        });
+    }
+
     if (! Schema::hasTable('tz_portal_operator_channels')) {
         Schema::create('tz_portal_operator_channels', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('operator_id')->nullable();
+            $table->unsignedBigInteger('operator_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('channel')->nullable();
+            $table->foreign('operator_id')->references('id')->on('tz_portal_operator_bots')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -37,6 +48,7 @@ beforeEach(function () {
             $table->unsignedBigInteger('chatbot_id')->nullable();
             $table->string('session_id')->nullable();
             $table->unsignedBigInteger('chatbot_channel_id')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
         });
@@ -59,6 +71,7 @@ beforeEach(function () {
         Schema::create('tz_portal_operator_embeddings', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('operator_id');
+            $table->foreign('operator_id')->references('id')->on('tz_portal_operator_bots')->cascadeOnDelete();
             $table->string('engine');
             $table->string('title')->nullable();
             $table->longText('content')->nullable();
@@ -78,6 +91,21 @@ test('TitanOperator module manifest is active on titanpro panel', function () {
 });
 
 test('webhook dispatch route creates operator conversation', function () {
+    \DB::table('tz_portal_operator_bots')->insert([
+        'id' => 33,
+        'title' => 'Operator 33',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    \DB::table('tz_portal_operator_channels')->insert([
+        'id' => 8,
+        'operator_id' => 33,
+        'channel' => 'whatsapp',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
     $response = $this->postJson('/api/v2/titan_operator/33/channel/8/whatsapp', [
         'session_id' => 'abc-123',
     ]);
@@ -92,6 +120,13 @@ test('webhook dispatch route creates operator conversation', function () {
 });
 
 test('knowledge base article save triggers embedding ingest', function () {
+    \DB::table('tz_portal_operator_bots')->insert([
+        'id' => 77,
+        'title' => 'Operator 77',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
     KnowledgeBaseArticle::query()->create([
         'title' => 'FAQ',
         'content' => 'Answer text',
@@ -107,6 +142,13 @@ test('knowledge base article save triggers embedding ingest', function () {
 });
 
 test('echoassist conversations are associated to operator by channel', function () {
+    \DB::table('tz_portal_operator_bots')->insert([
+        'id' => 45,
+        'title' => 'Operator 45',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
     \DB::table('tz_portal_operator_channels')->insert([
         'id' => 9,
         'operator_id' => 45,
@@ -124,5 +166,33 @@ test('echoassist conversations are associated to operator by channel', function 
         'operator_id' => 45,
         'session_id' => 'sess-999',
         'operator_channel_id' => 9,
+    ]);
+});
+
+test('echoassist company-scoped conversations require channel owner mapping', function () {
+    \DB::table('tz_portal_operator_bots')->insert([
+        'id' => 46,
+        'title' => 'Operator 46',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    \DB::table('tz_portal_operator_channels')->insert([
+        'id' => 10,
+        'operator_id' => 46,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    EchoConversation::query()->create([
+        'chatbot_channel_id' => 10,
+        'session_id' => 'sess-company-guard',
+        'company_id' => 1,
+        'last_activity_at' => now(),
+    ]);
+
+    $this->assertDatabaseMissing('tz_portal_operator_conversations', [
+        'operator_id' => 46,
+        'session_id' => 'sess-company-guard',
     ]);
 });

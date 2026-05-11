@@ -15,6 +15,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('tz_portal_operator_customers');
+        if (Schema::hasTable('tz_portal_operator_customers') && Schema::hasColumn('tz_portal_operator_customers', 'user_id')) {
+            Schema::table('tz_portal_operator_customers', function (Blueprint $table): void {
+                $table->dropColumn('user_id');
+            });
+        }
     }
 };
