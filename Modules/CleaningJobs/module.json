@@ -1,5 +1,6 @@
 {
   "name": "CleaningJobs",
+  "active": 1,
   "alias": "cleaningjobs",
   "description": "Cleaning business SaaS job management module converted from repaired Worksuite work orders module.",
   "keywords": [

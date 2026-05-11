@@ -1,5 +1,6 @@
 {
   "name": "TitanChatbot",
+  "active": 1,
   "alias": "titan-chatbot",
   "description": "Unified multi-channel AI chatbot, voice, live-agent and PWA-ready module assembled from uploaded TitanBot and chatbot codebases.",
   "keywords": [

@@ -1,5 +1,6 @@
 {
   "name": "CallingAgent",
+  "active": 1,
   "alias": "calling-agent",
   "description": "Merged calling agent module with Twilio/ElevenLabs voice, omnichannel reception workflows, builder UI, caller memory, outcome intelligence, transfer routing, calendar federation, SIP and provider failover.",
   "version": "1.0.12",

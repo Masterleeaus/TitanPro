@@ -1,5 +1,6 @@
 {
     "name": "CleanQuality",
+    "active": 1,
     "alias": "clean_quality",
     "description": "Merged quality engine for inspections, quality checks, templates, and reclean workflows.",
     "keywords": ["quality", "inspection", "cleaning", "templates", "reclean"],
