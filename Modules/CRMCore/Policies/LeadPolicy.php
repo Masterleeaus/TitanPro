@@ -19,6 +19,10 @@ class LeadPolicy
 
     public function view(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('View:Lead');
     }
 
@@ -29,11 +33,19 @@ class LeadPolicy
 
     public function update(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('Update:Lead');
     }
 
     public function delete(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('Delete:Lead');
     }
 
@@ -44,11 +56,19 @@ class LeadPolicy
 
     public function restore(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('Restore:Lead');
     }
 
     public function forceDelete(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Lead');
     }
 
@@ -64,12 +84,25 @@ class LeadPolicy
 
     public function replicate(AuthUser $authUser, Lead $lead): bool
     {
+        if (! $this->belongsToOrganization($authUser, $lead)) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Lead');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Lead');
+    }
+
+    private function belongsToOrganization(AuthUser $authUser, Lead $lead): bool
+    {
+        if ($lead->crmcore_customer_id !== null) {
+            return (int) ($lead->crmcoreCustomer?->organization_id ?? 0) === (int) $authUser->organization_id;
+        }
+
+        return true;
     }
 
 }
