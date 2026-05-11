@@ -16,7 +16,7 @@ class BiometricAttendanceController extends AccountBaseController
         $this->pageTitle = 'biometric::app.menu.deviceEmployees';
 
         $this->middleware(function ($request, $next) {
-            abort_403(!in_array('biometric', $this->user->modules) && user()->permission('manage_biometric_settings') != 'none');
+            abort_403(! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none');
             return $next($request);
         });
     }

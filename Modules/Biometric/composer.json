@@ -1,6 +1,6 @@
 {
     "name": "nwidart/biometric",
-    "description": "",
+    "description": "TitanPro Biometric module for secure tenant-scoped biometric device and attendance workflows.",
     "authors": [
         {
             "name": "Nicolas Widart",

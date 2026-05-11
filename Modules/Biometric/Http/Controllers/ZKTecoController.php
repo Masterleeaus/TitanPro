@@ -45,8 +45,6 @@ class ZKTecoController extends Controller
         // Split raw input by newlines in case of multiple logs
         $rows = preg_split('/\r\n|\r|\n/', $rawContent);
 
-        Log::info('Rows: ' . json_encode($rows));
-
         // If this contains fingerprint data (FP PIN=)
         // Check if the content contains any biometric data (fingerprint, user, card, or photo)
         $hasBiometricData = (
@@ -64,9 +62,9 @@ class ZKTecoController extends Controller
             return response("OK", 200)->header('Content-Type', 'text/plain');
         }
 
-        Log::info('Attendance data received', ['request' => $request->all()]);
+        Log::info('Attendance payload received from biometric device', ['serial_number' => $sn]);
 
-        BiometricEmployee::markAttendanceTodeviceAndApplication($rows, $device, $request);
+        BiometricEmployee::markAttendanceToDeviceAndApplication($rows, $device, $request);
 
         return response('OK', 200)->header('Content-Type', 'text/plain');
     }
@@ -130,9 +128,20 @@ class ZKTecoController extends Controller
     public function handleGetRequest(Request $request)
     {
         $sn = strtoupper($request->get('SN'));
+        if (! $sn) {
+            return response('OK', 200)->header('Content-Type', 'text/plain');
+        }
+
+        $device = BiometricDevice::where('serial_number', $sn)->first();
+        if (! $device) {
+            return response('OK', 200)->header('Content-Type', 'text/plain');
+        }
 
         // Lookup command for device
-        $command = BiometricCommands::where('device_serial_number', $sn)->where('status', 'pending')->first();
+        $command = BiometricCommands::where('device_serial_number', $sn)
+            ->where('company_id', $device->company_id)
+            ->where('status', 'pending')
+            ->first();
 
         if ($command) {
             Log::info('Sending Command to Device:', ['command' => $command->command]);
@@ -172,20 +181,21 @@ class ZKTecoController extends Controller
         $command = $parsedResponse['CMD'] ?? '';
         $returnCode = $parsedResponse['Return'] ?? '';
 
-        // Log the parsed result
         Log::info('Parsed command result', [
             'command' => $command,
             'return_code' => $returnCode,
-            'Parsed response: ' . json_encode($parsedResponse)
         ]);
 
         // Extract command ID from the parsed response
         $commandId = $parsedResponse['ID'] ?? '';
+        $pendingCommand = null;
 
         if (!empty($commandId)) {
-            $pendingCommand = BiometricCommands::where('command_id', $commandId)->first();
+            $pendingCommand = BiometricCommands::where('company_id', $device->company_id)
+                ->where('command_id', $commandId)
+                ->first();
 
-            if ($device->company_id != $pendingCommand->company_id) {
+            if (! $pendingCommand || $device->company_id != $pendingCommand->company_id) {
                 Log::info('Command execution failed: Company ID mismatch');
                 return response('OK', 200)->header('Content-Type', 'text/plain');
             }
@@ -202,6 +212,16 @@ class ZKTecoController extends Controller
 
         // Still return OK to the device but log the error
         Log::warning('Command execution failed', ['error_code' => $returnCode]);
+        return response('OK', 200)->header('Content-Type', 'text/plain');
+    }
+
+    public function handlePing(): \Illuminate\Http\Response
+    {
+        return response('OK', 200)->header('Content-Type', 'text/plain');
+    }
+
+    public function test(): \Illuminate\Http\Response
+    {
         return response('OK', 200)->header('Content-Type', 'text/plain');
     }
 }

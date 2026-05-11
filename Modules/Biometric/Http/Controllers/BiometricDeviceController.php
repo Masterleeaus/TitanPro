@@ -4,6 +4,7 @@ namespace Modules\Biometric\Http\Controllers;
 
 use App\Helper\Reply;
 use App\Http\Controllers\AccountBaseController;
+use Illuminate\Http\Request;
 use Modules\Biometric\Entities\BiometricDevice;
 use Modules\Biometric\Http\Requests\BiometricDeviceStore;
 use App\Models\User;
@@ -18,7 +19,7 @@ class BiometricDeviceController extends AccountBaseController
         $this->pageTitle = 'biometric::app.menu.devices';
 
         $this->middleware(function ($request, $next) {
-            abort_403(!in_array('biometric', $this->user->modules) && user()->permission('manage_biometric_settings') != 'none');
+            abort_403(! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none');
             return $next($request);
         });
     }
@@ -28,10 +29,11 @@ class BiometricDeviceController extends AccountBaseController
      */
     public function index()
     {
-        BiometricDevice::where('last_online', '<', now()->subMinutes(20))
+        BiometricDevice::where('company_id', company()->id)
+            ->where('last_online', '<', now()->subMinutes(20))
             ->update(['status' => 'offline']);
 
-        $this->biometricDevice = BiometricDevice::all();
+        $this->biometricDevice = BiometricDevice::where('company_id', company()->id)->get();
 
 
         return view('biometric::devices.index', $this->data);
@@ -71,7 +73,9 @@ class BiometricDeviceController extends AccountBaseController
     public function syncEmployees()
     {
         // Get all active devices
-        $devices = BiometricDevice::where('status', '!=', 'offline')->get();
+        $devices = BiometricDevice::where('company_id', company()->id)
+            ->where('status', '!=', 'offline')
+            ->get();
 
         if ($devices->isEmpty()) {
             return Reply::error(__('biometric::app.noActiveDevices'));
@@ -82,10 +86,10 @@ class BiometricDeviceController extends AccountBaseController
             ->leftJoin('biometric_employees', 'users.id', '=', 'biometric_employees.user_id')
             ->select(
                 'users.id',
-                'users.company_id',
                 'users.name',
                 'employee_details.employee_id',
             )
+            ->where('employee_details.company_id', company()->id)
             ->whereIn('users.id', request()->employee_ids)
             ->get();
 
@@ -100,7 +104,7 @@ class BiometricDeviceController extends AccountBaseController
                     'employee_id' => $employee->employee_id,
                     'device_serial_number' => $device->serial_number,
                     'command' => 'TEMPCOMMAND-' . time(),
-                    'status' => 'pending'
+                    'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
@@ -134,9 +138,22 @@ class BiometricDeviceController extends AccountBaseController
      */
     public function destroy($id)
     {
-        $device = BiometricDevice::findOrFail($id);
+        $device = BiometricDevice::where('company_id', company()->id)->findOrFail($id);
         $device->delete();
 
         return Reply::success(__('messages.deleteSuccess'));
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $request->validate([
+            'id' => ['required', 'integer'],
+            'status' => ['required', 'in:pending,online,offline,unauthorized,communicated'],
+        ]);
+
+        $device = BiometricDevice::where('company_id', company()->id)->findOrFail((int) $request->id);
+        $device->update(['status' => $request->status]);
+
+        return Reply::success(__('messages.updateSuccess'));
     }
 }

@@ -30,7 +30,6 @@ class BiometricEmployee extends BaseModel
             if (empty($row)) continue;
 
             $parts = explode("\t", $row);
-            Log::info('Parts: ' . json_encode($parts));
 
             if (count($parts) > 0) {
                 self::processRow($parts, $device);
@@ -68,7 +67,6 @@ class BiometricEmployee extends BaseModel
             'employee_id' => $employeeId,
             'has_fingerprint' => true,
             'fingerprint_id' => $fingerprintId,
-            'fingerprint_template' => $template
         ]);
 
         if ($employeeId && $fingerprintId) {
@@ -122,7 +120,7 @@ class BiometricEmployee extends BaseModel
 
         Log::info('Photo data received', [
             'employee_id' => $employeeId,
-            'photo' => $photo
+            'has_photo' => ! empty($photo),
         ]);
 
         if ($employeeId && $photo) {
@@ -153,8 +151,6 @@ class BiometricEmployee extends BaseModel
         foreach ($rows as $line) {
 
             $parts = explode("\t", $line);
-
-            Log::info('Parts: ' . json_encode($parts));
 
             if (count($parts) >= 2) {
                 $deviceEmployeeId = $parts[0];
@@ -249,7 +245,9 @@ class BiometricEmployee extends BaseModel
                     }
                 }
 
-                self::markAttendance($biometricEmployee->user, $timestamp);
+                if ($biometricEmployee?->user) {
+                    self::markAttendance($biometricEmployee->user, $timestamp);
+                }
             }
         }
     }

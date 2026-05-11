@@ -22,7 +22,7 @@ class BiometricEmployeeController extends AccountBaseController
         $this->pageTitle = 'biometric::app.menu.deviceEmployees';
 
         $this->middleware(function ($request, $next) {
-            if (!in_array('biometric', $this->user->modules) && user()->permission('manage_biometric_settings') != 'none') {
+            if (! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none') {
                 abort(403, __('messages.permissionDenied'));
             }
 
@@ -43,7 +43,6 @@ class BiometricEmployeeController extends AccountBaseController
             ->leftJoin('designations', 'employee_details.designation_id', '=', 'designations.id')
             ->select(
                 'users.id',
-                'users.company_id',
                 'users.name',
                 'users.email',
                 'users.created_at',
@@ -54,7 +53,9 @@ class BiometricEmployeeController extends AccountBaseController
                 'biometric_employees.biometric_employee_id',
                 'biometric_employees.has_fingerprint',
                 'biometric_employees.force_biometric_clockin'
-            )->get();
+            )
+            ->where('employee_details.company_id', company()->id)
+            ->get();
 
 
         // Pass devices to the view to check if any exist
@@ -112,7 +113,9 @@ class BiometricEmployeeController extends AccountBaseController
                 'users.image',
                 'employee_details.employee_id',
                 'biometric_employees.biometric_employee_id'
-            )->get();
+            )
+            ->where('employee_details.company_id', company()->id)
+            ->get();
 
         $data = $employees->map(function ($employee) {
             return [
@@ -138,7 +141,7 @@ class BiometricEmployeeController extends AccountBaseController
             ->where('company_id', $this->user->company_id)
             ->first();
 
-        $devices = BiometricDevice::all();
+        $devices = BiometricDevice::where('company_id', $this->user->company_id)->get();
 
         foreach ($devices as $device) {
             if ($biometricEmployee) {
@@ -153,7 +156,7 @@ class BiometricEmployeeController extends AccountBaseController
                     'employee_id' => $biometricEmployee->biometric_employee_id,
                     'device_serial_number' => $device->serial_number,
                     'command' => 'TEMPCOMMAND-' . time(),
-                    'status' => 'pending'
+                    'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
@@ -172,15 +175,17 @@ class BiometricEmployeeController extends AccountBaseController
     {
 
         if ($id) {
-            $biometricEmployees = BiometricEmployee::where('user_id', $id)->get();
+            $biometricEmployees = BiometricEmployee::where('company_id', $this->user->company_id)
+                ->where('user_id', $id)
+                ->get();
         } else {
-            $biometricEmployees = BiometricEmployee::all();
+            $biometricEmployees = BiometricEmployee::where('company_id', $this->user->company_id)->get();
         }
 
 
         $command = [];
 
-        $devices = BiometricDevice::all();
+        $devices = BiometricDevice::where('company_id', $this->user->company_id)->get();
 
         foreach ($devices as $device) {
             foreach ($biometricEmployees as $employee) {
@@ -191,7 +196,7 @@ class BiometricEmployeeController extends AccountBaseController
                     'device_serial_number' => $device->serial_number,
                     'user_id' => $employee->user_id,
                     'employee_id' => $employee->biometric_employee_id,
-                    'status' => 'pending'
+                    'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
@@ -205,5 +210,10 @@ class BiometricEmployeeController extends AccountBaseController
         }
 
         return Reply::successWithData(__('biometric::app.fetchAllBiometricDataSuccess'), ['data' => $command]);
+    }
+
+    public function fetchAll()
+    {
+        return $this->getEmployeeInfo();
     }
 }
