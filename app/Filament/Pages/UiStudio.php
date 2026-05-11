@@ -700,6 +700,8 @@ class UiStudio extends Page
 
                 // Merge registry defaults with saved data so the editor always has
                 // a complete set of keys even when new fields are added later.
+                // 'title' is intentionally excluded because it is stored as the
+                // widget's 'label' field, not inside the properties array.
                 $defaults   = WidgetPropertyRegistry::defaults($type);
                 $properties = array_merge($defaults, array_diff_key($savedData, ['title' => true]));
 

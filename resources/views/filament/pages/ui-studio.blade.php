@@ -410,7 +410,7 @@
                                                                 type="checkbox"
                                                                 wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
                                                                 wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.checked)"
-                                                                @checked(! empty($widgetPropertyValues[$field['key']] ?? $field['default']))
+                                                                @checked((bool)($widgetPropertyValues[$field['key']] ?? $field['default']))
                                                                 class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                                             />
                                                             <span class="text-xs text-gray-500 dark:text-gray-400">Enabled</span>
