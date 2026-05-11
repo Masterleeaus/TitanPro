@@ -250,3 +250,11 @@ Route::get('/theme/import/{token}', \App\Http\Controllers\Platform\ThemeImportCo
 
 require __DIR__.'/esoft.php';
 require __DIR__.'/auth.php';
+
+// UI Studio motion preview — only available in local and testing environments
+if (app()->isLocal() || app()->runningUnitTests()) {
+    Route::get(
+        '/titan-ui-studio/motion-preview',
+        \App\Http\Controllers\UiStudio\MotionPreviewController::class
+    )->name('ui-studio.motion-preview');
+}

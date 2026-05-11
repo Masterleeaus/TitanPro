@@ -19,7 +19,7 @@ class JobMessagePolicy
 
     public function view(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class JobMessagePolicy
 
     public function update(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -42,7 +42,7 @@ class JobMessagePolicy
 
     public function delete(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -56,7 +56,7 @@ class JobMessagePolicy
 
     public function restore(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class JobMessagePolicy
 
     public function forceDelete(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class JobMessagePolicy
 
     public function replicate(AuthUser $authUser, JobMessage $jobMessage): bool
     {
-        if ((int) $jobMessage->job?->organization_id !== (int) $authUser->organization_id) {
+        if ((int) $jobMessage->organization_id !== (int) $authUser->organization_id) {
             return false;
         }
 
