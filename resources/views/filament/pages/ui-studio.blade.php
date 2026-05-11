@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+    @vite('resources/js/filament/ui-studio.js')
+
     {{--
         UI Studio — three-panel visual design surface.
         Left  : component tree / layer list
@@ -192,12 +194,12 @@
         <aside class="studio-panel border-l border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 flex flex-col">
 
             {{-- Tab strip --}}
-            <div class="flex border-b border-gray-200 dark:border-white/10">
-                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu', 'components' => 'Components'] as $tab => $tabLabel)
+            <div class="flex border-b border-gray-200 dark:border-white/10 overflow-x-auto">
+                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu', 'components' => 'Components', 'marketplace' => 'Marketplace'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
-                        class="flex-1 py-2.5 text-xs font-semibold transition-colors
+                        class="flex-none px-3 py-2.5 text-xs font-semibold transition-colors whitespace-nowrap
                             {{ $activeTab === $tab
                                 ? 'text-primary-600 border-b-2 border-primary-500 bg-primary-50 dark:bg-primary-900/10'
                                 : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300' }}"
@@ -294,13 +296,10 @@
                     </section>
 
                     <section>
-                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Custom CSS</h4>
-                        <textarea
-                            wire:model.live="customCss"
-                            rows="6"
-                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300 resize-y"
-                            placeholder="/* custom overrides */"
-                        ></textarea>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Design token engine</h4>
+                        <div class="rounded-lg border border-dashed border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-white/5 px-3 py-3 text-xs text-gray-600 dark:text-gray-300">
+                            Theme overrides are stored as semantic tokens in <code>titan_theme_tokens</code>. Component tokens inherit from those values, and you can export the full token set with <code>php artisan titan:tokens:export</code>.
+                        </div>
                     </section>
 
                     {{-- Live preview swatch --}}
@@ -605,6 +604,251 @@
                     @endif
                 @endif
 
+                {{-- ── Marketplace tab ─────────────────────────────── --}}
+                @if ($activeTab === 'marketplace')
+
+                    {{-- Marketplace sub-tab strip --}}
+                    <div class="flex gap-1 border-b border-gray-100 dark:border-white/10 pb-2 mb-4 overflow-x-auto">
+                        @foreach (['browse' => 'Browse', 'install' => 'Install', 'share' => 'Share', 'import' => 'Import'] as $sub => $subLabel)
+                            <button
+                                type="button"
+                                wire:click="$set('marketplaceTab', '{{ $sub }}')"
+                                class="flex-none rounded-full px-3 py-1 text-[11px] font-semibold transition-colors
+                                    {{ $marketplaceTab === $sub
+                                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                                        : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5' }}"
+                            >
+                                {{ $subLabel }}
+                            </button>
+                        @endforeach
+                    </div>
+
+                    {{-- ── Browse --}}
+                    @if ($marketplaceTab === 'browse')
+                        <section>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Curated Theme Packs</h4>
+                            <div class="space-y-2">
+                                @foreach (\App\Support\ThemePackManager::builtinThemes() as $key => $theme)
+                                    <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                        {{-- Color swatch strip --}}
+                                        <div class="flex gap-1 mb-2">
+                                            @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $colorKey)
+                                                <div
+                                                    class="h-5 flex-1 rounded"
+                                                    style="background: {{ e($theme['tokens'][$colorKey] ?? '#eee') }}"
+                                                    title="{{ $colorKey }}"
+                                                ></div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">{{ $theme['name'] }}</p>
+                                                <p class="text-[10px] text-gray-400">{{ $theme['author'] }} · v{{ $theme['version'] }}</p>
+                                                {{-- Tags --}}
+                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                    @foreach ($theme['tags'] as $tag)
+                                                        <span class="inline-block rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[9px] text-gray-500 dark:text-gray-400">{{ $tag }}</span>
+                                                    @endforeach
+                                                </div>
+                                                {{-- Star rating --}}
+                                                <div class="flex items-center gap-0.5 mt-1">
+                                                    @php($fullStars = (int) floor($theme['rating']); $hasHalf = ($theme['rating'] - $fullStars) >= 0.5)
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $fullStars)
+                                                            <span class="text-amber-400 text-[11px]">★</span>
+                                                        @elseif ($i == $fullStars + 1 && $hasHalf)
+                                                            <span class="text-amber-300 text-[11px]">★</span>
+                                                        @else
+                                                            <span class="text-gray-300 text-[11px]">★</span>
+                                                        @endif
+                                                    @endfor
+                                                    <span class="ml-0.5 text-[9px] text-gray-400">{{ number_format($theme['rating'], 1) }}</span>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                wire:click="applyBuiltinTheme('{{ $key }}')"
+                                                class="flex-shrink-0 flex items-center gap-1 rounded-md bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1.5 text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:bg-primary-100 transition-colors"
+                                            >
+                                                <x-heroicon-o-paint-brush class="h-3 w-3" />
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endif
+
+                    {{-- ── Install (upload ZIP) --}}
+                    @if ($marketplaceTab === 'install')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Install from ZIP</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Upload a <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">.zip</code> containing
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">theme.json</code>,
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">meta.json</code>, and optionally
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">preview.png</code>.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Theme pack ZIP</label>
+                                <input
+                                    type="file"
+                                    wire:model="themeZipUpload"
+                                    accept=".zip"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                />
+                                @error('themeZipUpload') <p class="mt-1 text-[11px] text-red-500">{{ $message }}</p> @enderror
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="previewZip"
+                                wire:loading.attr="disabled"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                            >
+                                <x-heroicon-o-eye class="h-3.5 w-3.5" />
+                                Validate &amp; Preview
+                            </button>
+
+                            @if (!empty($zipPreview))
+                                <div class="rounded-lg border border-primary-200 dark:border-primary-900/40 bg-primary-50 dark:bg-primary-900/10 p-3 space-y-2">
+                                    <p class="text-xs font-semibold text-primary-700 dark:text-primary-400">
+                                        {{ $zipPreview['meta']['name'] ?? 'Theme' }}
+                                        <span class="ml-1 text-[10px] font-normal text-primary-500">v{{ $zipPreview['meta']['version'] ?? '1.0.0' }}</span>
+                                    </p>
+                                    <p class="text-[10px] text-gray-500">by {{ $zipPreview['meta']['author'] ?? 'Unknown' }}</p>
+                                    {{-- Token swatches --}}
+                                    <div class="flex gap-1">
+                                        @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $ck)
+                                            @if (!empty($zipPreview['tokens'][$ck]))
+                                                <div class="h-5 flex-1 rounded border border-white/20" style="background: {{ e($zipPreview['tokens'][$ck]) }}" title="{{ $ck }}"></div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                    <button
+                                        type="button"
+                                        wire:click="installFromZip"
+                                        class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                    >
+                                        <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                        Install Theme
+                                    </button>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                    {{-- ── Share --}}
+                    @if ($marketplaceTab === 'share')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Share Active Theme</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Generate a public share link that lets anyone preview and install your current theme.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Theme name (optional)</label>
+                                <input
+                                    type="text"
+                                    wire:model.live="shareThemeName"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="My Custom Theme"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="shareTheme"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                            >
+                                <x-heroicon-o-share class="h-3.5 w-3.5" />
+                                Generate Share Link
+                            </button>
+
+                            @if ($generatedShareUrl !== '')
+                                <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[10px] font-semibold text-gray-500 mb-1">Share URL</p>
+                                    <p class="text-[11px] font-mono text-primary-600 dark:text-primary-400 break-all select-all">{{ $generatedShareUrl }}</p>
+                                </div>
+                            @endif
+
+                            {{-- Export ZIP --}}
+                            <div class="pt-3 border-t border-gray-100 dark:border-white/10">
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Export as ZIP</h4>
+                                <p class="text-[10px] text-gray-400 mb-3 leading-relaxed">
+                                    Download the active theme as an installable <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">.zip</code> pack you can share with others.
+                                </p>
+                                <button
+                                    type="button"
+                                    wire:click="exportTheme"
+                                    class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                    Download Theme ZIP
+                                </button>
+                            </div>
+                        </section>
+                    @endif
+
+                    {{-- ── Import from URL --}}
+                    @if ($marketplaceTab === 'import')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Import from Share Link</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Paste a share link generated by the Share tab to preview and install a theme.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Share URL</label>
+                                <input
+                                    type="url"
+                                    wire:model.live="importUrl"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300"
+                                    placeholder="https://yoursite.com/theme/import/abc123"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="previewImport"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                            >
+                                <x-heroicon-o-eye class="h-3.5 w-3.5" />
+                                Preview Theme
+                            </button>
+
+                            @if (!empty($importPreview))
+                                <div class="rounded-lg border border-primary-200 dark:border-primary-900/40 bg-primary-50 dark:bg-primary-900/10 p-3 space-y-2">
+                                    <p class="text-xs font-semibold text-primary-700 dark:text-primary-400">
+                                        {{ $importPreview['meta']['name'] ?? 'Shared Theme' }}
+                                    </p>
+                                    <p class="text-[10px] text-gray-500">by {{ $importPreview['meta']['author'] ?? 'Unknown' }}</p>
+                                    {{-- Token swatches --}}
+                                    <div class="flex gap-1">
+                                        @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $ck)
+                                            @if (!empty($importPreview['tokens'][$ck]))
+                                                <div class="h-5 flex-1 rounded border border-white/20" style="background: {{ e($importPreview['tokens'][$ck]) }}" title="{{ $ck }}"></div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                    <button
+                                        type="button"
+                                        wire:click="installFromUrl"
+                                        class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                    >
+                                        <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                        Install This Theme
+                                    </button>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                @endif
+
             </div>
         </aside>
     </div>
@@ -618,28 +862,46 @@
         function studioCanvas(wire) {
             return {
                 sortable: null,
+                sortableReadyListener: null,
 
                 init() {
                     const el = document.getElementById('studio-canvas');
                     if (!el) return;
 
-                    // If SortableJS is available (loaded via a CDN or package), initialise it.
-                    if (typeof Sortable !== 'undefined') {
-                        this.sortable = Sortable.create(el, {
-                            animation: 150,
-                            handle: '.drag-handle',
-                            ghostClass: 'sortable-ghost',
-                            chosenClass: 'sortable-chosen',
-                            onEnd: (evt) => {
-                                const ids = Array.from(el.querySelectorAll('[data-id]'))
-                                    .map(el => el.dataset.id);
-                                wire.reorderWidgets(ids);
-                            },
-                        });
+                    this.sortableReadyListener = () => this.initialiseSortable(el, wire);
+                    this.initialiseSortable(el, wire);
+
+                    if (! this.sortable) {
+                        window.addEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener, { once: true });
                     }
                 },
 
+                initialiseSortable(el, wire) {
+                    const SortableLibrary = window.Sortable;
+
+                    if (! SortableLibrary || this.sortable) {
+                        return;
+                    }
+
+                    this.sortable = new SortableLibrary(el, {
+                        animation: 150,
+                        handle: '.drag-handle',
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        onEnd: () => {
+                            const ids = Array.from(el.querySelectorAll('[data-id]'))
+                                .map(item => item.dataset.id);
+                            wire.reorderWidgets(ids);
+                        },
+                    });
+                },
+
                 destroy() {
+                    if (this.sortableReadyListener) {
+                        window.removeEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener);
+                        this.sortableReadyListener = null;
+                    }
+
                     if (this.sortable) {
                         this.sortable.destroy();
                         this.sortable = null;

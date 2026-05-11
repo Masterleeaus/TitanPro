@@ -1,5 +1,6 @@
 {
     "name": "CleanQuality",
+    "active": 1,
     "alias": "clean_quality",
     "description": "Merged quality engine for inspections, quality checks, templates, and reclean workflows.",
     "keywords": ["quality", "inspection", "cleaning", "templates", "reclean"],
@@ -12,5 +13,6 @@
         "Modules\\CleanQuality\\Providers\\FilamentServiceProvider"
     ],
     "files": [],
-    "version": "2.0.0"
+    "version": "2.0.0",
+    "filament_panel": "groundzero"
 }
