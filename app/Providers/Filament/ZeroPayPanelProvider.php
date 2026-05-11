@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
 use App\Filament\ZeroPay\Pages\Dashboard;
 use App\Filament\ZeroPay\Pages\StripeSettings;
 use App\Filament\ZeroPay\Widgets\FinanceOverviewWidget;
@@ -54,6 +55,7 @@ class ZeroPayPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
                 StripeSettings::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/ZeroPay/Widgets'), for: 'App\\Filament\\ZeroPay\\Widgets')
             ->widgets([

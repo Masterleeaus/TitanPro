@@ -9,6 +9,7 @@ use App\Models\PlatformSetting;
 use App\Support\OrganizationBrandingResolver;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
+use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -138,6 +139,23 @@ class UiStudio extends Page
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
         $this->activeTab       = 'branding';
+    }
+
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        $ownerAdminPanels = ['titanstudio', 'titannexus', 'titanquotes', 'groundzero', 'zeropay'];
+
+        if (in_array(Filament::getCurrentPanel()?->getId(), $ownerAdminPanels, true)) {
+            return $user->hasRole(['owner', 'admin']);
+        }
+
+        return true;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
