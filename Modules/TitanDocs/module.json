@@ -1,0 +1,17 @@
+{
+    "name": "TitanDocs",
+    "active": 1,
+    "alias": "titandocs",
+    "description": "Titan Docs - SWMS & office doc generator powered by Titan Core.",
+    "keywords": [],
+    "priority": 0,
+    "version": "3.0",
+    "filament_panel": "titanpro",
+    "filament": {
+        "plugin": "Modules\\TitanDocs\\Filament\\Plugin\\TitanDocsPlugin"
+    },
+    "providers": [
+        "Modules\\TitanDocs\\Providers\\TitanDocsServiceProvider"
+    ],
+    "files": []
+}
