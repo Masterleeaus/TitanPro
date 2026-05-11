@@ -44,6 +44,15 @@
             cursor: col-resize;
             user-select: none;
         }
+        .preview-frame-shell {
+            overflow-x: hidden;
+        }
+        .preview-resource {
+            font-size: calc(0.95rem * var(--preview-heading-scale, 1));
+        }
+        .preview-resource-card {
+            padding: calc(var(--preview-card-padding, 16px));
+        }
     </style>
 
     <div class="ui-studio-shell bg-white dark:bg-gray-900 shadow-sm">
@@ -124,13 +133,85 @@
 
         {{-- ── CENTRE PANEL: Canvas ─────────────────────────────────── --}}
         <main class="studio-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
-            <div class="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
-                <span class="font-semibold">Canvas Preview</span>
-                <span class="text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
+            @php($previewModes = $this->previewModes())
+            @php($previewViewport = $this->previewViewportWidth())
+            @php($previewOverrides = $this->activeResponsiveOverrides())
+            @php($tablePreview = collect($canvasWidgets)->first(fn ($widget) => ($widget['type'] ?? null) === 'table-card'))
+            @php($mobileHiddenColumns = $tablePreview['properties']['hidden_columns']['mobile'] ?? ['owner', 'updated_at'])
+            @php($tabletHiddenColumns = $tablePreview['properties']['hidden_columns']['tablet'] ?? ['updated_at'])
+            <div class="space-y-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="font-semibold">Live Preview</span>
+                    <span class="text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    @foreach ($previewModes as $modeKey => $mode)
+                        <button
+                            type="button"
+                            wire:click="selectPreviewMode('{{ $modeKey }}')"
+                            class="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors
+                                {{ $previewMode === $modeKey
+                                    ? 'border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
+                                    : 'border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5' }}"
+                        >
+                            {{ $mode['label'] }} · {{ $mode['viewport'] }}px
+                        </button>
+                    @endforeach
+                </div>
             </div>
 
             {{-- Widget canvas --}}
             <div class="flex-1 p-4 overflow-y-auto">
+                <div
+                    class="preview-frame-shell mx-auto mb-4 rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                    style="max-width: min(100%, {{ $previewViewport }}px); --preview-sidebar-width: {{ (int) ($previewOverrides['sidebar_width'] ?? 280) }}px; --preview-heading-scale: {{ (float) ($previewOverrides['heading_scale'] ?? 1) }}; --preview-card-padding: {{ (int) ($previewOverrides['card_padding'] ?? 16) }}px;"
+                >
+                    <iframe
+                        title="UI Studio live preview"
+                        src="{{ $this->previewFrameUrl() }}"
+                        class="h-[340px] w-full rounded-lg border border-gray-100 dark:border-white/10"
+                        loading="lazy"
+                    ></iframe>
+                    <div class="preview-resource mt-3 overflow-x-hidden rounded-lg border border-dashed border-gray-200 bg-gray-50 text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
+                        <div class="preview-resource-card space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <h5 class="text-base font-semibold">Resource preview</h5>
+                                <span class="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600 dark:bg-white/10 dark:text-gray-300">Sidebar {{ (int) ($previewOverrides['sidebar_width'] ?? 280) }}px</span>
+                            </div>
+                            <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
+                                <table class="w-full table-fixed text-left text-xs">
+                                    <thead class="bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400">
+                                        <tr>
+                                            <th class="px-2 py-2">Name</th>
+                                            <th class="px-2 py-2">Status</th>
+                                            @if (! in_array('owner', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
+                                                <th class="px-2 py-2 {{ in_array('owner', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">Owner</th>
+                                            @endif
+                                            @if (! in_array('updated_at', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
+                                                <th class="px-2 py-2 {{ in_array('updated_at', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">Updated</th>
+                                            @endif
+                                            <th class="px-2 py-2 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-t border-gray-100 dark:border-white/5">
+                                            <td class="px-2 py-2">Acme HQ</td>
+                                            <td class="px-2 py-2">Active</td>
+                                            @if (! in_array('owner', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
+                                                <td class="px-2 py-2 {{ in_array('owner', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">A. Lee</td>
+                                            @endif
+                                            @if (! in_array('updated_at', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
+                                                <td class="px-2 py-2 {{ in_array('updated_at', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">2m ago</td>
+                                            @endif
+                                            <td class="px-2 py-2 text-right">View</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if (count($canvasWidgets) === 0)
                     <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-600 py-20 select-none">
                         <x-heroicon-o-squares-plus class="h-14 w-14 mb-4 opacity-30" />
@@ -332,6 +413,40 @@
 
                 {{-- ── Layout / Widget tab ─────────────────────────── --}}
                 @if ($activeTab === 'layout')
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Responsive Overrides</h4>
+                        <div class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-white/5">
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($this->previewModes() as $breakpointKey => $breakpoint)
+                                    <button
+                                        type="button"
+                                        wire:click="selectResponsiveBreakpoint('{{ $breakpointKey }}')"
+                                        class="rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-colors
+                                            {{ $responsiveBreakpoint === $breakpointKey
+                                                ? 'border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
+                                                : 'border-gray-200 text-gray-500 hover:bg-white dark:border-white/10 dark:text-gray-300 dark:hover:bg-gray-900' }}"
+                                    >
+                                        {{ $breakpoint['label'] }}
+                                    </button>
+                                @endforeach
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                <div>
+                                    <label class="text-[10px] text-gray-500 block mb-1">--sidebar-width (px)</label>
+                                    <input type="number" min="56" max="420" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.sidebar_width" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-500 block mb-1">Heading scale</label>
+                                    <input type="number" min="0.7" max="1.4" step="0.01" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.heading_scale" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-500 block mb-1">Card padding (px)</label>
+                                    <input type="number" min="8" max="48" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.card_padding" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     @if ($selectedWidgetId !== null)
                         @php($selectedWidget = collect($canvasWidgets)->firstWhere('id', $selectedWidgetId))
                         @if ($selectedWidget)
@@ -365,6 +480,33 @@
                                         <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Widget type</label>
                                         <p class="text-xs font-mono text-gray-500 bg-gray-50 dark:bg-white/5 rounded px-2 py-1.5">{{ $selectedWidget['type'] }}</p>
                                     </div>
+
+                                    @if (($selectedWidget['type'] ?? null) === 'table-card')
+                                        @php($selectedHidden = $selectedWidget['properties']['hidden_columns'] ?? ['mobile' => [], 'tablet' => []])
+                                        <div>
+                                            <label class="text-xs text-gray-600 dark:text-gray-400 block mb-2">Hide columns on small screens</label>
+                                            <div class="space-y-2">
+                                                @foreach (['mobile' => 'Mobile', 'tablet' => 'Tablet'] as $breakpoint => $label)
+                                                    <div class="rounded border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/5">
+                                                        <p class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">{{ $label }}</p>
+                                                        <div class="space-y-1">
+                                                            @foreach ($this->tableColumnOptions() as $columnKey => $columnLabel)
+                                                                <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        @checked(in_array($columnKey, $selectedHidden[$breakpoint] ?? [], true))
+                                                                        wire:change="updateTableColumnVisibility('{{ $selectedWidget['id'] }}', '{{ $breakpoint }}', '{{ $columnKey }}', $event.target.checked)"
+                                                                        class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                                                    />
+                                                                    {{ $columnLabel }}
+                                                                </label>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <button
                                         type="button"

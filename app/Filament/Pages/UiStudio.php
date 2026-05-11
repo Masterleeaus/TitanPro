@@ -65,7 +65,7 @@ class UiStudio extends Page
 
     // ── Dashboard / layout state ──────────────────────────────────────────────
 
-    /** @var array<int, array{id: string, type: string, label: string, columns: int, order: int}> */
+    /** @var array<int, array{id: string, type: string, label: string, columns: int, order: int, properties?: array<string, mixed>}> */
     public array $canvasWidgets = [];
 
     /** Currently selected widget id on the canvas (for right-panel property edit) */
@@ -84,6 +84,19 @@ class UiStudio extends Page
 
     /** @var array<string, string> type => label */
     public array $widgetCatalogue = [];
+
+    /** Active live-preview mode key. */
+    public string $previewMode = 'desktop';
+
+    /** Breakpoint currently being edited in the layout panel. */
+    public string $responsiveBreakpoint = 'desktop';
+
+    /**
+     * Responsive token overrides keyed by breakpoint.
+     *
+     * @var array<string, array<string, int|float>>
+     */
+    public array $responsiveTokenOverrides = [];
 
     // ── Component registry state ──────────────────────────────────────────────
 
@@ -138,6 +151,11 @@ class UiStudio extends Page
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
         $this->activeTab       = 'branding';
+        $this->responsiveTokenOverrides = $this->normalizeResponsiveTokenOverrides(
+            is_array($settings->theme_snapshots['ui_studio_responsive_overrides'] ?? null)
+                ? $settings->theme_snapshots['ui_studio_responsive_overrides']
+                : []
+        );
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -175,6 +193,24 @@ class UiStudio extends Page
         }
     }
 
+    public function selectPreviewMode(string $mode): void
+    {
+        if (! array_key_exists($mode, $this->previewModes())) {
+            return;
+        }
+
+        $this->previewMode = $mode;
+    }
+
+    public function selectResponsiveBreakpoint(string $breakpoint): void
+    {
+        if (! array_key_exists($breakpoint, $this->previewModes())) {
+            return;
+        }
+
+        $this->responsiveBreakpoint = $breakpoint;
+    }
+
     public function addWidget(string $type): void
     {
         $label = $this->widgetCatalogue[$type] ?? ucwords(str_replace(['-', '_'], ' ', $type));
@@ -185,6 +221,9 @@ class UiStudio extends Page
             'label'   => $label,
             'columns' => 12,
             'order'   => count($this->canvasWidgets),
+            'properties' => $type === 'table-card'
+                ? ['hidden_columns' => ['mobile' => ['owner', 'updated_at'], 'tablet' => ['updated_at']]]
+                : [],
         ];
     }
 
@@ -229,6 +268,37 @@ class UiStudio extends Page
         }
 
         $this->canvasWidgets = $reordered;
+    }
+
+    public function updateTableColumnVisibility(string $widgetId, string $breakpoint, string $column, bool $hidden): void
+    {
+        if (! in_array($breakpoint, ['mobile', 'tablet'], true)) {
+            return;
+        }
+
+        if (! array_key_exists($column, $this->tableColumnOptions())) {
+            return;
+        }
+
+        foreach ($this->canvasWidgets as &$widget) {
+            if ($widget['id'] !== $widgetId || ($widget['type'] ?? null) !== 'table-card') {
+                continue;
+            }
+
+            $hiddenColumns = $widget['properties']['hidden_columns'] ?? ['mobile' => [], 'tablet' => []];
+            $current = array_values(array_unique(array_filter((array) ($hiddenColumns[$breakpoint] ?? []), 'is_string')));
+
+            if ($hidden) {
+                $current[] = $column;
+            } else {
+                $current = array_values(array_filter($current, fn (string $item): bool => $item !== $column));
+            }
+
+            $hiddenColumns[$breakpoint] = array_values(array_unique($current));
+            $widget['properties']['hidden_columns'] = $hiddenColumns;
+            break;
+        }
+        unset($widget);
     }
 
     // ── Menu editing ──────────────────────────────────────────────────────────
@@ -530,6 +600,10 @@ class UiStudio extends Page
             'accent_color' => $this->accentColor,
             'surface_color' => $this->surfaceColor,
             'custom_css' => $this->customCss,
+            'theme_snapshots' => array_merge(
+                is_array($settings->theme_snapshots) ? $settings->theme_snapshots : [],
+                ['ui_studio_responsive_overrides' => $this->normalizeResponsiveTokenOverrides($this->responsiveTokenOverrides)]
+            ),
         ]);
         cache()->forget('platform_settings');
 
@@ -537,7 +611,17 @@ class UiStudio extends Page
         if (Schema::hasTable('layouts')) {
             $slug = 'ui-studio-layout';
             $userId = (int) (auth()->id() ?? DB::table('users')->min('id') ?? 1);
-            $widgets = array_map(fn ($w) => ['type' => $w['type'], 'data' => ['title' => $w['label']]], $this->canvasWidgets);
+            $widgets = array_map(
+                fn ($w) => [
+                    'type' => $w['type'],
+                    'data' => [
+                        'title' => $w['label'],
+                        'columns' => (int) ($w['columns'] ?? 12),
+                        'properties' => is_array($w['properties'] ?? null) ? $w['properties'] : [],
+                    ],
+                ],
+                $this->canvasWidgets
+            );
 
             DB::table('layouts')->updateOrInsert(
                 ['layout_slug' => $slug],
@@ -652,8 +736,9 @@ class UiStudio extends Page
                 'id'      => 'w_' . Str::ulid(),
                 'type'    => $w['type'] ?? 'html-card',
                 'label'   => $w['data']['title'] ?? ucwords(str_replace(['-', '_'], ' ', $w['type'] ?? 'Widget')),
-                'columns' => 12,
+                'columns' => max(1, min(12, (int) ($w['data']['columns'] ?? 12))),
                 'order'   => $i,
+                'properties' => is_array($w['data']['properties'] ?? null) ? $w['data']['properties'] : [],
             ], $widgets, array_keys($widgets))
         );
     }
@@ -744,5 +829,85 @@ class UiStudio extends Page
     private function getPanelOrNull(): ?string
     {
         return $this->componentPanel !== '' ? $this->componentPanel : null;
+    }
+
+    /** @return array<string, array{label: string, viewport: int}> */
+    public function previewModes(): array
+    {
+        return [
+            'desktop' => ['label' => 'Desktop', 'viewport' => 1440],
+            'tablet' => ['label' => 'Tablet', 'viewport' => 1024],
+            'mobile' => ['label' => 'Mobile', 'viewport' => 390],
+            'collapsed' => ['label' => 'Collapsed sidebar', 'viewport' => 1440],
+            'customer' => ['label' => 'Customer portal', 'viewport' => 390],
+        ];
+    }
+
+    public function previewViewportWidth(): int
+    {
+        return (int) ($this->previewModes()[$this->previewMode]['viewport'] ?? 1440);
+    }
+
+    /** @return array<string, int|float> */
+    public function activeResponsiveOverrides(): array
+    {
+        return $this->responsiveTokenOverrides[$this->previewMode]
+            ?? $this->responsiveTokenOverrides[$this->responsiveBreakpoint]
+            ?? $this->defaultResponsiveTokenOverrides()['desktop'];
+    }
+
+    public function previewFrameUrl(): string
+    {
+        $path = $this->previewMode === 'customer'
+            ? (string) config('titan_panels.panels.zerofuss.path', 'zerofuss')
+            : (string) config('titan_panels.panels.titanpro.path', 'titanpro');
+
+        return url('/' . ltrim($path, '/'));
+    }
+
+    /** @return array<string, string> */
+    public function tableColumnOptions(): array
+    {
+        return [
+            'name' => 'Name',
+            'status' => 'Status',
+            'owner' => 'Owner',
+            'updated_at' => 'Updated',
+            'actions' => 'Actions',
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, array<string, int|float>>
+     */
+    private function normalizeResponsiveTokenOverrides(array $overrides): array
+    {
+        $defaults = $this->defaultResponsiveTokenOverrides();
+        $normalized = [];
+
+        foreach ($defaults as $breakpoint => $values) {
+            $source = is_array($overrides[$breakpoint] ?? null) ? $overrides[$breakpoint] : [];
+            $sidebarMin = $breakpoint === 'customer' ? 0 : 56;
+            $normalized[$breakpoint] = [
+                'sidebar_width' => max($sidebarMin, min(420, (int) ($source['sidebar_width'] ?? $values['sidebar_width']))),
+                'heading_scale' => max(0.7, min(1.4, (float) ($source['heading_scale'] ?? $values['heading_scale']))),
+                'card_padding' => max(8, min(48, (int) ($source['card_padding'] ?? $values['card_padding']))),
+            ];
+        }
+
+        return $normalized;
+    }
+
+    /** @return array<string, array<string, int|float>> */
+    private function defaultResponsiveTokenOverrides(): array
+    {
+        return [
+            'desktop' => ['sidebar_width' => 280, 'heading_scale' => 1.0, 'card_padding' => 20],
+            'tablet' => ['sidebar_width' => 240, 'heading_scale' => 0.95, 'card_padding' => 16],
+            'mobile' => ['sidebar_width' => 64, 'heading_scale' => 0.85, 'card_padding' => 12],
+            'collapsed' => ['sidebar_width' => 64, 'heading_scale' => 1.0, 'card_padding' => 16],
+            'customer' => ['sidebar_width' => 0, 'heading_scale' => 0.9, 'card_padding' => 12],
+        ];
     }
 }
