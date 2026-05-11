@@ -54,6 +54,27 @@
                 <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Components</h3>
             </div>
 
+            {{-- Component Design System Registry --}}
+            <div class="px-3 py-3 border-b border-gray-200 dark:border-white/10">
+                <p class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Design System</p>
+                <div class="space-y-1">
+                    @foreach (\App\Platform\Ui\ComponentRegistry::all() as $componentKey => $componentDef)
+                        <button
+                            type="button"
+                            wire:click="styleComponent('{{ $componentKey }}')"
+                            class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors group
+                                {{ $activeComponentKey === $componentKey && $activeTab === 'components'
+                                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-semibold'
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm' }}"
+                        >
+                            <x-heroicon-o-swatch class="h-4 w-4 text-gray-400 group-hover:text-primary-500 flex-shrink-0" />
+                            <span class="flex-1 text-left text-xs">{{ $componentDef['label'] }}</span>
+                            <span class="text-[10px] font-semibold text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity">Style</span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- Widget catalogue --}}
             <div class="px-3 py-3 flex-1">
                 <p class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Widget Catalogue</p>
@@ -172,7 +193,7 @@
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10">
-                @foreach (['theme' => 'Theme', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles'] as $tab => $tabLabel)
+                @foreach (['theme' => 'Theme', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
@@ -520,6 +541,161 @@
                             </div>
                         @endif
                     </section>
+                @endif
+
+                {{-- ── Components tab ─────────────────────────────── --}}
+                @if ($activeTab === 'components')
+                    @if ($activeComponentKey === '')
+                        <div class="text-center py-10 text-gray-400 dark:text-gray-600">
+                            <x-heroicon-o-swatch class="h-10 w-10 mx-auto mb-3 opacity-30" />
+                            <p class="text-xs">Click <strong class="text-gray-500">Style</strong> next to any component in the left panel to open it here.</p>
+                        </div>
+                    @else
+                        @php($componentDef = \App\Platform\Ui\ComponentRegistry::get($activeComponentKey))
+                        @if ($componentDef)
+                            {{-- Component header --}}
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                                    {{ $componentDef['label'] }}
+                                </h4>
+                                <span class="text-[10px] font-mono text-gray-400 bg-gray-100 dark:bg-white/5 px-1.5 py-0.5 rounded">{{ $activeComponentKey }}</span>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mb-4 font-mono truncate" title="{{ $componentDef['selector'] }}">{{ $componentDef['selector'] }}</p>
+
+                            {{-- Panel selector --}}
+                            <section class="mb-4">
+                                <label class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 block mb-1">Panel</label>
+                                <select
+                                    wire:model.live="componentPanel"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                >
+                                    <option value="admin">admin</option>
+                                    <option value="titanpro">titanpro</option>
+                                    <option value="titanstudio">titanstudio</option>
+                                    <option value="titansolo">titansolo</option>
+                                    <option value="zeropay">zeropay</option>
+                                    <option value="titannexus">titannexus</option>
+                                </select>
+                            </section>
+
+                            {{-- Token editor --}}
+                            <section>
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Design Tokens</h4>
+                                <div class="space-y-3">
+                                    @foreach ($componentDef['tokens'] as $token)
+                                        <div>
+                                            <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">
+                                                {{ $token['label'] }}
+                                                @if(($componentTokenValues[$token['key']] ?? $token['default']) !== $token['default'])
+                                                    <span class="ml-1 text-[10px] text-primary-500">● override</span>
+                                                @endif
+                                            </label>
+                                            @if ($token['type'] === 'color')
+                                                <div class="flex items-center gap-2">
+                                                    <input
+                                                        type="color"
+                                                        wire:model.live="componentTokenValues.{{ $token['key'] }}"
+                                                        class="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-white/10 p-0.5 flex-shrink-0"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        wire:model.live="componentTokenValues.{{ $token['key'] }}"
+                                                        class="flex-1 text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 font-mono text-gray-700 dark:text-gray-300"
+                                                        placeholder="{{ $token['default'] }}"
+                                                    />
+                                                </div>
+                                            @elseif ($token['type'] === 'select')
+                                                <select
+                                                    wire:model.live="componentTokenValues.{{ $token['key'] }}"
+                                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                >
+                                                    @foreach ($token['options'] as $optVal => $optLabel)
+                                                        <option value="{{ $optVal }}">{{ $optLabel }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <input
+                                                    type="text"
+                                                    wire:model.live="componentTokenValues.{{ $token['key'] }}"
+                                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300"
+                                                    placeholder="{{ $token['default'] }}"
+                                                />
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+
+                            {{-- Save / Reset actions --}}
+                            <section class="mt-4 space-y-2">
+                                <button
+                                    type="button"
+                                    wire:click="saveComponentOverrides"
+                                    class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                >
+                                    <x-heroicon-o-check class="h-3.5 w-3.5" />
+                                    Save overrides
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="resetComponentOverrides"
+                                    wire:confirm="Reset all overrides for this component to theme defaults?"
+                                    class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                                    Reset to theme defaults
+                                </button>
+                            </section>
+
+                            {{-- Preset management --}}
+                            <section class="mt-5 pt-4 border-t border-gray-200 dark:border-white/10">
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Presets</h4>
+
+                                {{-- Save new preset --}}
+                                <div class="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        wire:model.live="newPresetName"
+                                        class="flex-1 text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                        placeholder="Preset name…"
+                                    />
+                                    <button
+                                        type="button"
+                                        wire:click="saveComponentPreset"
+                                        class="flex items-center gap-1 rounded-md bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1 text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:bg-primary-100 transition-colors flex-shrink-0"
+                                    >
+                                        <x-heroicon-o-bookmark class="h-3 w-3" />
+                                        Save
+                                    </button>
+                                </div>
+
+                                {{-- Apply existing preset --}}
+                                @if (count($availablePresets) > 0)
+                                    <div class="flex gap-2">
+                                        <select
+                                            wire:model.live="selectedPreset"
+                                            class="flex-1 text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                        >
+                                            <option value="">Select preset…</option>
+                                            @foreach ($availablePresets as $preset)
+                                                <option value="{{ $preset }}">{{ $preset }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button
+                                            type="button"
+                                            wire:click="applyComponentPreset"
+                                            class="flex items-center gap-1 rounded-md border border-gray-200 dark:border-white/10 px-2.5 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex-shrink-0"
+                                        >
+                                            <x-heroicon-o-play class="h-3 w-3" />
+                                            Apply
+                                        </button>
+                                    </div>
+                                @else
+                                    <p class="text-[10px] text-gray-400">No presets saved yet for this component.</p>
+                                @endif
+                            </section>
+                        @endif
+                    @endif
                 @endif
 
             </div>

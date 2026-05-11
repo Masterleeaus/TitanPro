@@ -6,6 +6,8 @@ namespace App\Filament\Pages;
 
 use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
+use App\Models\TitanUiComponentOverride;
+use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -60,7 +62,7 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'theme'; // theme | layout | menu | roles
+    public string $activeTab = 'theme'; // theme | layout | menu | roles | components
 
     // ── Role Profiles state ───────────────────────────────────────────────────
 
@@ -74,6 +76,34 @@ class UiStudio extends Page
 
     /** @var array<string, string> type => label */
     public array $widgetCatalogue = [];
+
+    // ── Component registry state ──────────────────────────────────────────────
+
+    /** Key of the component currently open in the Visual Inspector. */
+    public string $activeComponentKey = '';
+
+    /** Panel id whose overrides are being edited. */
+    public string $componentPanel = 'admin';
+
+    /**
+     * Live token values for the selected component (token_key => value).
+     *
+     * @var array<string, string>
+     */
+    public array $componentTokenValues = [];
+
+    /** Name typed into the "Save as preset" input. */
+    public string $newPresetName = '';
+
+    /** Preset selected in the "Apply preset" dropdown. */
+    public string $selectedPreset = '';
+
+    /**
+     * Available presets for the selected component (refreshed when component changes).
+     *
+     * @var array<string>
+     */
+    public array $availablePresets = [];
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -298,6 +328,171 @@ class UiStudio extends Page
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Component registry actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Livewire lifecycle hook — called whenever $componentPanel is updated via
+     * wire:model.  If a component is already open in the inspector, reload its
+     * overrides for the new panel.
+     */
+    public function updatedComponentPanel(): void
+    {
+        if ($this->activeComponentKey !== '') {
+            $this->styleComponent($this->activeComponentKey);
+        }
+    }
+
+    /**
+     * Open a registered component in the Visual Inspector (right panel).
+     * Switches to the "components" tab and pre-loads its token values.
+     */
+    public function styleComponent(string $key): void
+    {
+        $component = ComponentRegistry::get($key);
+        if ($component === null) {
+            return;
+        }
+
+        $this->activeComponentKey = $key;
+        $this->activeTab          = 'components';
+        $this->newPresetName      = '';
+        $this->selectedPreset     = '';
+
+        // Load saved overrides, falling back to token defaults.
+        $saved    = $this->loadOverrides($key);
+        $defaults = ComponentRegistry::defaults($key);
+
+        $tokens = [];
+        foreach ($component['tokens'] as $token) {
+            $tokens[$token['key']] = $saved[$token['key']] ?? $defaults[$token['key']];
+        }
+        $this->componentTokenValues = $tokens;
+
+        // Refresh available presets.
+        $this->availablePresets = $this->fetchPresets($key);
+    }
+
+    /**
+     * Save the current token values as active overrides for the selected component.
+     */
+    public function saveComponentOverrides(): void
+    {
+        if ($this->activeComponentKey === '') {
+            return;
+        }
+
+        if (! Schema::hasTable('titan_ui_component_overrides')) {
+            Notification::make()->title('Table not found')->body('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        TitanUiComponentOverride::saveTokens(
+            $this->activeComponentKey,
+            $this->getPanelOrNull(),
+            $this->componentTokenValues
+        );
+
+        Notification::make()
+            ->title('Component overrides saved')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Save the current token values as a named preset.
+     */
+    public function saveComponentPreset(): void
+    {
+        $name = trim($this->newPresetName);
+        if ($name === '' || $this->activeComponentKey === '') {
+            Notification::make()->title('Enter a preset name')->warning()->send();
+
+            return;
+        }
+
+        if (! Schema::hasTable('titan_ui_component_overrides')) {
+            Notification::make()->title('Table not found')->body('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        TitanUiComponentOverride::savePreset(
+            $this->activeComponentKey,
+            $this->getPanelOrNull(),
+            $name,
+            $this->componentTokenValues
+        );
+
+        $this->newPresetName    = '';
+        $this->availablePresets = $this->fetchPresets($this->activeComponentKey);
+
+        Notification::make()
+            ->title("Preset \"{$name}\" saved")
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Apply a named preset to the active overrides and reload the token editor.
+     */
+    public function applyComponentPreset(): void
+    {
+        $name = $this->selectedPreset;
+        if ($name === '' || $this->activeComponentKey === '') {
+            Notification::make()->title('Select a preset to apply')->warning()->send();
+
+            return;
+        }
+
+        if (! Schema::hasTable('titan_ui_component_overrides')) {
+            Notification::make()->title('Table not found')->body('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        TitanUiComponentOverride::applyPreset(
+            $this->activeComponentKey,
+            $this->getPanelOrNull(),
+            $name
+        );
+
+        // Reload the token editor with the freshly applied values.
+        $this->styleComponent($this->activeComponentKey);
+
+        Notification::make()
+            ->title("Preset \"{$name}\" applied")
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Reset active overrides for the selected component to theme defaults.
+     */
+    public function resetComponentOverrides(): void
+    {
+        if ($this->activeComponentKey === '') {
+            return;
+        }
+
+        if (Schema::hasTable('titan_ui_component_overrides')) {
+            TitanUiComponentOverride::resetOverrides(
+                $this->activeComponentKey,
+                $this->getPanelOrNull()
+            );
+        }
+
+        // Reset in-memory tokens to registry defaults.
+        $this->componentTokenValues = ComponentRegistry::defaults($this->activeComponentKey);
+
+        Notification::make()
+            ->title('Component reset to theme defaults')
+            ->success()
+            ->send();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Publish
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -499,5 +694,48 @@ class UiStudio extends Page
             'hidden_nav_items' => [],
             'widget_layout'    => [],
         ];
+    }
+
+    /**
+     * Load saved active overrides for a component + panel from the DB.
+     * Returns an empty array if the table does not yet exist.
+     *
+     * @return array<string, string>
+     */
+    private function loadOverrides(string $componentKey): array
+    {
+        if (! Schema::hasTable('titan_ui_component_overrides')) {
+            return [];
+        }
+
+        return TitanUiComponentOverride::loadTokens(
+            $componentKey,
+            $this->getPanelOrNull()
+        );
+    }
+
+    /**
+     * Fetch the list of named presets available for a component + panel.
+     *
+     * @return array<string>
+     */
+    private function fetchPresets(string $componentKey): array
+    {
+        if (! Schema::hasTable('titan_ui_component_overrides')) {
+            return [];
+        }
+
+        return TitanUiComponentOverride::presetNames(
+            $componentKey,
+            $this->getPanelOrNull()
+        );
+    }
+
+    /**
+     * Return the active panel as a non-empty string, or null for platform-wide.
+     */
+    private function getPanelOrNull(): ?string
+    {
+        return $this->componentPanel !== '' ? $this->componentPanel : null;
     }
 }
