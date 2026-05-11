@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
+use App\Support\OrganizationBrandingResolver;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -24,6 +29,10 @@ use Illuminate\Support\Str;
  */
 class UiStudio extends Page
 {
+    use WithFileUploads;
+
+    private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Platform';
@@ -44,6 +53,14 @@ class UiStudio extends Page
     public string $surfaceColor   = '#f8fafc';
     public string $fontHeading    = 'Figtree';
     public string $fontBody       = 'Figtree';
+    public string $fontFamily     = 'Figtree';
+    public ?string $logoPath      = null;
+    public ?string $faviconPath   = null;
+    public TemporaryUploadedFile|null $logoUpload = null;
+    public TemporaryUploadedFile|null $faviconUpload = null;
+    public string $panelName      = 'TITAN ZERO';
+    public string $backgroundType = 'none';
+    public ?string $backgroundValue = null;
     public string $customCss      = '';
 
     // ── Dashboard / layout state ──────────────────────────────────────────────
@@ -61,7 +78,7 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'theme'; // theme | layout | menu | components
+    public string $activeTab = 'branding'; // branding | layout | menu | components
 
     // ── Available widget catalogue ────────────────────────────────────────────
 
@@ -101,18 +118,26 @@ class UiStudio extends Page
     public function mount(): void
     {
         $settings = PlatformSetting::current();
+        $branding = app(OrganizationBrandingResolver::class)->current();
 
-        $this->primaryColor   = $settings->primary_color   ?? '#2563eb';
-        $this->secondaryColor = $settings->secondary_color ?? '#0f172a';
-        $this->accentColor    = $settings->accent_color    ?? '#14b8a6';
-        $this->surfaceColor   = $settings->surface_color   ?? '#f8fafc';
-        $this->fontHeading    = $settings->font_heading    ?? 'Figtree';
-        $this->fontBody       = $settings->font_body       ?? 'Figtree';
-        $this->customCss      = $settings->custom_css      ?? '';
+        $this->primaryColor   = $branding['primary_color'] ?? '#2563eb';
+        $this->secondaryColor = $branding['secondary_color'] ?? '#0f172a';
+        $this->accentColor    = $settings->accent_color ?? '#14b8a6';
+        $this->surfaceColor   = $settings->surface_color ?? '#f8fafc';
+        $this->fontHeading    = $branding['font_family'] ?? ($settings->font_heading ?? 'Figtree');
+        $this->fontBody       = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
+        $this->fontFamily     = $branding['font_family'] ?? ($settings->font_body ?? 'Figtree');
+        $this->panelName      = $branding['panel_name'] ?? $settings->brandName();
+        $this->backgroundType = $branding['background_type'] ?? 'none';
+        $this->backgroundValue = $branding['background_value'] ?? null;
+        $this->logoPath       = $this->storagePathFromUrl($branding['logo_url'] ?? null);
+        $this->faviconPath    = $this->storagePathFromUrl($branding['favicon_url'] ?? null);
+        $this->customCss      = $settings->custom_css ?? '';
 
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
         $this->menuItems       = $this->loadMenuItems();
+        $this->activeTab       = 'branding';
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -432,46 +457,105 @@ class UiStudio extends Page
 
     public function publish(): void
     {
-        // 1. Persist theme settings
+        $validated = $this->validate([
+            'logoUpload' => 'nullable|image|max:2048',
+            'faviconUpload' => 'nullable|image|max:1024',
+            'panelName' => 'nullable|string|max:255',
+            'primaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'secondaryColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
+            'fontFamily' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
+            'backgroundType' => 'required|in:none,gradient,image',
+            'backgroundValue' => 'nullable|string|max:500',
+        ]);
+
+        if ($validated['backgroundType'] === 'gradient' && $validated['backgroundValue']) {
+            $this->validate([
+                'backgroundValue' => ['regex:/^linear-gradient\(([#0-9a-fA-F.,%\s-]+)\)$/'],
+            ]);
+        }
+
+        if ($validated['backgroundType'] === 'image' && $validated['backgroundValue']) {
+            $this->validate([
+                'backgroundValue' => ['url', 'regex:/^https?:\/\//i'],
+            ]);
+        }
+
+        $orgId = auth()->user()?->organization_id;
         $settings = PlatformSetting::current();
+
+        if ($orgId) {
+            $branding = OrganizationBranding::firstOrCreate(['organization_id' => $orgId]);
+
+            if ($this->logoUpload) {
+                if ($branding->logo_path) {
+                    Storage::disk('public')->delete($branding->logo_path);
+                }
+                $branding->logo_path = $this->logoUpload->store($this->brandingDirectory($orgId), 'public');
+                $this->logoUpload = null;
+            } elseif ($this->logoPath) {
+                $branding->logo_path = $this->logoPath;
+            }
+
+            if ($this->faviconUpload) {
+                if ($branding->favicon_path) {
+                    Storage::disk('public')->delete($branding->favicon_path);
+                }
+                $branding->favicon_path = $this->faviconUpload->store($this->brandingDirectory($orgId), 'public');
+                $this->faviconUpload = null;
+            } elseif ($this->faviconPath) {
+                $branding->favicon_path = $this->faviconPath;
+            }
+
+            $branding->fill([
+                'panel_name' => $validated['panelName'] ?: null,
+                'primary_color' => $validated['primaryColor'],
+                'secondary_color' => $validated['secondaryColor'],
+                'font_family' => $validated['fontFamily'] ?: null,
+                'background_type' => $validated['backgroundType'],
+                'background_value' => $validated['backgroundValue'] ?: null,
+                'menu_items' => $this->menuItems,
+                'dashboard_layout' => $this->canvasWidgets,
+            ])->save();
+        } else {
+            $settings->update([
+                'primary_color' => $validated['primaryColor'],
+                'secondary_color' => $validated['secondaryColor'],
+                'font_heading' => $validated['fontFamily'] ?: 'Figtree',
+                'font_body' => $validated['fontFamily'] ?: 'Figtree',
+            ]);
+        }
+
+        // Persist shared theme settings for app shell preview behavior.
         $settings->update([
-            'primary_color'   => $this->primaryColor,
-            'secondary_color' => $this->secondaryColor,
-            'accent_color'    => $this->accentColor,
-            'surface_color'   => $this->surfaceColor,
-            'font_heading'    => $this->fontHeading,
-            'font_body'       => $this->fontBody,
-            'custom_css'      => $this->customCss,
+            'accent_color' => $this->accentColor,
+            'surface_color' => $this->surfaceColor,
+            'custom_css' => $this->customCss,
         ]);
         cache()->forget('platform_settings');
 
-        // 2. Persist dashboard layout (to the existing `layouts` table if it exists)
+        // Persist dashboard layout fallback row for legacy dashboard consumers.
         if (Schema::hasTable('layouts')) {
-            $slug    = 'ui-studio-layout';
-            $userId  = (int) (auth()->id() ?? DB::table('users')->min('id') ?? 1);
+            $slug = 'ui-studio-layout';
+            $userId = (int) (auth()->id() ?? DB::table('users')->min('id') ?? 1);
             $widgets = array_map(fn ($w) => ['type' => $w['type'], 'data' => ['title' => $w['label']]], $this->canvasWidgets);
 
             DB::table('layouts')->updateOrInsert(
                 ['layout_slug' => $slug],
                 [
-                    'user_id'      => $userId,
+                    'user_id' => $userId,
                     'layout_title' => 'UI Studio Layout',
-                    'layout_slug'  => $slug,
-                    'widgets'      => json_encode($widgets),
-                    'is_active'    => 1,
-                    'updated_at'   => now(),
-                    'created_at'   => now(),
+                    'layout_slug' => $slug,
+                    'widgets' => json_encode($widgets),
+                    'is_active' => 1,
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
         }
 
-        // 3. Persist menu items as JSON in `platform_settings.custom_css` is intentionally
-        //    avoided. Menu overrides are held in-session until a dedicated `ui_studio_menus`
-        //    table migration is added; this keeps the publish action non-destructive.
-
         Notification::make()
             ->title('UI Studio layout published')
-            ->body('Theme, dashboard layout, and menu changes have been saved.')
+            ->body('Branding, dashboard layout, and menu changes have been saved.')
             ->success()
             ->send();
     }
@@ -486,7 +570,7 @@ class UiStudio extends Page
      */
     public function safeColor(string $color, string $default = '#000000'): string
     {
-        return preg_match('/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $color) ? $color : $default;
+        return preg_match(self::HEX_COLOR_REGEX, $color) ? $color : $default;
     }
 
     /**
@@ -496,6 +580,23 @@ class UiStudio extends Page
     public function safeFont(string $font, string $default = 'Figtree'): string
     {
         return preg_match('/^[\w\s\-]+$/', $font) ? $font : $default;
+    }
+
+    public function safeBackgroundStyle(?string $type, ?string $value): ?string
+    {
+        if (! $type || ! $value) {
+            return null;
+        }
+
+        if ($type === 'gradient' && preg_match('/^linear-gradient\(([#0-9a-fA-F.,%\s-]+)\)$/', $value)) {
+            return "background: {$value}";
+        }
+
+        if ($type === 'image' && preg_match('/^https?:\/\//i', $value) && filter_var($value, FILTER_VALIDATE_URL)) {
+            return "background-image:url(\"{$value}\");background-size:cover;background-position:center;";
+        }
+
+        return null;
     }
 
     /** @return array<string, string> */
@@ -518,6 +619,17 @@ class UiStudio extends Page
     /** @return array<int, array<string, mixed>> */
     private function loadCanvasWidgets(): array
     {
+        $orgId = auth()->user()?->organization_id;
+        if ($orgId) {
+            $branding = OrganizationBranding::query()
+                ->where('organization_id', $orgId)
+                ->first();
+
+            if (is_array($branding?->dashboard_layout) && count($branding->dashboard_layout) > 0) {
+                return $branding->dashboard_layout;
+            }
+        }
+
         if (! Schema::hasTable('layouts')) {
             return [];
         }
@@ -549,6 +661,17 @@ class UiStudio extends Page
     /** @return array<int, array<string, mixed>> */
     private function loadMenuItems(): array
     {
+        $orgId = auth()->user()?->organization_id;
+        if ($orgId) {
+            $branding = OrganizationBranding::query()
+                ->where('organization_id', $orgId)
+                ->first();
+
+            if (is_array($branding?->menu_items) && count($branding->menu_items) > 0) {
+                return $branding->menu_items;
+            }
+        }
+
         // Default nav items that mirror the main admin sidebar sections.
         return [
             ['id' => 'm_0', 'label' => 'Dashboard',    'url' => '/titanpro',                   'icon' => 'heroicon-o-home',           'order' => 0],
@@ -557,6 +680,27 @@ class UiStudio extends Page
             ['id' => 'm_3', 'label' => 'Invoices',      'url' => '/titanpro/invoices',          'icon' => 'heroicon-o-document-text',  'order' => 3],
             ['id' => 'm_4', 'label' => 'Site Settings', 'url' => '/titanpro/site-settings',     'icon' => 'heroicon-o-paint-brush',    'order' => 4],
         ];
+    }
+
+    private function storagePathFromUrl(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        $marker = '/storage/';
+        $position = strpos($url, $marker);
+
+        if ($position === false) {
+            return null;
+        }
+
+        return substr($url, $position + strlen($marker));
+    }
+
+    private function brandingDirectory(int $organizationId): string
+    {
+        return "organization-branding/{$organizationId}";
     }
 
     /**
