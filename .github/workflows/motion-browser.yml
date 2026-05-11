@@ -1,0 +1,87 @@
+name: 🌐 Motion Browser Validation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Modules/TitanNexus/UI/**'
+      - 'tests/Browser/**'
+      - 'resources/views/ui-studio/**'
+      - 'app/Http/Controllers/UiStudio/**'
+      - '.github/workflows/motion-browser.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'Modules/TitanNexus/UI/**'
+      - 'tests/Browser/**'
+      - 'resources/views/ui-studio/**'
+      - 'app/Http/Controllers/UiStudio/**'
+      - '.github/workflows/motion-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: motion-browser-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  motion-browser:
+    name: UI Studio Motion — Browser Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql, pdo_sqlite, bcmath, json, gd
+          coverage: none
+
+      - name: Copy .env for CI
+        run: cp .env.example .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Install ChromeDriver
+        run: php artisan dusk:chrome-driver --detect
+
+      - name: Start Chrome in headless mode
+        run: |
+          google-chrome --headless=new --disable-gpu --remote-debugging-port=9222 &
+          sleep 2
+
+      - name: Start Laravel development server
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          sleep 3
+        env:
+          APP_ENV: testing
+          APP_URL: http://127.0.0.1:8000
+
+      - name: Run Dusk browser tests (Motion)
+        run: php artisan dusk tests/Browser/MotionBrowserTest.php
+        env:
+          APP_ENV: testing
+          APP_URL: http://127.0.0.1:8000
+          DUSK_DRIVER_URL: http://localhost:9515
+
+      - name: Upload Dusk failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dusk-motion-failures
+          path: tests/Browser/screenshots
+          retention-days: 7

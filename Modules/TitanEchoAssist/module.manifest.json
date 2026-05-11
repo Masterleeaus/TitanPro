@@ -1,5 +1,5 @@
 {
-    "name": "TitanChatbot",
+    "name": "TitanEchoAssist",
     "enabled": true,
     "priority": 10,
     "providers": [

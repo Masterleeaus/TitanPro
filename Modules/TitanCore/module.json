@@ -1,5 +1,6 @@
 {
     "name": "TitanCore",
+    "active": 1,
     "alias": "titancore",
     "description": "Titan Core module (providers, settings, health checks, quotas, adapters).",
     "version": "1.0.0",

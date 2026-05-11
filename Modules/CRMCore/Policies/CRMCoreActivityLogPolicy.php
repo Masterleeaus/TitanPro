@@ -19,6 +19,10 @@ class CRMCoreActivityLogPolicy
 
     public function view(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('View:CRMCoreActivityLog');
     }
 
@@ -29,11 +33,19 @@ class CRMCoreActivityLogPolicy
 
     public function update(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('Update:CRMCoreActivityLog');
     }
 
     public function delete(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('Delete:CRMCoreActivityLog');
     }
 
@@ -44,11 +56,19 @@ class CRMCoreActivityLogPolicy
 
     public function restore(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('Restore:CRMCoreActivityLog');
     }
 
     public function forceDelete(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:CRMCoreActivityLog');
     }
 
@@ -64,6 +84,10 @@ class CRMCoreActivityLogPolicy
 
     public function replicate(AuthUser $authUser, CRMCoreActivityLog $cRMCoreActivityLog): bool
     {
+        if ((int) ($cRMCoreActivityLog->company_id ?? 0) !== (int) ($authUser->company_id ?? $authUser->organization_id ?? 0)) {
+            return false;
+        }
+
         return $authUser->can('Replicate:CRMCoreActivityLog');
     }
 
