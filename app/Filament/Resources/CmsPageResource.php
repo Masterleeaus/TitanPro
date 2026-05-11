@@ -31,7 +31,7 @@ class CmsPageResource extends Resource
     {
         return $schema->components([
             Forms\Components\Section::make('Page')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                     Forms\Components\TextInput::make('title')
                         ->required()
@@ -133,7 +133,7 @@ class CmsPageResource extends Resource
                 ]),
 
             Forms\Components\Section::make('SEO')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->collapsed()
                 ->schema([
                     Forms\Components\TextInput::make('meta_title'),

@@ -1,0 +1,31 @@
+TitanPulse (v2.0) — Post Install
+
+1) Place extension folder:
+   app/Extensions/TitanPulse/
+
+2) Register extension (SQL-first doctrine):
+   - Insert/Update row in `extensions`:
+     slug = 'titan-pulse'
+     installed = 1
+     enabled = 1  (if your schema has it)
+
+3) Clear caches:
+   php artisan optimize:clear
+
+4) Run migrations (dev/staging) OR paste SQL in prod if you prefer SQL-first:
+   php artisan migrate
+
+   Notes:
+   - Migration `2026_03_04_000000_pulse_neutral_table_cutover` will rename legacy tz_work_* tables
+     to neutral tz_* tables if present.
+
+5) Seed default rule packs (Work Cleaning MVP + Quality/Retention):
+   php artisan db:seed --class="App\Extensions\TitanPulse\Database\Seeders\TitanPulseSeeder"
+
+6) Run Pulse:
+   php artisan titan:pulse-run --limit=200
+
+7) Cron (recommended every 5 minutes):
+   */5 * * * * php /path/to/artisan titan:pulse-run --limit=200
+
+Pulse consumes signals from tz_signals (Titan Signal is handled separately).

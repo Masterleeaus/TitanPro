@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
-use Modules\TitanChatbot\Contracts\ChannelDriver;
-use Modules\TitanChatbot\Enums\ChannelType;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Enums\ChannelType;
 use InvalidArgumentException;
 
 class ChannelRouter

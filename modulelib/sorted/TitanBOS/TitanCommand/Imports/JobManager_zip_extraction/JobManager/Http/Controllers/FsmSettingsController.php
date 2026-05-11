@@ -1,0 +1,9 @@
+<?php
+
+namespace Modules\JobManager\Http\Controllers;
+
+
+
+namespace ModulesJobManagerHttpControllers;
+
+namespace Modules\JobManager\Http\Controllers;use Illuminate\Routing\Controller;use Illuminate\Http\Request;use Illuminate\Support\Facades\Cache;use Modules\JobManager\Entities\FsmSetting;class FsmSettingsController extends Controller{public function index(){$row=FsmSetting::orderBy('id','desc')->first();$verticals=['general_trades','hvac','tiling','builders','electricians','cleaners','painters','plumbers','roofing','pool_cleaning','mobile_car_washing'];return view('jobmanager::admin.fsm_settings',compact('row','verticals'));}public function save(Request $r){$d=$r->validate(['vertical'=>'required|string','features'=>'array','terminology'=>'array','branding'=>'array']);$row=FsmSetting::create(['tenant_id'=>null,'vertical'=>$d['vertical'],'features'=>$d['features']??null,'terminology'=>$d['terminology']??null,'branding'=>$d['branding']??null]);Cache::put('fsm_vertical',$row->vertical,600);Cache::forget('fsm_terms_'.$row->vertical);return back()->with('status','Saved');}}

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotWhatsapp\System\Services\Twillio;
+namespace Modules\TitanEchoAssist\Channels\WhatsApp\System\Services\Twillio;
 
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
 use Exception;

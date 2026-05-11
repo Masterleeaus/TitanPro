@@ -2,11 +2,16 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
+use App\Filament\ZeroPay\Pages\Dashboard;
+use App\Filament\ZeroPay\Pages\StripeSettings;
+use App\Filament\ZeroPay\Widgets\FinanceOverviewWidget;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -18,25 +23,44 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+/**
+ * ZeroPay — Payments and invoicing panel.
+ *
+ * Accessible to users with the owner, admin, or bookkeeper role.
+ * Provides invoice management, payment recording, and Stripe integration settings.
+ */
 class ZeroPayPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->id('zeropay')
             ->path('zeropay')
-            ->brandName('ZeroPay — Payments')
-            ->colors([
-                'primary' => Color::Violet,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('ZeroPay'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#8b5cf6'),
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroPay/Resources'), for: 'App\\Filament\\ZeroPay\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroPay/Pages'), for: 'App\\Filament\\ZeroPay\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
+                StripeSettings::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/ZeroPay/Widgets'), for: 'App\\Filament\\ZeroPay\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                FinanceOverviewWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -51,6 +75,8 @@ class ZeroPayPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiOverrideSsrHook())
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

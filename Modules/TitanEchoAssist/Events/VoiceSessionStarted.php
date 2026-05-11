@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Events;
+namespace Modules\TitanEchoAssist\Events;
 
 class VoiceSessionStarted
 {

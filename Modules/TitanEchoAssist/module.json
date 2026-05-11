@@ -1,5 +1,6 @@
 {
-  "name": "TitanChatbot",
+  "name": "TitanEchoAssist",
+  "active": 1,
   "alias": "titan-chatbot",
   "description": "Unified multi-channel AI chatbot, voice, live-agent and PWA-ready module assembled from uploaded TitanBot and chatbot codebases.",
   "keywords": [
@@ -15,8 +16,10 @@
   ],
   "priority": 10,
   "providers": [
-    "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider"
+    "Modules\\TitanEchoAssist\\Providers\\ModuleServiceProvider"
   ],
-  "filament_panel": "zerofuss",
-  "active": 1
+  "filament_panel": "titanpro",
+  "filament": {
+    "plugin": "Modules\\TitanEchoAssist\\Filament\\Plugin\\TitanEchoAssistPlugin"
+  }
 }

@@ -21,6 +21,7 @@
   "active": 1,
   "aliases": {},
   "requires": [],
+  "filament_panel": "titanpro",
   "permissions": [
     "supplychain.view",
     "supplychain.manage",

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Tenancy\Scopes;
+namespace Modules\TitanEchoAssist\Tenancy\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

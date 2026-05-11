@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,23 +22,37 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * TitanNexus — Growth and expansion intelligence panel (formerly TitanGrow).
+ * TitanNexus — vertical pack management, lead generation,
+ * niche training content, and marketing automation panel.
  */
 class TitanNexusPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->id('titannexus')
             ->path('titannexus')
-            ->brandName('TitanNexus — Growth Intel')
-            ->colors([
-                'primary' => Color::Indigo,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanNexus'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#6366f1'),
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanNexus/Resources'), for: 'App\\Filament\\TitanNexus\\Resources')
             ->discoverPages(in: app_path('Filament/TitanNexus/Pages'), for: 'App\\Filament\\TitanNexus\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanNexus/Widgets'), for: 'App\\Filament\\TitanNexus\\Widgets')
             ->widgets([
@@ -54,6 +71,8 @@ class TitanNexusPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiOverrideSsrHook())
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

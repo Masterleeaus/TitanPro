@@ -3,6 +3,7 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Modules\TitanCore\Services\ModulePersistence\TitanModuleLifecycleStore;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 use Nwidart\Modules\Module;
 
@@ -26,7 +27,7 @@ class ModulesEnableCommand extends Command
 
     protected $description = 'Enable module(s) after validating dependency constraints.';
 
-    public function handle(ModuleDependencyGraph $graph): int
+    public function handle(ModuleDependencyGraph $graph, TitanModuleLifecycleStore $lifecycleStore): int
     {
         /** @var string[] $moduleNames */
         $moduleNames = (array) $this->argument('module');
@@ -36,7 +37,7 @@ class ModulesEnableCommand extends Command
         $graph->build();
 
         foreach ($moduleNames as $moduleName) {
-            $result = $this->enableModule($moduleName, $graph, $force);
+            $result = $this->enableModule($moduleName, $graph, $force, $lifecycleStore);
 
             if ($result !== self::SUCCESS) {
                 $exitCode = self::FAILURE;
@@ -46,7 +47,7 @@ class ModulesEnableCommand extends Command
         return $exitCode;
     }
 
-    protected function enableModule(string $moduleName, ModuleDependencyGraph $graph, bool $force): int
+    protected function enableModule(string $moduleName, ModuleDependencyGraph $graph, bool $force, TitanModuleLifecycleStore $lifecycleStore): int
     {
         // Resolve module from nwidart repository
         /** @var Module|null $module */
@@ -102,6 +103,11 @@ class ModulesEnableCommand extends Command
             function () use ($module) {
                 $module->enable();
             }
+        );
+
+        $lifecycleStore->markEnabled(
+            $moduleName,
+            is_string($module->get('version')) ? $module->get('version') : null
         );
 
         return self::SUCCESS;

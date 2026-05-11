@@ -1,11 +1,13 @@
 {
   "name": "TitanNexus",
+  "active": 1,
   "display_name": "Titan Nexus",
   "version": "0.19.0",
   "namespace": "Modules\\TitanNexus",
   "description": "AI-native lead generation, marketing, invoice follow-up, payment assist, voice/SMS/email orchestration module.",
   "primary_agent": "titan-nexus.marketing-agent",
   "control_panel": "Modules/TitanNexus/UI/ControlPanel",
+  "filament_panel": "titannexus",
   "capabilities": [
     "lead-generation",
     "campaign-orchestration",

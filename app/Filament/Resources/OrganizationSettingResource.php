@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrganizationSettingResource extends Resource
 {
@@ -30,14 +31,17 @@ class OrganizationSettingResource extends Resource
     {
         return $schema->components([
             Section::make('Organization Setting')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
-                                        TextInput::make('organization_id')->label('Organization ID')->numeric(),
                     TextInput::make('company_name')->label('Company Name')->maxLength(160),
                     TextInput::make('company_email')->label('Company Email')->maxLength(160),
                     TextInput::make('company_phone')->label('Company Phone')->maxLength(80),
                     TextInput::make('default_tax_rate')->label('Default Tax Rate')->numeric(),
-                    TextInput::make('stripe_publishable_key')->label('Stripe Publishable Key')->maxLength(255),
+                    TextInput::make('stripe_publishable_key')
+                        ->label('Stripe Publishable Key')
+                        ->password()
+                        ->revealable()
+                        ->maxLength(255),
                     TextInput::make('twilio_from_number')->label('Twilio From Number')->maxLength(80),
                     TextInput::make('sendgrid_from_email')->label('SendGrid From Email')->maxLength(160),
                 ]),
@@ -48,10 +52,13 @@ class OrganizationSettingResource extends Resource
     {
         return $table
             ->columns([
-                                TextColumn::make('organization_id')->label('Org')->searchable()->sortable(),
                 TextColumn::make('company_name')->label('Company')->searchable()->sortable(),
                 TextColumn::make('company_email')->label('Email')->searchable()->sortable(),
                 TextColumn::make('default_tax_rate')->label('Tax Rate')->searchable()->sortable(),
+                TextColumn::make('stripe_publishable_key')
+                    ->label('Publishable Key')
+                    ->formatStateUsing(fn (?string $state): string => OrganizationSetting::maskPrefix($state) ?? '—')
+                    ->toggleable(),
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
@@ -71,5 +78,17 @@ class OrganizationSettingResource extends Resource
             'create' => Pages\CreateOrganizationSetting::route('/create'),
             'edit' => Pages\EditOrganizationSetting::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

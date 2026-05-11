@@ -1,0 +1,4 @@
+- /dashboard/user/command/jobs?html=1 shows Jobs list
+- /dashboard/user/command/jobs/{id}?html=1 shows Job page
+- /dashboard/user/command/jobs/{id}/proof-pack?html=1 renders proof pack
+- /dashboard/user/command/jobs/{id}/proof-pack/export downloads PDF if dompdf installed; otherwise HTML

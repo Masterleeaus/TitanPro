@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Billing\Plans;
+namespace Modules\TitanEchoAssist\Billing\Plans;
 
 class ChatbotPlan
 {

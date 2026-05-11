@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
-use Modules\TitanChatbot\Services\Contracts\TitanChatbotServiceContract;
+use Modules\TitanEchoAssist\Services\Contracts\TitanChatbotServiceContract;
 
 class TitanChatbotService implements TitanChatbotServiceContract
 {

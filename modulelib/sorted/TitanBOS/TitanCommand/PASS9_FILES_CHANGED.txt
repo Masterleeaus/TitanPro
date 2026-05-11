@@ -1,0 +1,1 @@
+Pass 9: Jobs workspace HTML views (layout + sidebar + screens) and controller renders for index/create/show/dispatch/timeline/checklists/evidence/reports/settings; adds /jobs/settings route.

@@ -1,0 +1,9 @@
+{
+  "name": "QuoteMaker",
+  "slug": "productphotography",
+  "version": "1.7.0",
+  "description": "Surface-renamed ProductPhotography extension for service quote visuals.",
+  "providers": [
+    "App\\Extensions\\ProductPhotography\\Providers\\ProductPhotographyServiceProvider"
+  ]
+}

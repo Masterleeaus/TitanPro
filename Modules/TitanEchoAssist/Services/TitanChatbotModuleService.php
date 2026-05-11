@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 class TitanChatbotModuleService
 {

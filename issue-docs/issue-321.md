@@ -1,0 +1,155 @@
+## Issue #321 — [BUG] Filament Shield config sets auth_provider_model as array, breaks artisan commands
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `issue-docs/issue-321.md` | Added issue resolution notes, validation attempts, and follow-ups. |
+
+### Fix Applied
+
+- Verified `config/filament-shield.php` already uses a single FQCN string for Shield auth provider:
+  - `'auth_provider_model' => \App\Models\User::class,`
+- No further code change was required in the config file for this issue.
+
+### Validation Attempts
+
+- `php artisan config:clear && php artisan about`  
+  - Blocked in this sandbox before Laravel bootstrap because PHP dependencies are not installable on PHP 8.3.6 (`composer.json` requires PHP 8.4+ packages).
+- `npm run build`  
+  - Initially failed with `vite: not found` before Node dependencies were installed.
+  - After `npm install`, build remains blocked by missing Laravel vendor bootstrap because Composer install is blocked by PHP version mismatch.
+- `./vendor/bin/pest` (full suite)  
+  - Blocked because `vendor/` is unavailable for the same Composer/PHP constraint reason.
+
+### Follow-ups / Next Steps
+
+1. Run validation on a PHP 8.4+ environment:
+   - `composer install`
+   - `php artisan config:clear && php artisan about`
+   - `npm run build`
+   - `./vendor/bin/pest`
+2. Confirm all commands complete successfully now that Shield config uses string `auth_provider_model`.
+# Issue 321 — Replace TitanNexus placeholder pages with org-scoped Filament Resources
+
+## Files Changed
+
+- `app/Providers/Filament/TitanNexusPanelProvider.php`
+  - Removed placeholder page registrations/imports so TitanNexus now relies on discovered resources.
+- `app/Filament/TitanNexus/Pages/Verticals.php` (removed)
+- `app/Filament/TitanNexus/Pages/LeadPipeline.php` (removed)
+- `app/Filament/TitanNexus/Pages/TrainingContent.php` (removed)
+- `app/Filament/TitanNexus/Pages/MarketingCampaigns.php` (removed)
+- `resources/views/filament/titan-nexus/pages/verticals.blade.php` (removed)
+- `resources/views/filament/titan-nexus/pages/lead-pipeline.blade.php` (removed)
+- `resources/views/filament/titan-nexus/pages/training-content.blade.php` (removed)
+- `resources/views/filament/titan-nexus/pages/marketing-campaigns.blade.php` (removed)
+
+### New domain models
+- `app/Models/VerticalPack.php`
+- `app/Models/LeadPipelineEntry.php`
+- `app/Models/TrainingContentModule.php`
+- `app/Models/MarketingCampaign.php`
+
+### New migrations
+- `database/migrations/2026_05_11_180300_create_vertical_packs_table.php`
+- `database/migrations/2026_05_11_180301_create_lead_pipeline_entries_table.php`
+- `database/migrations/2026_05_11_180302_create_training_content_modules_table.php`
+- `database/migrations/2026_05_11_180303_create_marketing_campaigns_table.php`
+
+### New factories
+- `database/factories/VerticalPackFactory.php`
+- `database/factories/LeadPipelineEntryFactory.php`
+- `database/factories/TrainingContentModuleFactory.php`
+- `database/factories/MarketingCampaignFactory.php`
+
+### New TitanNexus Filament resources
+- `app/Filament/TitanNexus/Resources/VerticalPackResource.php`
+- `app/Filament/TitanNexus/Resources/LeadPipelineEntryResource.php`
+- `app/Filament/TitanNexus/Resources/TrainingContentModuleResource.php`
+- `app/Filament/TitanNexus/Resources/MarketingCampaignResource.php`
+- `app/Filament/TitanNexus/Resources/**/Pages/*.php` (list/create/view/edit pages for each resource)
+
+### New tests
+- `tests/Feature/TitanNexus/TitanNexusResourcesTest.php`
+
+## Fixes Applied
+
+- Replaced static TitanNexus placeholders with four full Filament resources backed by dedicated domain models.
+- Added CRUD pages (list/create/view/edit) for vertical packs, lead pipeline entries, training modules, and marketing campaigns.
+- Added explicit org scoping in each resource via `getEloquentQuery()` with null-safe `whereRaw('1 = 0')` fallback.
+- Added role checks in each resource so only owner/admin can use resource actions (super-admin denied).
+- Preserved existing TitanNexus routes by setting slugs to:
+  - `verticals`
+  - `lead-pipeline`
+  - `training-content`
+  - `marketing-campaigns`
+- Added Pest feature tests for owner/admin CRUD route access, super-admin denial, and cross-org 404 isolation per resource.
+
+## Validation
+
+- `php -l` run across all changed PHP files: **pass**.
+- Could not run Pest in this environment because `vendor/` is unavailable and Composer install is blocked on PHP 8.3.6 while project dependencies require PHP 8.4+.
+
+## Next Steps
+
+- In a PHP 8.4+ environment: run migrations and execute `./vendor/bin/pest tests/Feature/TitanNexus/TitanNexusResourcesTest.php`.
+- Run full project test suite once dependencies are installed.
+- If desired, add resource-specific policy classes for finer-grained action control beyond panel role gating.
+# Issue 321 — [FOLLOW-UP] TitanPro dedicated super-admin resources
+
+## Files Changed
+
+- `app/Providers/Filament/TitanProPanelProvider.php`
+- `app/Models/Organization.php`
+- `database/migrations/2026_05_11_180500_add_module_enablement_and_suspension_to_organizations_table.php`
+- `app/Filament/TitanPro/Resources/OrganizationResource.php`
+- `app/Filament/TitanPro/Resources/OrganizationResource/Pages/ListOrganizations.php`
+- `app/Filament/TitanPro/Resources/OrganizationResource/Pages/CreateOrganization.php`
+- `app/Filament/TitanPro/Resources/OrganizationResource/Pages/EditOrganization.php`
+- `app/Filament/TitanPro/Resources/UserResource.php`
+- `app/Filament/TitanPro/Resources/UserResource/Pages/ListUsers.php`
+- `app/Filament/TitanPro/Resources/UserResource/Pages/CreateUser.php`
+- `app/Filament/TitanPro/Resources/UserResource/Pages/EditUser.php`
+- `app/Filament/TitanPro/Resources/SubscriptionResource.php`
+- `app/Filament/TitanPro/Resources/SubscriptionResource/Pages/ListSubscriptions.php`
+- `app/Filament/TitanPro/Resources/SubscriptionResource/Pages/CreateSubscription.php`
+- `app/Filament/TitanPro/Resources/SubscriptionResource/Pages/EditSubscription.php`
+- `app/Filament/TitanPro/Resources/ModuleResource.php`
+- `app/Filament/TitanPro/Resources/ModuleResource/Pages/ListModules.php`
+- `app/Filament/TitanPro/Resources/ModuleResource/Pages/EditModule.php`
+- `app/Filament/TitanPro/Pages/PlatformHealthDashboard.php`
+- `resources/views/filament/titanpro/pages/platform-health-dashboard.blade.php`
+- `tests/Feature/Admin/TitanProSuperAdminResourcesAccessTest.php`
+
+## Fixes Applied
+
+- Switched the TitanPro panel to discover resources/pages from `app/Filament/TitanPro/**` instead of generic `app/Filament/Resources`.
+- Added dedicated TitanPro resources for:
+  - cross-org organization management (including suspend/unsuspend actions)
+  - cross-org user management (organization + role filters, role assignment, impersonate action)
+  - cross-org subscription oversight
+  - per-tenant module enablement (`enabled_modules` on organizations)
+- Added a TitanPro platform health page showing queue depth, failed jobs, last-hour failures, and error-rate snapshot.
+- Added resource-level super-admin authorization methods (`canViewAny`, `canCreate`, `canView`, `canEdit`, `canDelete`, `canDeleteAny`) across all new TitanPro resources.
+- Added a focused Pest feature test ensuring:
+  - `super_admin` can access TitanPro dedicated resource/page routes
+  - non-super-admin (`admin`) receives `403` on those routes
+
+## Validation Notes
+
+- Baseline environment checks were run:
+  - `composer run test` failed due missing `vendor/` (no Composer deps in sandbox)
+  - `npm run build` failed (`vite` missing)
+  - `npm run lint` failed (`eslint` missing)
+- Post-change checks run:
+  - `php -l` on all changed PHP files passed
+  - targeted Pest command `./vendor/bin/pest tests/Feature/Admin/TitanProSuperAdminResourcesAccessTest.php` could not run because `vendor/bin/pest` is unavailable in this sandbox
+
+## Next Steps
+
+- Run `composer install` in a PHP 8.4-compatible environment and execute:
+  - `./vendor/bin/pest tests/Feature/Admin/TitanProSuperAdminResourcesAccessTest.php`
+  - full test suite (`composer run test`)
+- Optionally wire impersonation stop/return flow for `titanpro.impersonator_id` session key in UI.
+- If tenant module enablement should drive runtime gating immediately, connect `organizations.enabled_modules` to module resolution checks.

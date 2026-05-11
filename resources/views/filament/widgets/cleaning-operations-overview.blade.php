@@ -6,25 +6,25 @@
 
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">Operations Dashboard</x-slot>
-        <x-slot name="description">Tenant-aware live counts from jobs, quotes, invoices, and payments.</x-slot>
+        <x-slot name="heading">Operations Overview</x-slot>
+        <x-slot name="description">Today's jobs with scheduled vs completed progress and active technician coverage.</x-slot>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Jobs Today</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Today's Jobs</div>
                 <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['jobs_today'] }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Unassigned Jobs</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['unassigned_jobs'] }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Scheduled Today</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['scheduled_jobs_today'] }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Open Quotes</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['quotes_open'] }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Completed Today</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['completed_jobs_today'] }}</div>
             </div>
             <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-                <div class="text-sm text-gray-500 dark:text-gray-400">Outstanding Balance</div>
-                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ CleaningAdminMetrics::currency($totals['outstanding_balance']) }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">Active Technicians</div>
+                <div class="mt-2 text-3xl font-bold text-gray-950 dark:text-white">{{ $totals['active_technicians'] }}</div>
             </div>
         </div>
 
@@ -65,8 +65,8 @@
                         <div class="font-semibold text-gray-950 dark:text-white">Reports</div>
                         <div class="text-sm text-gray-500">Revenue, quotes, workload, services.</div>
                     </a>
-                    <a href="/technician/dashboard" target="_blank" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-                        <div class="font-semibold text-gray-950 dark:text-white">Open Cleaner PWA</div>
+                    <a href="/titango" target="_blank" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
+                        <div class="font-semibold text-gray-950 dark:text-white">TitanGo</div>
                         <div class="text-sm text-gray-500">Launch the installable field app.</div>
                     </a>
                     <a href="/admin/driver-locations" class="rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">

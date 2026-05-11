@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Billing\Limits;
+namespace Modules\TitanEchoAssist\Billing\Limits;
 
 class VoiceSecondsLimit
 {

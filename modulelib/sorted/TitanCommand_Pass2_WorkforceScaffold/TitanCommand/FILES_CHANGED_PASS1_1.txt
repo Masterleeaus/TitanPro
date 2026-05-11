@@ -1,0 +1,8 @@
+PASS 1.1 — Command Jobs Routes Surface
+
+Updated:
+- TitanCommand/System/Titan CommandAgentServiceProvider.php
+
+Added:
+- TitanCommand/System/Http/Routes/web.php
+- TitanCommand/System/Http/Controllers/JobsController.php

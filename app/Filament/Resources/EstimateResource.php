@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EstimateResource extends Resource
 {
@@ -33,7 +34,7 @@ class EstimateResource extends Resource
     {
         return $schema->components([
             Section::make('Quote')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('estimate_number')->label('Quote #')->maxLength(80),
                     TextInput::make('title')->label('Title')->required()->maxLength(160),
@@ -73,5 +74,17 @@ class EstimateResource extends Resource
             'create' => Pages\CreateEstimate::route('/create'),
             'edit' => Pages\EditEstimate::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

@@ -1,0 +1,9 @@
+dashboard_support/
+  shared/titan_runtime/        Shared Titan Zero runtime shell/assets
+  work/                        Work-hub renamed cards/routes/quote hooks
+  customer/                    Reserved for customer hub isolated files
+  bookings/                    Reserved for bookings hub isolated files
+  money/                       Reserved for money hub isolated files
+  team/                        Reserved for team hub isolated files
+  supply/                      Reserved for supply hub isolated files
+  home/                        Reserved for home hub isolated files

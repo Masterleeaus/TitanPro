@@ -34,15 +34,25 @@ class JobTypeChecklistItemResource extends Resource
         return $schema->components([
             Section::make('Service Checklist Task')->columnSpanFull()->columns(1)->schema([
                 Select::make('job_type_id')->label('Service')->relationship('jobType', 'name', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id))->searchable()->preload()->required(),
-                Select::make('task_library_item_id')->label('Task Library Item')->options(fn () => JobChecklistItem::query()->where('organization_id', auth()->user()?->organization_id)->whereNull('job_id')->orderBy('label')->pluck('label', 'id'))->searchable()->preload()->helperText('Optional: link to a reusable task.'),
+                Select::make('task_library_item_id')
+                    ->label('Task Library Item')
+                    ->options(fn () => JobChecklistItem::query()
+                        ->where('organization_id', auth()->user()?->organization_id)
+                        ->whereNull('job_id')
+                        ->orderBy('label')
+                        ->pluck('label', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 TextInput::make('label')->label('Checklist Task')->required()->maxLength(200)->columnSpanFull(),
                 Textarea::make('instructions')->label('Cleaner Instructions')->rows(3)->columnSpanFull(),
-                TextInput::make('sort_order')->label('Display Order')->numeric()->default(0),
+                TextInput::make('sort_order')->label('Task Order')->numeric()->default(0),
                 Select::make('condition_type')->label('Condition')->options([
                     'always' => 'Always show', 'if_addon_selected' => 'Only if add-on selected', 'if_room_count' => 'Based on room count', 'if_bathroom_count' => 'Based on bathroom count',
                 ])->default('always'),
                 TextInput::make('condition_value')->label('Condition Value')->maxLength(255),
                 Toggle::make('is_required')->label('Required')->default(true),
+                Toggle::make('required_override')->label('Required Override')->default(false),
                 Toggle::make('requires_photo')->label('Photo Required')->default(false),
             ]),
         ]);
@@ -57,6 +67,7 @@ class JobTypeChecklistItemResource extends Resource
                 TextColumn::make('sort_order')->label('Order')->sortable(),
                 TextColumn::make('condition_type')->label('Condition')->badge()->sortable(),
                 IconColumn::make('is_required')->label('Required')->boolean(),
+                IconColumn::make('required_override')->label('Override')->boolean(),
                 IconColumn::make('requires_photo')->label('Photo')->boolean(),
             ])
             ->filters([
@@ -74,6 +85,13 @@ class JobTypeChecklistItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas('jobType', fn (Builder $query) => $query->where('organization_id', auth()->user()?->organization_id));
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

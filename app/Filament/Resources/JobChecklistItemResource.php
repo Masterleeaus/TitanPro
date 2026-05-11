@@ -37,7 +37,7 @@ class JobChecklistItemResource extends Resource
                 Select::make('category')->options(['general' => 'General', 'kitchen' => 'Kitchen', 'bathroom' => 'Bathroom', 'bedroom' => 'Bedroom', 'floors' => 'Floors', 'windows' => 'Windows', 'laundry' => 'Laundry', 'exterior' => 'Exterior', 'quality' => 'Quality Check'])->default('general'),
                 TextInput::make('label')->label('Task Name')->required()->maxLength(200)->columnSpanFull(),
                 Textarea::make('instructions')->label('Cleaner Instructions')->rows(3)->columnSpanFull(),
-                TextInput::make('estimated_minutes')->label('Estimated Minutes')->numeric()->minValue(0),
+                TextInput::make('estimated_minutes')->label('Estimated Time (minutes)')->numeric()->minValue(0),
                 TextInput::make('sort_order')->label('Display Order')->numeric()->default(0),
                 Toggle::make('is_required')->label('Required')->default(true),
                 Toggle::make('requires_photo')->label('Photo Required')->default(false),
@@ -72,9 +72,15 @@ class JobChecklistItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where(function (Builder $query) {
-            $query->where('organization_id', auth()->user()?->organization_id)
-                ->orWhereHas('job', fn (Builder $jobQuery) => $jobQuery->where('organization_id', auth()->user()?->organization_id));
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()->where(function (Builder $query) use ($organizationId) {
+            $query->where('organization_id', $organizationId)
+                ->orWhereHas('job', fn (Builder $jobQuery) => $jobQuery->where('organization_id', $organizationId));
         });
     }
 }

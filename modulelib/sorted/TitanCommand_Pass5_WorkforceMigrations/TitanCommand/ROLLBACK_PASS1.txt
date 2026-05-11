@@ -1,0 +1,6 @@
+ROLLBACK (Pass 1)
+
+To rollback Pass 1:
+- Reinstall the previous ZIP (Pass 0).
+
+No database changes were made in Pass 1.

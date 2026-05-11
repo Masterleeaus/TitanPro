@@ -4,6 +4,8 @@ namespace Modules\TitanCore\Services;
 
 use Illuminate\Support\Facades\Log;
 use Modules\TitanCore\AI\Providers\LocalModelProvider;
+use Modules\TitanCore\AI\Providers\NullChatProvider;
+use Modules\TitanCore\AI\Providers\NullEmbeddingProvider;
 use Modules\TitanCore\AI\Providers\OpenAiChatProvider;
 use Modules\TitanCore\AI\Providers\OpenAiEmbeddingProvider;
 use Modules\TitanCore\Contracts\AI\ChatProviderContract;
@@ -108,6 +110,7 @@ class TitanCoreModelGateway
     protected function buildChatProvider(string $key): ChatProviderContract
     {
         return match ($key) {
+            'null'  => new NullChatProvider(),
             'local' => new LocalModelProvider(),
             default => new OpenAiChatProvider(), // 'openai' and unknown keys default to OpenAI
         };
@@ -116,6 +119,7 @@ class TitanCoreModelGateway
     protected function buildEmbeddingProvider(string $key): EmbeddingProviderContract
     {
         return match ($key) {
+            'null'  => new NullEmbeddingProvider(),
             'local' => new LocalModelProvider(),
             default => new OpenAiEmbeddingProvider(),
         };

@@ -1,0 +1,1 @@
+<?php namespace App\Extensions\TitanPulse\System\Services\Conditions\Operators; class GreaterThan { public function passes(mixed $actual,mixed $expected): bool { return is_numeric($actual) && is_numeric($expected) && (float)$actual > (float)$expected; } }

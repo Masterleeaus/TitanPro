@@ -24,8 +24,7 @@ class JobLineItem extends Model
     {
         return [
             'unit_price' => 'decimal:2',
-            'quantity' => 'decimal:3',
-            'total' => 'decimal:2',
+            'quantity'   => 'decimal:3',
         ];
     }
 

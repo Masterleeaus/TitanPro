@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class JobMessageResource extends Resource
 {
@@ -32,7 +33,7 @@ class JobMessageResource extends Resource
     {
         return $schema->components([
             Section::make('Job Message')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('job_id')->label('Job ID')->numeric(),
                     TextInput::make('customer_id')->label('Customer ID')->numeric(),
@@ -73,5 +74,17 @@ class JobMessageResource extends Resource
             'create' => Pages\CreateJobMessage::route('/create'),
             'edit' => Pages\EditJobMessage::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

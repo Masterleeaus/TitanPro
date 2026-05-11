@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Resources;
+namespace Modules\TitanEchoAssist\Filament\Resources;
 
 if (class_exists(\Filament\Resources\Resource::class)) {
     class ChannelResource extends \Filament\Resources\Resource
@@ -20,7 +20,7 @@ if (class_exists(\Filament\Resources\Resource::class)) {
 
         public static function getModel(): string
         {
-            return \Modules\TitanChatbot\Models\ChatbotChannel::class;
+            return \Modules\TitanEchoAssist\Models\ChatbotChannel::class;
         }
 
         public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
@@ -65,9 +65,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
         public static function getPages(): array
         {
             return [
-                'index'  => \Modules\TitanChatbot\Filament\Resources\ChannelResource\Pages\ListChannels::route('/'),
-                'create' => \Modules\TitanChatbot\Filament\Resources\ChannelResource\Pages\CreateChannel::route('/create'),
-                'edit'   => \Modules\TitanChatbot\Filament\Resources\ChannelResource\Pages\EditChannel::route('/{record}/edit'),
+                'index'  => \Modules\TitanEchoAssist\Filament\Resources\ChannelResource\Pages\ListChannels::route('/'),
+                'create' => \Modules\TitanEchoAssist\Filament\Resources\ChannelResource\Pages\CreateChannel::route('/create'),
+                'edit'   => \Modules\TitanEchoAssist\Filament\Resources\ChannelResource\Pages\EditChannel::route('/{record}/edit'),
             ];
         }
     }

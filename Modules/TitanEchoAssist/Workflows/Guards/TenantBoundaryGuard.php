@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Workflows\Guards;
+namespace Modules\TitanEchoAssist\Workflows\Guards;
 
 class TenantBoundaryGuard
 {

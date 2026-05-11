@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Commands;
+namespace Modules\TitanEchoAssist\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -16,18 +16,18 @@ class AuditTitanChatbotCommand extends Command
 
         $checks = [
             'AI Provider Config' => fn() => $this->checkAiConfig(),
-            'GeneratorBridge'    => fn() => class_exists(\Modules\TitanChatbot\Services\GeneratorBridge::class),
-            'ConversationRouter' => fn() => class_exists(\Modules\TitanChatbot\Services\ConversationRouter::class),
-            'ChannelRouter'      => fn() => class_exists(\Modules\TitanChatbot\Services\ChannelRouter::class),
-            'TitanAgent base'    => fn() => class_exists(\Modules\TitanChatbot\AI\Core\TitanAgent::class),
-            'ToolRegistry'       => fn() => class_exists(\Modules\TitanChatbot\AI\Tools\ToolRegistry::class),
-            'SchemaGenerator'    => fn() => class_exists(\Modules\TitanChatbot\AI\Tools\SchemaGenerator::class),
-            'StorageManager'     => fn() => class_exists(\Modules\TitanChatbot\AI\Memory\StorageManager::class),
-            'VoiceSecondsMeter'  => fn() => class_exists(\Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter::class),
-            'ConversationMeter'  => fn() => class_exists(\Modules\TitanChatbot\Billing\Meters\ConversationMeter::class),
-            'UsageTracker'       => fn() => class_exists(\Modules\TitanChatbot\Billing\Usage\UsageTracker::class),
-            'WebchatChannel'     => fn() => class_exists(\Modules\TitanChatbot\Services\WebchatChannel::class),
-            'TrainingPipeline'   => fn() => class_exists(\Modules\TitanChatbot\Services\TrainingPipeline::class),
+            'GeneratorBridge'    => fn() => class_exists(\Modules\TitanEchoAssist\Services\GeneratorBridge::class),
+            'ConversationRouter' => fn() => class_exists(\Modules\TitanEchoAssist\Services\ConversationRouter::class),
+            'ChannelRouter'      => fn() => class_exists(\Modules\TitanEchoAssist\Services\ChannelRouter::class),
+            'TitanAgent base'    => fn() => class_exists(\Modules\TitanEchoAssist\AI\Core\TitanAgent::class),
+            'ToolRegistry'       => fn() => class_exists(\Modules\TitanEchoAssist\AI\Tools\ToolRegistry::class),
+            'SchemaGenerator'    => fn() => class_exists(\Modules\TitanEchoAssist\AI\Tools\SchemaGenerator::class),
+            'StorageManager'     => fn() => class_exists(\Modules\TitanEchoAssist\AI\Memory\StorageManager::class),
+            'VoiceSecondsMeter'  => fn() => class_exists(\Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter::class),
+            'ConversationMeter'  => fn() => class_exists(\Modules\TitanEchoAssist\Billing\Meters\ConversationMeter::class),
+            'UsageTracker'       => fn() => class_exists(\Modules\TitanEchoAssist\Billing\Usage\UsageTracker::class),
+            'WebchatChannel'     => fn() => class_exists(\Modules\TitanEchoAssist\Services\WebchatChannel::class),
+            'TrainingPipeline'   => fn() => class_exists(\Modules\TitanEchoAssist\Services\TrainingPipeline::class),
             'Knowledge Pack'     => fn() => is_dir(__DIR__ . '/../../Knowledge'),
             'Knowledge README'   => fn() => file_exists(__DIR__ . '/../../Knowledge/README.md'),
             'BookingAgent Manifest' => fn() => $this->checkValidJson(__DIR__ . '/../../Agents/BookingAgent/agent.manifest.json'),

@@ -19,6 +19,10 @@ class JobTypePolicy
 
     public function view(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:JobType');
     }
 
@@ -29,11 +33,19 @@ class JobTypePolicy
 
     public function update(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:JobType');
     }
 
     public function delete(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:JobType');
     }
 
@@ -44,11 +56,19 @@ class JobTypePolicy
 
     public function restore(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:JobType');
     }
 
     public function forceDelete(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:JobType');
     }
 
@@ -64,6 +84,10 @@ class JobTypePolicy
 
     public function replicate(AuthUser $authUser, JobType $jobType): bool
     {
+        if ((int) $jobType->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:JobType');
     }
 

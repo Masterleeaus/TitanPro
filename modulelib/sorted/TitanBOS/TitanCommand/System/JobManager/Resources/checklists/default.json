@@ -1,0 +1,14 @@
+{
+  "title": "Standard SWMS Checklist",
+  "items": [
+    "[ ] module.json name/alias/providers correct",
+    "[ ] ServiceProvider loads migrations, routes (web+api), views, lang, config",
+    "[ ] Sidebar blade checks plan + @can('view_<alias>')",
+    "[ ] Web + API routes are prefixed, named, auth'd, and permission-guarded",
+    "[ ] Migrations: tables, module registration, permissions, role assignment",
+    "[ ] Packages updated to include alias where needed",
+    "[ ] Widgets registered + templates and render include tested",
+    "[ ] QA plan executed with screenshots",
+    "[ ] ZIP structure correct (no flattening)"
+  ]
+}

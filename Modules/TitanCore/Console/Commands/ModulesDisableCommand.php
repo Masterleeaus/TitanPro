@@ -3,6 +3,7 @@
 namespace Modules\TitanCore\Console\Commands;
 
 use Illuminate\Console\Command;
+use Modules\TitanCore\Services\ModulePersistence\TitanModuleLifecycleStore;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 use Nwidart\Modules\Module;
 
@@ -28,7 +29,7 @@ class ModulesDisableCommand extends Command
 
     protected $description = 'Disable module(s) and prevent them from booting on the next request.';
 
-    public function handle(ModuleDependencyGraph $graph): int
+    public function handle(ModuleDependencyGraph $graph, TitanModuleLifecycleStore $lifecycleStore): int
     {
         /** @var string[] $moduleNames */
         $moduleNames = (array) $this->argument('module');
@@ -38,7 +39,7 @@ class ModulesDisableCommand extends Command
         $graph->build();
 
         foreach ($moduleNames as $moduleName) {
-            $result = $this->disableModule($moduleName, $graph, $force);
+            $result = $this->disableModule($moduleName, $graph, $force, $lifecycleStore);
 
             if ($result !== self::SUCCESS) {
                 $exitCode = self::FAILURE;
@@ -50,7 +51,7 @@ class ModulesDisableCommand extends Command
 
     // ──────────────────────────────────────────────────────────────────────────
 
-    protected function disableModule(string $moduleName, ModuleDependencyGraph $graph, bool $force): int
+    protected function disableModule(string $moduleName, ModuleDependencyGraph $graph, bool $force, TitanModuleLifecycleStore $lifecycleStore): int
     {
         /** @var Module|null $module */
         $module = $this->laravel['modules']->find($moduleName);
@@ -98,6 +99,8 @@ class ModulesDisableCommand extends Command
                 $module->disable();
             }
         );
+
+        $lifecycleStore->markDisabled($moduleName);
 
         return self::SUCCESS;
     }

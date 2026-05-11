@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\JobType;
 use App\Models\JobTypeChecklistItem;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,6 +17,7 @@ class JobTypeChecklistItemFactory extends Factory
     public function definition(): array
     {
         return [
+            'organization_id' => Organization::factory(),
             'job_type_id' => JobType::factory(),
             'label' => fake()->randomElement([
                 'Verify customer contact on site',
@@ -28,6 +30,7 @@ class JobTypeChecklistItemFactory extends Factory
             ]),
             'sort_order' => 0,
             'is_required' => false,
+            'required_override' => false,
         ];
     }
 

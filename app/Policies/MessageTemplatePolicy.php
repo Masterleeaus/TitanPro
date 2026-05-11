@@ -19,6 +19,10 @@ class MessageTemplatePolicy
 
     public function view(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:MessageTemplate');
     }
 
@@ -29,11 +33,19 @@ class MessageTemplatePolicy
 
     public function update(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:MessageTemplate');
     }
 
     public function delete(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:MessageTemplate');
     }
 
@@ -44,11 +56,19 @@ class MessageTemplatePolicy
 
     public function restore(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:MessageTemplate');
     }
 
     public function forceDelete(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:MessageTemplate');
     }
 
@@ -64,6 +84,10 @@ class MessageTemplatePolicy
 
     public function replicate(AuthUser $authUser, MessageTemplate $messageTemplate): bool
     {
+        if ((int) $messageTemplate->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:MessageTemplate');
     }
 

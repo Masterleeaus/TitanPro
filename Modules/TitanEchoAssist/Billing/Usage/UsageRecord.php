@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Billing\Usage;
+namespace Modules\TitanEchoAssist\Billing\Usage;
 
 class UsageRecord
 {

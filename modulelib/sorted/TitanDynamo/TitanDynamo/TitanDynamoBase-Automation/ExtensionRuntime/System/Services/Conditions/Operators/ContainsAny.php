@@ -1,0 +1,1 @@
+<?php namespace App\Extensions\TitanPulse\System\Services\Conditions\Operators; class ContainsAny { public function passes(mixed $actual,mixed $expected): bool { if (!is_string($actual)||!is_array($expected)) return false; $hay=mb_strtolower($actual); foreach($expected as $needle){ if (str_contains($hay, mb_strtolower((string)$needle))) return true; } return false; } }

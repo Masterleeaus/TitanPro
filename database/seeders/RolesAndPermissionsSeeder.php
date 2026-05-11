@@ -84,5 +84,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'items.view', 'items.create', 'items.edit',
             'reports.view',
         ]);
+
+        // Customer — self-service portal access only
+        $customer = Role::firstOrCreate(['name' => 'customer']);
+        $customer->syncPermissions([]);
     }
 }

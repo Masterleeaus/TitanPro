@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Contracts;
+namespace Modules\TitanEchoAssist\Contracts;
 
 interface ChannelDriver
 {

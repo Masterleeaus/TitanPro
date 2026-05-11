@@ -26,8 +26,8 @@ async function postLocation(position: GeolocationPosition): Promise<void> {
     });
 }
 
-export function useLocationSharing() {
-    const enabled = ref(localStorage.getItem(STORAGE_KEY) === 'true');
+export function useLocationSharing(disabled = false) {
+    const enabled = ref(!disabled && localStorage.getItem(STORAGE_KEY) === 'true');
     const permissionDenied = ref(false);
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -60,6 +60,10 @@ export function useLocationSharing() {
     }
 
     async function toggle() {
+        if (disabled) {
+            return;
+        }
+
         if (enabled.value) {
             enabled.value = false;
             localStorage.setItem(STORAGE_KEY, 'false');
@@ -90,7 +94,7 @@ export function useLocationSharing() {
     }
 
     // Auto-start if previously enabled
-    if (enabled.value && navigator.geolocation) {
+    if (!disabled && enabled.value && navigator.geolocation) {
         startSharing();
     }
 

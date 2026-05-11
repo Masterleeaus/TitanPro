@@ -1,5 +1,6 @@
 {
   "name": "Accountings",
+  "active": 1,
   "alias": "accountings",
   "description": "Titan AI-native accounting, ledger, GST, receivables, reconciliation records, cashflow, and late-invoice follow-up module.",
   "priority": 20,

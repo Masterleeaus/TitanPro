@@ -18,10 +18,14 @@ class Organization extends Model
         'plan',
         'trial_ends_at',
         'stripe_customer_id',
+        'enabled_modules',
+        'suspended_at',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
+        'enabled_modules' => 'array',
+        'suspended_at' => 'datetime',
     ];
 
     public function users(): HasMany
@@ -57,6 +61,11 @@ class Organization extends Model
     public function settings(): HasOne
     {
         return $this->hasOne(OrganizationSetting::class);
+    }
+
+    public function branding(): HasOne
+    {
+        return $this->hasOne(OrganizationBranding::class);
     }
 
     public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany

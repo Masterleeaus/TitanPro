@@ -1,0 +1,342 @@
+  BUNDLE_README.txt (1235 bytes)
+  EXTRACTED_FILES.txt (0 bytes)
+  dashboard.blade.php (109623 bytes)
+dashboard_support/
+  chatbot.sql (40407 bytes)
+  TitanZero_dashboard_cards_finished_full/
+    dashboard/
+      account-summary.blade.php (43 bytes)
+      active-assistants.blade.php (46 bytes)
+      affiliates.blade.php (42 bytes)
+    resources/
+      views/
+        components/
+          titan-runtime/
+            dashboard-assistants-card.blade.php (1189 bytes)
+            dashboard-canvas-card.blade.php (1301 bytes)
+            dashboard-command-card.blade.php (1899 bytes)
+            runtime-shell.blade.php (162 bytes)
+        panel/
+          user/
+            titan-runtime/
+              partials/
+                assistants-pane.blade.php (986 bytes)
+                canvas-pane.blade.php (398 bytes)
+                chat-thread.blade.php (864 bytes)
+                context-strip.blade.php (776 bytes)
+                prompt-bar.blade.php (714 bytes)
+    public/
+      vendor/
+        titan-runtime/
+          runtime-dashboard.css (104 bytes)
+          runtime-dashboard.js (1749 bytes)
+    TitanDocs/
+      TitanZero/
+        DASHBOARD_MERGE_NOTES.md (364 bytes)
+        FILES_CHANGED_DASHBOARD.md (250 bytes)
+  TitanWork_Dashboard_WorkCards_Pass07_MiniWizards_Activity/
+    FILES_CHANGED.md (500 bytes)
+    MERGE_NOTES.md (307 bytes)
+    dashboard/
+      account-summary.blade.php (1092 bytes)
+      affiliates.blade.php (6768 bytes)
+      favorite-chatbots.blade.php (3548 bytes)
+      work-ops-cards.blade.php (5663 bytes)
+      partials/
+        work-wizard-embed.blade.php (44604 bytes)
+        work-cards/
+          dispatch-card.blade.php (10009 bytes)
+          qa-card.blade.php (8307 bytes)
+          team-status-card.blade.php (6659 bytes)
+          today-card.blade.php (11050 bytes)
+          components/
+            assistant-chip.blade.php (786 bytes)
+            metric-chip.blade.php (347 bytes)
+            status-pill.blade.php (734 bytes)
+  TitanWork_Dashboard_Wizard_Embed_Pass04_CommandSurface/
+    FILES_CHANGED.md (101 bytes)
+    MERGE_NOTES.md (345 bytes)
+    dashboard/
+      account-summary.blade.php (1092 bytes)
+      affiliates.blade.php (6768 bytes)
+      favorite-chatbots.blade.php (3548 bytes)
+      partials/
+        work-wizard-embed.blade.php (44604 bytes)
+  Titan_TimeEngine_MINIMAL_CORE_FIXED/
+    TIME_ENGINE_PACKAGE_README.txt (671 bytes)
+    app/
+      Traits/
+        BelongsToTenant.php (2716 bytes)
+      Models/
+        Tz/
+          AbstractTzTenantModel.php (516 bytes)
+          TzCalendarEvent.php (361 bytes)
+          TzCalendarEventSource.php (302 bytes)
+          TzCalendarRecurrenceRule.php (309 bytes)
+          TzCalendarSyncAccount.php (345 bytes)
+          TzCalendarSyncLink.php (304 bytes)
+          TzScheduledTask.php (495 bytes)
+          TzScheduledTaskLog.php (259 bytes)
+          TzScheduledTaskRun.php (339 bytes)
+      Services/
+        TitanCalendarSystem/
+          CalendarAggregationService.php (2504 bytes)
+          CalendarFeedService.php (327 bytes)
+          CalendarService.php (2488 bytes)
+          CalendarSyncService.php (441 bytes)
+          GoogleCalendarService.php (2200 bytes)
+          RecurrenceService.php (4827 bytes)
+          Adapters/
+            ChatbotScheduledJobCalendarAdapter.php (2027 bytes)
+            InvoiceCalendarAdapter.php (1965 bytes)
+            JobCalendarAdapter.php (2063 bytes)
+            ManualCalendarAdapter.php (2362 bytes)
+            ScheduledTaskCalendarAdapter.php (2061 bytes)
+            SocialMediaPostCalendarAdapter.php (2036 bytes)
+          Contracts/
+            CalendarSourceAdapterInterface.php (269 bytes)
+          Support/
+            CalendarEventNormalizer.php (1301 bytes)
+        TitanScheduleEngine/
+          DueTaskResolver.php (747 bytes)
+          RetryService.php (429 bytes)
+          ScheduleEngine.php (524 bytes)
+          ScheduledTaskService.php (3466 bytes)
+          TaskDispatcher.php (1350 bytes)
+          Contracts/
+            ScheduledTaskHandlerInterface.php (260 bytes)
+          Handlers/
+            AbstractScheduledTaskHandler.php (478 bytes)
+            CreateFollowUpHandler.php (589 bytes)
+            DispatchWorkHandler.php (579 bytes)
+            InvoiceDueReminderHandler.php (605 bytes)
+            PublishPostHandler.php (575 bytes)
+            SendReminderHandler.php (579 bytes)
+      Http/
+        Controllers/
+          Calendar/
+            CalendarInteractionController.php (751 bytes)
+            TitanCalendarController.php (10496 bytes)
+            TitanCalendarEventController.php (1681 bytes)
+            TitanCalendarFeedController.php (1091 bytes)
+            TitanCalendarSettingsController.php (977 bytes)
+            TitanScheduledTaskController.php (1496 bytes)
+      Console/
+        Kernel.php (1711 bytes)
+        Commands/
+          TitanRunScheduledTasks.php (770 bytes)
+    routes/
+      panel.php (62310 bytes)
+    database/
+      sql/
+        titan_calendar_install.sql (4940 bytes)
+    resources/
+      views/
+        marketing-bot-dashboard/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+        bolt/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+        classic/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+        sleek/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+        default/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+          scss/
+            components/
+              _fullcalendar.scss (3760 bytes)
+        social-media-dashboard/
+          panel/
+            user/
+              calendar/
+                index.blade.php (29040 bytes)
+                scheduled-tasks.blade.php (3197 bytes)
+                settings.blade.php (1917 bytes)
+                partials/
+                  filters.blade.php (1909 bytes)
+                  titlebar.blade.php (616 bytes)
+            dashboard/
+              widgets/
+                calendar.blade.php (445 bytes)
+  titantrust_card_pass3/
+    dashboard/
+      account-summary.blade.php (890 bytes)
+      partials/
+        trust-evidence.blade.php (72 bytes)
+        trust-incidents.blade.php (187 bytes)
+        trust-inspections.blade.php (191 bytes)
+        trust-overview.blade.php (168 bytes)
+  docs-proof-dashboard-pass5-huge-needed-files/
+    app/
+      Http/
+        Controllers/
+          Dashboard/
+            UserController.php (71071 bytes)
+    routes/
+      panel.php (61285 bytes)
+    resources/
+      views/
+        default/
+          panel/
+            user/
+              dashboard/
+                account-summary.blade.php (6470 bytes)
+              openai/
+                documents.blade.php (19018 bytes)
+                documents_packets.blade.php (3630 bytes)
+                documents_review.blade.php (7669 bytes)
+                documents_workbook.blade.php (13730 bytes)
+        social-media-dashboard/
+          panel/
+            user/
+              openai/
+                documents.blade.php (19018 bytes)
+                documents_packets.blade.php (3630 bytes)
+                documents_review.blade.php (7669 bytes)
+  TitanTalk_dashboard_cards_fullpack/
+    README.md (421 bytes)
+    original-donors/
+      announcement.blade.php (3076 bytes)
+      campaigns-stats.blade.php (1991 bytes)
+      recent-campaigns.blade.php (4588 bytes)
+      recently-launched.blade.php (2022 bytes)
+    upgraded-cards/
+      TITANTALK_CARDS_UPGRADE_NOTES.md (865 bytes)
+      titantalk-campaign-focus.blade.php (2710 bytes)
+      titantalk-messaging-overview.blade.php (2345 bytes)
+      titantalk-quick-actions.blade.php (3368 bytes)
+      titantalk-recent-conversations.blade.php (3272 bytes)
+  ProductPhotography_QuoteMaker_RealHooks_v1_9_2/
+    ProductPhotography/
+      README.md (310 bytes)
+      extension.json (283 bytes)
+      Controllers/
+        QuoteMakerController.php (14852 bytes)
+      Requests/
+        GenerateQuoteVisualRequest.php (830 bytes)
+      Models/
+        QuoteBot.php (356 bytes)
+        QuoteTemplate.php (340 bytes)
+        QuoteVisual.php (583 bytes)
+        RevenueBuilder.php (649 bytes)
+        RevenueExecutionLog.php (403 bytes)
+      Providers/
+        ProductPhotographyServiceProvider.php (1065 bytes)
+      Services/
+        ImageRenderWorker.php (373 bytes)
+        PromptBuilder.php (1486 bytes)
+        QuoteMetadataFactory.php (586 bytes)
+        QuoteVisualRepository.php (446 bytes)
+        RenderPayloadFactory.php (620 bytes)
+        RevenueExecutionBridge.php (6557 bytes)
+      config/
+        productphotography.php (662 bytes)
+      database/
+        migrations/
+          2026_03_13_000000_create_ext_quotemaker_visuals_table.php (1330 bytes)
+          2026_03_14_000001_create_ext_quotemaker_templates_table.php (902 bytes)
+          2026_03_14_000002_create_ext_quotemaker_quote_bots_table.php (910 bytes)
+          2026_03_14_000003_create_ext_quotemaker_builders_table.php (1651 bytes)
+          2026_03_14_000004_create_ext_quotemaker_execution_logs_table.php (1065 bytes)
+        seeders/
+          QuoteMakerSeeder.php (215 bytes)
+      resources/
+        views/
+          gallery.blade.php (1360 bytes)
+          index.blade.php (7139 bytes)
+          templates.blade.php (1377 bytes)
+          partials/
+            result_card.blade.php (1249 bytes)
+            template_card.blade.php (2079 bytes)
+          create/
+            create-step-0.blade.php (698 bytes)
+            create-step-1.blade.php (2297 bytes)
+            create-step-2.blade.php (1390 bytes)
+            create-step-3.blade.php (2614 bytes)
+            create-step-4.blade.php (1544 bytes)
+            create-step-5.blade.php (1938 bytes)
+            create-step-6.blade.php (2719 bytes)
+            create-step-7.blade.php (1308 bytes)
+            create-step-8.blade.php (460 bytes)
+            create-step-9.blade.php (596 bytes)
+            index.blade.php (11061 bytes)
+      routes/
+        extensions/
+          quotemaker.routes.php (746 bytes)
+      assets/
+        js/
+          quotemaker.js (913 bytes)
+        css/
+          quotemaker.css (565 bytes)
+      docs/
+        AFFILIATE_CARD_EMBED_NOTES.md (420 bytes)
+        CORE_ROUTE_FILE.php (461 bytes)
+        INSTALL.md (386 bytes)
+        MENU_SQL_CLASSIC_ROUTE_NAMES.sql (3221 bytes)
+        MENU_SQL_DASHBOARD_USER.sql (3453 bytes)
+        MENU_SQL_PATH_FALLBACK.sql (2450 bytes)
+        PASS_45_NOTES.md (343 bytes)
+        QUOTE_BUILDER_SQL.sql (1201 bytes)
+        REAL_TABLE_INTEGRATION_v1_9_2.md (635 bytes)
+        REAL_TABLE_SQL_v1_9_2.sql (1476 bytes)
+        REVENUE_MODES_NOTES.md (348 bytes)
+        REVENUE_MODES_SQL_v1_9_0.sql (1293 bytes)
+        ROUTE_AUDIT_v1_8_7.md (514 bytes)
+        TEMPLATES_PAGE_NOTES.md (372 bytes)
+        THEME_REUSE_NOTES.md (402 bytes)
+        WIZARD_NOTES.md (417 bytes)

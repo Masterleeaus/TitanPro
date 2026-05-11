@@ -19,6 +19,10 @@ class AttachmentPolicy
 
     public function view(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:Attachment');
     }
 
@@ -29,11 +33,19 @@ class AttachmentPolicy
 
     public function update(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:Attachment');
     }
 
     public function delete(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:Attachment');
     }
 
@@ -44,11 +56,19 @@ class AttachmentPolicy
 
     public function restore(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:Attachment');
     }
 
     public function forceDelete(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:Attachment');
     }
 
@@ -64,6 +84,10 @@ class AttachmentPolicy
 
     public function replicate(AuthUser $authUser, Attachment $attachment): bool
     {
+        if ((int) $attachment->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:Attachment');
     }
 

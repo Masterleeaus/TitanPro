@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Extensions\ChatbotWhatsapp\System\Http\Controllers;
+namespace Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Controllers;
 
 use App\Extensions\Chatbot\System\Helpers\ChatbotHelper;
 use App\Extensions\Chatbot\System\Http\Resources\Admin\ChatbotChannelResource;
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
-use App\Extensions\ChatbotWhatsapp\System\Http\Requests\WhatsappChannelStoreRequest;
+use Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Requests\WhatsappChannelStoreRequest;
 use App\Helpers\Classes\Helper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;

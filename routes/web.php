@@ -19,6 +19,7 @@ use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\CmsPageController;
 use App\Http\Controllers\Platform\TitanModuleAdminApiController;
 use App\Http\Controllers\Platform\DashboardController as PlatformDashboardController;
+use App\Http\Controllers\Platform\ModuleAdminDashboardController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\PublicEstimateController;
 use App\Http\Controllers\Technician\DashboardController as TechnicianDashboardController;
@@ -52,6 +53,13 @@ Route::get('/dashboard', function () {
     return redirect()->route('owner.dashboard');
 })->middleware('auth')->name('dashboard');
 
+// Legacy owner panel entry paths must bypass subscription middleware and
+// permanently redirect to canonical Titan panel paths.
+Route::redirect('/owner/dispatch', '/titango', 301)->name('owner.dispatch.alias');
+Route::redirect('/owner/billing', '/zeropay', 301)->name('owner.billing.alias');
+Route::redirect('/owner/estimates', '/titanquotes', 301)->name('owner.estimates.alias');
+Route::redirect('/owner/marketing', '/titannexus', 301)->name('owner.marketing.alias');
+
 // ── Platform SaaS admin — cross-tenant controls for self-hosted operators ──
 Route::middleware(['auth', 'verified', 'role:super_admin'])
     ->prefix('platform')
@@ -65,6 +73,8 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
 
         // Module administration — protected by titan.admin gate via module.admin middleware
         Route::middleware('module.admin')->group(function () {
+            Route::get('/modules', [ModuleAdminDashboardController::class, 'index'])
+                ->name('modules.index');
             Route::get('/modules/audit-log', [\App\Http\Controllers\Platform\ModuleAuditLogController::class, 'index'])
                 ->name('modules.audit-log');
         });
@@ -73,10 +83,12 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
 Route::prefix('admin/titan/modules')
     ->middleware(['auth', 'module.admin'])
     ->group(function () {
+        Route::post('/sync', [TitanModuleAdminApiController::class, 'sync']);
         Route::get('/', [TitanModuleAdminApiController::class, 'index']);
         Route::post('/{module}/enable', [TitanModuleAdminApiController::class, 'enable']);
         Route::post('/{module}/disable', [TitanModuleAdminApiController::class, 'disable']);
         Route::get('/{module}/health', [TitanModuleAdminApiController::class, 'health']);
+        Route::get('/{module}/manifests', [TitanModuleAdminApiController::class, 'manifests']);
     });
 
 Route::middleware(['auth', 'role:owner|admin'])
@@ -170,7 +182,7 @@ Route::middleware(['throttle:10,1'])->group(function () {
     Route::post('/estimates/{token}/decline', [PublicEstimateController::class, 'decline'])->name('estimates.decline');
 });
 
-Route::middleware(['auth', 'role:technician'])
+Route::middleware(['auth', 'role:technician|owner|admin|super_admin'])
     ->prefix('technician')
     ->name('technician.')
     ->group(function () {
@@ -187,6 +199,19 @@ Route::get('/health/ready', [HealthController::class, 'readiness'])->name('healt
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
     ->name('stripe.webhook');
 
+// ── Visual UI Inspector API — authenticated; accessible to admins & owners ──
+Route::middleware(['auth', 'role:super_admin|admin|owner'])
+    ->prefix('titan/ui-inspector')
+    ->name('titan.ui-inspector.')
+    ->group(function () {
+        Route::get('/overrides',            [\App\Http\Controllers\UiInspectorController::class, 'index'])->name('index');
+        Route::post('/overrides',           [\App\Http\Controllers\UiInspectorController::class, 'upsert'])->name('upsert');
+        Route::get('/export',               [\App\Http\Controllers\UiInspectorController::class, 'export'])->name('export');
+        Route::post('/import',              [\App\Http\Controllers\UiInspectorController::class, 'import'])->name('import');
+        Route::delete('/overrides/{key}',   [\App\Http\Controllers\UiInspectorController::class, 'reset'])->name('reset');
+        Route::delete('/overrides',         [\App\Http\Controllers\UiInspectorController::class, 'resetAll'])->name('reset-all');
+    });
+
 
 
 // Public Titan BOS marketing, app, Service Mode, and CMS pages.
@@ -199,6 +224,8 @@ Route::get('/industries', fn () => app(CmsPageController::class)->show('industri
 Route::get('/pricing', fn () => app(CmsPageController::class)->show('pricing'))->name('pricing');
 Route::get('/zero-philosophy', fn () => app(CmsPageController::class)->show('zero-philosophy'))->name('zero-philosophy');
 Route::get('/zero', fn () => app(CmsPageController::class)->show('zero-philosophy'))->name('zero');
+// ZeroPay product marketing page — the panel itself lives at /zeropay (handled by ZeroPayPanelProvider).
+Route::get('/zeropay-product', fn () => app(CmsPageController::class)->show('zeropay'))->name('zeropay.product');
 Route::get('/security', fn () => app(CmsPageController::class)->show('security'))->name('security');
 Route::get('/ai-strategy', fn () => app(CmsPageController::class)->show('ai-strategy'))->name('ai-strategy');
 Route::get('/automation-engine', fn () => app(CmsPageController::class)->show('automation-engine'))->name('automation-engine');
@@ -207,10 +234,29 @@ Route::get('/features', fn () => app(CmsPageController::class)->show('features')
 Route::get('/faq', fn () => app(CmsPageController::class)->show('faq'))->name('faq');
 Route::get('/about', fn () => app(CmsPageController::class)->show('about'))->name('about');
 Route::get('/contact', fn () => app(CmsPageController::class)->show('contact'))->name('contact');
-Route::get('/zeropay', fn () => app(CmsPageController::class)->show('zeropay'))->name('zeropay');
+// Legacy panel aliases — permanent redirects to canonical panel paths.
+Route::redirect('/admin', '/titanpro', 301)->name('titanpro.alias');
+Route::redirect('/ground-zero', '/groundzero', 301)->name('groundzero.alias');
+Route::redirect('/titan-go', '/titango', 301)->name('titango.alias');
+Route::redirect('/titan-quotes', '/titanquotes', 301)->name('titanquotes.alias');
+Route::redirect('/titan-grow', '/titannexus', 301)->name('titannexus.alias');
+Route::redirect('/titan-nexus', '/titannexus', 301)->name('titannexus.hyphen.alias');
 Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.index');
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');
 
+// Theme share import — resolves a share token and redirects to UI Studio
+Route::get('/theme/import/{token}', \App\Http\Controllers\Platform\ThemeImportController::class)
+    ->name('theme.import')
+    ->middleware('auth');
+
 require __DIR__.'/esoft.php';
 require __DIR__.'/auth.php';
+
+// UI Studio motion preview — only available in local and testing environments
+if (app()->isLocal() || app()->runningUnitTests()) {
+    Route::get(
+        '/titan-ui-studio/motion-preview',
+        \App\Http\Controllers\UiStudio\MotionPreviewController::class
+    )->name('ui-studio.motion-preview');
+}

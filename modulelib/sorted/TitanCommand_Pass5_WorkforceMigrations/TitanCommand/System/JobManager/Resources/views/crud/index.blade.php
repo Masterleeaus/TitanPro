@@ -1,0 +1,4 @@
+namespace App\Extensions\TitanCommand\System\JobManager\Resources\views\crud;
+
+
+<x-app-layout><h2 class='text-xl font-semibold'>CRUD: index</h2><p>{{ \$resource ?? '' }} {% if(isset($id)) %}</p></x-app-layout>

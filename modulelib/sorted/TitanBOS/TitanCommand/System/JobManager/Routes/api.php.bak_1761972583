@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+if (config('jobmanager.api_auth', true)) {
+    Route::middleware(['auth','can:jobmanager.view'])->prefix('jobmanager')->group(function () {
+        Route::get('/health', fn() => response()->json(['ok'=>true]));
+        // TODO: add protected endpoints
+    });
+} else {
+    Route::prefix('jobmanager')->group(function () {
+        Route::get('/health', fn() => response()->json(['ok'=>true]));
+    });
+]
+
+
+// ---- JobManager AI Proxy Routes ----
+use Illuminate\Support\Facades\Route;
+use Modules\JobManager\Http\Controllers\Api\AIAssistantProxyController;
+use Modules\JobManager\Http\Controllers\Api\AIToolProxyController;
+use Modules\JobManager\Http\Controllers\Api\AIComplianceProxyController;
+
+Route::prefix('jobmanager')->middleware('auth:sanctum')->group(function() {
+    Route::post('/assistant', [AIAssistantProxyController::class, 'chat'])->name('jobmanager.api.assistant');
+    Route::post('/tool', [AIToolProxyController::class, 'run'])->name('jobmanager.api.tool');
+    Route::post('/compliance/pdf', [AIComplianceProxyController::class, 'pdf'])->name('jobmanager.api.compliance.pdf');
+});

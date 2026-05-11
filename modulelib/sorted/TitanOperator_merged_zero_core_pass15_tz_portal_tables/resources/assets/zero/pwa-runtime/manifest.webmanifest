@@ -1,0 +1,35 @@
+{
+  "name": "Titan Runtime",
+  "short_name": "Titan",
+  "description": "Offline-aware TitanZero runtime shell.",
+  "start_url": "/dashboard/user/pwa-runtime",
+  "scope": "/dashboard/user/pwa-runtime",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/pwa-runtime/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-runtime/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Runtime",
+      "short_name": "Runtime",
+      "url": "/dashboard/user/pwa-runtime"
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard/user"
+    }
+  ]
+}

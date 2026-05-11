@@ -1,0 +1,6 @@
+{
+  "name": "TitanRewind",
+  "type": "extension",
+  "version": "0.2.0",
+  "description": "TitanRewind \u2014 audit log + corrective (rewind) system for operators and AI (based on MarketingBot skeleton)."
+}

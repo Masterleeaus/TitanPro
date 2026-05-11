@@ -2,11 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\TitanSolo\Pages\Dashboard;
+use App\Filament\TitanSolo\Widgets\SoloOverviewWidget;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -23,23 +26,35 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
  */
 class TitanSoloPanelProvider extends PanelProvider
 {
+    use RegistersFilamentPlugins;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->id('titansolo')
             ->path('titansolo')
-            ->brandName('TitanSolo — Solo Ops')
-            ->colors([
-                'primary' => Color::Sky,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanSolo'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#0ea5e9'),
+            ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')
             ->discoverPages(in: app_path('Filament/TitanSolo/Pages'), for: 'App\\Filament\\TitanSolo\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanSolo/Widgets'), for: 'App\\Filament\\TitanSolo\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                SoloOverviewWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -54,6 +69,8 @@ class TitanSoloPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiOverrideSsrHook())
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

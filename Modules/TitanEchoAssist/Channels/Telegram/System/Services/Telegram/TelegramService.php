@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotTelegram\System\Services\Telegram;
+namespace Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram;
 
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
 use Exception;

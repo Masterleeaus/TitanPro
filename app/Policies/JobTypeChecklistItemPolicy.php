@@ -19,6 +19,10 @@ class JobTypeChecklistItemPolicy
 
     public function view(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('View:JobTypeChecklistItem');
     }
 
@@ -29,11 +33,19 @@ class JobTypeChecklistItemPolicy
 
     public function update(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Update:JobTypeChecklistItem');
     }
 
     public function delete(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Delete:JobTypeChecklistItem');
     }
 
@@ -44,11 +56,19 @@ class JobTypeChecklistItemPolicy
 
     public function restore(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Restore:JobTypeChecklistItem');
     }
 
     public function forceDelete(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('ForceDelete:JobTypeChecklistItem');
     }
 
@@ -64,6 +84,10 @@ class JobTypeChecklistItemPolicy
 
     public function replicate(AuthUser $authUser, JobTypeChecklistItem $jobTypeChecklistItem): bool
     {
+        if ((int) $jobTypeChecklistItem->organization_id !== (int) $authUser->organization_id) {
+            return false;
+        }
+
         return $authUser->can('Replicate:JobTypeChecklistItem');
     }
 

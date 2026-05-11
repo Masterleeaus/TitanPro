@@ -24,19 +24,19 @@ return [
         'titanpro' => [
             'label'       => 'TitanPro',
             'description' => 'Super-admin SaaS control panel',
-            'path'        => 'admin',
+            'path'        => 'titanpro',
             'color'       => 'blue',
             'icon'        => 'heroicon-o-shield-check',
             'roles'       => ['super_admin'],
         ],
 
         'groundzero' => [
-            'label'       => 'Ground Zero',
-            'description' => 'Dispatch SPA — live job board and route management',
+            'label'       => 'GroundZero',
+            'description' => 'Primary owner/admin panel for day-to-day cleaning business operations',
             'path'        => 'groundzero',
             'color'       => 'cyan',
             'icon'        => 'heroicon-o-map',
-            'roles'       => ['owner', 'admin', 'dispatcher'],
+            'roles'       => ['owner', 'admin', 'dispatcher', 'bookkeeper'],
         ],
 
         'titanquotes' => [
@@ -45,7 +45,7 @@ return [
             'path'        => 'titanquotes',
             'color'       => 'emerald',
             'icon'        => 'heroicon-o-document-text',
-            'roles'       => ['owner', 'admin', 'dispatcher'],
+            'roles'       => ['owner', 'admin', 'bookkeeper'],
         ],
 
         'zeropay' => [
@@ -63,7 +63,7 @@ return [
             'path'        => 'titango',
             'color'       => 'orange',
             'icon'        => 'heroicon-o-device-phone-mobile',
-            'roles'       => ['technician', 'owner', 'admin'],
+            'roles'       => ['owner', 'admin', 'super_admin'],
         ],
 
         'zerofuss' => [
@@ -77,7 +77,7 @@ return [
 
         'titansolo' => [
             'label'       => 'TitanSolo',
-            'description' => 'Solo operator all-in-one dashboard',
+            'description' => 'Sole trader / single-operator cleaning business dashboard',
             'path'        => 'titansolo',
             'color'       => 'sky',
             'icon'        => 'heroicon-o-user',
@@ -86,7 +86,7 @@ return [
 
         'titanstudio' => [
             'label'       => 'TitanStudio',
-            'description' => 'Creative hub — branding, content and collateral',
+            'description' => 'Workflow builder, automation config, CMS editing, and template management studio',
             'path'        => 'titanstudio',
             'color'       => 'pink',
             'icon'        => 'heroicon-o-paint-brush',
@@ -95,7 +95,7 @@ return [
 
         'titannexus' => [
             'label'       => 'TitanNexus',
-            'description' => 'Growth intelligence (formerly TitanGrow)',
+            'description' => 'Vertical packs, lead pipeline, training content, and marketing automation',
             'path'        => 'titannexus',
             'color'       => 'indigo',
             'icon'        => 'heroicon-o-arrow-trending-up',

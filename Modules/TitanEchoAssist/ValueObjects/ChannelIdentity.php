@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\ValueObjects;
+namespace Modules\TitanEchoAssist\ValueObjects;
 
 class ChannelIdentity
 {

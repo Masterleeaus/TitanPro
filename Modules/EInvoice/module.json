@@ -1,5 +1,6 @@
 {
   "name": "EInvoice",
+  "active": 1,
   "alias": "einvoice",
   "description": "Titan AI-native electronic invoicing, invoice automation, XML compliance, and late-invoice follow-up module.",
   "priority": 19,

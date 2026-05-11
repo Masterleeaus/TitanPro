@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class EstimatePackageResource extends Resource
 {
@@ -34,7 +35,7 @@ class EstimatePackageResource extends Resource
     {
         return $schema->components([
             Section::make('Cleaning Package')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('estimate_id')->label('Quote ID')->numeric(),
                     Select::make('tier')->label('Tier')->options(['good' => 'Good', 'better' => 'Better', 'best' => 'Best'])->required(),
@@ -72,5 +73,17 @@ class EstimatePackageResource extends Resource
             'create' => Pages\CreateEstimatePackage::route('/create'),
             'edit' => Pages\EditEstimatePackage::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

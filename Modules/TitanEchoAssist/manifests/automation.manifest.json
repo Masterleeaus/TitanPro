@@ -5,33 +5,33 @@
   "enabled": true,
   "triggers": [
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Triggers\\ConversationStartedTrigger",
-      "listens_to": "Modules\\TitanChatbot\\Events\\ConversationStarted"
+      "class": "Modules\\TitanEchoAssist\\Automation\\Triggers\\ConversationStartedTrigger",
+      "listens_to": "Modules\\TitanEchoAssist\\Events\\ConversationStarted"
     },
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Triggers\\ConversationEscalatedTrigger",
-      "listens_to": "Modules\\TitanChatbot\\Events\\ConversationEscalated"
+      "class": "Modules\\TitanEchoAssist\\Automation\\Triggers\\ConversationEscalatedTrigger",
+      "listens_to": "Modules\\TitanEchoAssist\\Events\\ConversationEscalated"
     },
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Triggers\\IntentDetectedTrigger",
-      "listens_to": "Modules\\TitanChatbot\\Events\\IntentDetected"
+      "class": "Modules\\TitanEchoAssist\\Automation\\Triggers\\IntentDetectedTrigger",
+      "listens_to": "Modules\\TitanEchoAssist\\Events\\IntentDetected"
     },
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Triggers\\VoiceSessionStartedTrigger",
-      "listens_to": "Modules\\TitanChatbot\\Events\\VoiceSessionStarted"
+      "class": "Modules\\TitanEchoAssist\\Automation\\Triggers\\VoiceSessionStartedTrigger",
+      "listens_to": "Modules\\TitanEchoAssist\\Events\\VoiceSessionStarted"
     }
   ],
   "handlers": [
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Handlers\\SendSuggestedPromptsHandler",
+      "class": "Modules\\TitanEchoAssist\\Automation\\Handlers\\SendSuggestedPromptsHandler",
       "description": "Sends configured suggested prompts to the conversation channel"
     },
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Handlers\\SendWelcomeBannerHandler",
+      "class": "Modules\\TitanEchoAssist\\Automation\\Handlers\\SendWelcomeBannerHandler",
       "description": "Sends the welcome banner message to new conversations"
     },
     {
-      "class": "Modules\\TitanChatbot\\Automation\\Handlers\\EscalateToAgentHandler",
+      "class": "Modules\\TitanEchoAssist\\Automation\\Handlers\\EscalateToAgentHandler",
       "description": "Escalates a conversation to a human agent and fires the escalation event"
     }
   ]

@@ -7,5 +7,5 @@
     "messenger",
     "voice"
   ],
-  "router": "Modules\\TitanChatbot\\Services\\ChannelRouter"
+  "router": "Modules\\TitanEchoAssist\\Services\\ChannelRouter"
 }

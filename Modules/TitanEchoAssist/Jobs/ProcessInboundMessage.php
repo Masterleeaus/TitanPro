@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Jobs;
+namespace Modules\TitanEchoAssist\Jobs;
 
 class ProcessInboundMessage
 {

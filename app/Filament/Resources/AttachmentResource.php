@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AttachmentResource extends Resource
 {
@@ -30,7 +31,7 @@ class AttachmentResource extends Resource
     {
         return $schema->components([
             Section::make('Attachment')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('filename')->label('Filename')->maxLength(200),
                     TextInput::make('disk')->label('Disk')->maxLength(80),
@@ -69,5 +70,17 @@ class AttachmentResource extends Resource
             'create' => Pages\CreateAttachment::route('/create'),
             'edit' => Pages\EditAttachment::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

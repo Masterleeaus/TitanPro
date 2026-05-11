@@ -1,5 +1,6 @@
 {
   "name": "TitanZero",
+  "active": 1,
   "alias": "titanzero",
   "description": "Titan Zero – AI Orchestration Node. Single AI entry point for the platform.",
   "keywords": [
@@ -13,12 +14,11 @@
     "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
   ],
   "files": [],
+  "filament_panel": "titanpro",
   "manifest": {
     "retrieval": "AI/Retrieval/retrieval.policy.json",
     "guardrails": "AI/Guardrails/guardrails.json",
     "citations": "AI/Citations/citation.schema.json",
     "ai": "manifests/ai_tools.json"
-  },
-  "filament_panel": "titanpro",
-  "active": 1
+  }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\ViewModels;
+namespace Modules\TitanEchoAssist\ViewModels;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ChatbotViewModel
 {

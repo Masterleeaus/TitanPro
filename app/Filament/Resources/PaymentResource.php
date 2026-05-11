@@ -14,7 +14,16 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * PaymentResource — TitanPro (super-admin) panel.
+ *
+ * Restricted to super_admin only. Finance operators should use the
+ * dedicated ZeroPay panel (/zeropay) where bookkeeper/owner/admin
+ * roles have access via App\Filament\ZeroPay\Resources\PaymentResource.
+ */
 class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
@@ -29,11 +38,41 @@ class PaymentResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    public static function canViewAny(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canCreate(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return (bool) auth()->user()?->hasRole('super_admin');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             Section::make('Payment')
-                ->columns(2)
+                ->columns(['sm' => 1, 'lg' => 2])
                 ->schema([
                                         TextInput::make('invoice_id')->label('Invoice ID')->numeric(),
                     TextInput::make('amount')->label('Amount')->required()->numeric(),
@@ -72,5 +111,17 @@ class PaymentResource extends Resource
             'create' => Pages\CreatePayment::route('/create'),
             'edit' => Pages\EditPayment::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organizationId);
     }
 }

@@ -1,0 +1,12 @@
+ROLLBACK — Pass 2
+
+Code rollback:
+- Replace the TitanCommand folder with the previous ZIP (Pass 1_2).
+
+DB rollback:
+- If you need to roll back migrations, run:
+  cd /home/saassmar/domains/buildsm.art/public_html && php artisan migrate:rollback
+- Or drop tables manually if required:
+  work_jobs, work_jobs_events, work_jobs_items, work_jobs_assignments,
+  work_jobs_checklists, work_jobs_checklist_items, work_jobs_parts,
+  work_assets, work_permits, work_jobs_links

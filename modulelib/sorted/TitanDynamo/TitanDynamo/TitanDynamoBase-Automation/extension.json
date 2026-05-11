@@ -1,0 +1,10 @@
+{
+  "name": "TitanPulse",
+  "slug": "titan-pulse",
+  "type": "extension",
+  "version": "1.2.0",
+  "description": "Titan Pulse \u2014 universal automation + intelligence engine (consumes tz_signals, produces suggestions, pending actions, analyses).",
+  "providers": [
+    "App\\Extensions\\TitanPulse\\Providers\\TitanPulseServiceProvider"
+  ]
+}

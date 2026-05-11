@@ -11,8 +11,9 @@ const page = usePage();
 const user = (page.props.auth as { user: { name: string } }).user;
 const platform = computed(() => (page.props.platform ?? {}) as any);
 const appName = computed(() => platform.value.app_name ?? 'TITAN ZERO');
+const previewMode = computed(() => page.props.preview === true);
 
-const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = useLocationSharing();
+const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = useLocationSharing(previewMode.value);
 </script>
 
 <template>
@@ -27,8 +28,11 @@ const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = u
                     class="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition"
                     :class="locationEnabled
                         ? 'bg-green-100 text-green-700'
-                        : 'bg-slate-100 text-slate-500'"
-                    :title="permissionDenied ? 'Location permission denied' : (locationEnabled ? 'Sharing location' : 'Share location')"
+                        : (previewMode ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500')"
+                    :title="previewMode
+                        ? 'Location sharing is disabled in preview mode'
+                        : (permissionDenied ? 'Location permission denied' : (locationEnabled ? 'Sharing location' : 'Share location'))"
+                    :disabled="previewMode"
                     @click="toggleLocation"
                 >
                     <!-- location pin icon -->
@@ -36,6 +40,7 @@ const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = u
                         <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-2.083 3.952-5.125 3.952-8.577 0-4.85-3.922-8.773-8.75-8.773S3.75 7.65 3.75 12.5c0 3.452 2.008 6.494 3.952 8.577a19.58 19.58 0 002.683 2.282 16.975 16.975 0 001.144.742zM12.5 15a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" clip-rule="evenodd" />
                     </svg>
                     <span v-if="locationEnabled">On</span>
+                    <span v-else-if="previewMode">Preview</span>
                     <span v-else>Off</span>
                 </button>
 
@@ -53,6 +58,9 @@ const { enabled: locationEnabled, permissionDenied, toggle: toggleLocation } = u
 
         <!-- Page content — pb accounts for bottom nav height + iOS home bar -->
         <main class="flex-1 pb-[calc(5rem+env(safe-area-inset-bottom,0px))]">
+            <div v-if="previewMode" class="border-b border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                Preview Mode: technician actions and live location updates are disabled for this account.
+            </div>
             <slot />
         </main>
 
