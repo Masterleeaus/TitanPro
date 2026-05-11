@@ -1,4 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import dispatchF56169 from './dispatch'
+import estimates from './estimates'
+import marketing from './marketing'
 import subscription from './subscription'
 import setup90f0be from './setup'
 import team from './team'
@@ -6,8 +9,6 @@ import customers from './customers'
 import properties from './properties'
 import jobs from './jobs'
 import calendarFa95d0 from './calendar'
-import estimates from './estimates'
-import dispatchF56169 from './dispatch'
 import reports from './reports'
 import settings from './settings'
 import invoices from './invoices'
@@ -417,6 +418,10 @@ dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 dashboard.form = dashboardForm
 
 const owner = {
+    dispatch: Object.assign(dispatch, dispatchF56169),
+    billing: Object.assign(billing, billing),
+    estimates: Object.assign(estimates, estimates),
+    marketing: Object.assign(marketing, marketing),
     subscription: Object.assign(subscription, subscription),
     setup: Object.assign(setup, setup90f0be),
     team: Object.assign(team, team),
@@ -424,9 +429,6 @@ const owner = {
     properties: Object.assign(properties, properties),
     jobs: Object.assign(jobs, jobs),
     calendar: Object.assign(calendar, calendarFa95d0),
-    estimates: Object.assign(estimates, estimates),
-    dispatch: Object.assign(dispatch, dispatchF56169),
-    billing: Object.assign(billing, billing),
     dashboard: Object.assign(dashboard, dashboard),
     reports: Object.assign(reports, reports),
     settings: Object.assign(settings, settings),

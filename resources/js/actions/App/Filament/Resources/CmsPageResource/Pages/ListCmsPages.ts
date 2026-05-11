@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 const ListCmsPages = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCmsPages.url(options),
@@ -11,13 +11,13 @@ const ListCmsPages = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListCmsPages.definition = {
     methods: ["get","head"],
-    url: '/admin/cms-pages',
+    url: '/titanstudio/cms-pages',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 ListCmsPages.url = (options?: RouteQueryOptions) => {
     return ListCmsPages.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListCmsPages.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 ListCmsPages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCmsPages.url(options),
@@ -36,7 +36,7 @@ ListCmsPages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 ListCmsPages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListCmsPages.url(options),
@@ -46,7 +46,7 @@ ListCmsPages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 const ListCmsPagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCmsPages.url(options),
@@ -56,7 +56,7 @@ const ListCmsPagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 ListCmsPagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCmsPages.url(options),
@@ -66,7 +66,7 @@ ListCmsPagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\ListCmsPages::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php:7
-* @route '/admin/cms-pages'
+* @route '/titanstudio/cms-pages'
 */
 ListCmsPagesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCmsPages.url({

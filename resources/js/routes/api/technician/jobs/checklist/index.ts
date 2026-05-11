@@ -1,10 +1,10 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Technician\JobController::toggle
-* @see app/Http/Controllers/Technician/JobController.php:129
+* @see app/Http/Controllers/Technician/JobController.php:139
 * @route '/api/technician/jobs/{job}/checklist/{item}'
 */
-export const toggle = (args: { job: number | { id: number }, item: number | { id: number } } | [job: number | { id: number }, item: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const toggle = (args: { job: string | number | { id: string | number }, item: string | number | { id: string | number } } | [job: string | number | { id: string | number }, item: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: toggle.url(args, options),
     method: 'patch',
 })
@@ -16,10 +16,10 @@ toggle.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::toggle
-* @see app/Http/Controllers/Technician/JobController.php:129
+* @see app/Http/Controllers/Technician/JobController.php:139
 * @route '/api/technician/jobs/{job}/checklist/{item}'
 */
-toggle.url = (args: { job: number | { id: number }, item: number | { id: number } } | [job: number | { id: number }, item: number | { id: number } ], options?: RouteQueryOptions) => {
+toggle.url = (args: { job: string | number | { id: string | number }, item: string | number | { id: string | number } } | [job: string | number | { id: string | number }, item: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             job: args[0],
@@ -46,20 +46,20 @@ toggle.url = (args: { job: number | { id: number }, item: number | { id: number 
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::toggle
-* @see app/Http/Controllers/Technician/JobController.php:129
+* @see app/Http/Controllers/Technician/JobController.php:139
 * @route '/api/technician/jobs/{job}/checklist/{item}'
 */
-toggle.patch = (args: { job: number | { id: number }, item: number | { id: number } } | [job: number | { id: number }, item: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+toggle.patch = (args: { job: string | number | { id: string | number }, item: string | number | { id: string | number } } | [job: string | number | { id: string | number }, item: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: toggle.url(args, options),
     method: 'patch',
 })
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::toggle
-* @see app/Http/Controllers/Technician/JobController.php:129
+* @see app/Http/Controllers/Technician/JobController.php:139
 * @route '/api/technician/jobs/{job}/checklist/{item}'
 */
-const toggleForm = (args: { job: number | { id: number }, item: number | { id: number } } | [job: number | { id: number }, item: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const toggleForm = (args: { job: string | number | { id: string | number }, item: string | number | { id: string | number } } | [job: string | number | { id: string | number }, item: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: toggle.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -71,10 +71,10 @@ const toggleForm = (args: { job: number | { id: number }, item: number | { id: n
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::toggle
-* @see app/Http/Controllers/Technician/JobController.php:129
+* @see app/Http/Controllers/Technician/JobController.php:139
 * @route '/api/technician/jobs/{job}/checklist/{item}'
 */
-toggleForm.patch = (args: { job: number | { id: number }, item: number | { id: number } } | [job: number | { id: number }, item: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+toggleForm.patch = (args: { job: string | number | { id: string | number }, item: string | number | { id: string | number } } | [job: string | number | { id: string | number }, item: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: toggle.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
