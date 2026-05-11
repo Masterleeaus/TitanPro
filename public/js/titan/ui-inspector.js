@@ -259,7 +259,7 @@
         assignStableUiKeys();
         const data = loadStorage();
         for (const [key, props] of Object.entries(data)) {
-            // Best-effort: find element(s) by data-ui-key or skip (Livewire may re-render later)
+            // Best-effort: apply to all current instances for this key; future Livewire renders are handled by re-run hooks
             document.querySelectorAll(`[data-ui-key="${cssEscape(key)}"]`).forEach((el) => applyProps(el, props));
         }
     }

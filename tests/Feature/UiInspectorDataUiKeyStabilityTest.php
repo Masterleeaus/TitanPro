@@ -1,8 +1,10 @@
 <?php
 
 use App\Platform\Ui\ComponentRegistry;
+use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
+    expect(File::exists(base_path('public/js/titan/ui-inspector.js')))->toBeTrue();
     $this->source = file_get_contents(base_path('public/js/titan/ui-inspector.js'));
 });
 
