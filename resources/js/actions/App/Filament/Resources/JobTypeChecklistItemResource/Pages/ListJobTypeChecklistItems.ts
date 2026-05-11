@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 const ListJobTypeChecklistItems = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobTypeChecklistItems.url(options),
@@ -11,13 +11,13 @@ const ListJobTypeChecklistItems = (options?: RouteQueryOptions): RouteDefinition
 
 ListJobTypeChecklistItems.definition = {
     methods: ["get","head"],
-    url: '/admin/job-type-checklist-items',
+    url: '/titanstudio/job-type-checklist-items',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 ListJobTypeChecklistItems.url = (options?: RouteQueryOptions) => {
     return ListJobTypeChecklistItems.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListJobTypeChecklistItems.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 ListJobTypeChecklistItems.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobTypeChecklistItems.url(options),
@@ -36,7 +36,7 @@ ListJobTypeChecklistItems.get = (options?: RouteQueryOptions): RouteDefinition<'
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 ListJobTypeChecklistItems.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListJobTypeChecklistItems.url(options),
@@ -46,7 +46,7 @@ ListJobTypeChecklistItems.head = (options?: RouteQueryOptions): RouteDefinition<
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 const ListJobTypeChecklistItemsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypeChecklistItems.url(options),
@@ -56,7 +56,7 @@ const ListJobTypeChecklistItemsForm = (options?: RouteQueryOptions): RouteFormDe
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 ListJobTypeChecklistItemsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypeChecklistItems.url(options),
@@ -66,7 +66,7 @@ ListJobTypeChecklistItemsForm.get = (options?: RouteQueryOptions): RouteFormDefi
 /**
 * @see \App\Filament\Resources\JobTypeChecklistItemResource\Pages\ListJobTypeChecklistItems::__invoke
 * @see app/Filament/Resources/JobTypeChecklistItemResource/Pages/ListJobTypeChecklistItems.php:7
-* @route '/admin/job-type-checklist-items'
+* @route '/titanstudio/job-type-checklist-items'
 */
 ListJobTypeChecklistItemsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypeChecklistItems.url({
