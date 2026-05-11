@@ -1,41 +1,50 @@
-# Issue 285 — HandleInertiaRequests missing shared props required by frontend TypeScript types
+# Issue 285 — [FOLLOW-UP] Verify: GroundZero /groundzero UI for owner, admin, dispatcher, bookkeeper roles
 
 ## Issue Summary
 
-`app/Http/Middleware/HandleInertiaRequests.php` did not share the `name`, `quote`, or `sidebarOpen`
-props that the TypeScript interface `AppPageProps` (in `resources/js/types/index.d.ts`) declares as
-required. Any Vue page reading `$page.props.name`, `$page.props.quote`, or `$page.props.sidebarOpen`
-would receive `undefined` at runtime, causing silent JS errors or a broken UI.
+Follow-up to issue #119. Verifies that the GroundZero Filament panel at `/groundzero` behaves correctly
+for each allowed role (owner, admin, dispatcher, bookkeeper) and that disallowed roles are blocked.
+Also verifies subscription gating via `CheckSubscription` middleware and the `GroundZero` brand name.
 
 ## Files Changed
 
-### Modified files
+| File | Change |
+|------|--------|
+| `tests/Feature/Admin/GroundZeroPanelAccessTest.php` | Extended with brand-name assertion, subscription gating tests (owner/admin blocked; dispatcher/bookkeeper pass-through), and section comments |
+| `issue-docs/issue-197.md` | This file |
 
-| File | Changes |
-|------|---------|
-| `app/Http/Middleware/HandleInertiaRequests.php` | Added `name`, `quote`, and `sidebarOpen` to the `share()` return array. |
+## Already in Place (No Code Changes Required)
+
+- `app/Providers/Filament/GroundZeroPanelProvider.php` — `CheckSubscription` in `authMiddleware`; brand name set to `'GroundZero'`
+- `app/Models/User.php` — `canAccessPanel()` grants `dispatcher` and `bookkeeper` roles for `groundzero` panel
+- `routes/web.php` — `/ground-zero` → `/groundzero` 301 redirect (`groundzero.alias` route)
+- `config/titan_panels.php` — `groundzero` roles list includes `dispatcher` and `bookkeeper`
+- `tests/Feature/PanelRoutingTest.php` — `legacy_panel_aliases` dataset covers `/ground-zero` → `/groundzero` 301 redirect
 
 ## Fixes Applied
 
-| Prop | Value | Notes |
-|------|-------|-------|
-| `name` | `config('app.name')` | Application name from Laravel config. |
-| `quote` | `['message' => '', 'author' => '']` | Static empty default; can be wired to a DB table or config in a follow-up. |
-| `sidebarOpen` | `$request->cookie('sidebar_state') === 'true'` | Reads the unencrypted `sidebar_state` cookie (excluded from `encryptCookies` in `bootstrap/app.php`); defaults to `false` when the cookie is absent. |
+1. **Subscription gating tests** — Added tests that verify:
+   - An `owner` with no active subscription is redirected to `route('owner.subscription.expired')` when accessing `/groundzero`.
+   - An `admin` with no active subscription is redirected similarly.
+   - A `dispatcher` passes through `CheckSubscription` even without an active subscription.
+   - A `bookkeeper` passes through `CheckSubscription` even without an active subscription.
 
-All pre-existing props (`auth`, `subscription`, `plan`, `platform`) are unchanged.
+2. **Brand name test** — Added a test that follows redirects into `/groundzero` and asserts the rendered HTML contains `GroundZero`, confirming `OrganizationBrandingResolver::panelName('GroundZero')` resolves correctly.
 
-## Acceptance Criteria Verified
+## Acceptance Criteria Mapping
 
-- [x] Middleware shares `name`, `quote`, and `sidebarOpen`
-- [x] TypeScript types remain in sync — `AppPageProps` already declared all three; no TS changes needed
-- [x] `sidebarOpen` is driven by the persisted `sidebar_state` cookie so sidebar state survives page reloads
-- [x] Existing Inertia pages still receive `auth`, `subscription`, `plan`, `platform`
+| Criterion | Test / Verification |
+|-----------|---------------------|
+| `/groundzero` loads for owner with active subscription | `owner can access the GroundZero panel` |
+| `/groundzero` loads for admin with active subscription | `admin can access the GroundZero panel` |
+| `/groundzero` loads for dispatcher (passes through CheckSubscription) | `dispatcher can access the GroundZero panel` + `dispatcher passes through CheckSubscription even without an active subscription` |
+| `/groundzero` loads for bookkeeper (passes through CheckSubscription) | `bookkeeper can access the GroundZero panel` + `bookkeeper passes through CheckSubscription even without an active subscription` |
+| `/groundzero` is blocked for technician | `technician cannot access the GroundZero panel` |
+| `/ground-zero` 301-redirects to `/groundzero` | `legacy panel aliases permanently redirect to canonical routes` in `PanelRoutingTest.php` |
+| Owner/admin without active subscription is gated | `owner without an active subscription is redirected by CheckSubscription` + `admin without an active subscription is redirected by CheckSubscription` |
+| Brand name renders as `GroundZero` | `GroundZero panel renders brand name as GroundZero` |
 
 ## Next Steps
 
-1. **Quote service** — if rotating motivational quotes are desired, create a `quotes` config file or
-   a `Quote` model and replace the static default with a call to a `QuoteService::random()` helper.
-   Track in a follow-up issue.
-2. **User-preference sidebar state** — consider storing sidebar preference in the `user_preferences`
-   table rather than a cookie so it roams across browsers/devices.
+- Run `composer run test` (PHP 8.4 environment required) to confirm all tests pass.
+- Run `vendor/bin/pint` to apply code style fixes.
