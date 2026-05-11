@@ -149,10 +149,17 @@ class UiStudio extends Page
             return false;
         }
 
-        $ownerAdminPanels = ['titanstudio', 'titannexus', 'titanquotes', 'groundzero', 'zeropay'];
+        $panelId = Filament::getCurrentPanel()?->getId();
 
-        if (in_array(Filament::getCurrentPanel()?->getId(), $ownerAdminPanels, true)) {
-            return $user->hasRole(['owner', 'admin']);
+        if (! $panelId) {
+            return true;
+        }
+
+        $panelRoles = config("titan_panels.panels.{$panelId}.roles", []);
+        $uiStudioRoles = array_values(array_intersect($panelRoles, ['owner', 'admin']));
+
+        if ($uiStudioRoles !== []) {
+            return $user->hasRole($uiStudioRoles);
         }
 
         return true;
