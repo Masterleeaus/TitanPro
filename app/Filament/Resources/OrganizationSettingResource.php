@@ -37,7 +37,11 @@ class OrganizationSettingResource extends Resource
                     TextInput::make('company_email')->label('Company Email')->maxLength(160),
                     TextInput::make('company_phone')->label('Company Phone')->maxLength(80),
                     TextInput::make('default_tax_rate')->label('Default Tax Rate')->numeric(),
-                    TextInput::make('stripe_publishable_key')->label('Stripe Publishable Key')->maxLength(255),
+                    TextInput::make('stripe_publishable_key')
+                        ->label('Stripe Publishable Key')
+                        ->password()
+                        ->revealable()
+                        ->maxLength(255),
                     TextInput::make('twilio_from_number')->label('Twilio From Number')->maxLength(80),
                     TextInput::make('sendgrid_from_email')->label('SendGrid From Email')->maxLength(160),
                 ]),
@@ -51,6 +55,10 @@ class OrganizationSettingResource extends Resource
                 TextColumn::make('company_name')->label('Company')->searchable()->sortable(),
                 TextColumn::make('company_email')->label('Email')->searchable()->sortable(),
                 TextColumn::make('default_tax_rate')->label('Tax Rate')->searchable()->sortable(),
+                TextColumn::make('stripe_publishable_key')
+                    ->label('Publishable Key')
+                    ->formatStateUsing(fn (?string $state): string => OrganizationSetting::maskPrefix($state) ?? '—')
+                    ->toggleable(),
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([

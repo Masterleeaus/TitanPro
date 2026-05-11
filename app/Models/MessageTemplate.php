@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Contracts\TenantAware;
 use App\Models\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MessageTemplate extends Model implements TenantAware
 {
-    use BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'organization_id',

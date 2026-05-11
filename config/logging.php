@@ -127,6 +127,23 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'ops' => [
+            'driver' => 'stack',
+            'channels' => array_values(array_filter(
+                array_map('trim', explode(',', (string) env('OPS_LOG_CHANNELS', 'ops_daily'))),
+                fn (string $v) => $v !== ''
+            )),
+            'ignore_exceptions' => false,
+        ],
+
+        'ops_daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/ops.log'),
+            'level' => 'critical',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
     ],
 
 ];

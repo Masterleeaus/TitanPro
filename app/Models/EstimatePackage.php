@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
-class EstimatePackage extends Model
+class EstimatePackage extends Model implements TenantAware
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'organization_id',
         'estimate_id',
         'tier',
         'label',
@@ -36,6 +39,23 @@ class EstimatePackage extends Model
     public function estimate(): BelongsTo
     {
         return $this->belongsTo(Estimate::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $estimatePackage): void {
+            if ($estimatePackage->organization_id !== null) {
+                return;
+            }
+
+            $estimatePackage->organization_id = auth()->user()?->organization_id
+                ?? Estimate::withoutGlobalScopes()->whereKey($estimatePackage->estimate_id)->value('organization_id');
+        });
     }
 
     public function lineItems(): HasMany
