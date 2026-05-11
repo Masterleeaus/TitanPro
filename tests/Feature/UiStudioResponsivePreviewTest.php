@@ -16,9 +16,10 @@ test('ui studio exposes required preview modes and viewports', function () {
 
 test('ui studio preview viewport width follows selected mode', function () {
     $studio = new UiStudio();
-    $studio->selectPreviewMode('mobile');
-
-    expect($studio->previewViewportWidth())->toBe(390);
+    foreach ($studio->previewModes() as $mode => $config) {
+        $studio->selectPreviewMode($mode);
+        expect($studio->previewViewportWidth())->toBe($config['viewport']);
+    }
 });
 
 test('ui studio can configure hidden table columns per breakpoint', function () {
@@ -35,9 +36,12 @@ test('ui studio can configure hidden table columns per breakpoint', function () 
     ];
 
     $studio->updateTableColumnVisibility('w_table', 'mobile', 'owner', true);
+    expect($studio->canvasWidgets[0]['properties']['hidden_columns']['mobile'])->toBe(['owner']);
+
     $studio->updateTableColumnVisibility('w_table', 'mobile', 'owner', false);
+    expect($studio->canvasWidgets[0]['properties']['hidden_columns']['mobile'])->toBe([]);
+
     $studio->updateTableColumnVisibility('w_table', 'tablet', 'updated_at', true);
 
-    expect($studio->canvasWidgets[0]['properties']['hidden_columns']['mobile'])->toBe([])
-        ->and($studio->canvasWidgets[0]['properties']['hidden_columns']['tablet'])->toBe(['updated_at']);
+    expect($studio->canvasWidgets[0]['properties']['hidden_columns']['tablet'])->toBe(['updated_at']);
 });

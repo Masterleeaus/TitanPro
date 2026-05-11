@@ -222,7 +222,7 @@ class UiStudio extends Page
             'columns' => 12,
             'order'   => count($this->canvasWidgets),
             'properties' => $type === 'table-card'
-                ? ['hidden_columns' => ['mobile' => ['owner', 'updated_at'], 'tablet' => ['updated_at']]]
+                ? ['hidden_columns' => $this->defaultTableHiddenColumns()]
                 : [],
         ];
     }
@@ -285,16 +285,21 @@ class UiStudio extends Page
                 continue;
             }
 
-            $hiddenColumns = $widget['properties']['hidden_columns'] ?? ['mobile' => [], 'tablet' => []];
-            $current = array_values(array_unique(array_filter((array) ($hiddenColumns[$breakpoint] ?? []), 'is_string')));
+            $hiddenColumns = is_array($widget['properties']['hidden_columns'] ?? null)
+                ? $widget['properties']['hidden_columns']
+                : $this->defaultTableHiddenColumns();
+
+            $existingColumns = (array) ($hiddenColumns[$breakpoint] ?? []);
+            $validColumns = array_filter($existingColumns, 'is_string');
+            $uniqueColumns = array_values(array_unique($validColumns));
 
             if ($hidden) {
-                $current[] = $column;
+                $uniqueColumns[] = $column;
             } else {
-                $current = array_values(array_filter($current, fn (string $item): bool => $item !== $column));
+                $uniqueColumns = array_values(array_filter($uniqueColumns, fn (string $item): bool => $item !== $column));
             }
 
-            $hiddenColumns[$breakpoint] = array_values(array_unique($current));
+            $hiddenColumns[$breakpoint] = array_values(array_unique($uniqueColumns));
             $widget['properties']['hidden_columns'] = $hiddenColumns;
             break;
         }
@@ -848,7 +853,12 @@ class UiStudio extends Page
         return (int) ($this->previewModes()[$this->previewMode]['viewport'] ?? 1440);
     }
 
-    /** @return array<string, int|float> */
+    /**
+     * Resolve active responsive tokens for preview.
+     * Fallback order: selected preview mode -> currently edited breakpoint -> desktop defaults.
+     *
+     * @return array<string, int|float>
+     */
     public function activeResponsiveOverrides(): array
     {
         return $this->responsiveTokenOverrides[$this->previewMode]
@@ -875,6 +885,44 @@ class UiStudio extends Page
             'updated_at' => 'Updated',
             'actions' => 'Actions',
         ];
+    }
+
+    /** @return array<string, array<int, string>> */
+    public function defaultTableHiddenColumns(): array
+    {
+        return [
+            'mobile' => ['owner', 'updated_at'],
+            'tablet' => ['updated_at'],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $properties
+     * @return array<string, array<int, string>>
+     */
+    public function resolvePreviewTableHiddenColumns(?array $properties = null): array
+    {
+        $defaults = $this->defaultTableHiddenColumns();
+        $current = is_array($properties['hidden_columns'] ?? null) ? $properties['hidden_columns'] : [];
+
+        return [
+            'mobile' => array_values(array_unique(array_filter((array) ($current['mobile'] ?? $defaults['mobile']), 'is_string'))),
+            'tablet' => array_values(array_unique(array_filter((array) ($current['tablet'] ?? $defaults['tablet']), 'is_string'))),
+        ];
+    }
+
+    /** @param array<int, string> $mobileHiddenColumns */
+    public function shouldShowPreviewTableColumn(string $column, array $mobileHiddenColumns): bool
+    {
+        $isMobilePreview = in_array($this->previewMode, ['mobile', 'customer'], true);
+
+        return ! ($isMobilePreview && in_array($column, $mobileHiddenColumns, true));
+    }
+
+    /** @param array<int, string> $tabletHiddenColumns */
+    public function previewTableColumnClass(string $column, array $tabletHiddenColumns): string
+    {
+        return in_array($column, $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '';
     }
 
     /**

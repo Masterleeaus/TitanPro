@@ -137,8 +137,9 @@
             @php($previewViewport = $this->previewViewportWidth())
             @php($previewOverrides = $this->activeResponsiveOverrides())
             @php($tablePreview = collect($canvasWidgets)->first(fn ($widget) => ($widget['type'] ?? null) === 'table-card'))
-            @php($mobileHiddenColumns = $tablePreview['properties']['hidden_columns']['mobile'] ?? ['owner', 'updated_at'])
-            @php($tabletHiddenColumns = $tablePreview['properties']['hidden_columns']['tablet'] ?? ['updated_at'])
+            @php($tableHiddenColumns = $this->resolvePreviewTableHiddenColumns($tablePreview['properties'] ?? []))
+            @php($mobileHiddenColumns = $tableHiddenColumns['mobile'])
+            @php($tabletHiddenColumns = $tableHiddenColumns['tablet'])
             <div class="space-y-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
                 <div class="flex items-center justify-between gap-3">
                     <span class="font-semibold">Live Preview</span>
@@ -184,11 +185,11 @@
                                         <tr>
                                             <th class="px-2 py-2">Name</th>
                                             <th class="px-2 py-2">Status</th>
-                                            @if (! in_array('owner', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
-                                                <th class="px-2 py-2 {{ in_array('owner', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">Owner</th>
+                                            @if ($this->shouldShowPreviewTableColumn('owner', $mobileHiddenColumns))
+                                                <th class="px-2 py-2 {{ $this->previewTableColumnClass('owner', $tabletHiddenColumns) }}">Owner</th>
                                             @endif
-                                            @if (! in_array('updated_at', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
-                                                <th class="px-2 py-2 {{ in_array('updated_at', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">Updated</th>
+                                            @if ($this->shouldShowPreviewTableColumn('updated_at', $mobileHiddenColumns))
+                                                <th class="px-2 py-2 {{ $this->previewTableColumnClass('updated_at', $tabletHiddenColumns) }}">Updated</th>
                                             @endif
                                             <th class="px-2 py-2 text-right">Actions</th>
                                         </tr>
@@ -197,11 +198,11 @@
                                         <tr class="border-t border-gray-100 dark:border-white/5">
                                             <td class="px-2 py-2">Acme HQ</td>
                                             <td class="px-2 py-2">Active</td>
-                                            @if (! in_array('owner', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
-                                                <td class="px-2 py-2 {{ in_array('owner', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">A. Lee</td>
+                                            @if ($this->shouldShowPreviewTableColumn('owner', $mobileHiddenColumns))
+                                                <td class="px-2 py-2 {{ $this->previewTableColumnClass('owner', $tabletHiddenColumns) }}">A. Lee</td>
                                             @endif
-                                            @if (! in_array('updated_at', $mobileHiddenColumns, true) || ! in_array($previewMode, ['mobile', 'customer'], true))
-                                                <td class="px-2 py-2 {{ in_array('updated_at', $tabletHiddenColumns, true) ? 'hidden md:table-cell' : '' }}">2m ago</td>
+                                            @if ($this->shouldShowPreviewTableColumn('updated_at', $mobileHiddenColumns))
+                                                <td class="px-2 py-2 {{ $this->previewTableColumnClass('updated_at', $tabletHiddenColumns) }}">2m ago</td>
                                             @endif
                                             <td class="px-2 py-2 text-right">View</td>
                                         </tr>
@@ -482,7 +483,7 @@
                                     </div>
 
                                     @if (($selectedWidget['type'] ?? null) === 'table-card')
-                                        @php($selectedHidden = $selectedWidget['properties']['hidden_columns'] ?? ['mobile' => [], 'tablet' => []])
+                                        @php($selectedHidden = $this->resolvePreviewTableHiddenColumns($selectedWidget['properties'] ?? []))
                                         <div>
                                             <label class="text-xs text-gray-600 dark:text-gray-400 block mb-2">Hide columns on small screens</label>
                                             <div class="space-y-2">
