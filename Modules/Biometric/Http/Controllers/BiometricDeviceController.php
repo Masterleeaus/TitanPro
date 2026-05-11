@@ -4,15 +4,14 @@ namespace Modules\Biometric\Http\Controllers;
 
 use App\Helper\Reply;
 use App\Http\Controllers\AccountBaseController;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Modules\Biometric\Entities\BiometricCommands;
 use Modules\Biometric\Entities\BiometricDevice;
 use Modules\Biometric\Http\Requests\BiometricDeviceStore;
-use App\Models\User;
-use Modules\Biometric\Entities\BiometricCommands;
 
 class BiometricDeviceController extends AccountBaseController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -20,6 +19,7 @@ class BiometricDeviceController extends AccountBaseController
 
         $this->middleware(function ($request, $next) {
             abort_403(! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none');
+
             return $next($request);
         });
     }
@@ -34,7 +34,6 @@ class BiometricDeviceController extends AccountBaseController
             ->update(['status' => 'offline']);
 
         $this->biometricDevice = BiometricDevice::where('company_id', company()->id)->get();
-
 
         return view('biometric::devices.index', $this->data);
     }
@@ -60,7 +59,7 @@ class BiometricDeviceController extends AccountBaseController
      */
     public function store(BiometricDeviceStore $request)
     {
-        $device = new BiometricDevice();
+        $device = new BiometricDevice;
         $device->company_id = company()->id;
         $device->device_name = $request->device_name;
         $device->serial_number = strtoupper($request->serial_number);
@@ -99,17 +98,17 @@ class BiometricDeviceController extends AccountBaseController
                 $biometricCommand = BiometricCommands::create([
                     'company_id' => company()->id,
                     'type' => 'CREATEUSER',
-                    'command_id' => 'TEMP-' . time(), // Temporary ID
+                    'command_id' => 'TEMP-'.time(), // Temporary ID
                     'user_id' => $employee->id,
                     'employee_id' => $employee->employee_id,
                     'device_serial_number' => $device->serial_number,
-                    'command' => 'TEMPCOMMAND-' . time(),
+                    'command' => 'TEMPCOMMAND-'.time(),
                     'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
                 $biometricCommand->update([
-                    'command_id' => 'CREATEUSER-' . $biometricCommand->id,
+                    'command_id' => 'CREATEUSER-'.$biometricCommand->id,
                     'command' => BiometricCommands::createUserCommand($biometricCommand->id, $employee->employee_id, $employee->name),
                 ]);
             }

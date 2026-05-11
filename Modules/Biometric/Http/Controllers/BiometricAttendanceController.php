@@ -6,10 +6,8 @@ use App\Http\Controllers\AccountBaseController;
 use App\Models\User;
 use Modules\Biometric\DataTables\BiometricAttendanceDataTable;
 
-
 class BiometricAttendanceController extends AccountBaseController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -17,11 +15,10 @@ class BiometricAttendanceController extends AccountBaseController
 
         $this->middleware(function ($request, $next) {
             abort_403(! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none');
+
             return $next($request);
         });
     }
-
-
 
     /**
      * Display a listing of the resource.
