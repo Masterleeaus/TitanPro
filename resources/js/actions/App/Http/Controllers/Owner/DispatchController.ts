@@ -163,10 +163,10 @@ technicianLocations.form = technicianLocationsForm
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-export const technicianTrail = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const technicianTrail = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: technicianTrail.url(args, options),
     method: 'get',
 })
@@ -178,10 +178,10 @@ technicianTrail.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-technicianTrail.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+technicianTrail.url = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { user: args }
     }
@@ -211,50 +211,50 @@ technicianTrail.url = (args: { user: number | { id: number } } | [user: number |
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-technicianTrail.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+technicianTrail.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: technicianTrail.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-technicianTrail.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+technicianTrail.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: technicianTrail.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-const technicianTrailForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const technicianTrailForm = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: technicianTrail.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-technicianTrailForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+technicianTrailForm.get = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: technicianTrail.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
-technicianTrailForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+technicianTrailForm.head = (args: { user: string | number | { id: string | number } } | [user: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: technicianTrail.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
