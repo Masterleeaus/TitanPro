@@ -23,7 +23,7 @@ return new class extends Migration
         $hasGuardName = Schema::hasColumn('permissions', 'guard_name');
 
         $configPerms = config('accountings.permissions', []);
-        $legacyPerms = ['accountings.view', 'accountings.create', 'accountings.update', 'accountings.delete'];
+        $legacyPerms = ['accountings.view', 'accountings.create', 'accountings.edit', 'accountings.update', 'accountings.delete'];
         $mergedPerms = array_merge($configPerms, $legacyPerms);
 
         $perms = array_values(array_unique(array_filter(

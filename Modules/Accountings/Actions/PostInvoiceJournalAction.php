@@ -51,7 +51,7 @@ class PostInvoiceJournalAction
 
         if ($authCompanyId !== null) {
             if ($requestedCompanyId !== null && $requestedCompanyId !== (int) $authCompanyId) {
-                throw new AuthorizationException('Cross-tenant journal posting is not allowed.');
+                throw new AuthorizationException("Cross-tenant journal posting is not allowed. Requested: {$requestedCompanyId}, Authenticated: {$authCompanyId}.");
             }
 
             return (int) $authCompanyId;

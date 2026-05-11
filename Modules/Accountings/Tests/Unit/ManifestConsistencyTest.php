@@ -9,9 +9,12 @@ class ManifestConsistencyTest extends TestCase
 {
     public function test_module_json_has_single_active_key(): void
     {
-        $moduleJson = file_get_contents(base_path('Modules/Accountings/module.json'));
+        $manifestPath = base_path('Modules/Accountings/module.json');
+        $moduleJson = (string) file_get_contents($manifestPath);
+        $manifest = json_decode($moduleJson, true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertSame(1, substr_count((string) $moduleJson, '"active"'));
+        $this->assertArrayHasKey('active', $manifest);
+        $this->assertSame(1, preg_match_all('/"active"\s*:/', $moduleJson));
     }
 
     public function test_declared_providers_resolve_to_existing_classes(): void

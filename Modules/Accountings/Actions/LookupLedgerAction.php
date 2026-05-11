@@ -25,7 +25,7 @@ class LookupLedgerAction
 
         if ($authCompanyId !== null) {
             if ($requestedCompanyId !== null && $requestedCompanyId !== (int) $authCompanyId) {
-                throw new AuthorizationException('Cross-tenant ledger lookup is not allowed.');
+                throw new AuthorizationException("Cross-tenant ledger lookup is not allowed. Requested: {$requestedCompanyId}, Authenticated: {$authCompanyId}.");
             }
 
             return (int) $authCompanyId;

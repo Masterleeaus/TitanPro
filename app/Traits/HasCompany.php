@@ -20,8 +20,20 @@ trait HasCompany
                 return;
             }
 
-            if (empty($model->company_id) && isset(Auth::user()->company_id)) {
-                $model->company_id = (int) Auth::user()->company_id;
+            if (! isset(Auth::user()->company_id)) {
+                return;
+            }
+
+            $authenticatedCompanyId = (int) Auth::user()->company_id;
+
+            if ($model->company_id === null) {
+                $model->company_id = $authenticatedCompanyId;
+
+                return;
+            }
+
+            if ((int) $model->company_id !== $authenticatedCompanyId) {
+                $model->company_id = $authenticatedCompanyId;
             }
         });
 
