@@ -33,6 +33,11 @@ trait HasCompany
             }
 
             if ((int) $model->company_id !== $authenticatedCompanyId) {
+                Log::warning('HasCompany prevented cross-tenant company_id assignment during model creation.', [
+                    'model' => get_class($model),
+                    'requested_company_id' => (int) $model->company_id,
+                    'authenticated_company_id' => $authenticatedCompanyId,
+                ]);
                 $model->company_id = $authenticatedCompanyId;
             }
         });
