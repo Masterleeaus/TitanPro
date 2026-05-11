@@ -5,14 +5,17 @@
 @else
     @php
         $frontendView = 'titan-operator::frontend-ui.frontend-ui';
+        $routeIfExists = static fn (string $name, array $parameters = []): ?string => \Illuminate\Support\Facades\Route::has($name)
+            ? route($name, $parameters)
+            : null;
         $routes = [
-            'index' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.index') ? route('api.v2.titan_operator.index', [$titan_operator->getAttribute('uuid'), $session]) : null,
-            'getSession' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.index.session') ? route('api.v2.titan_operator.index.session', [$titan_operator->getAttribute('uuid'), $session]) : null,
-            'conversations' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.conversion.store') ? route('api.v2.titan_operator.conversion.store', [$titan_operator->getAttribute('uuid'), $session]) : null,
-            'send-email' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.send-email.store') ? route('api.v2.titan_operator.send-email.store', [$titan_operator->getAttribute('uuid'), $session]) : null,
-            'collect-email' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.collect.email') ? route('api.v2.titan_operator.collect.email', [$titan_operator->getAttribute('uuid'), $session]) : null,
-            'articles' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.articles') ? route('api.v2.titan_operator.articles', [$titan_operator->getAttribute('uuid')]) : null,
-            'enable-sound' => \Illuminate\Support\Facades\Route::has('api.v2.titan_operator.enable-sound') ? route('api.v2.titan_operator.enable-sound', [$titan_operator->getAttribute('uuid'), $session]) : null,
+            'index' => $routeIfExists('api.v2.titan_operator.index', [$titan_operator->getAttribute('uuid'), $session]),
+            'getSession' => $routeIfExists('api.v2.titan_operator.index.session', [$titan_operator->getAttribute('uuid'), $session]),
+            'conversations' => $routeIfExists('api.v2.titan_operator.conversion.store', [$titan_operator->getAttribute('uuid'), $session]),
+            'send-email' => $routeIfExists('api.v2.titan_operator.send-email.store', [$titan_operator->getAttribute('uuid'), $session]),
+            'collect-email' => $routeIfExists('api.v2.titan_operator.collect.email', [$titan_operator->getAttribute('uuid'), $session]),
+            'articles' => $routeIfExists('api.v2.titan_operator.articles', [$titan_operator->getAttribute('uuid')]),
+            'enable-sound' => $routeIfExists('api.v2.titan_operator.enable-sound', [$titan_operator->getAttribute('uuid'), $session]),
         ];
     @endphp
 
