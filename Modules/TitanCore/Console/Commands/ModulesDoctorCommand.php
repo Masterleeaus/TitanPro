@@ -109,22 +109,22 @@ class ModulesDoctorCommand extends Command
             }
         }
 
-        // ── 4. Automation handler class checks ───────────────────────────────
+        // ── 5. Automation handler class checks ───────────────────────────────
         if ($this->runAutomationHandlerValidation()) {
             $hasProblems = true;
         }
 
-        // ── 5. AI manifest class checks ───────────────────────────────────────
+        // ── 6. AI manifest class checks ───────────────────────────────────────
         if ($this->runAIManifestValidation()) {
             $hasProblems = true;
         }
 
-        // ── 6. Tenant boundary diagnostics ─────────────────────────────────────
+        // ── 7. Tenant boundary diagnostics ─────────────────────────────────────
         if ($this->runTenantBoundaryValidation()) {
             $hasProblems = true;
         }
 
-        // ── 7. Load order ─────────────────────────────────────────────────────
+        // ── 8. Load order ─────────────────────────────────────────────────────
         $this->newLine();
         $this->components->info('Resolved load order:');
         $order = $graph->resolveLoadOrder();
