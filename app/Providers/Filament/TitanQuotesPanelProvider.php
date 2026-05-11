@@ -63,6 +63,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }

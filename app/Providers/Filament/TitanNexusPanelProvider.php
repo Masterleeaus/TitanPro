@@ -77,6 +77,7 @@ class TitanNexusPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(...$this->uiInspectorHook());
     }
 }
