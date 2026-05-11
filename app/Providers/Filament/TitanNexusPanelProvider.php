@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
 use App\Filament\TitanNexus\Pages\LeadPipeline;
 use App\Filament\TitanNexus\Pages\MarketingCampaigns;
 use App\Filament\TitanNexus\Pages\TrainingContent;
@@ -59,6 +60,7 @@ class TitanNexusPanelProvider extends PanelProvider
                 LeadPipeline::class,
                 TrainingContent::class,
                 MarketingCampaigns::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanNexus/Widgets'), for: 'App\\Filament\\TitanNexus\\Widgets')
             ->widgets([

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
 use App\Filament\TitanQuotes\Pages\QuotePipelineDashboard;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Support\OrganizationBrandingResolver;
@@ -45,6 +46,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/TitanQuotes/Pages'), for: 'App\\Filament\\TitanQuotes\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                UiStudio::class,
                 QuotePipelineDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanQuotes/Widgets'), for: 'App\\Filament\\TitanQuotes\\Widgets')

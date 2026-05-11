@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
 use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
 use App\Http\Middleware\CheckSubscription;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
@@ -55,6 +56,7 @@ class GroundZeroPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/GroundZero/Pages'), for: 'App\\Filament\\GroundZero\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/GroundZero/Widgets'), for: 'App\\Filament\\GroundZero\\Widgets')
             ->widgets([

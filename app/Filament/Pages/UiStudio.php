@@ -15,6 +15,7 @@ use App\Support\ThemeTokenManager;
 use App\Support\ThemePackManager;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
+use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -221,6 +222,34 @@ class UiStudio extends Page
             $this->marketplaceTab = 'import';
             $this->importUrl      = url('/theme/import/' . $importToken);
         }
+    }
+
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        $panelId = Filament::getCurrentPanel()?->getId();
+
+        if (! $panelId) {
+            return false;
+        }
+
+        if ($panelId === 'titanpro') {
+            return $user->hasRole('super_admin');
+        }
+
+        $panelRoles = config("titan_panels.panels.{$panelId}.roles", []);
+        $uiStudioRoles = array_values(array_intersect($panelRoles, ['owner', 'admin']));
+
+        if ($uiStudioRoles === []) {
+            return false;
+        }
+
+        return $user->hasRole($uiStudioRoles);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
