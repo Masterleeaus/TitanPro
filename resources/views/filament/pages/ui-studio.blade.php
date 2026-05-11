@@ -620,17 +620,17 @@
         function studioCanvas(wire) {
             return {
                 sortable: null,
-                sortableReadyHandler: null,
+                sortableReadyListener: null,
 
                 init() {
                     const el = document.getElementById('studio-canvas');
                     if (!el) return;
 
-                    this.sortableReadyHandler = () => this.initialiseSortable(el, wire);
+                    this.sortableReadyListener = () => this.initialiseSortable(el, wire);
                     this.initialiseSortable(el, wire);
 
                     if (! this.sortable) {
-                        window.addEventListener('titan-ui-studio:sortable-ready', this.sortableReadyHandler, { once: true });
+                        window.addEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener, { once: true });
                     }
                 },
 
@@ -655,9 +655,9 @@
                 },
 
                 destroy() {
-                    if (this.sortableReadyHandler) {
-                        window.removeEventListener('titan-ui-studio:sortable-ready', this.sortableReadyHandler);
-                        this.sortableReadyHandler = null;
+                    if (this.sortableReadyListener) {
+                        window.removeEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener);
+                        this.sortableReadyListener = null;
                     }
 
                     if (this.sortable) {
