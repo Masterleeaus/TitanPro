@@ -31,7 +31,7 @@ class SignalEmitter
             ?? data_get($user, 'organization_id')
             ?? data_get($user, 'company_id');
         if (!$teamId) {
-            throw new \RuntimeException('SignalEmitter: team_id is required.');
+            throw new \RuntimeException("SignalEmitter: team_id is required but was not found in opts['team_id'], authenticated user team_id, organization_id, or company_id.");
         }
 
         $companyId = $opts['company_id'] ?? $teamId;

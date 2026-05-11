@@ -483,7 +483,7 @@ class AutomationRunner
         return $out;
     }
 
-private function logRun(int $teamId, int $companyId, ?int $userId, ?int $signalId, ?string $idempo, string $status, ?array $result, ?string $error): void
+private function logRun(int $teamId, int $companyId, ?int $userId, ?int $signalId, ?string $idempotencyKey, string $status, ?array $result, ?string $error): void
     {
         DB::table('tz_automation_runs')->insert([
             'team_id' => $teamId,
@@ -491,7 +491,7 @@ private function logRun(int $teamId, int $companyId, ?int $userId, ?int $signalI
             'user_id' => $userId,
             'agent_type' => 'titan_work_automation',
             'signal_id' => $signalId,
-            'idempotency_key' => $idempo,
+            'idempotency_key' => $idempotencyKey,
             'status' => $status,
             'result_json' => $result ? json_encode($result, JSON_UNESCAPED_UNICODE) : null,
             'error' => $error,
