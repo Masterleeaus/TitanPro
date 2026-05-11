@@ -609,6 +609,170 @@
         </aside>
     </div>
 
+    {{-- ── AI Theme Generator Modal ──────────────────────────────────────── --}}
+    @if ($showAiModal)
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            wire:key="ai-theme-modal"
+        >
+            <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 mx-4">
+
+                {{-- Modal header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/10">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-sparkles class="h-4 w-4 text-amber-500" />
+                        AI Theme Generator
+                    </h2>
+                    <button
+                        type="button"
+                        wire:click="closeAiModal"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                    >
+                        <x-heroicon-o-x-mark class="h-5 w-5" />
+                    </button>
+                </div>
+
+                <div class="px-6 py-5">
+
+                    {{-- ── Step 1: Prompt input ────────────────────────── --}}
+                    @if ($aiModalStep === 'prompt')
+                        <div class="space-y-4">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                                Describe the admin panel style you want. The AI will generate a complete colour palette, typography, and design tokens.
+                            </p>
+                            <div>
+                                <label class="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1.5">
+                                    Describe your design
+                                </label>
+                                <textarea
+                                    wire:model="aiPrompt"
+                                    rows="3"
+                                    class="w-full text-sm rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2 text-gray-700 dark:text-gray-300 resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                                    placeholder="e.g. Create a luxury dark fintech dashboard with gold accents"
+                                ></textarea>
+                                <p class="mt-1 text-[11px] text-gray-400">Examples: "clean SaaS admin", "dark cyberpunk ops dashboard", "warm earthy CRM"</p>
+                            </div>
+
+                            @if ($aiErrorMessage !== '')
+                                <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+                                    <p class="text-xs text-red-600 dark:text-red-400">{{ $aiErrorMessage }}</p>
+                                </div>
+                            @endif
+
+                            <button
+                                type="button"
+                                wire:click="generateAiTheme"
+                                class="w-full flex items-center justify-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-600 py-2.5 text-sm font-semibold text-white transition-colors"
+                            >
+                                <x-heroicon-o-sparkles class="h-4 w-4" />
+                                Generate Design System
+                            </button>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 2: Generating (loading spinner) ─────────── --}}
+                    @if ($aiModalStep === 'generating')
+                        <div class="flex flex-col items-center justify-center py-12 space-y-4">
+                            <div class="relative h-12 w-12">
+                                <div class="absolute inset-0 rounded-full border-4 border-amber-100 dark:border-amber-900/30"></div>
+                                <div class="absolute inset-0 rounded-full border-4 border-t-amber-500 animate-spin"></div>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Generating your design system…</p>
+                                <p class="text-xs text-gray-400 mt-1">This usually takes a few seconds.</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 3: Preview ──────────────────────────────── --}}
+                    @if ($aiModalStep === 'preview' && count($aiGeneratedTheme) > 0)
+                        <div class="space-y-4">
+                            {{-- Description --}}
+                            @if (!empty($aiGeneratedTheme['description']))
+                                <p class="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                                    "{{ $aiGeneratedTheme['description'] }}"
+                                </p>
+                            @endif
+
+                            {{-- Colour palette --}}
+                            <div>
+                                <h3 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Colour Palette</h3>
+                                <div class="grid grid-cols-5 gap-2">
+                                    @foreach ([
+                                        'primary_color'   => 'Primary',
+                                        'secondary_color' => 'Secondary',
+                                        'accent_color'    => 'Accent',
+                                        'surface_color'   => 'Surface',
+                                        'sidebar_color'   => 'Sidebar',
+                                    ] as $colorKey => $colorLabel)
+                                        @php($colorVal = $aiGeneratedTheme[$colorKey] ?? '#cccccc')
+                                        <div class="text-center">
+                                            <div
+                                                class="h-9 rounded-md border border-gray-200 dark:border-white/10 mb-1"
+                                                style="background: {{ e($this->safeColor($colorVal, '#cccccc')) }}"
+                                            ></div>
+                                            <p class="text-[9px] font-medium text-gray-500">{{ $colorLabel }}</p>
+                                            <p class="text-[9px] font-mono text-gray-400">{{ $colorVal }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Typography + tokens --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Typography</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium">{{ $aiGeneratedTheme['font_heading'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Heading · weight {{ $aiGeneratedTheme['heading_weight'] ?? '—' }}</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium mt-1">{{ $aiGeneratedTheme['font_body'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Body</p>
+                                </div>
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Tokens</p>
+                                    <p class="text-[10px] text-gray-500 mb-0.5">Radius</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['border_radius'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-500 mt-1.5 mb-0.5">Button hover</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['button_hover'] ?? '—' }}</p>
+                                </div>
+                            </div>
+
+                            {{-- Action buttons --}}
+                            <div class="flex gap-2 pt-1">
+                                <button
+                                    type="button"
+                                    wire:click="acceptAiTheme"
+                                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 py-2.5 text-xs font-semibold text-white transition-colors"
+                                >
+                                    <x-heroicon-o-check class="h-3.5 w-3.5" />
+                                    Accept & Apply
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="regenerateAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 dark:border-white/10 px-3 py-2.5 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                    title="Edit prompt and regenerate"
+                                >
+                                    <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                                    Regenerate
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="discardAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 dark:border-red-800 px-3 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                    title="Discard and close"
+                                >
+                                    <x-heroicon-o-trash class="h-3.5 w-3.5" />
+                                    Discard
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{--
         Alpine.js data component for the drag-and-drop canvas.
         Uses a lightweight inline sort that falls back gracefully if
