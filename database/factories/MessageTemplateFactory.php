@@ -13,9 +13,6 @@ class MessageTemplateFactory extends Factory
 {
     protected $model = MessageTemplate::class;
 
-    /** Track used event/channel combos per org to satisfy the unique constraint. */
-    private static array $used = [];
-
     public function definition(): array
     {
         return [
