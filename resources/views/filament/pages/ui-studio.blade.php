@@ -167,7 +167,7 @@
                         id="ui-studio-preview-iframe"
                         class="ui-preview-frame"
                         src="{{ $this->previewPanelUrl() }}"
-                        sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+                        sandbox="allow-forms allow-same-origin allow-scripts"
                         referrerpolicy="same-origin"
                     ></iframe>
                 </div>
@@ -613,14 +613,26 @@
             let syncScrollEnabled = payload.dataset.syncScroll === '1';
             let currentIframeUrl = '';
             let syncing = false;
+            const isSameOriginFrame = () => {
+                try {
+                    return iframe.contentWindow?.location?.origin === window.location.origin;
+                } catch (error) {
+                    return false;
+                }
+            };
 
             const injectBridge = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
                 try {
                     const doc = iframe.contentDocument;
-                    if (!doc || doc.getElementById('titan-preview-bridge')) {
+                    if (!doc || doc.documentElement.dataset.titanPreviewBridgeInjected === '1') {
                         return;
                     }
 
+                    doc.documentElement.dataset.titanPreviewBridgeInjected = '1';
                     const script = doc.createElement('script');
                     script.id = 'titan-preview-bridge';
                     script.textContent = `
@@ -664,6 +676,10 @@
                     return;
                 }
 
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
                 try {
                     const iframeWindow = iframe.contentWindow;
                     const iframeDoc = iframe.contentDocument;
@@ -686,6 +702,10 @@
             };
 
             const refreshUrlLabel = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
                 try {
                     const iframeUrl = iframe.contentWindow?.location?.href;
                     if (!iframeUrl || iframeUrl === currentIframeUrl) {

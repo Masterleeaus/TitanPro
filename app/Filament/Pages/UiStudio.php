@@ -316,36 +316,41 @@ class UiStudio extends Page
         $user = auth()->user();
 
         if (! $user) {
-            return $panels;
+            return [];
         }
 
         return array_filter(
             $panels,
-            fn (array $panel): bool => empty($panel['roles']) || $user->hasRole($panel['roles'])
+            fn (array $panel): bool => empty($panel['roles']) || $user->hasAnyRole($panel['roles'])
         );
     }
 
     public function previewPanelUrl(): string
     {
-        $panel = $this->previewPanelOptions()[$this->previewPanel] ?? null;
-        $path = $panel['path'] ?? trim($this->previewPanel, '/');
+        $panels = $this->previewPanelOptions();
+        $fallbackPanelId = $this->resolveCurrentPanelId();
+        $panel = $panels[$this->previewPanel] ?? ($panels[$fallbackPanelId] ?? null);
 
-        return url('/' . trim((string) $path, '/'));
+        $path = trim((string) ($panel['path'] ?? ''), '/');
+
+        return $path === '' ? url('/') : url('/' . $path);
+    }
+
+    public function updatedPreviewPanel(string $panelId): void
+    {
+        if (! array_key_exists($panelId, $this->previewPanelOptions())) {
+            $this->previewPanel = $this->resolveCurrentPanelId();
+        }
     }
 
     public function previewCssVariables(): array
     {
         return [
             '--color-primary-500' => $this->safeColor($this->primaryColor),
-            '--color-primary-600' => $this->safeColor($this->primaryColor),
             '--color-secondary-500' => $this->safeColor($this->secondaryColor),
             '--color-accent-500' => $this->safeColor($this->accentColor),
             '--color-surface-50' => $this->safeColor($this->surfaceColor),
             '--font-family' => $this->safeFont($this->fontFamily),
-            '--ui-studio-primary' => $this->safeColor($this->primaryColor),
-            '--ui-studio-secondary' => $this->safeColor($this->secondaryColor),
-            '--ui-studio-accent' => $this->safeColor($this->accentColor),
-            '--ui-studio-surface' => $this->safeColor($this->surfaceColor),
         ];
     }
 
