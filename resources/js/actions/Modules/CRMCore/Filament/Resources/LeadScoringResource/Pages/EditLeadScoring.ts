@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 const EditLeadScoring = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditLeadScoring.url(args, options),
@@ -11,13 +11,13 @@ const EditLeadScoring = (args: { record: string | number } | [record: string | n
 
 EditLeadScoring.definition = {
     methods: ["get","head"],
-    url: '/admin/lead-scorings/{record}/edit',
+    url: '/titanpro/lead-scorings/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 EditLeadScoring.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditLeadScoring.url = (args: { record: string | number } | [record: string | num
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 EditLeadScoring.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditLeadScoring.url(args, options),
@@ -54,7 +54,7 @@ EditLeadScoring.get = (args: { record: string | number } | [record: string | num
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 EditLeadScoring.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditLeadScoring.url(args, options),
@@ -64,7 +64,7 @@ EditLeadScoring.head = (args: { record: string | number } | [record: string | nu
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 const EditLeadScoringForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditLeadScoring.url(args, options),
@@ -74,7 +74,7 @@ const EditLeadScoringForm = (args: { record: string | number } | [record: string
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 EditLeadScoringForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditLeadScoring.url(args, options),
@@ -84,7 +84,7 @@ EditLeadScoringForm.get = (args: { record: string | number } | [record: string |
 /**
 * @see \Modules\CRMCore\Filament\Resources\LeadScoringResource\Pages\EditLeadScoring::__invoke
 * @see Modules/CRMCore/Filament/Resources/LeadScoringResource/Pages/EditLeadScoring.php:7
-* @route '/admin/lead-scorings/{record}/edit'
+* @route '/titanpro/lead-scorings/{record}/edit'
 */
 EditLeadScoringForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditLeadScoring.url(args, {

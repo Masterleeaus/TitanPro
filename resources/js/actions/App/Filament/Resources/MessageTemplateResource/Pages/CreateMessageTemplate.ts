@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 const CreateMessageTemplate = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateMessageTemplate.url(options),
@@ -11,13 +11,13 @@ const CreateMessageTemplate = (options?: RouteQueryOptions): RouteDefinition<'ge
 
 CreateMessageTemplate.definition = {
     methods: ["get","head"],
-    url: '/admin/message-templates/create',
+    url: '/titanstudio/message-templates/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 CreateMessageTemplate.url = (options?: RouteQueryOptions) => {
     return CreateMessageTemplate.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateMessageTemplate.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 CreateMessageTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateMessageTemplate.url(options),
@@ -36,7 +36,7 @@ CreateMessageTemplate.get = (options?: RouteQueryOptions): RouteDefinition<'get'
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 CreateMessageTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateMessageTemplate.url(options),
@@ -46,7 +46,7 @@ CreateMessageTemplate.head = (options?: RouteQueryOptions): RouteDefinition<'hea
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 const CreateMessageTemplateForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateMessageTemplate.url(options),
@@ -56,7 +56,7 @@ const CreateMessageTemplateForm = (options?: RouteQueryOptions): RouteFormDefini
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 CreateMessageTemplateForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateMessageTemplate.url(options),
@@ -66,7 +66,7 @@ CreateMessageTemplateForm.get = (options?: RouteQueryOptions): RouteFormDefiniti
 /**
 * @see \App\Filament\Resources\MessageTemplateResource\Pages\CreateMessageTemplate::__invoke
 * @see app/Filament/Resources/MessageTemplateResource/Pages/CreateMessageTemplate.php:7
-* @route '/admin/message-templates/create'
+* @route '/titanstudio/message-templates/create'
 */
 CreateMessageTemplateForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateMessageTemplate.url({

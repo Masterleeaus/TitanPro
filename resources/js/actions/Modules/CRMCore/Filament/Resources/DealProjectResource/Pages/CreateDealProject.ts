@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 const CreateDealProject = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateDealProject.url(options),
@@ -11,13 +11,13 @@ const CreateDealProject = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 CreateDealProject.definition = {
     methods: ["get","head"],
-    url: '/admin/deal-projects/create',
+    url: '/titanpro/deal-projects/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 CreateDealProject.url = (options?: RouteQueryOptions) => {
     return CreateDealProject.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateDealProject.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 CreateDealProject.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateDealProject.url(options),
@@ -36,7 +36,7 @@ CreateDealProject.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 CreateDealProject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateDealProject.url(options),
@@ -46,7 +46,7 @@ CreateDealProject.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 const CreateDealProjectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDealProject.url(options),
@@ -56,7 +56,7 @@ const CreateDealProjectForm = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 CreateDealProjectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDealProject.url(options),
@@ -66,7 +66,7 @@ CreateDealProjectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\CreateDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/CreateDealProject.php:7
-* @route '/admin/deal-projects/create'
+* @route '/titanpro/deal-projects/create'
 */
 CreateDealProjectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDealProject.url({

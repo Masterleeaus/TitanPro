@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 const ListClientPipelines = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListClientPipelines.url(options),
@@ -11,13 +11,13 @@ const ListClientPipelines = (options?: RouteQueryOptions): RouteDefinition<'get'
 
 ListClientPipelines.definition = {
     methods: ["get","head"],
-    url: '/admin/client-pipelines',
+    url: '/titanpro/client-pipelines',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 ListClientPipelines.url = (options?: RouteQueryOptions) => {
     return ListClientPipelines.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListClientPipelines.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 ListClientPipelines.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListClientPipelines.url(options),
@@ -36,7 +36,7 @@ ListClientPipelines.get = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 ListClientPipelines.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListClientPipelines.url(options),
@@ -46,7 +46,7 @@ ListClientPipelines.head = (options?: RouteQueryOptions): RouteDefinition<'head'
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 const ListClientPipelinesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListClientPipelines.url(options),
@@ -56,7 +56,7 @@ const ListClientPipelinesForm = (options?: RouteQueryOptions): RouteFormDefiniti
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 ListClientPipelinesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListClientPipelines.url(options),
@@ -66,7 +66,7 @@ ListClientPipelinesForm.get = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ListClientPipelines::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ListClientPipelines.php:7
-* @route '/admin/client-pipelines'
+* @route '/titanpro/client-pipelines'
 */
 ListClientPipelinesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListClientPipelines.url({

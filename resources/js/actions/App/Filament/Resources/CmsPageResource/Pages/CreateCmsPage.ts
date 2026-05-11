@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 const CreateCmsPage = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateCmsPage.url(options),
@@ -11,13 +11,13 @@ const CreateCmsPage = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 CreateCmsPage.definition = {
     methods: ["get","head"],
-    url: '/admin/cms-pages/create',
+    url: '/titanstudio/cms-pages/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 CreateCmsPage.url = (options?: RouteQueryOptions) => {
     return CreateCmsPage.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateCmsPage.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 CreateCmsPage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateCmsPage.url(options),
@@ -36,7 +36,7 @@ CreateCmsPage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 CreateCmsPage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateCmsPage.url(options),
@@ -46,7 +46,7 @@ CreateCmsPage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 const CreateCmsPageForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCmsPage.url(options),
@@ -56,7 +56,7 @@ const CreateCmsPageForm = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 CreateCmsPageForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCmsPage.url(options),
@@ -66,7 +66,7 @@ CreateCmsPageForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 /**
 * @see \App\Filament\Resources\CmsPageResource\Pages\CreateCmsPage::__invoke
 * @see app/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php:7
-* @route '/admin/cms-pages/create'
+* @route '/titanstudio/cms-pages/create'
 */
 CreateCmsPageForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCmsPage.url({

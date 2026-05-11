@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 const ViewClientPipeline = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewClientPipeline.url(args, options),
@@ -11,13 +11,13 @@ const ViewClientPipeline = (args: { record: string | number } | [record: string 
 
 ViewClientPipeline.definition = {
     methods: ["get","head"],
-    url: '/admin/client-pipelines/{record}',
+    url: '/titanpro/client-pipelines/{record}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 ViewClientPipeline.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ ViewClientPipeline.url = (args: { record: string | number } | [record: string | 
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 ViewClientPipeline.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewClientPipeline.url(args, options),
@@ -54,7 +54,7 @@ ViewClientPipeline.get = (args: { record: string | number } | [record: string | 
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 ViewClientPipeline.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ViewClientPipeline.url(args, options),
@@ -64,7 +64,7 @@ ViewClientPipeline.head = (args: { record: string | number } | [record: string |
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 const ViewClientPipelineForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewClientPipeline.url(args, options),
@@ -74,7 +74,7 @@ const ViewClientPipelineForm = (args: { record: string | number } | [record: str
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 ViewClientPipelineForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewClientPipeline.url(args, options),
@@ -84,7 +84,7 @@ ViewClientPipelineForm.get = (args: { record: string | number } | [record: strin
 /**
 * @see \Modules\CRMCore\Filament\Resources\ClientPipelineResource\Pages\ViewClientPipeline::__invoke
 * @see Modules/CRMCore/Filament/Resources/ClientPipelineResource/Pages/ViewClientPipeline.php:7
-* @route '/admin/client-pipelines/{record}'
+* @route '/titanpro/client-pipelines/{record}'
 */
 ViewClientPipelineForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewClientPipeline.url(args, {
