@@ -73,9 +73,8 @@ class Conversation extends Model
                 }
 
                 $channelUserId = filter_var($channel->user_id, FILTER_VALIDATE_INT);
-                $conversationCompanyId = filter_var($conversation->company_id, FILTER_VALIDATE_INT);
 
-                if ($channelUserId === false || $conversationCompanyId === false) {
+                if ($channelUserId === false) {
                     return;
                 }
 
@@ -84,9 +83,11 @@ class Conversation extends Model
                     ->value('organization_id');
 
                 $channelCompanyId = filter_var($channelUserCompanyId, FILTER_VALIDATE_INT);
+                $conversationCompanyId = filter_var($conversation->company_id, FILTER_VALIDATE_INT);
 
                 if (
                     $channelCompanyId === false
+                    || $conversationCompanyId === false
                     || $channelCompanyId !== $conversationCompanyId
                 ) {
                     return;

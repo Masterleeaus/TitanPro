@@ -5,9 +5,7 @@
 @else
     @php
         $frontendView = 'titan-operator::frontend-ui.frontend-ui';
-        $routeIfExists = static fn (string $name, array $parameters = []): ?string => \Illuminate\Support\Facades\Route::has($name)
-            ? route($name, $parameters)
-            : null;
+        $routeIfExists = static fn (string $name, array $parameters = []): ?string => \Illuminate\Support\Facades\Route::has($name) ? route($name, $parameters) : null;
         $routes = [
             'index' => $routeIfExists('api.v2.titan_operator.index', [$titan_operator->getAttribute('uuid'), $session]),
             'getSession' => $routeIfExists('api.v2.titan_operator.index.session', [$titan_operator->getAttribute('uuid'), $session]),
