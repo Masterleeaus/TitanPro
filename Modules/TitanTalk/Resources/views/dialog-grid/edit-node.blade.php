@@ -6,7 +6,7 @@
 		<hr>
 		<div class="form-row">
 		    <div class="form-group col-md-9">
-		      <select class="form-control search-dialog" name="title" id="keyword_search" placeholder="Enter your keyword" name="keyword" value="{{$details['name']}}">
+		      <select class="form-control search-dialog" name="title" id="keyword_search" placeholder="Enter your keyword" value="{{$details['name']}}">
 		      	@foreach($details['dialog'] as $prop)
 		      		<option value="{{$prop['name']}}" selected>{{$prop['name']}}</option>
 		      	@endforeach

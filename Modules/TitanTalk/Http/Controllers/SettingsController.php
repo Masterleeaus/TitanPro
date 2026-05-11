@@ -70,11 +70,6 @@ class SettingsController extends Controller
             ->with('success', 'Titan Talk channel settings updated.');
     }
 
-    public function index()
-    {
-        return view('titantalk::settings.index');
-    }
-
     public function update(\Modules\TitanTalk\Http\Requests\SettingsUpdateRequest $request)
     {
         // In Pass 1, we store settings in cache/session-safe config fallback.
