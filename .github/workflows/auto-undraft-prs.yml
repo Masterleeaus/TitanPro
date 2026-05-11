@@ -1,0 +1,81 @@
+name: 🚀 Auto-Undraft Copilot PRs
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes
+  workflow_dispatch: {}
+
+permissions:
+  pull-requests: write
+  statuses:      read
+
+concurrency:
+  group: auto-undraft-prs
+  cancel-in-progress: false
+
+jobs:
+  undraft:
+    name: Promote passing draft Copilot PRs to ready
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Find draft Copilot PRs
+        id: prs
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --limit 50 \
+            --json number,author,isDraft,headRefName,statusCheckRollup \
+            --jq '[.[] | select(.author.login == "Copilot" and .isDraft == true)] | .[].number' \
+            > /tmp/draft_prs.txt || true
+
+          COUNT=$(grep -c . /tmp/draft_prs.txt 2>/dev/null || echo 0)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Found $COUNT draft Copilot PR(s)."
+          cat /tmp/draft_prs.txt
+
+      - name: Skip if none
+        if: steps.prs.outputs.count == '0'
+        run: echo "No draft Copilot PRs."
+
+      - name: Promote PRs whose checks are all passing
+        if: steps.prs.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+        run: |
+          while IFS= read -r PR_NUM; do
+            [ -z "$PR_NUM" ] && continue
+
+            echo "Checking PR #$PR_NUM..."
+
+            # Get check status for the head commit
+            STATUS=$(gh pr view "$PR_NUM" --repo "$REPO" \
+              --json statusCheckRollup \
+              --jq '.statusCheckRollup // [] | map(.conclusion // .state) | unique | @json')
+
+            echo "  Status: $STATUS"
+
+            # Only undraft if all checks are SUCCESS or NEUTRAL (no failures, no pending)
+            # If statusCheckRollup is empty ([]) we also undraft (no required checks)
+            HAS_FAILURE=$(echo "$STATUS" | python3 -c "
+import json, sys
+states = json.loads(sys.stdin.read())
+bad = {'FAILURE', 'ERROR', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED', 'failure', 'error', 'pending', 'IN_PROGRESS', 'QUEUED', 'WAITING', 'PENDING'}
+print('yes' if any(s in bad for s in states) else 'no')
+")
+
+            if [ "$HAS_FAILURE" = "yes" ]; then
+              echo "  ⏳ PR #$PR_NUM still has pending/failing checks — skipping."
+            else
+              echo "  ✓ All checks pass — marking PR #$PR_NUM ready for review."
+              gh pr ready "$PR_NUM" --repo "$REPO" 2>/dev/null || \
+                echo "  (already ready or could not undraft)"
+            fi
+
+            sleep 2
+          done < /tmp/draft_prs.txt

@@ -1,0 +1,143 @@
+name: 🏷️ Issue Auto-Triage
+
+on:
+  issues:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  triage:
+    name: Label issue #${{ github.event.issue.number }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Apply labels based on content
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          ISSUE:    ${{ github.event.issue.number }}
+          TITLE:    ${{ github.event.issue.title }}
+          BODY:     ${{ github.event.issue.body }}
+        run: |
+          # Combine title + body for matching (lowercased)
+          TEXT=$(printf '%s\n%s' "$TITLE" "$BODY" | tr '[:upper:]' '[:lower:]')
+
+          LABELS=()
+
+          # ── Type classification ───────────────────────────────────────────────
+          if echo "$TEXT" | grep -qiE '\b(bug|error|exception|crash|broken|fail|wrong|incorrect|regression|unexpected)\b'; then
+            LABELS+=("bug")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(feat|feature|add|new|implement|build|create|support)\b'; then
+            LABELS+=("enhancement")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(performance|slow|n\+1|query|optimize|cache|memory|timeout|lag)\b'; then
+            LABELS+=("performance")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(security|auth|permission|xss|injection|csrf|token|leak|exposure|vulnerability)\b'; then
+            LABELS+=("security")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(test|pest|coverage|spec|assert|mock|fixture)\b'; then
+            LABELS+=("testing")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(doc|docs|documentation|readme|comment|example)\b'; then
+            LABELS+=("documentation")
+          fi
+
+          # ── Layer classification ──────────────────────────────────────────────
+          if echo "$TEXT" | grep -qiE '\b(ui|blade|vue|frontend|css|tailwind|livewire|component|widget|theme|studio|inertia)\b'; then
+            LABELS+=("frontend")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(api|controller|service|model|migration|eloquent|query|database|db|queue|job|event|listener)\b'; then
+            LABELS+=("backend")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(ai|claude|openai|llm|prompt|embedding|vector|rag|tool|agent|titan.?zero)\b'; then
+            LABELS+=("ai")
+          fi
+
+          # ── Module classification ─────────────────────────────────────────────
+          if echo "$TEXT" | grep -qiE '\b(crm|contact|lead|deal|interaction)\b'; then
+            LABELS+=("module:crm")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(job|booking|dispatch|schedule|appointment|work.?order)\b'; then
+            LABELS+=("module:jobs")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(invoice|payment|stripe|billing|accounting|ledger|tax|gst|einvoice)\b'; then
+            LABELS+=("module:billing")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(hr|employee|staff|payroll|leave|biometric|attendance)\b'; then
+            LABELS+=("module:hr")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(nexus|lead.gen|campaign|marketing|outbound|pipeline|funnel)\b'; then
+            LABELS+=("module:nexus")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(supply.?chain|inventory|supplier|procurement|stock)\b'; then
+            LABELS+=("module:supply")
+          fi
+
+          if echo "$TEXT" | grep -qiE '\b(panel|filament|admin|groundzero|zeropay|titango|titannexus|titanquotes|titanstudio|titansolo|zerofuss)\b'; then
+            LABELS+=("filament-panel")
+          fi
+
+          # ── Ensure labels exist before applying ───────────────────────────────
+          declare -A LABEL_COLORS=(
+            ["bug"]="d73a4a"
+            ["enhancement"]="a2eeef"
+            ["performance"]="fbca04"
+            ["security"]="e4e669"
+            ["testing"]="0075ca"
+            ["documentation"]="0075ca"
+            ["frontend"]="bfd4f2"
+            ["backend"]="d4c5f9"
+            ["ai"]="f9d0c4"
+            ["module:crm"]="c5def5"
+            ["module:jobs"]="c5def5"
+            ["module:billing"]="c5def5"
+            ["module:hr"]="c5def5"
+            ["module:nexus"]="c5def5"
+            ["module:supply"]="c5def5"
+            ["filament-panel"]="e4e669"
+          )
+
+          for LABEL in "${LABELS[@]}"; do
+            COLOR="${LABEL_COLORS[$LABEL]:-ededed}"
+            gh api "repos/${REPO}/labels" \
+              --method POST \
+              -f name="$LABEL" -f color="$COLOR" \
+              2>/dev/null || true
+          done
+
+          # ── Apply all matched labels ──────────────────────────────────────────
+          if [ ${#LABELS[@]} -eq 0 ]; then
+            echo "No labels matched for issue #$ISSUE."
+            exit 0
+          fi
+
+          LABEL_ARGS=""
+          for LABEL in "${LABELS[@]}"; do
+            LABEL_ARGS="$LABEL_ARGS --add-label \"$LABEL\""
+          done
+
+          # Build label list for gh issue edit
+          LABEL_CSV=$(printf '%s,' "${LABELS[@]}" | sed 's/,$//')
+          gh issue edit "$ISSUE" --repo "$REPO" --add-label "$LABEL_CSV"
+          echo "Applied labels: $LABEL_CSV to issue #$ISSUE"

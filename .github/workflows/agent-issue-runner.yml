@@ -10,9 +10,9 @@ on:
         required: false
         type: string
       batch_size:
-        description: 'Issues to assign per run (default 5)'
+        description: 'Issues to assign per run (default 10)'
         required: false
-        default: '5'
+        default: '10'
         type: string
 
 # models: read  — required for Copilot coding agent API
@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   assign-issues:
-    name: Assign ${{ github.event.inputs.batch_size || '5' }} issues to Copilot
+    name: Assign ${{ github.event.inputs.batch_size || '10' }} issues to Copilot
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -57,7 +57,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BATCH="${{ github.event.inputs.batch_size || '5' }}"
+          BATCH="${{ github.event.inputs.batch_size || '10' }}"
 
           if [ -n "${{ github.event.inputs.issue_number }}" ]; then
             echo "${{ github.event.inputs.issue_number }}" > /tmp/issue_numbers.txt
