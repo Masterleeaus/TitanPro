@@ -84,6 +84,6 @@ class EstimatePackageResource extends Resource
         }
 
         return parent::getEloquentQuery()
-            ->whereHas('estimate', fn (Builder $q) => $q->where('organization_id', $organizationId));
+            ->where('organization_id', $organizationId);
     }
 }
