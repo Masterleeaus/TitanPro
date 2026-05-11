@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Notifications;
+namespace Modules\TitanEchoAssist\Notifications;
 
 class ChatbotEscalationNotification
 {

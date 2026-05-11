@@ -1,7 +1,7 @@
 {
   "module": "TitanChatbot",
   "knowledge_models": [
-    "Modules\\TitanChatbot\\Models\\KnowledgeArticle"
+    "Modules\\TitanEchoAssist\\Models\\KnowledgeArticle"
   ],
   "views": "Resources/views"
 }

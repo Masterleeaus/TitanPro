@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Memory;
+namespace Modules\TitanEchoAssist\AI\Memory;
 
 /** @deprecated Use ConversationMemoryStore instead */
 class ConversationMemory extends ConversationMemoryStore {}

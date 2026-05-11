@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Commands;
+namespace Modules\TitanEchoAssist\Console\Commands;
 
 use Illuminate\Console\Command;
 

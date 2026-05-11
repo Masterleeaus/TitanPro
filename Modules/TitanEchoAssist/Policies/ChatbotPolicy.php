@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Policies;
+namespace Modules\TitanEchoAssist\Policies;
 
 class ChatbotPolicy
 {

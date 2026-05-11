@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Signals\ChatbotAnalyticsSignal;
+use Modules\TitanEchoAssist\Signals\ChatbotAnalyticsSignal;
 
 class ChatbotAnalyticsService
 {

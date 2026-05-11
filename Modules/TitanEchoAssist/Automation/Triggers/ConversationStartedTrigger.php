@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Triggers;
+namespace Modules\TitanEchoAssist\Automation\Triggers;
 
-use Modules\TitanChatbot\Events\ConversationStarted;
+use Modules\TitanEchoAssist\Events\ConversationStarted;
 
 class ConversationStartedTrigger
 {

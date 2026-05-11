@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Presenters;
+namespace Modules\TitanEchoAssist\Presenters;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ChatbotPresenter
 {

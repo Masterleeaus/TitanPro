@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Queries;
+namespace Modules\TitanEchoAssist\Queries;
 
 class ConversationQuery
 {

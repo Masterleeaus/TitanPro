@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\Search\Indexes;
+namespace Modules\TitanEchoAssist\Search\Indexes;
 
 class ConversationIndex
 {

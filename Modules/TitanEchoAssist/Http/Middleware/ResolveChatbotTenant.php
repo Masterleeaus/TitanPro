@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Middleware;
+namespace Modules\TitanEchoAssist\Http\Middleware;
 
 class ResolveChatbotTenant
 {

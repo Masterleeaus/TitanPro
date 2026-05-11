@@ -94,11 +94,11 @@ Response returned to caller
 1. Create a PHP class in `AI/Agents/` extending `TitanAgent`:
 
 ```php
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
-use Modules\TitanChatbot\AI\Core\TitanAgent;
-use Modules\TitanChatbot\AI\Attributes\Tool;
-use Modules\TitanChatbot\AI\Attributes\Desc;
+use Modules\TitanEchoAssist\AI\Core\TitanAgent;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Desc;
 
 class MyAgent extends TitanAgent
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Memory;
+namespace Modules\TitanEchoAssist\AI\Memory;
 
 use Illuminate\Support\Facades\Cache;
-use Modules\TitanChatbot\Events\AI\MemorySaved;
-use Modules\TitanChatbot\Events\AI\MemoryLoaded;
+use Modules\TitanEchoAssist\Events\AI\MemorySaved;
+use Modules\TitanEchoAssist\Events\AI\MemoryLoaded;
 use Illuminate\Support\Facades\Event;
 
 class ConversationMemoryStore

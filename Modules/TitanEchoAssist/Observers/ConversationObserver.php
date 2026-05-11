@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Observers;
+namespace Modules\TitanEchoAssist\Observers;
 
 class ConversationObserver
 {

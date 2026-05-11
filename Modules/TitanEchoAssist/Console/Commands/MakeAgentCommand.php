@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Commands;
+namespace Modules\TitanEchoAssist\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -24,9 +24,9 @@ class MakeAgentCommand extends Command
         $stub = <<<PHP
 <?php
 
-namespace Modules\TitanChatbot\AI\Agents;
+namespace Modules\TitanEchoAssist\AI\Agents;
 
-use Modules\TitanChatbot\AI\Core\TitanAgent;
+use Modules\TitanEchoAssist\AI\Core\TitanAgent;
 
 class {$name} extends TitanAgent
 {

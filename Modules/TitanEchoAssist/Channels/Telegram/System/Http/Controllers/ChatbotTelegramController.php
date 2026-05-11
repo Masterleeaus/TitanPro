@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Extensions\ChatbotTelegram\System\Http\Controllers;
+namespace Modules\TitanEchoAssist\Channels\Telegram\System\Http\Controllers;
 
 use App\Extensions\Chatbot\System\Helpers\ChatbotHelper;
 use App\Extensions\Chatbot\System\Http\Resources\Admin\ChatbotChannelResource;
 use App\Extensions\Chatbot\System\Models\ChatbotChannel;
-use App\Extensions\ChatbotTelegram\System\Http\Requests\TelegramChannelStoreRequest;
-use App\Extensions\ChatbotTelegram\System\Services\Telegram\TelegramService;
+use Modules\TitanEchoAssist\Channels\Telegram\System\Http\Requests\TelegramChannelStoreRequest;
+use Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram\TelegramService;
 use App\Helpers\Classes\Helper;
 use App\Http\Controllers\Controller;
 use Exception;
