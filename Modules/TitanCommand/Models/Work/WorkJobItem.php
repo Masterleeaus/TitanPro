@@ -14,15 +14,9 @@ class WorkJobItem extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'meta_json' => 'array',
-        'payload_json' => 'array',
-        'scheduled_start' => 'datetime',
-        'scheduled_end' => 'datetime',
+        'meta_json'    => 'array',
+        'due_at'       => 'datetime',
         'completed_at' => 'datetime',
-        'archived_at' => 'datetime',
-        'occurred_at' => 'datetime',
-        'due_at' => 'datetime',
-        'checked_at' => 'datetime',
     ];
 
     public function scopeTenant(Builder $q, int $companyId, int $userId): Builder

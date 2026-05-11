@@ -12,8 +12,11 @@ class CreateWorkJob extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $user = auth()->user();
-        $data['company_id'] = $user?->organization_id ?? 0;
-        $data['user_id']    = $user?->id ?? 0;
+
+        abort_unless($user && $user->organization_id, 403);
+
+        $data['company_id'] = $user->organization_id;
+        $data['user_id']    = $user->id;
         return $data;
     }
 }

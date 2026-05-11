@@ -119,7 +119,7 @@ return new class extends Migration
             ]);
 
             $reqs = [
-                ['label' => 'completed_requires_photos', 'sort_order' => 10, 'schema_json' => ['when_job_status' => 'completed', 'requires' => ['photo_post']]],
+                ['label' => 'closed_requires_photos', 'sort_order' => 10, 'schema_json' => ['when_job_status' => 'closed', 'requires' => ['photo']]],
                 ['label' => 'signoff_requires_signature', 'sort_order' => 20, 'schema_json' => ['when' => 'signoff', 'requires' => ['signature']]],
             ];
 

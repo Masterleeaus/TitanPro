@@ -14,15 +14,11 @@ class WorkJob extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'meta_json' => 'array',
-        'payload_json' => 'array',
+        'meta_json'       => 'array',
         'scheduled_start' => 'datetime',
-        'scheduled_end' => 'datetime',
-        'completed_at' => 'datetime',
-        'archived_at' => 'datetime',
-        'occurred_at' => 'datetime',
-        'due_at' => 'datetime',
-        'checked_at' => 'datetime',
+        'scheduled_end'   => 'datetime',
+        'completed_at'    => 'datetime',
+        'archived_at'     => 'datetime',
     ];
 
     public function scopeTenant(Builder $q, int $companyId, int $userId): Builder

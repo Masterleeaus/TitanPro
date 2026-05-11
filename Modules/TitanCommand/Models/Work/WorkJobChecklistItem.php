@@ -14,14 +14,7 @@ class WorkJobChecklistItem extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'meta_json' => 'array',
-        'payload_json' => 'array',
-        'scheduled_start' => 'datetime',
-        'scheduled_end' => 'datetime',
-        'completed_at' => 'datetime',
-        'archived_at' => 'datetime',
-        'occurred_at' => 'datetime',
-        'due_at' => 'datetime',
+        'meta_json'  => 'array',
         'checked_at' => 'datetime',
     ];
 

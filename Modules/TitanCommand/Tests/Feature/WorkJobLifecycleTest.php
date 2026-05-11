@@ -213,10 +213,13 @@ class WorkJobLifecycleTest extends TestCase
 
         $myJob = $this->makeJob('open');
 
-        $results = WorkJob::where('company_id', $this->companyId)->get();
+        // Use the scopeTenant() helper which filters by both company_id and user_id
+        $results = WorkJob::query()->scopeTenant($this->companyId, $this->userId)->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals($myJob->id, $results->first()->id);
+        // Confirm the other-tenant job is not included
+        $this->assertNotEquals(999, $results->first()->company_id);
     }
 
     // -----------------------------------------------------------------------

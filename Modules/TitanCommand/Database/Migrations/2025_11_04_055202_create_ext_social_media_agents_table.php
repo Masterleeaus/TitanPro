@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
 
-        if (Schema::hasTable('social_media_agents')) {
+        if (Schema::hasTable('ext_titan_command_agents')) {
             return;
         }
 
