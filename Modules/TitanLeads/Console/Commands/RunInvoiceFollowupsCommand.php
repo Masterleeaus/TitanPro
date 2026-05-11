@@ -27,7 +27,7 @@ class RunInvoiceFollowupsCommand extends Command
 
             $to = $channel === 'email' ? $row->customer_email : $row->customer_phone;
             if (!$to) {
-                $row->update(['next_followup_at' => $now->addDay()]);
+                $row->update(['next_followup_at' => $now->copy()->addDay()]);
                 continue;
             }
 

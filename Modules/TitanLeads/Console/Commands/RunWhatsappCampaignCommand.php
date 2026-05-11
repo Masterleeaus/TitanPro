@@ -8,14 +8,15 @@ use Modules\TitanLeads\Models\MarketingCampaign;
 use Modules\TitanLeads\Services\Whatsapp\WhatsappSenderService;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class RunWhatsappCampaignCommand extends Command
 {
-    protected $signature = 'app:run-whatsapp-campaign';
+    protected $signature = 'titan-leads:run-whatsapp-campaign';
 
-    protected $description = 'Run a new Whatsapp campaign';
+    protected $description = 'Run a new WhatsApp campaign';
 
-    public function handle()
+    public function handle(): int
     {
         $now = now();
 
@@ -27,13 +28,21 @@ class RunWhatsappCampaignCommand extends Command
             ->where('scheduled_at', '<=', $now)
             ->get();
 
-        $campaigns->map(function (MarketingCampaign $campaign) use ($whatsappService) {
+        foreach ($campaigns as $campaign) {
             try {
                 $whatsappService
                     ->setMarketingCampaign($campaign)
                     ->send();
             } catch (Exception $e) {
+                Log::error('[TitanLeads] WhatsApp campaign failed', [
+                    'campaign_id' => $campaign->getKey(),
+                    'error'       => $e->getMessage(),
+                ]);
+
+                $campaign->update(['status' => CampaignStatus::failed]);
             }
-        });
+        }
+
+        return self::SUCCESS;
     }
 }

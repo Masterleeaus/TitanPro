@@ -15,6 +15,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Modules\TitanLeads\Enums\CampaignStatus;
+use Modules\TitanLeads\Enums\CampaignType;
 use Modules\TitanLeads\Models\MarketingCampaign;
 
 class LeadsCampaignResource extends Resource
@@ -38,22 +40,11 @@ class LeadsCampaignResource extends Resource
                 ->schema([
                     TextInput::make('name')->required()->maxLength(255),
                     Select::make('type')
-                        ->options([
-                            'whatsapp'  => 'WhatsApp',
-                            'telegram'  => 'Telegram',
-                            'sms'       => 'SMS',
-                            'messenger' => 'Messenger',
-                            'voice'     => 'Voice',
-                            'email'     => 'Email',
-                        ])
+                        ->options(array_column(CampaignType::cases(), 'value', 'value'))
                         ->required(),
                     Select::make('status')
-                        ->options([
-                            'draft'     => 'Draft',
-                            'scheduled' => 'Scheduled',
-                            'running'   => 'Running',
-                            'finished'  => 'Finished',
-                        ])
+                        ->options(array_column(CampaignStatus::cases(), 'value', 'value'))
+                        ->default(CampaignStatus::pending->value)
                         ->required(),
                     DateTimePicker::make('scheduled_at'),
                     Textarea::make('content')->rows(4)->columnSpanFull(),

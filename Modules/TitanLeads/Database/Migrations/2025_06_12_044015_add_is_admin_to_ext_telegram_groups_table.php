@@ -24,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('ext_telegram_groups', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('ext_telegram_groups', 'is_admin')) {
+            Schema::table('ext_telegram_groups', function (Blueprint $table) {
+                $table->dropColumn('is_admin');
+            });
+        }
     }
 };

@@ -18,7 +18,7 @@ class TelegramSenderService
 {
     use HasMarketingCampaign;
 
-    public TelegramBot $telegramBot;
+    public ?TelegramBot $telegramBot = null;
 
     public function setBot($userId): self
     {
@@ -37,7 +37,7 @@ class TelegramSenderService
 
         $this->setBot($marketingCampaign->getAttribute('user_id'));
 
-        $contactArray = $marketingCampaign->getAttribute('contacts');
+        $contactArray = $marketingCampaign->getAttribute('contacts') ?? [];
 
         $contacts = TelegramContact::query()->whereIn('id', $contactArray)->get();
 
@@ -64,7 +64,7 @@ class TelegramSenderService
                 'conversation_id' => $marketingConversation->getKey(),
                 'message_id'      => random_int(100000000, 999999999),
                 'model'           => null,
-                'role'            => 'user',
+                'role'            => 'assistant',
                 'message'         => $message,
                 'type'            => 'default',
                 'message_type'    => 'text',

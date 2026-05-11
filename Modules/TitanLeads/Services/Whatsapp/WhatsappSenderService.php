@@ -11,6 +11,7 @@ use Modules\TitanLeads\Services\Common\Traits\HasMarketingCampaign;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
 
@@ -33,7 +34,7 @@ class WhatsappSenderService
     {
         $marketingCampaign = $this->getMarketingCampaign()->refresh();
 
-        if ($marketingCampaign === CampaignStatus::running) {
+        if ($marketingCampaign->status === CampaignStatus::running) {
             return;
         }
 
@@ -45,7 +46,7 @@ class WhatsappSenderService
             throw new Exception('Whatsapp channel not found for user ID: ' . $marketingCampaign->getAttribute('user_id'));
         }
 
-        $contacts = $marketingCampaign->getAttribute('contacts');
+        $contacts = $marketingCampaign->getAttribute('contacts') ?? [];
 
         $segments = $marketingCampaign->getAttribute('segments');
 
@@ -87,7 +88,7 @@ class WhatsappSenderService
                 'conversation_id' => $conversation->getKey(),
                 'message_id'      => random_int(100000000, 999999999),
                 'model'           => null,
-                'role'            => 'user',
+                'role'            => 'assistant',
                 'message'         => $content,
                 'media_url'       => $marketingCampaign->getAttribute('image'),
                 'type'            => 'default',
@@ -96,6 +97,11 @@ class WhatsappSenderService
                 'created_at'      => now(),
             ]);
         } catch (Exception $exception) {
+            Log::error('[TitanLeads] WhatsApp send failed', [
+                'phone'     => $contactList->phone ?? null,
+                'campaign'  => $marketingCampaign->getKey(),
+                'error'     => $exception->getMessage(),
+            ]);
         }
     }
 

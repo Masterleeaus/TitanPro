@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('ext_marketing_conversations') && !Schema::hasColumn('ext_marketing_conversations', 'lead_id')) {
             Schema::table('ext_marketing_conversations', function (Blueprint $table) {
-                $table->unsignedBigInteger('lead_id')->nullable()->after('contact_id')->index();
+                $table->unsignedBigInteger('lead_id')->nullable()->index();
             });
         }
     }
