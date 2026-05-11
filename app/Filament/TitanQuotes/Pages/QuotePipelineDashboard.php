@@ -13,13 +13,13 @@ class QuotePipelineDashboard extends Page
 
     protected static ?string $navigationLabel = 'Quote Pipeline';
 
-    protected static ?string $navigationGroup = 'Quotes';
+    protected static string|\UnitEnum|null $navigationGroup = 'Quotes';
 
     protected static ?string $slug = 'quote-pipeline';
 
     protected static ?int $navigationSort = 5;
 
-    protected static string $view = 'filament.titanquotes.pages.quote-pipeline-dashboard';
+    protected string $view = 'filament.titanquotes.pages.quote-pipeline-dashboard';
 
     public function getViewData(): array
     {
