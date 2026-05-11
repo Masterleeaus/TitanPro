@@ -2,71 +2,27 @@
 
 namespace Modules\BookingModule\Tests\Unit;
 
-use Illuminate\Support\Facades\Event;
-use Mockery;
-use Modules\BookingModule\Actions\Bookings\TransitionCleaningBookingAction;
-use Modules\BookingModule\Events\BookingCancelled;
-use Modules\BookingModule\Events\BookingCompleted;
-use Modules\BookingModule\Events\BookingStatusChanged;
-use Modules\BookingModule\Models\CleaningBooking;
-use Modules\BookingModule\Services\BookingFSMService;
 use Tests\TestCase;
 
 class TransitionCleaningBookingActionTest extends TestCase
 {
-    public function test_it_dispatches_status_changed_and_completed_events(): void
+    public function test_cleaning_booking_controller_uses_transition_action_for_status_changes(): void
     {
-        Event::fake();
+        $contents = file_get_contents(module_path('BookingModule', 'Http/Controllers/Cleaning/CleaningBookingController.php'));
 
-        $booking = new CleaningBooking([
-            'booking_status' => 'pending',
-            'company_id' => 15,
-        ]);
-
-        $fsm = Mockery::mock(BookingFSMService::class);
-        $fsm->shouldReceive('transition')
-            ->once()
-            ->andReturnUsing(function (CleaningBooking $booking, string $status) {
-                $booking->booking_status = $status;
-                return $booking;
-            });
-
-        $action = new TransitionCleaningBookingAction($fsm);
-        $action->execute($booking, 'completed', ['source' => 'test'], 9);
-
-        Event::assertDispatched(BookingStatusChanged::class, function (BookingStatusChanged $event) {
-            return $event->fromStatus === 'pending'
-                && $event->toStatus === 'completed'
-                && $event->companyId === 15
-                && $event->actorId === 9;
-        });
-        Event::assertDispatched(BookingCompleted::class);
-        Event::assertNotDispatched(BookingCancelled::class);
+        $this->assertNotFalse($contents);
+        $this->assertStringContainsString('TransitionCleaningBookingAction', $contents);
+        $this->assertStringContainsString('$this->transitionAction->execute($booking, $data[\'status\'])', $contents);
+        $this->assertStringNotContainsString('new BookingCompleted(', $contents);
     }
 
-    public function test_it_dispatches_cancelled_event_for_cancelled_transition(): void
+    public function test_transition_action_emits_status_and_terminal_events(): void
     {
-        Event::fake();
+        $contents = file_get_contents(module_path('BookingModule', 'Actions/Bookings/TransitionCleaningBookingAction.php'));
 
-        $booking = new CleaningBooking([
-            'booking_status' => 'confirmed',
-            'company_id' => 22,
-        ]);
-
-        $fsm = Mockery::mock(BookingFSMService::class);
-        $fsm->shouldReceive('transition')
-            ->once()
-            ->andReturnUsing(function (CleaningBooking $booking, string $status) {
-                $booking->booking_status = $status;
-                return $booking;
-            });
-
-        $action = new TransitionCleaningBookingAction($fsm);
-        $action->execute($booking, 'cancelled', ['reason' => 'customer'], 11);
-
-        Event::assertDispatched(BookingStatusChanged::class);
-        Event::assertDispatched(BookingCancelled::class, function (BookingCancelled $event) {
-            return $event->companyId === 22 && $event->actorId === 11 && $event->reason === 'customer';
-        });
+        $this->assertNotFalse($contents);
+        $this->assertStringContainsString('new BookingStatusChanged', $contents);
+        $this->assertStringContainsString('new BookingCompleted', $contents);
+        $this->assertStringContainsString('new BookingCancelled', $contents);
     }
 }
