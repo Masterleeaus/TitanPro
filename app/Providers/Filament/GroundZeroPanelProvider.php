@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
 use App\Http\Middleware\CheckSubscription;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -36,9 +37,11 @@ class GroundZeroPanelProvider extends PanelProvider
         return $panel
             ->id('groundzero')
             ->path('groundzero')
-            ->brandName('GroundZero')
-            ->colors([
-                'primary' => Color::Cyan,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('GroundZero'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#06b6d4'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),

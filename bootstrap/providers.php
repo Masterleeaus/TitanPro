@@ -11,7 +11,7 @@ return [
     App\Providers\TitanAiRuntimeServiceProvider::class,
     App\Providers\TitanModelRuntimeServiceProvider::class,
     App\Providers\TitanModuleSecurityServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
+    App\Providers\Filament\TitanProPanelProvider::class,
     App\Providers\Filament\GroundZeroPanelProvider::class,
     App\Providers\Filament\TitanQuotesPanelProvider::class,
     App\Providers\Filament\ZeroPayPanelProvider::class,

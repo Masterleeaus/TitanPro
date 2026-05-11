@@ -25,7 +25,7 @@ reload.
 |------|--------|
 | `routes/web.php` | Added `GET/POST/DELETE /titan/ui-inspector/overrides` routes guarded by `auth + role:super_admin|admin|owner` |
 | `app/Providers/Filament/Concerns/RegistersFilamentPlugins.php` | Added `uiInspectorHook()` helper — returns the `panels::body.end` render hook definition |
-| `app/Providers/Filament/AdminPanelProvider.php` | Calls `->renderHook(...$this->uiInspectorHook())` |
+| `app/Providers/Filament/TitanProPanelProvider.php` | Calls `->renderHook(...$this->uiInspectorHook())` |
 | `app/Providers/Filament/GroundZeroPanelProvider.php` | Same |
 | `app/Providers/Filament/TitanGoPanelProvider.php` | Same |
 | `app/Providers/Filament/TitanNexusPanelProvider.php` | Same |
