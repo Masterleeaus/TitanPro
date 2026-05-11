@@ -134,9 +134,13 @@
         {{-- ── CENTRE PANEL: Canvas ─────────────────────────────────── --}}
         <main class="studio-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
             @php($previewModes = $this->previewModes())
-            @php($previewViewport = $this->previewViewportWidth())
             @php($previewOverrides = $this->activeResponsiveOverrides())
-            @php($tablePreview = collect($canvasWidgets)->first(fn ($widget) => ($widget['type'] ?? null) === 'table-card'))
+            @php($tablePreview = null)
+            @foreach ($canvasWidgets as $previewWidget)
+                @if ($tablePreview === null && ($previewWidget['type'] ?? null) === 'table-card')
+                    @php($tablePreview = $previewWidget)
+                @endif
+            @endforeach
             @php($tableHiddenColumns = $this->resolvePreviewTableHiddenColumns($tablePreview['properties'] ?? []))
             @php($mobileHiddenColumns = $tableHiddenColumns['mobile'])
             @php($tabletHiddenColumns = $tableHiddenColumns['tablet'])
@@ -165,7 +169,7 @@
             <div class="flex-1 p-4 overflow-y-auto">
                 <div
                     class="preview-frame-shell mx-auto mb-4 rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                    style="max-width: min(100%, {{ $previewViewport }}px); --preview-sidebar-width: {{ (int) ($previewOverrides['sidebar_width'] ?? 280) }}px; --preview-heading-scale: {{ (float) ($previewOverrides['heading_scale'] ?? 1) }}; --preview-card-padding: {{ (int) ($previewOverrides['card_padding'] ?? 16) }}px;"
+                    style="{{ $this->previewFrameStyle() }}"
                 >
                     <iframe
                         title="UI Studio live preview"
@@ -177,7 +181,7 @@
                         <div class="preview-resource-card space-y-3">
                             <div class="flex items-center justify-between gap-2">
                                 <h5 class="text-base font-semibold">Resource preview</h5>
-                                <span class="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600 dark:bg-white/10 dark:text-gray-300">Sidebar {{ (int) ($previewOverrides['sidebar_width'] ?? 280) }}px</span>
+                                <span class="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600 dark:bg-white/10 dark:text-gray-300">Sidebar {{ (int) $previewOverrides['sidebar_width'] }}px</span>
                             </div>
                             <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
                                 <table class="w-full table-fixed text-left text-xs">

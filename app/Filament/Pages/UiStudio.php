@@ -32,6 +32,8 @@ class UiStudio extends Page
     use WithFileUploads;
 
     private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
+    private const SIDEBAR_MIN_WIDTH = 56;
+    private const SIDEBAR_CUSTOMER_WIDTH = 0;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
 
@@ -289,9 +291,7 @@ class UiStudio extends Page
                 ? $widget['properties']['hidden_columns']
                 : $this->defaultTableHiddenColumns();
 
-            $existingColumns = (array) ($hiddenColumns[$breakpoint] ?? []);
-            $validColumns = array_filter($existingColumns, 'is_string');
-            $uniqueColumns = array_values(array_unique($validColumns));
+            $uniqueColumns = array_filter((array) ($hiddenColumns[$breakpoint] ?? []), 'is_string');
 
             if ($hidden) {
                 $uniqueColumns[] = $column;
@@ -875,6 +875,20 @@ class UiStudio extends Page
         return url('/' . ltrim($path, '/'));
     }
 
+    public function previewFrameStyle(): string
+    {
+        $viewport = $this->previewViewportWidth();
+        $overrides = $this->activeResponsiveOverrides();
+
+        return sprintf(
+            'max-width: min(100%%, %dpx); --preview-sidebar-width: %dpx; --preview-heading-scale: %s; --preview-card-padding: %dpx;',
+            $viewport,
+            (int) ($overrides['sidebar_width'] ?? 280),
+            number_format((float) ($overrides['heading_scale'] ?? 1), 2, '.', ''),
+            (int) ($overrides['card_padding'] ?? 16)
+        );
+    }
+
     /** @return array<string, string> */
     public function tableColumnOptions(): array
     {
@@ -936,7 +950,9 @@ class UiStudio extends Page
 
         foreach ($defaults as $breakpoint => $values) {
             $source = is_array($overrides[$breakpoint] ?? null) ? $overrides[$breakpoint] : [];
-            $sidebarMin = $breakpoint === 'customer' ? 0 : 56;
+            $sidebarMin = $breakpoint === 'customer'
+                ? self::SIDEBAR_CUSTOMER_WIDTH
+                : self::SIDEBAR_MIN_WIDTH;
             $normalized[$breakpoint] = [
                 'sidebar_width' => max($sidebarMin, min(420, (int) ($source['sidebar_width'] ?? $values['sidebar_width']))),
                 'heading_scale' => max(0.7, min(1.4, (float) ($source['heading_scale'] ?? $values['heading_scale']))),

@@ -45,3 +45,24 @@ test('ui studio can configure hidden table columns per breakpoint', function () 
 
     expect($studio->canvasWidgets[0]['properties']['hidden_columns']['tablet'])->toBe(['updated_at']);
 });
+
+test('ui studio keeps table column visibility isolated per breakpoint', function () {
+    $studio = new UiStudio();
+    $studio->canvasWidgets = [
+        [
+            'id' => 'w_table',
+            'type' => 'table-card',
+            'label' => 'Data Table',
+            'columns' => 12,
+            'order' => 0,
+            'properties' => ['hidden_columns' => ['mobile' => [], 'tablet' => []]],
+        ],
+    ];
+
+    $studio->updateTableColumnVisibility('w_table', 'mobile', 'owner', true);
+    $studio->updateTableColumnVisibility('w_table', 'mobile', 'updated_at', true);
+    $studio->updateTableColumnVisibility('w_table', 'tablet', 'status', true);
+
+    expect($studio->canvasWidgets[0]['properties']['hidden_columns']['mobile'])->toBe(['owner', 'updated_at'])
+        ->and($studio->canvasWidgets[0]['properties']['hidden_columns']['tablet'])->toBe(['status']);
+});
