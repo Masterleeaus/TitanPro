@@ -35,4 +35,13 @@ class EstimatePackageFactory extends Factory
     {
         return $this->state(['is_recommended' => true]);
     }
+
+    public function forEstimate(Estimate $estimate, string $tier = 'good'): static
+    {
+        return $this->state([
+            'organization_id' => $estimate->organization_id,
+            'estimate_id'     => $estimate->id,
+            'tier'            => $tier,
+        ]);
+    }
 }

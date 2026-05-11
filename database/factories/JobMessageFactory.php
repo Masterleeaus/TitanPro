@@ -42,4 +42,13 @@ class JobMessageFactory extends Factory
             'error'  => fake()->sentence(),
         ]);
     }
+
+    public function forJob(Job $job): static
+    {
+        return $this->state([
+            'organization_id' => $job->organization_id,
+            'job_id'          => $job->id,
+            'customer_id'     => $job->customer_id,
+        ]);
+    }
 }
