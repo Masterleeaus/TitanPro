@@ -1,5 +1,6 @@
 {
     "name": "TitanZero",
+    "active": 1,
     "alias": "titanzero",
     "description": "Titan Zero – AI Orchestration Node. Single AI entry point for the platform.",
     "keywords": ["ai", "orchestration", "titan-zero"],
