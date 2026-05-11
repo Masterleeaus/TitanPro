@@ -25,7 +25,7 @@ class SettingsPage extends Page implements HasForms
 
     protected static ?int $navigationSort = 90;
 
-    protected static string $view = 'filament.groundzero.pages.settings';
+    protected string $view = 'filament.groundzero.pages.settings';
 
     public ?array $data = [];
 
