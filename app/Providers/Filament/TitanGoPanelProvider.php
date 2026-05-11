@@ -11,6 +11,7 @@ use App\Filament\TitanGo\Widgets\TechnicianActivityChartWidget;
 use App\Filament\TitanGo\Widgets\TechnicianActivityWidget;
 use App\Filament\TitanGo\Widgets\TitanGoDashboardWidget;
 use App\Filament\Widgets\CleanerLiveMap;
+use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -41,9 +42,11 @@ class TitanGoPanelProvider extends PanelProvider
         return $panel
             ->id('titango')
             ->path('titango')
-            ->brandName('TitanGo — Field Ops')
-            ->colors([
-                'primary' => Color::Orange,
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanGo — Field Ops'))
+            ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
+            ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
+            ->colors(fn (): array => [
+                'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#f97316'),
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
@@ -85,4 +88,3 @@ class TitanGoPanelProvider extends PanelProvider
             ]);
     }
 }
-
