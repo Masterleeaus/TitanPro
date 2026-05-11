@@ -27,8 +27,22 @@
      * The inspector cycles through these (most specific first) when the user
      * hovers over an element so it highlights the nearest logical component.
      */
+    const COMPONENT_DEFS = [
+        { key: 'stat-card',        selector: '.fi-wi-stats-overview-stat, .fi-stat-card',      label: 'Stat Card' },
+        { key: 'table',            selector: '.fi-ta-table, .fi-ta-content',                    label: 'Table' },
+        { key: 'modal',            selector: '.fi-modal-window, .fi-fo-section-content',        label: 'Modal' },
+        { key: 'sidebar',          selector: '.fi-sidebar, .fi-sidebar-nav',                    label: 'Sidebar' },
+        { key: 'nav-group',        selector: '.fi-sidebar-group',                                label: 'Nav Group' },
+        { key: 'widget-container', selector: '.fi-wi, .fi-widgets-container',                   label: 'Widget Container' },
+        { key: 'form-section',     selector: '.fi-fo-section, .fi-fo-section-content-ctn',      label: 'Form Section' },
+        { key: 'hero-panel',       selector: '.fi-hero-panel, .fi-page-header',                 label: 'Hero Panel' },
+        { key: 'empty-state',      selector: '.fi-ta-empty-state, .fi-fo-field-wrp-hint',       label: 'Empty State' },
+    ];
+
+    const COMPONENT_LABELS = Object.fromEntries(COMPONENT_DEFS.map(({ key, label }) => [key, label]));
+
     const COMPONENT_SELECTORS = [
-        { selector: '[data-ui-key]',              label: (el) => el.dataset.uiKey },
+        { selector: '[data-ui-key]',              label: (el) => COMPONENT_LABELS[el.dataset.uiKey] ?? el.dataset.uiKey },
         { selector: '.fi-wi-stats-overview-stat', label: () => 'Stats Card' },
         { selector: '.fi-wi',                     label: (el) => el.querySelector('[class*="fi-wi-"]')?.className.match(/fi-wi-([\w-]+)/)?.[1] ?? 'Widget' },
         { selector: '.fi-ta',                     label: () => 'Table' },
@@ -134,8 +148,30 @@
         return parts.join('>');
     }
 
+    /** Stamp stable data-ui-key values onto core Filament components. */
+    function assignStableUiKeys(root = document) {
+        for (const { key, selector } of COMPONENT_DEFS) {
+            root.querySelectorAll(selector).forEach((el) => {
+                if (!el.dataset.uiKey) {
+                    el.dataset.uiKey = key;
+                }
+            });
+        }
+    }
+
+    /** Find a component element by stable key. */
+    function findComponentByKey(key) {
+        if (!key) return null;
+        return document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
+    }
+
     /** Find the nearest Filament component ancestor (or self). */
     function nearestComponent(el) {
+        const keyedMatch = el.closest('[data-ui-key]');
+        if (keyedMatch) {
+            return { el: keyedMatch, label: COMPONENT_LABELS[keyedMatch.dataset.uiKey] ?? keyedMatch.dataset.uiKey, key: elementKey(keyedMatch) };
+        }
+
         for (const { selector, label } of COMPONENT_SELECTORS) {
             const match = el.closest(selector);
             if (match) return { el: match, label: label(match), key: elementKey(match) };
@@ -220,11 +256,11 @@
     /* ── Apply persisted overrides on page load ─────────────────────────── */
 
     function applyAllStoredOverrides() {
+        assignStableUiKeys();
         const data = loadStorage();
         for (const [key, props] of Object.entries(data)) {
-            // Best-effort: find element by data-ui-key or skip (Livewire may re-render later)
-            const el = document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
-            if (el) applyProps(el, props);
+            // Best-effort: find element(s) by data-ui-key or skip (Livewire may re-render later)
+            document.querySelectorAll(`[data-ui-key="${cssEscape(key)}"]`).forEach((el) => applyProps(el, props));
         }
     }
 
@@ -296,7 +332,22 @@
                 this._onMouseOut  = this._handleMouseOut.bind(this);
                 this._onClick     = this._handleClick.bind(this);
                 this._onKey       = this._handleKey.bind(this);
-                this._onLivewire  = applyAllStoredOverrides;
+                this._onLivewire  = () => {
+                    applyAllStoredOverrides();
+
+                    if (!this.selectedKey) return;
+
+                    const selected = findComponentByKey(this.selectedKey);
+                    if (!selected) return;
+
+                    this.selectedEl = selected;
+                    if (this.sidebarOpen) {
+                        this.selectedLabel = COMPONENT_LABELS[this.selectedKey] ?? this.selectedKey;
+                        this._loadComponentProps(selected, this.selectedKey);
+                    }
+                };
+
+                assignStableUiKeys();
 
                 document.addEventListener('livewire:navigated', this._onLivewire);
             },
