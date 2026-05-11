@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Feature;
+namespace Modules\TitanEchoAssist\Tests\Feature;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
 
 class TitanChatbotBuilderTest extends TestCase
 {
@@ -60,6 +60,6 @@ class TitanChatbotBuilderTest extends TestCase
 
     public function test_state_store_class_exists(): void
     {
-        $this->assertTrue(class_exists(\Modules\TitanChatbot\Services\ConversationStateStore::class));
+        $this->assertTrue(class_exists(\Modules\TitanEchoAssist\Services\ConversationStateStore::class));
     }
 }

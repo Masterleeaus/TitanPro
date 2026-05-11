@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Tools;
+namespace Modules\TitanEchoAssist\AI\Tools;
 
-use Modules\TitanChatbot\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
 use ReflectionClass;
 
 class ToolRegistry

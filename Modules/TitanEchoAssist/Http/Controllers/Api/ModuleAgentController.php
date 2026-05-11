@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Api;
+namespace Modules\TitanEchoAssist\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\TitanChatbot\Services\ModuleAgentControlService;
+use Modules\TitanEchoAssist\Services\ModuleAgentControlService;
 
 class ModuleAgentController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Scopes;
+namespace Modules\TitanEchoAssist\Scopes;
 
 class TenantScope
 {

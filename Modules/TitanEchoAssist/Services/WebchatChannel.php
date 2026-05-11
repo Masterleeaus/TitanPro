@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Contracts\ChannelDriver;
-use Modules\TitanChatbot\Models\Chatbot;
-use Modules\TitanChatbot\Models\Conversation;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Conversation;
 
 class WebchatChannel implements ChannelDriver
 {

@@ -2,16 +2,16 @@
     @vite('resources/js/filament/ui-studio.js')
 
     {{--
-        UI Studio — three-panel visual design surface.
-        Left  : component tree / layer list
-        Centre: drag-and-drop canvas preview
-        Right : context-sensitive property editor
+        UI Studio — split-screen visual design surface.
+        Left  : controls (component tree + property editor)
+        Right : live sandboxed panel preview
     --}}
 
     <style>
         .ui-studio-shell {
             display: grid;
-            grid-template-columns: 260px 1fr 300px;
+            grid-template-columns: minmax(220px, 16fr) minmax(260px, 24fr) minmax(420px, 60fr);
+            grid-template-areas: "catalogue editor preview";
             grid-template-rows: 1fr;
             height: calc(100vh - 10rem);
             min-height: 520px;
@@ -20,38 +20,40 @@
             border: 1px solid rgba(0,0,0,0.08);
         }
         @media (max-width: 1024px) {
-            .ui-studio-shell { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; }
+            .ui-studio-shell { grid-template-columns: 1fr; grid-template-areas: "catalogue" "editor" "preview"; grid-template-rows: auto auto auto; height: auto; }
         }
         .studio-panel {
             overflow-y: auto;
             overflow-x: hidden;
         }
-        .studio-canvas-item {
-            transition: box-shadow 0.15s ease;
-            cursor: grab;
+        .ui-studio-catalogue-panel { grid-area: catalogue; }
+        .ui-studio-editor-panel { grid-area: editor; }
+        .ui-studio-preview-panel { grid-area: preview; }
+        .ui-preview-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: white;
         }
-        .studio-canvas-item:active {
-            cursor: grabbing;
+        .ui-preview-shell {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            height: 100%;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            transition: max-width 0.2s ease;
         }
-        .studio-canvas-item.sortable-ghost {
-            opacity: 0.4;
-        }
-        .studio-canvas-item.sortable-chosen {
-            box-shadow: 0 0 0 2px #2563eb;
-        }
-        .resize-handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: col-resize;
-            user-select: none;
-        }
+        .ui-preview-shell[data-frame="desktop"] { max-width: 100%; }
+        .ui-preview-shell[data-frame="tablet"] { max-width: 820px; }
+        .ui-preview-shell[data-frame="mobile"] { max-width: 430px; }
     </style>
 
     <div class="ui-studio-shell bg-white dark:bg-gray-900 shadow-sm">
 
         {{-- ── LEFT PANEL: Component tree ───────────────────────────── --}}
-        <aside class="studio-panel border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-950 flex flex-col">
+        <aside class="studio-panel ui-studio-catalogue-panel border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-950 flex flex-col">
             <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
                 <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Components</h3>
             </div>
@@ -124,74 +126,67 @@
             </div>
         </aside>
 
-        {{-- ── CENTRE PANEL: Canvas ─────────────────────────────────── --}}
-        <main class="studio-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
-            <div class="flex items-center justify-between px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
-                <span class="font-semibold">Canvas Preview</span>
-                <span class="text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
+        {{-- ── RIGHT PANEL: Live preview sandbox ─────────────────────── --}}
+        <main class="studio-panel ui-studio-preview-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
+            <div class="px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-semibold">Live Preview Sandbox</span>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="text-[11px] text-gray-500 dark:text-gray-400">Panel</label>
+                        <select wire:model.live="previewPanel" class="text-[11px] rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-gray-700 dark:text-gray-300">
+                            @foreach ($this->previewPanelOptions() as $panelId => $panelMeta)
+                                <option value="{{ $panelId }}">{{ $panelMeta['label'] ?? $panelId }}</option>
+                            @endforeach
+                        </select>
+                        <div class="inline-flex rounded-md border border-gray-200 dark:border-white/10 overflow-hidden">
+                            @foreach (['desktop' => 'Desktop', 'tablet' => 'Tablet', 'mobile' => 'Mobile'] as $frameSize => $label)
+                                <button
+                                    type="button"
+                                    wire:click="setPreviewFrameSize('{{ $frameSize }}')"
+                                    class="px-2.5 py-1 text-[11px] {{ $previewFrameSize === $frameSize ? 'bg-primary-500 text-white' : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400' }}"
+                                >
+                                    {{ $label }}
+                                </button>
+                            @endforeach
+                        </div>
+                        <label class="inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
+                            <input type="checkbox" wire:model.live="syncPreviewScroll" class="rounded border-gray-300 dark:border-white/10" />
+                            Sync scroll
+                        </label>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                    <p id="ui-preview-current-url" class="truncate text-[10px] text-gray-400">{{ $this->previewPanelUrl() }}</p>
+                    <span class="text-[10px] font-semibold {{ $this->hasUnsavedThemeChanges() ? 'text-amber-500' : 'text-emerald-500' }}">
+                        {{ $this->hasUnsavedThemeChanges() ? 'Unsaved theme changes' : 'Theme is saved' }}
+                    </span>
+                </div>
             </div>
 
-            {{-- Widget canvas --}}
             <div class="flex-1 p-4 overflow-y-auto">
-                @if (count($canvasWidgets) === 0)
-                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-600 py-20 select-none">
-                        <x-heroicon-o-squares-plus class="h-14 w-14 mb-4 opacity-30" />
-                        <p class="text-sm font-medium">Canvas is empty</p>
-                        <p class="text-xs mt-1">Click a widget in the left panel to add it here.</p>
-                    </div>
-                @else
-                    <div
-                        id="studio-canvas"
-                        x-data="studioCanvas($wire)"
-                        x-init="init()"
-                        class="space-y-3"
-                    >
-                        @foreach ($canvasWidgets as $widget)
-                            <div
-                                data-id="{{ $widget['id'] }}"
-                                wire:key="widget-{{ $widget['id'] }}"
-                                class="studio-canvas-item rounded-xl border bg-white dark:bg-gray-900 shadow-sm
-                                    {{ $selectedWidgetId === $widget['id'] ? 'border-primary-400 ring-1 ring-primary-400' : 'border-gray-200 dark:border-white/10' }}"
-                                style="width: {{ round($widget['columns'] / 12 * 100) }}%"
-                                @click="$wire.selectWidget('{{ $widget['id'] }}')"
-                            >
-                                <div class="flex items-center justify-between px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <x-heroicon-o-bars-3 class="h-4 w-4 text-gray-400 drag-handle cursor-grab" />
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            {{ $widget['label'] }}
-                                        </span>
-                                        <span class="text-[10px] font-mono text-gray-400 bg-gray-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
-                                            {{ $widget['type'] }}
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] text-gray-400">
-                                            {{ $widget['columns'] }}/12 cols
-                                        </span>
-                                        <button
-                                            type="button"
-                                            wire:click.stop="removeWidget('{{ $widget['id'] }}')"
-                                            class="text-gray-300 hover:text-red-400 transition-colors"
-                                        >
-                                            <x-heroicon-o-trash class="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {{-- Widget preview placeholder --}}
-                                <div class="mx-4 mb-4 h-16 rounded-lg bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 flex items-center justify-center">
-                                    <span class="text-xs text-gray-400">{{ $widget['label'] }} preview</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                <div class="ui-preview-shell shadow-sm bg-white dark:bg-gray-900" data-frame="{{ $previewFrameSize }}">
+                    <iframe
+                        id="ui-studio-preview-iframe"
+                        class="ui-preview-frame"
+                        src="{{ $this->previewPanelUrl() }}"
+                        sandbox="allow-forms allow-same-origin allow-scripts"
+                        referrerpolicy="same-origin"
+                    ></iframe>
+                </div>
             </div>
+
+            <div
+                id="ui-studio-preview-payload"
+                data-preview-url="{{ $this->previewPanelUrl() }}"
+                data-preview-frame="{{ $previewFrameSize }}"
+                data-sync-scroll="{{ $syncPreviewScroll ? '1' : '0' }}"
+                data-preview-css='@json($this->previewCssVariables())'
+                hidden
+            ></div>
         </main>
 
         {{-- ── RIGHT PANEL: Property editor ─────────────────────────── --}}
-        <aside class="studio-panel border-l border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 flex flex-col">
+        <aside class="studio-panel ui-studio-editor-panel border-l border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 flex flex-col">
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10 overflow-x-auto">
@@ -300,6 +295,16 @@
                         <div class="rounded-lg border border-dashed border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-white/5 px-3 py-3 text-xs text-gray-600 dark:text-gray-300">
                             Theme overrides are stored as semantic tokens in <code>titan_theme_tokens</code>. Component tokens inherit from those values, and you can export the full token set with <code>php artisan titan:tokens:export</code>.
                         </div>
+                    </section>
+
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Custom CSS</h4>
+                        <textarea
+                            wire:model.live="customCss"
+                            rows="6"
+                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300 resize-y"
+                            placeholder="/* custom overrides */"
+                        ></textarea>
                     </section>
 
                     {{-- Live preview swatch --}}
@@ -551,12 +556,9 @@
                                     wire:model.live="componentPanel"
                                     class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
                                 >
-                                    <option value="admin">admin</option>
-                                    <option value="titanpro">titanpro</option>
-                                    <option value="titanstudio">titanstudio</option>
-                                    <option value="titansolo">titansolo</option>
-                                    <option value="zeropay">zeropay</option>
-                                    <option value="titannexus">titannexus</option>
+                                    @foreach ($this->previewPanelOptions() as $panelId => $panelMeta)
+                                        <option value="{{ $panelId }}">{{ $panelMeta['label'] ?? $panelId }}</option>
+                                    @endforeach
                                 </select>
                             </section>
 
@@ -680,7 +682,6 @@
                     @endif
                 @endif
 
-                {{-- ── Marketplace tab ─────────────────────────────── --}}
                 @if ($activeTab === 'marketplace')
 
                     {{-- Marketplace sub-tab strip --}}
@@ -929,6 +930,170 @@
         </aside>
     </div>
 
+    {{-- ── AI Theme Generator Modal ──────────────────────────────────────── --}}
+    @if ($showAiModal)
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            wire:key="ai-theme-modal"
+        >
+            <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 mx-4">
+
+                {{-- Modal header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/10">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-sparkles class="h-4 w-4 text-amber-500" />
+                        AI Theme Generator
+                    </h2>
+                    <button
+                        type="button"
+                        wire:click="closeAiModal"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                    >
+                        <x-heroicon-o-x-mark class="h-5 w-5" />
+                    </button>
+                </div>
+
+                <div class="px-6 py-5">
+
+                    {{-- ── Step 1: Prompt input ────────────────────────── --}}
+                    @if ($aiModalStep === 'prompt')
+                        <div class="space-y-4">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                                Describe the admin panel style you want. The AI will generate a complete colour palette, typography, and design tokens.
+                            </p>
+                            <div>
+                                <label class="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1.5">
+                                    Describe your design
+                                </label>
+                                <textarea
+                                    wire:model="aiPrompt"
+                                    rows="3"
+                                    class="w-full text-sm rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2 text-gray-700 dark:text-gray-300 resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                                    placeholder="e.g. Create a luxury dark fintech dashboard with gold accents"
+                                ></textarea>
+                                <p class="mt-1 text-[11px] text-gray-400">Examples: "clean SaaS admin", "dark cyberpunk ops dashboard", "warm earthy CRM"</p>
+                            </div>
+
+                            @if ($aiErrorMessage !== '')
+                                <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+                                    <p class="text-xs text-red-600 dark:text-red-400">{{ $aiErrorMessage }}</p>
+                                </div>
+                            @endif
+
+                            <button
+                                type="button"
+                                wire:click="generateAiTheme"
+                                class="w-full flex items-center justify-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-600 py-2.5 text-sm font-semibold text-white transition-colors"
+                            >
+                                <x-heroicon-o-sparkles class="h-4 w-4" />
+                                Generate Design System
+                            </button>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 2: Generating (loading spinner) ─────────── --}}
+                    @if ($aiModalStep === 'generating')
+                        <div class="flex flex-col items-center justify-center py-12 space-y-4">
+                            <div class="relative h-12 w-12">
+                                <div class="absolute inset-0 rounded-full border-4 border-amber-100 dark:border-amber-900/30"></div>
+                                <div class="absolute inset-0 rounded-full border-4 border-t-amber-500 animate-spin"></div>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Generating your design system…</p>
+                                <p class="text-xs text-gray-400 mt-1">This usually takes a few seconds.</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 3: Preview ──────────────────────────────── --}}
+                    @if ($aiModalStep === 'preview' && count($aiGeneratedTheme) > 0)
+                        <div class="space-y-4">
+                            {{-- Description --}}
+                            @if (!empty($aiGeneratedTheme['description']))
+                                <p class="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                                    "{{ $aiGeneratedTheme['description'] }}"
+                                </p>
+                            @endif
+
+                            {{-- Colour palette --}}
+                            <div>
+                                <h3 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Colour Palette</h3>
+                                <div class="grid grid-cols-5 gap-2">
+                                    @foreach ([
+                                        'primary_color'   => 'Primary',
+                                        'secondary_color' => 'Secondary',
+                                        'accent_color'    => 'Accent',
+                                        'surface_color'   => 'Surface',
+                                        'sidebar_color'   => 'Sidebar',
+                                    ] as $colorKey => $colorLabel)
+                                        @php($colorVal = $aiGeneratedTheme[$colorKey] ?? '#cccccc')
+                                        <div class="text-center">
+                                            <div
+                                                class="h-9 rounded-md border border-gray-200 dark:border-white/10 mb-1"
+                                                style="background: {{ e($this->safeColor($colorVal, '#cccccc')) }}"
+                                            ></div>
+                                            <p class="text-[9px] font-medium text-gray-500">{{ $colorLabel }}</p>
+                                            <p class="text-[9px] font-mono text-gray-400">{{ $colorVal }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Typography + tokens --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Typography</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium">{{ $aiGeneratedTheme['font_heading'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Heading · weight {{ $aiGeneratedTheme['heading_weight'] ?? '—' }}</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium mt-1">{{ $aiGeneratedTheme['font_body'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Body</p>
+                                </div>
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Tokens</p>
+                                    <p class="text-[10px] text-gray-500 mb-0.5">Radius</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['border_radius'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-500 mt-1.5 mb-0.5">Button hover</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['button_hover'] ?? '—' }}</p>
+                                </div>
+                            </div>
+
+                            {{-- Action buttons --}}
+                            <div class="flex gap-2 pt-1">
+                                <button
+                                    type="button"
+                                    wire:click="acceptAiTheme"
+                                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 py-2.5 text-xs font-semibold text-white transition-colors"
+                                >
+                                    <x-heroicon-o-check class="h-3.5 w-3.5" />
+                                    Accept & Apply
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="regenerateAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 dark:border-white/10 px-3 py-2.5 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                    title="Edit prompt and regenerate"
+                                >
+                                    <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                                    Regenerate
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="discardAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 dark:border-red-800 px-3 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                    title="Discard and close"
+                                >
+                                    <x-heroicon-o-trash class="h-3.5 w-3.5" />
+                                    Discard
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{--
         Alpine.js data component for the drag-and-drop canvas.
         Uses a lightweight inline sort that falls back gracefully if
@@ -985,5 +1150,167 @@
                 },
             };
         }
+    </script>
+
+    <script>
+        (() => {
+            const iframe = document.getElementById('ui-studio-preview-iframe');
+            const payload = document.getElementById('ui-studio-preview-payload');
+            const urlLabel = document.getElementById('ui-preview-current-url');
+            if (!iframe || !payload) {
+                return;
+            }
+
+            let syncScrollEnabled = payload.dataset.syncScroll === '1';
+            let currentIframeUrl = '';
+            let syncing = false;
+            const isSameOriginFrame = () => {
+                try {
+                    return iframe.contentWindow?.location?.origin === window.location.origin;
+                } catch (error) {
+                    return false;
+                }
+            };
+
+            const injectBridge = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const doc = iframe.contentDocument;
+                    if (!doc || doc.documentElement.dataset.titanPreviewBridgeInjected === '1') {
+                        return;
+                    }
+
+                    doc.documentElement.dataset.titanPreviewBridgeInjected = '1';
+                    const script = doc.createElement('script');
+                    script.id = 'titan-preview-bridge';
+                    script.textContent = `
+                        (function () {
+                            if (window.__titanPreviewBridgeInstalled) return;
+                            window.__titanPreviewBridgeInstalled = true;
+                            window.addEventListener('message', function (event) {
+                                if (event.origin !== window.location.origin) return;
+                                var data = event.data || {};
+                                if (data.type !== 'titan-ui-theme-vars' || !data.payload) return;
+                                var root = document.documentElement;
+                                Object.keys(data.payload).forEach(function (key) {
+                                    root.style.setProperty(key, String(data.payload[key]));
+                                });
+                            });
+                        })();
+                    `;
+                    doc.head.appendChild(script);
+                } catch (error) {
+                    // Ignore cross-origin or transient iframe access issues.
+                }
+            };
+
+            const postTheme = () => {
+                try {
+                    const vars = JSON.parse(payload.dataset.previewCss ?? '{}');
+                    iframe.contentWindow?.postMessage(
+                        {
+                            type: 'titan-ui-theme-vars',
+                            payload: vars,
+                        },
+                        window.location.origin
+                    );
+                } catch (error) {
+                    // Ignore malformed payload data.
+                }
+            };
+
+            const syncPreviewScroll = (sourceEl) => {
+                if (!syncScrollEnabled || syncing) {
+                    return;
+                }
+
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const iframeWindow = iframe.contentWindow;
+                    const iframeDoc = iframe.contentDocument;
+                    if (!iframeWindow || !iframeDoc) {
+                        return;
+                    }
+
+                    const sourceMax = sourceEl.scrollHeight - sourceEl.clientHeight;
+                    const targetMax = iframeDoc.documentElement.scrollHeight - iframeWindow.innerHeight;
+                    const ratio = sourceMax > 0 ? sourceEl.scrollTop / sourceMax : 0;
+
+                    syncing = true;
+                    iframeWindow.scrollTo({ top: ratio * Math.max(targetMax, 0), behavior: 'auto' });
+                    window.setTimeout(() => {
+                        syncing = false;
+                    }, 32);
+                } catch (error) {
+                    syncing = false;
+                }
+            };
+
+            const refreshUrlLabel = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const iframeUrl = iframe.contentWindow?.location?.href;
+                    if (!iframeUrl || iframeUrl === currentIframeUrl) {
+                        return;
+                    }
+
+                    currentIframeUrl = iframeUrl;
+                    if (urlLabel) {
+                        urlLabel.textContent = iframeUrl;
+                    }
+                } catch (error) {
+                    // Ignore inaccessible iframe URLs.
+                }
+            };
+
+            const applyState = () => {
+                const nextUrl = payload.dataset.previewUrl ?? '';
+                const nextFrame = payload.dataset.previewFrame ?? 'desktop';
+                syncScrollEnabled = payload.dataset.syncScroll === '1';
+
+                const shell = iframe.closest('.ui-preview-shell');
+                if (shell) {
+                    shell.dataset.frame = nextFrame;
+                }
+
+                if (nextUrl && iframe.src !== nextUrl) {
+                    iframe.src = nextUrl;
+                    currentIframeUrl = '';
+                }
+
+                injectBridge();
+                postTheme();
+                refreshUrlLabel();
+            };
+
+            const controls = document.querySelectorAll('.ui-studio-catalogue-panel, .ui-studio-editor-panel');
+            controls.forEach((control) => {
+                control.addEventListener('scroll', () => syncPreviewScroll(control));
+            });
+
+            iframe.addEventListener('load', () => {
+                injectBridge();
+                postTheme();
+                refreshUrlLabel();
+            });
+
+            const observer = new MutationObserver(applyState);
+            observer.observe(payload, {
+                attributes: true,
+                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-sync-scroll', 'data-preview-css'],
+            });
+
+            applyState();
+            window.setInterval(refreshUrlLabel, 400);
+        })();
     </script>
 </x-filament-panels::page>

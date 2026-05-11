@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Extensions\ChatbotMessenger\System;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System;
 
-use App\Extensions\ChatbotMessenger\System\Http\Controllers\ChatbotMessengerController;
-use App\Extensions\ChatbotMessenger\System\Http\Controllers\Webhook\ChatbotMessengerWebhookController;
+use Modules\TitanEchoAssist\Channels\Messenger\System\Http\Controllers\ChatbotMessengerController;
+use Modules\TitanEchoAssist\Channels\Messenger\System\Http\Controllers\Webhook\ChatbotMessengerWebhookController;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;

@@ -1,26 +1,26 @@
 {
   "name": "TitanChatbot",
   "studlyName": "TitanChatbot",
-  "namespace": "Modules\\TitanChatbot\\",
+  "namespace": "Modules\\TitanEchoAssist\\",
   "enabled": true,
   "providers": [
-    "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\AutomationServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\BillingServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\EventServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\FilamentServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\ModuleBootServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\PolicyServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\RepositoryServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\RouteServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\SearchServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\TenancyServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\TitanChatbotServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\WorkflowServiceProvider"
+    "Modules\\TitanEchoAssist\\Providers\\ModuleServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\AutomationServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\BillingServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\EventServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\FilamentServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\ModuleBootServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\PolicyServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\RepositoryServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\RouteServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\SearchServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\TenancyServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\TitanChatbotServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\WorkflowServiceProvider"
   ],
   "autoload": {
     "psr-4": {
-      "Modules\\TitanChatbot\\": "./"
+      "Modules\\TitanEchoAssist\\": "./"
     }
   },
   "issues": [],

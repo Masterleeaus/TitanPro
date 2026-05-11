@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Services\Contracts;
+namespace Modules\TitanEchoAssist\Services\Contracts;
 
 interface TitanChatbotServiceContract
 {

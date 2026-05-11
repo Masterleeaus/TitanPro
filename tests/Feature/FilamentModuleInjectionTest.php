@@ -5,6 +5,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Illuminate\Support\Collection;
+use Modules\TitanEchoAssist\Filament\Plugin\TitanEchoAssistPlugin;
 use Nwidart\Modules\Module;
 
 /**
@@ -154,6 +155,13 @@ test('resolvePluginClass finds plugin at canonical Filament/Plugin/ path', funct
     $provider = makeTestableProvider();
 
     expect($provider->testResolvePluginClass($module))->toBe(TitanTestFilamentPlugin::class);
+});
+
+test('resolvePluginClass discovers TitanEchoAssist plugin by module name', function () {
+    $module = makeModuleStub('TitanEchoAssist', true);
+    $provider = makeTestableProvider();
+
+    expect($provider->testResolvePluginClass($module))->toBe(TitanEchoAssistPlugin::class);
 });
 
 test('resolvePluginClass ignores a manifest class that does not implement Plugin', function () {

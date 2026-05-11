@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
 
 class VoiceChannel implements ChannelDriver
 {
@@ -13,7 +13,7 @@ class VoiceChannel implements ChannelDriver
         $chatbot = $payload['chatbot'] ?? null;
 
         // Integrate with VoiceConversationPipeline when available
-        if (class_exists(\Modules\TitanChatbot\AI\Pipelines\VoiceConversationPipeline::class)) {
+        if (class_exists(\Modules\TitanEchoAssist\AI\Pipelines\VoiceConversationPipeline::class)) {
             return $this->handleViaPipeline($payload);
         }
 
@@ -23,8 +23,8 @@ class VoiceChannel implements ChannelDriver
     private function handleViaPipeline(array $payload): string
     {
         try {
-            /** @var \Modules\TitanChatbot\AI\Pipelines\VoiceConversationPipeline $pipeline */
-            $pipeline = app(\Modules\TitanChatbot\AI\Pipelines\VoiceConversationPipeline::class);
+            /** @var \Modules\TitanEchoAssist\AI\Pipelines\VoiceConversationPipeline $pipeline */
+            $pipeline = app(\Modules\TitanEchoAssist\AI\Pipelines\VoiceConversationPipeline::class);
 
             $pipeline->setSessionId($payload['session_id'] ?? 'voice_default');
             return (string) $pipeline->process($payload['message'] ?? '');

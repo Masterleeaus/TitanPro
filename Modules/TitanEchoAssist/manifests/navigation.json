@@ -1,6 +1,6 @@
 {
   "module": "TitanChatbot",
-  "filament_plugin": "Modules\\TitanChatbot\\Filament\\TitanChatbotPlugin",
-  "main_page": "Modules\\TitanChatbot\\Filament\\Pages\\TitanChatbotPage",
-  "dashboard": "Modules\\TitanChatbot\\Filament\\Pages\\TitanChatbotDashboard"
+  "filament_plugin": "Modules\\TitanEchoAssist\\Filament\\TitanEchoAssistPlugin",
+  "main_page": "Modules\\TitanEchoAssist\\Filament\\Pages\\TitanChatbotPage",
+  "dashboard": "Modules\\TitanEchoAssist\\Filament\\Pages\\TitanChatbotDashboard"
 }

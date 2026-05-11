@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Filament\Pages;
+namespace Modules\TitanEchoAssist\Filament\Pages;
 
 class BuilderPage
 {

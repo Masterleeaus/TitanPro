@@ -1,7 +1,7 @@
 {
   "module": "TitanChatbot",
   "config": "Config/permissions.php",
-  "policy": "Modules\\TitanChatbot\\Policies\\ChatbotPolicy",
+  "policy": "Modules\\TitanEchoAssist\\Policies\\ChatbotPolicy",
   "permissions": [
     "titan-chatbot.view",
     "titan-chatbot.create",

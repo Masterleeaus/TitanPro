@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Workflows\Steps;
+namespace Modules\TitanEchoAssist\Workflows\Steps;
 
 class CollectBookingDetails
 {

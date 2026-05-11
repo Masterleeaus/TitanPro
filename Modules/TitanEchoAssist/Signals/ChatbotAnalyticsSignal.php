@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Signals;
+namespace Modules\TitanEchoAssist\Signals;
 
 use Illuminate\Support\Facades\Log;
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Webhooks;
+namespace Modules\TitanEchoAssist\Http\Controllers\Webhooks;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\DTOs\MessagePayload;
-use Modules\TitanChatbot\Services\ConversationRouter;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\Services\ConversationRouter;
 
 class TelegramWebhookController extends Controller
 {
@@ -55,8 +55,8 @@ class TelegramWebhookController extends Controller
     private function resolveChatbotId(int $channelId): int
     {
         try {
-            if (class_exists(\Modules\TitanChatbot\Models\ChatbotChannel::class)) {
-                $channel = \Modules\TitanChatbot\Models\ChatbotChannel::find($channelId);
+            if (class_exists(\Modules\TitanEchoAssist\Models\ChatbotChannel::class)) {
+                $channel = \Modules\TitanEchoAssist\Models\ChatbotChannel::find($channelId);
                 if ($channel) {
                     return (int) $channel->chatbot_id;
                 }

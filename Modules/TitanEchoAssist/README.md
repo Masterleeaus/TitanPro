@@ -8,7 +8,7 @@ Unified Laravel module for a multi-channel AI chatbot platform. Supports website
 
 1. **Register the provider** in `config/app.php` (or your module loader):
    ```php
-   Modules\TitanChatbot\Providers\ModuleServiceProvider::class,
+   Modules\TitanEchoAssist\Providers\ModuleServiceProvider::class,
    ```
 
 2. **Run migrations:**
@@ -102,7 +102,7 @@ Voice calls are handled by `VoiceAgent` and `VoiceConversationPipeline`. Integra
 Use `TrainingPipeline` to ingest content into `ext_chatbot_embeddings`:
 
 ```php
-app(\Modules\TitanChatbot\Services\TrainingPipeline::class)
+app(\Modules\TitanEchoAssist\Services\TrainingPipeline::class)
     ->ingest($chatbotId, 'qa', $content, ['title' => 'FAQ', 'engine' => 'default']);
 ```
 
