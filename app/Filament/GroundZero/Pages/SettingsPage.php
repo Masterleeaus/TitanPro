@@ -98,7 +98,7 @@ class SettingsPage extends Page implements HasForms
             'company_phone'   => $data['company_phone'] ?? null,
             'company_email'   => $data['company_email'] ?? null,
             'company_address' => $data['company_address'] ?? null,
-            'default_tax_rate' => isset($data['default_tax_rate']) && $data['default_tax_rate'] !== '' ? $data['default_tax_rate'] : null,
+            'default_tax_rate' => ($data['default_tax_rate'] !== '' && $data['default_tax_rate'] !== null) ? $data['default_tax_rate'] : null,
         ], fn ($v) => $v !== null))->save();
 
         Notification::make()
