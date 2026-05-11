@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\Memory\Truncation;
+namespace Modules\TitanEchoAssist\AI\Memory\Truncation;
 
 use Illuminate\Support\Facades\Log;
 
@@ -47,8 +47,8 @@ class SummarizationStrategy implements TruncationStrategyInterface
     private function buildSummary(array $messages): string
     {
         try {
-            if (class_exists(\Modules\TitanChatbot\Services\GeneratorBridge::class)) {
-                $bridge = app(\Modules\TitanChatbot\Services\GeneratorBridge::class);
+            if (class_exists(\Modules\TitanEchoAssist\Services\GeneratorBridge::class)) {
+                $bridge = app(\Modules\TitanEchoAssist\Services\GeneratorBridge::class);
                 $text   = implode("\n", array_map(fn($m) => ($m['role'] ?? 'user') . ': ' . ($m['content'] ?? ''), $messages));
                 $prompt = 'Summarize the following conversation in 2-3 sentences:\n\n' . $text;
                 return $bridge->generate($prompt, []);

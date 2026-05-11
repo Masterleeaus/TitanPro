@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Interfaces;
+namespace Modules\TitanEchoAssist\Interfaces;
 
 interface ConversationRepositoryInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\DTOs;
+namespace Modules\TitanEchoAssist\DTOs;
 
 class MessagePayload
 {

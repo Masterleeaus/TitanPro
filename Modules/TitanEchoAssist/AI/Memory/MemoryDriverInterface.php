@@ -1,5 +1,5 @@
 <?php
-namespace Modules\TitanChatbot\AI\Memory;
+namespace Modules\TitanEchoAssist\AI\Memory;
 
 interface MemoryDriverInterface
 {

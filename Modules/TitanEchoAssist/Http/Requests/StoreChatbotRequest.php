@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Requests;
+namespace Modules\TitanEchoAssist\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

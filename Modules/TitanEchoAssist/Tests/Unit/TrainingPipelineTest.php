@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\Services\TrainingPipeline;
+use Modules\TitanEchoAssist\Services\TrainingPipeline;
 
 class TrainingPipelineTest extends TestCase
 {

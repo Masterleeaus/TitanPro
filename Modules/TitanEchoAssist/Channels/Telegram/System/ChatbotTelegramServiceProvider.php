@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Extensions\ChatbotTelegram\System;
+namespace Modules\TitanEchoAssist\Channels\Telegram\System;
 
-use App\Extensions\ChatbotTelegram\System\Http\Controllers\ChatbotTelegramController;
-use App\Extensions\ChatbotTelegram\System\Http\Controllers\Webhook\ChatbotTelegramWebhookController;
+use Modules\TitanEchoAssist\Channels\Telegram\System\Http\Controllers\ChatbotTelegramController;
+use Modules\TitanEchoAssist\Channels\Telegram\System\Http\Controllers\Webhook\ChatbotTelegramWebhookController;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;

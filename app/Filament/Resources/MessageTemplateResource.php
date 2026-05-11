@@ -109,7 +109,13 @@ class MessageTemplateResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
         return parent::getEloquentQuery()
-            ->where('organization_id', auth()->user()?->organization_id);
+            ->where('organization_id', $organizationId);
     }
 }

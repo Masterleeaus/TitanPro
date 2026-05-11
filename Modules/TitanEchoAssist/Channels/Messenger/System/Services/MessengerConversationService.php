@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Services;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Services;
 
 use App\Extensions\Chatbot\System\Enums\InteractionType;
 use App\Extensions\Chatbot\System\Models\Chatbot;

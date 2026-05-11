@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\API\Contracts;
+namespace Modules\TitanEchoAssist\API\Contracts;
 
 interface ApiResponseContract
 {

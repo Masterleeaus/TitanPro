@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Pipelines;
+namespace Modules\TitanEchoAssist\AI\Pipelines;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Services\GeneratorBridge;
+use Modules\TitanEchoAssist\Services\GeneratorBridge;
 use Throwable;
 
 class RagAnswerPipeline

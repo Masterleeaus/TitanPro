@@ -1,8 +1,8 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\AI\Memory\Truncation\SimpleTruncationStrategy;
-use Modules\TitanChatbot\AI\Memory\Truncation\SummarizationStrategy;
+use Modules\TitanEchoAssist\AI\Memory\Truncation\SimpleTruncationStrategy;
+use Modules\TitanEchoAssist\AI\Memory\Truncation\SummarizationStrategy;
 
 class TruncationStrategyTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotTelegram\System\Http\Requests;
+namespace Modules\TitanEchoAssist\Channels\Telegram\System\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

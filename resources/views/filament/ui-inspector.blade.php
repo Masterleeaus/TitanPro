@@ -413,17 +413,5 @@ body.titan-inspector-active #titan-ui-inspector-root * {
 body.titan-inspector-active #titan-inspector-sidebar * {
     cursor: auto !important;
 }
-
-.fi-sidebar {
-    width: var(--sidebar-width, 16rem) !important;
-    max-width: var(--sidebar-width, 16rem) !important;
-}
-
-.fi-main,
-.fi-main-ctn {
-    width: 100%;
-    max-width: var(--content-max-width, 80rem);
-    margin-inline: auto;
-}
 </style>
 <script src="{{ asset('js/titan/ui-inspector.js') }}" defer></script>

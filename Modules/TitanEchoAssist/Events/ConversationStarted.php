@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Events;
+namespace Modules\TitanEchoAssist\Events;
 
-use Modules\TitanChatbot\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
 
 class ConversationStarted
 {

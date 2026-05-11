@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Extensions\ChatbotTelegram\System\Http\Controllers\Webhook;
+namespace Modules\TitanEchoAssist\Channels\Telegram\System\Http\Controllers\Webhook;
 
 use App\Extensions\Chatbot\System\Models\Chatbot;
 use App\Extensions\Chatbot\System\Models\ChatbotChannelWebhook;
-use App\Extensions\ChatbotTelegram\System\Services\Telegram\TelegramConversationService;
+use Modules\TitanEchoAssist\Channels\Telegram\System\Services\Telegram\TelegramConversationService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

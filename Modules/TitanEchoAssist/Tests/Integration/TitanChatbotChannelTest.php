@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\TitanChatbot\Tests\Integration;
+namespace Modules\TitanEchoAssist\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\Services\ChannelRouter;
-use Modules\TitanChatbot\Enums\ChannelType;
+use Modules\TitanEchoAssist\Services\ChannelRouter;
+use Modules\TitanEchoAssist\Enums\ChannelType;
 
 class TitanChatbotChannelTest extends TestCase
 {
@@ -59,7 +59,7 @@ class TitanChatbotChannelTest extends TestCase
             );
             $this->assertTrue(
                 in_array(
-                    \Modules\TitanChatbot\Contracts\ChannelDriver::class,
+                    \Modules\TitanEchoAssist\Contracts\ChannelDriver::class,
                     class_implements($driverClass) ?: []
                 ),
                 "{$driverClass} must implement ChannelDriver"
@@ -84,7 +84,7 @@ class TitanChatbotChannelTest extends TestCase
 
     public function test_register_adds_entry_to_channel_map(): void
     {
-        $this->router->register('test_channel', \Modules\TitanChatbot\Services\WebchatChannel::class);
+        $this->router->register('test_channel', \Modules\TitanEchoAssist\Services\WebchatChannel::class);
 
         $reflection = new \ReflectionClass($this->router);
         $prop       = $reflection->getProperty('channelMap');

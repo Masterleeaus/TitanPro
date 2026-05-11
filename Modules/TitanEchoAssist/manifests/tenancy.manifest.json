@@ -5,19 +5,19 @@
   "enabled": true,
   "scopes": [
     {
-      "class": "Modules\\TitanChatbot\\Tenancy\\Scopes\\TenantConversationScope",
+      "class": "Modules\\TitanEchoAssist\\Tenancy\\Scopes\\TenantConversationScope",
       "description": "Applies tenant boundary scoping to conversation queries"
     }
   ],
   "policies": [
     {
-      "class": "Modules\\TitanChatbot\\Tenancy\\Policies\\TenantChatbotPolicy",
+      "class": "Modules\\TitanEchoAssist\\Tenancy\\Policies\\TenantChatbotPolicy",
       "description": "Authorisation policy for chatbot resources within a tenant"
     }
   ],
   "resolvers": [
     {
-      "class": "Modules\\TitanChatbot\\Tenancy\\Resolvers\\ChatbotTenantResolver",
+      "class": "Modules\\TitanEchoAssist\\Tenancy\\Resolvers\\ChatbotTenantResolver",
       "description": "Resolves the current tenant from a chatbot context"
     }
   ]
