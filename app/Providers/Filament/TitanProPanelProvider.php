@@ -84,8 +84,8 @@ class TitanProPanelProvider extends PanelProvider
                     'TomatoPHP\\FilamentTranslationComponent\\FilamentTranslationComponentPlugin',
                 ]),
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(in: app_path('Filament/TitanPro/Resources'), for: 'App\\Filament\\TitanPro\\Resources')
+            ->discoverPages(in: app_path('Filament/TitanPro/Pages'), for: 'App\\Filament\\TitanPro\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
