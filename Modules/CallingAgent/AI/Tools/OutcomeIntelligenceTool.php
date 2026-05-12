@@ -6,7 +6,12 @@ use Modules\CallingAgent\AI\Pipelines\OutcomeExtractionPipeline;
 
 final class OutcomeIntelligenceTool
 {
-    public function __construct(private readonly OutcomeExtractionPipeline $pipeline = new OutcomeExtractionPipeline()) {}
+    private OutcomeExtractionPipeline $pipeline;
+
+    public function __construct(?OutcomeExtractionPipeline $pipeline = null)
+    {
+        $this->pipeline = $pipeline ?? app(OutcomeExtractionPipeline::class);
+    }
 
     public function execute(array $input): array
     {

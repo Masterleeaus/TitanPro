@@ -16,9 +16,12 @@ class CallingAgentCredentialResolverTest extends TestCase
         parent::setUp();
 
         if (! Schema::hasTable('calling_agent_configs')) {
-            $this->artisan('migrate', [
-                '--path' => 'Modules/CallingAgent/Database/Migrations/2026_05_12_000008_create_calling_agent_configs_table.php',
-            ]);
+            $migrationFiles = glob(base_path('Modules/CallingAgent/Database/Migrations/*create_calling_agent_configs_table.php')) ?: [];
+            $this->assertNotEmpty($migrationFiles, 'Could not find CallingAgent configs migration file.');
+
+            $migrationPath = str_replace(base_path().'/', '', $migrationFiles[0]);
+
+            $this->artisan('migrate', ['--path' => $migrationPath])->assertExitCode(0);
         }
 
         CallingAgentConfig::query()->withoutGlobalScopes()->truncate();

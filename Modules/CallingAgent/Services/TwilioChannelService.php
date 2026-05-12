@@ -11,7 +11,12 @@ use Twilio\TwiML\VoiceResponse;
  */
 class TwilioChannelService
 {
-    public function __construct(private readonly CallingAgentCredentialResolver $credentialResolver = new CallingAgentCredentialResolver()) {}
+    private CallingAgentCredentialResolver $credentialResolver;
+
+    public function __construct(?CallingAgentCredentialResolver $credentialResolver = null)
+    {
+        $this->credentialResolver = $credentialResolver ?? app(CallingAgentCredentialResolver::class);
+    }
 
     // ── SDK / config availability ─────────────────────────────────────────────
 

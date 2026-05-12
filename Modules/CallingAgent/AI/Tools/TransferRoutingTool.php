@@ -6,7 +6,12 @@ use Modules\CallingAgent\Services\TransferRoutingService;
 
 final class TransferRoutingTool
 {
-    public function __construct(private readonly TransferRoutingService $routingService = new TransferRoutingService()) {}
+    private TransferRoutingService $routingService;
+
+    public function __construct(?TransferRoutingService $routingService = null)
+    {
+        $this->routingService = $routingService ?? app(TransferRoutingService::class);
+    }
 
     public function execute(array $input): array
     {

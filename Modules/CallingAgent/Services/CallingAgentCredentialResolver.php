@@ -7,6 +7,11 @@ use Modules\CallingAgent\Support\TenantContext;
 
 class CallingAgentCredentialResolver
 {
+    /**
+     * @var array<int, CallingAgentConfig|null>
+     */
+    private array $configCache = [];
+
     public function resolveConfig(?int $companyId = null): ?CallingAgentConfig
     {
         $companyId ??= TenantContext::id();
@@ -15,7 +20,11 @@ class CallingAgentCredentialResolver
             return null;
         }
 
-        return CallingAgentConfig::query()
+        if (array_key_exists($companyId, $this->configCache)) {
+            return $this->configCache[$companyId];
+        }
+
+        return $this->configCache[$companyId] = CallingAgentConfig::query()
             ->withoutGlobalScopes()
             ->where('company_id', $companyId)
             ->first();

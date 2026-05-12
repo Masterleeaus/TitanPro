@@ -6,7 +6,12 @@ use Modules\CallingAgent\Support\TenantContext;
 
 final class SipBridgeService
 {
-    public function __construct(private readonly CallingAgentCredentialResolver $credentialResolver = new CallingAgentCredentialResolver()) {}
+    private CallingAgentCredentialResolver $credentialResolver;
+
+    public function __construct(?CallingAgentCredentialResolver $credentialResolver = null)
+    {
+        $this->credentialResolver = $credentialResolver ?? app(CallingAgentCredentialResolver::class);
+    }
 
     public function normalizeUri(string $destination): string
     {
