@@ -3,29 +3,53 @@
   "card": "ModuleTablesCard",
   "tabs": [
     {
-      "key": "records",
-      "label": "Records",
-      "resource": "ExampleRecordResource",
-      "permission": "accountings.view",
+      "key": "overview",
+      "label": "Overview",
+      "source": "accounting_overview",
+      "permission": "accounting.view",
       "default": true
     },
     {
-      "key": "imports",
-      "label": "Imports",
-      "source": "imports",
-      "permission": "accountings.import"
+      "key": "invoices",
+      "label": "Invoices",
+      "resource": "Modules\\Accountings\\Filament\\Resources\\InvoiceResource",
+      "permission": "accounting.view"
     },
     {
-      "key": "agent_logs",
-      "label": "Agent Logs",
-      "source": "agent_control_logs",
-      "permission": "accountings.agent.use"
+      "key": "payments",
+      "label": "Payments",
+      "resource": "Modules\\Accountings\\Filament\\Resources\\PaymentSessionResource",
+      "permission": "accounting.view"
     },
     {
-      "key": "knowledge",
-      "label": "Knowledge",
-      "source": "knowledge_sources",
-      "permission": "accountings.knowledge.manage"
+      "key": "collections",
+      "label": "Collections",
+      "page": "Modules\\Accountings\\Filament\\Pages\\CollectionsPage",
+      "permission": "accounting.view"
+    },
+    {
+      "key": "bank_matching",
+      "label": "Bank Matching",
+      "page": "Modules\\Accountings\\Filament\\Pages\\BankMatchingPage",
+      "permission": "accounting.reconcile"
+    },
+    {
+      "key": "accounting",
+      "label": "Accounting",
+      "resource": "Modules\\Accountings\\Filament\\Resources\\JournalResource",
+      "permission": "accounting.view"
+    },
+    {
+      "key": "compliance",
+      "label": "Compliance",
+      "page": "Modules\\Accountings\\Filament\\Pages\\CompliancePage",
+      "permission": "accounting.gst.view"
+    },
+    {
+      "key": "ai_control",
+      "label": "AI Control",
+      "page": "Modules\\Accountings\\Filament\\Pages\\AiControlPage",
+      "permission": "money.agent.use"
     }
   ],
   "actions": [

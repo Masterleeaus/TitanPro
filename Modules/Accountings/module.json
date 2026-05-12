@@ -39,6 +39,8 @@
     "permissions": "manifests/permissions.json",
     "signals": "manifests/signals.json",
     "ai": "manifests/ai-tools.json",
+    "zeropay": "manifests/zeropay.php",
+    "titanzero": "manifests/titanzero.php",
     "cms": "manifests/cms.json",
     "omni": "manifests/omni.json",
     "agent": "Agents/ModuleAgent/agent.manifest.json",

@@ -11,18 +11,10 @@
     {"event":"Modules\\Accountings\\Events\\ZeroPayPaymentConfirmed","alias":"accounting.zeropay.payment_confirmed"}
   ],
   "consumes": [
+    "Modules\\EInvoice\\Events\\InvoiceSent",
     "einvoice.issued",
     "einvoice.paid",
     "zeropay.payment.completed",
     "zeropay.bank_deposit.matched"
-  ],
-  "emits": [
-    "accounting.journal.posted",
-    "accounting.gst.posted",
-    "accounting.receivables.aged",
-    "accounting.statement.generated",
-    "accounting.writeoff.posted",
-    "accounting.ledger_adjustment.suggested",
-    "accounting.zeropay.payment_confirmed"
   ]
 }
