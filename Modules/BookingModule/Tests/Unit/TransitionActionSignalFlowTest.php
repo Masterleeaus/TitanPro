@@ -16,4 +16,3 @@ class TransitionActionSignalFlowTest extends TestCase
         $this->assertStringContainsString('new BookingCancelled', $contents);
     }
 }
-

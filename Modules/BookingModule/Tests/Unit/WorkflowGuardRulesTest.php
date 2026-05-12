@@ -16,4 +16,3 @@ class WorkflowGuardRulesTest extends TestCase
         $this->assertArrayHasKey('completed->invoiced', $guards);
     }
 }
-

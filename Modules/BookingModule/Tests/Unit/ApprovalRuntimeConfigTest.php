@@ -15,4 +15,3 @@ class ApprovalRuntimeConfigTest extends TestCase
         $this->assertStringContainsString("'timeout_hours'", $contents);
     }
 }
-

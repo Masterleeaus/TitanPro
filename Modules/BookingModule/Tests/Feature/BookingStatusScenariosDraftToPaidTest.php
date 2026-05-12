@@ -29,4 +29,3 @@ class BookingStatusScenariosDraftToPaidTest extends TestCase
         $this->assertTrue($booking->canTransitionTo('paid'));
     }
 }
-

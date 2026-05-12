@@ -26,4 +26,3 @@ class CreateBookingFromQuoteAcceptedSignal
         $this->createFromQuote->execute($payload);
     }
 }
-

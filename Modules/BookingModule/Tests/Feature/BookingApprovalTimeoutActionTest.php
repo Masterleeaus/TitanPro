@@ -15,4 +15,3 @@ class BookingApprovalTimeoutActionTest extends TestCase
         $this->assertStringContainsString("'approval_timeout' => true", $contents);
     }
 }
-

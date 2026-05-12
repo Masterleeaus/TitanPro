@@ -19,4 +19,3 @@ class LifecycleManifestContractTest extends TestCase
         $this->assertContains('paid', $states);
     }
 }
-

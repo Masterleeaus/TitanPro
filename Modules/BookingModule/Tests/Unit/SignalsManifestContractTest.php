@@ -20,4 +20,3 @@ class SignalsManifestContractTest extends TestCase
         $this->assertContains('ZeroFussPortal.NotifyCustomer', $manifest['emits'] ?? []);
     }
 }
-

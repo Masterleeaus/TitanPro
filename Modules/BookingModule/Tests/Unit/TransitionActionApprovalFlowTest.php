@@ -16,4 +16,3 @@ class TransitionActionApprovalFlowTest extends TestCase
         $this->assertStringContainsString('BookingApprovalDecided', $contents);
     }
 }
-

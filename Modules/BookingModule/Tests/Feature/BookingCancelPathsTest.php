@@ -15,4 +15,3 @@ class BookingCancelPathsTest extends TestCase
         }
     }
 }
-

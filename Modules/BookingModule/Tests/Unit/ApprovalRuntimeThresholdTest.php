@@ -18,4 +18,3 @@ class ApprovalRuntimeThresholdTest extends TestCase
         $this->assertTrue($runtime->requiresApproval($booking));
     }
 }
-

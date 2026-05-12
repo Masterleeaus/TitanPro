@@ -19,4 +19,3 @@ class BookingApprovalDecided
         public readonly array $payload = [],
     ) {}
 }
-

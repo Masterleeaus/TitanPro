@@ -16,4 +16,3 @@ class FilamentResourceArchitectureTest extends TestCase
         $this->assertStringNotContainsString('BookingApprovalRuntime', $contents);
     }
 }
-

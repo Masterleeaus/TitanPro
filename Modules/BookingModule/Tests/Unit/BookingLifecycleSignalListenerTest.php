@@ -16,4 +16,3 @@ class BookingLifecycleSignalListenerTest extends TestCase
         $this->assertStringContainsString('ZeroFussPortal.NotifyCustomer', $contents);
     }
 }
-

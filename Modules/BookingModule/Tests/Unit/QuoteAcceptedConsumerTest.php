@@ -15,4 +15,3 @@ class QuoteAcceptedConsumerTest extends TestCase
         $this->assertStringContainsString('CreateBookingFromQuoteAcceptedSignal::class', $contents);
     }
 }
-

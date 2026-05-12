@@ -20,4 +20,3 @@ class BookingRescheduleAndNoShowTest extends TestCase
         $this->assertTrue($noShow->canTransitionTo('rescheduled'));
     }
 }
-

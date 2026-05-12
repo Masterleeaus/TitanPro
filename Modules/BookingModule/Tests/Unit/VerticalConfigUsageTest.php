@@ -15,4 +15,3 @@ class VerticalConfigUsageTest extends TestCase
         $this->assertStringContainsString("config('bookingmodule.verticals.default'", $contents);
     }
 }
-

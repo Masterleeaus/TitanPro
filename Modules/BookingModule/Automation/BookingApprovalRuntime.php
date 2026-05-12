@@ -52,4 +52,3 @@ class BookingApprovalRuntime
         return (float) ($company ?? $fallback);
     }
 }
-

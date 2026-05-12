@@ -18,4 +18,3 @@ class BookingApprovalRequested
         public readonly array $payload = [],
     ) {}
 }
-

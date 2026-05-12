@@ -16,4 +16,3 @@ class VerticalDocumentationTest extends TestCase
         $this->assertStringContainsString('maintenance', $contents);
     }
 }
-
