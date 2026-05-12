@@ -3,8 +3,10 @@
 namespace Modules\Accountings\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accountings\Entities\Journal;
+use Modules\Accountings\Events\InvoiceJournalPosted;
 
 class PostInvoiceJournalAction
 {
@@ -41,6 +43,15 @@ class PostInvoiceJournalAction
         if ($journal->isDirty()) {
             $journal->save();
         }
+
+        Event::dispatch(new InvoiceJournalPosted([
+            'company_id' => $companyId,
+            'actor_id' => auth()->id(),
+            'occurred_at' => now()->toIso8601String(),
+            'journal_id' => $journal->id,
+            'invoice_id' => $invoiceId,
+            'reference' => $reference,
+        ]));
 
         return $journal;
     }
