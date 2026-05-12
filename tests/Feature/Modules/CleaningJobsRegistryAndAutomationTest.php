@@ -22,7 +22,7 @@ class CleaningJobsRegistryAndAutomationTest extends TestCase
     {
         $this->assertNotNull(app(DashboardRegistry::class)->manifest('CleaningJobs'));
         $this->assertNotNull(app(TableRegistry::class)->find('CleaningJobs', 'jobs'));
-        $this->assertNotNull(app(ShortcutRegistry::class)->find('CleaningJobs', 'schedule_job'));
+        $this->assertNotNull(app(ShortcutRegistry::class)->find('CleaningJobs', 'create_booking'));
         $this->assertNotNull(app(SettingsRegistry::class)->find('CleaningJobs', 'auto_convert_on_complete'));
 
         $tenantResolver = app(TenancyRegistry::class)->findResolver('cleaningjobs.company');

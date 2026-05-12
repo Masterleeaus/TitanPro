@@ -125,6 +125,17 @@ class CleaningJobsControlPanelTest extends TestCase
         }
     }
 
+    public function test_shortcut_actions_execute_with_payload_passthrough(): void
+    {
+        $payload = ['job_id' => 99, 'company_id' => 7];
+
+        foreach (ShortcutRegistry::getShortcuts() as $shortcut) {
+            $result = (new $shortcut['action']())->execute($payload);
+
+            $this->assertSame(['ok' => true, 'payload' => $payload], $result);
+        }
+    }
+
     private function tenantPair(): array
     {
         $orgA = Organization::factory()->create();
