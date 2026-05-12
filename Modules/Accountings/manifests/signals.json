@@ -11,7 +11,6 @@
     {"event":"Modules\\Accountings\\Events\\ZeroPayPaymentConfirmed","alias":"accounting.zeropay.payment_confirmed"}
   ],
   "consumes": [
-    "Modules\\EInvoice\\Events\\InvoiceSent",
     "einvoice.issued",
     "einvoice.paid",
     "zeropay.payment.completed",

@@ -16,6 +16,6 @@ class BankMatchingPage extends Page
 
     public function match(array $deposit, array $candidateInvoices = []): array
     {
-        return app(MatchBankDepositTool::class)->__invoke($deposit, $candidateInvoices);
+        return app(MatchBankDepositTool::class)($deposit, $candidateInvoices);
     }
 }

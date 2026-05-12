@@ -2,8 +2,8 @@
 
 namespace Modules\Accountings\Tests\Feature;
 
-use PHPUnit\Framework\TestCase;
 use Modules\Accountings\UI\Tabs\ControlPanelTabs;
+use Tests\TestCase;
 
 class AccountingsWorkspaceContractsTest extends TestCase
 {
@@ -40,7 +40,10 @@ class AccountingsWorkspaceContractsTest extends TestCase
         foreach (['ai_tools.json', 'signals_manifest.json', 'lifecycle_manifest.json'] as $file) {
             $path = $base . '/' . $file;
             $this->assertFileExists($path);
-            $this->assertNotNull(json_decode((string) file_get_contents($path), true), "{$file} must be valid JSON.");
+            $this->assertIsArray(
+                json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR),
+                "{$file} must decode to an object or array."
+            );
         }
 
         $this->assertFileExists($base . '/zeropay.php');

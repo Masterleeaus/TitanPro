@@ -35,13 +35,10 @@
   ],
   "manifest": {
     "lifecycle": "manifests/lifecycle.json",
-    "lifecycle_manifest": "manifests/lifecycle_manifest.json",
     "api": "manifests/api.json",
     "permissions": "manifests/permissions.json",
     "signals": "manifests/signals.json",
-    "signals_manifest": "manifests/signals_manifest.json",
     "ai": "manifests/ai-tools.json",
-    "ai_tools": "manifests/ai_tools.json",
     "zeropay": "manifests/zeropay.php",
     "titanzero": "manifests/titanzero.php",
     "cms": "manifests/cms.json",

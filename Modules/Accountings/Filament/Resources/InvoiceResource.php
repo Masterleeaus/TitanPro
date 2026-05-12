@@ -33,7 +33,7 @@ class InvoiceResource extends Resource
                 Tables\Actions\Action::make('follow_up')
                     ->label('Follow-up')
                     ->action(function (Invoice $record): array {
-                        $daysOverdue = max(0, now()->diffInDays($record->due_date ?? now(), false) * -1);
+                        $daysOverdue = static::daysOverdue($record);
 
                         return app(GenerateLateInvoiceFollowupAction::class)->execute($record, $daysOverdue);
                     }),
@@ -45,5 +45,12 @@ class InvoiceResource extends Resource
         return [
             'index' => Pages\ListInvoices::route('/'),
         ];
+    }
+
+    private static function daysOverdue(Invoice $invoice): int
+    {
+        return $invoice->due_date
+            ? max(0, $invoice->due_date->diffInDays(now(), false))
+            : 0;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Modules\Accountings\Tests\Unit;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accountings\Actions\GenerateAccountantExportPackAction;
@@ -125,7 +125,7 @@ class AccountingsEventDispatchTest extends TestCase
 
     private function actingAsCompany(int $companyId): void
     {
-        $user = new class extends Authenticatable {};
+        $user = new User;
         $user->id = $companyId + 1000;
         $user->company_id = $companyId;
 
