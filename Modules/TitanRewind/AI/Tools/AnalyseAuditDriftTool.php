@@ -34,9 +34,11 @@ class AnalyseAuditDriftTool
             'count' => (int) $row->total,
         ])->values()->all();
 
-        $confidence = count($anomalies) === 0
+        $anomalyCount = count($anomalies);
+
+        $confidence = $anomalyCount === 0
             ? self::BASE_CONFIDENCE
-            : min(self::CONFIDENCE_MAX, self::CONFIDENCE_FLOOR + (count($anomalies) * self::CONFIDENCE_STEP));
+            : min(self::CONFIDENCE_MAX, self::CONFIDENCE_FLOOR + ($anomalyCount * self::CONFIDENCE_STEP));
 
         return [
             'anomalies' => $anomalies,
