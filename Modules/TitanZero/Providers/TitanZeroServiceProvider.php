@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Route;
 use Modules\TitanZero\Console\Commands\TitanZeroImportPdf;
 use Modules\TitanZero\Console\Commands\TitanZeroClassifyDocs;
 use Modules\TitanZero\Console\Commands\TitanZeroClassifyDocsV2;
+use Modules\TitanZero\Console\Commands\ListBlueprintsCommand;
 use Modules\TitanZero\Services\Aegis\AegisService;
 use Modules\TitanZero\Services\CompanyApiKeyService;
 use Modules\TitanZero\Services\Context\TitanZeroContextLoader;
 use Modules\TitanZero\Services\TitanZeroQueryService;
 use Modules\TitanZero\Services\TitanZeroRateLimitService;
+use Modules\TitanZero\Services\ToolInvocationLogger;
+use Modules\TitanZero\Services\CircuitBreaker\CircuitBreakerService;
+use Modules\TitanZero\Evaluation\AgentEvaluator;
 
 class TitanZeroServiceProvider extends ServiceProvider
 {
@@ -25,6 +29,9 @@ class TitanZeroServiceProvider extends ServiceProvider
         $this->app->singleton(CompanyApiKeyService::class);
         $this->app->singleton(TitanZeroRateLimitService::class);
         $this->app->singleton(TitanZeroQueryService::class);
+        $this->app->singleton(ToolInvocationLogger::class);
+        $this->app->singleton(CircuitBreakerService::class);
+        $this->app->singleton(AgentEvaluator::class);
 
         // Facade accessor: TitanZero::query($context, $prompt)
         $this->app->alias(TitanZeroQueryService::class, 'titan-zero.query');
@@ -81,6 +88,7 @@ class TitanZeroServiceProvider extends ServiceProvider
                 TitanZeroImportPdf::class,
                 TitanZeroClassifyDocs::class,
                 TitanZeroClassifyDocsV2::class,
+                ListBlueprintsCommand::class,
             ]);
 
             // Publish public assets (if present)
