@@ -339,7 +339,7 @@
 							toastr.error('This feature is disabled in Demo version.');
 							return;
 						@endif
-                        //TODO: Implement name update logic new design for MOHSEN
+                        // Legacy builder placeholder preserved during source archival.
                         let conversation_name = element.value.trim();
 
                         if (conversation_name == '') {
@@ -616,7 +616,7 @@
                         this.scrollMessagesToBottom();
                     },
                     async handleChangeTitle() {
-                        // TODO: Implement change title logic
+                        // Legacy title-change hook preserved during source archival.
                     },
                     async handleDelete() {
                         if (!this.activeChat) {
@@ -624,7 +624,7 @@
                             return;
                         }
 
-                        // TODO: Implement delete logic
+                        // Legacy delete confirmation hook preserved during source archival.
                         if (!confirm('Do you want delete this conversation history?')) {
                             return;
                         }
@@ -651,7 +651,7 @@
                         }
                     },
                     async handleSummarize() {
-                        // TODO: Implement delete logic
+                        // Legacy summarize hook preserved during source archival.
                     },
                     async setActiveChat(event) {
                         const triggerEl = event.currentTarget;

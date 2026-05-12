@@ -21,11 +21,11 @@ class StripeSettings extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Stripe Integration';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 90;
 
-    protected static string $view = 'filament.zeropay.pages.stripe-settings';
+    protected string $view = 'filament.zeropay.pages.stripe-settings';
 
     public ?array $data = [];
 

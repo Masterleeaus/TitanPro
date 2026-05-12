@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Queue;
 // ══════════════════════════════════════════════════════════════════════════════
 
 describe('ConditionEvaluator', function () {
-    test('evaluates == operator correctly', function () {
+    test('evaluates equality comparisons correctly', function () {
         $evaluator = new ConditionEvaluator;
 
         expect($evaluator->evaluate(['field' => 'status', 'operator' => '==', 'value' => 'active'], ['status' => 'active']))->toBeTrue();
         expect($evaluator->evaluate(['field' => 'status', 'operator' => '==', 'value' => 'active'], ['status' => 'inactive']))->toBeFalse();
     });
 
-    test('evaluates != operator correctly', function () {
+    test('evaluates inequality comparisons correctly', function () {
         $evaluator = new ConditionEvaluator;
 
         expect($evaluator->evaluate(['field' => 'status', 'operator' => '!=', 'value' => 'active'], ['status' => 'inactive']))->toBeTrue();

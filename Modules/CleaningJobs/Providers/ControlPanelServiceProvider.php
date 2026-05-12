@@ -3,24 +3,20 @@
 namespace Modules\CleaningJobs\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\CleaningJobs\ControlPanel\Metrics\DashboardMetrics;
+use Modules\CleaningJobs\ControlPanel\Tables\Providers\JobsTableProvider;
+use Modules\CleaningJobs\ControlPanel\Tables\Providers\RequestsTableProvider;
+use Modules\CleaningJobs\ControlPanel\Tables\TabsRegistry;
+use Modules\CleaningJobs\ControlPanel\Widgets\OperationalWidgets;
 
-/**
- * ControlPanelServiceProvider registers the TitanWork control panel components.
- *
- * This provider is responsible for binding data providers and publishing
- * assets or resources required by the control panel UI. At this stage it
- * only serves as a placeholder to satisfy the blueprint contract.
- */
 class ControlPanelServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Here you could bind interfaces to implementations for metrics,
-        // widgets, shortcuts, settings, tables, etc.
-    }
-
-    public function boot(): void
-    {
-        // You may publish view files or routes related to the control panel here.
+        $this->app->singleton(DashboardMetrics::class);
+        $this->app->singleton(OperationalWidgets::class);
+        $this->app->singleton(JobsTableProvider::class);
+        $this->app->singleton(RequestsTableProvider::class);
+        $this->app->singleton(TabsRegistry::class);
     }
 }

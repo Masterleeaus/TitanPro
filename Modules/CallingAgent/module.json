@@ -12,7 +12,6 @@
     "twilio/sdk",
     "guzzlehttp/guzzle"
   ],
-  "filament_panel": "groundzero",
   "source_extensions": [
     "ExternalChatbot",
     "ChatbotWhatsapp",
@@ -35,5 +34,6 @@
     "voice_personas",
     "full_duplex_helpers",
     "builder_ui_preserved"
-  ]
+  ],
+  "filament_panel": "groundzero"
 }

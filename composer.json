@@ -16,7 +16,7 @@
         "attargah/admin-bar": "^1.0",
         "awcodes/filament-badgeable-column": "^3.1",
         "awcodes/filament-curator": "^5.0",
-        "bezhansalleh/filament-panel-switch": "^2.1",
+        "bezhansalleh/filament-panel-switch": "^3.1",
         "bezhansalleh/filament-shield": "^4.2",
         "biostate/filament-menu-builder": "^4.0",
         "devonab/filament-easy-footer": "^2.2",
@@ -48,12 +48,11 @@
         "relaticle/flowforge": "^3.0",
         "savannabits/filament-modules": "^5.1",
         "sentry/sentry-laravel": "^4.25",
-        "shreejan/dash-arrange": "^1.0",
         "solution-forest/tab-layout-plugin": "^4.0",
         "spatie/laravel-permission": "^7.0",
         "spykapps/filament-uppy-upload": "^1.0",
         "stripe/stripe-php": "^20.0",
-        "symfony/sendgrid-mailer": "^8.0",
+        "symfony/sendgrid-mailer": "^7.4",
         "tapp/filament-progress-bar-column": "^1.0",
         "tomatophp/filament-cms": "^4.0",
         "tomatophp/filament-settings-hub": "^4.0",
@@ -88,6 +87,7 @@
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
             "npm install",
@@ -143,5 +143,6 @@
             "wikimedia/composer-merge-plugin": true
         }
     },
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

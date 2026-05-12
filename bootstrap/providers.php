@@ -6,6 +6,7 @@ return [
     // 1. Module layer first (registry must exist before AI / security resolve it)
     App\Providers\TitanModuleServiceProvider::class,
     App\Providers\AutomationEngineServiceProvider::class,
+    App\Extensions\TitanPulse\Providers\TitanPulseServiceProvider::class,
     App\Providers\TitanBlueprintServiceProvider::class,
     // 2. AI and security layers depend on the module registry being available
     App\Providers\TitanAiRuntimeServiceProvider::class,
@@ -22,6 +23,7 @@ return [
     App\Providers\Filament\TitanNexusPanelProvider::class,
     App\Providers\FortifyServiceProvider::class,
     Modules\CRMCore\Providers\ModuleServiceProvider::class,
+    Modules\TitanLeads\Providers\TitanLeadsServiceProvider::class,
     // Only registered when Telescope is installed (dev environments only)
     ...(class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)
         ? [App\Providers\TelescopeServiceProvider::class]

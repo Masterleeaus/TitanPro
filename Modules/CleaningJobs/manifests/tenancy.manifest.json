@@ -1,7 +1,25 @@
 {
-  "enables": [
-    "tenant scoping",
-    "company isolation",
-    "tenant route surface"
+  "enabled": true,
+  "canonical_tenant_key": "company_id",
+  "legacy_fallback_key": "parent_id",
+  "resolvers": [
+    {
+      "key": "cleaningjobs.company",
+      "class": "Modules\\CleaningJobs\\Tenancy\\Resolvers\\CompanyTenantResolver"
+    }
+  ],
+  "policies": [
+    {
+      "key": "cleaningjobs.work_orders",
+      "class": "Modules\\CleaningJobs\\Tenancy\\Policies\\TenantJobPolicy",
+      "model": "Modules\\CleaningJobs\\Models\\WorkOrder"
+    }
+  ],
+  "scoped_models": [
+    "Modules\\CleaningJobs\\Models\\WorkOrder",
+    "Modules\\CleaningJobs\\Models\\WORequest",
+    "Modules\\CleaningJobs\\Models\\WOServiceAppointment",
+    "Modules\\CleaningJobs\\Models\\WOType",
+    "Modules\\CleaningJobs\\Models\\ServicePart"
   ]
 }

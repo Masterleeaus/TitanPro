@@ -9,6 +9,7 @@ use Modules\CallingAgent\Services\TwilioChannelService;
 use Modules\CallingAgent\Services\ReceptionistOrchestrator;
 use Modules\CallingAgent\Models\CallingAgentCall;
 use Modules\CallingAgent\Models\CallingAgentActiveCall;
+use Modules\CallingAgent\Support\TenantContext;
 use Twilio\TwiML\VoiceResponse;
 
 class TwilioVoiceWebhookController extends Controller
@@ -21,6 +22,7 @@ class TwilioVoiceWebhookController extends Controller
 
     public function incoming(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
         $call = $this->orchestrator->startInbound($request->all());
         $this->orchestrator->touchActive($call, $request->all());
         $agent = $this->orchestrator->resolveByNumber($request->input('To'));
@@ -37,6 +39,7 @@ class TwilioVoiceWebhookController extends Controller
 
     public function gather(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
         $call   = $this->orchestrator->startInbound($request->all());
         $speech = $request->input('SpeechResult') ?: $request->input('Digits') ?: '';
         $reply  = $speech
@@ -54,14 +57,16 @@ class TwilioVoiceWebhookController extends Controller
 
     public function status(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         if ($callSid = $request->input('CallSid')) {
             $this->orchestrator->complete($callSid, $request->all());
 
             // Billing: record voice seconds once, idempotently
-            $call = CallingAgentCall::where('call_sid', $callSid)->first();
+            $call = CallingAgentCall::query()->withoutGlobalScopes()->where('call_sid', $callSid)->first();
             if ($call && in_array($request->input('CallStatus'), ['completed', 'failed', 'busy', 'no-answer'], true)) {
                 try {
-                    $this->usageRecorder->record($call);
+                    $this->usageRecorder->record($call, $call->tenant_id);
                 } catch (\Throwable $e) {
                     report($e);
                 }
@@ -72,6 +77,8 @@ class TwilioVoiceWebhookController extends Controller
 
     public function recording(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         $callSid      = $request->input('CallSid');
         $recordingSid = $request->input('RecordingSid');
         $recordingUrl = $request->input('RecordingUrl');
@@ -90,7 +97,11 @@ class TwilioVoiceWebhookController extends Controller
             ->update(['recording_url' => $recordingUrl]);
 
         try {
+            $call = CallingAgentCall::query()->withoutGlobalScopes()->where('call_sid', $callSid)->first();
+
             \DB::table('calling_agent_recordings')->insert([
+                'tenant_id' => $call?->tenant_id ?? TenantContext::id(),
+                'calling_agent_call_id' => $call?->id,
                 'call_sid'      => $callSid,
                 'recording_sid' => $recordingSid,
                 'recording_url' => $recordingUrl,
@@ -114,6 +125,8 @@ class TwilioVoiceWebhookController extends Controller
 
     public function voicemail(Request $request)
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         $callSid      = $request->input('CallSid');
         $recordingUrl = $request->input('RecordingUrl');
         $recordingSid = $request->input('RecordingSid');
@@ -132,7 +145,11 @@ class TwilioVoiceWebhookController extends Controller
                     'recording_url' => $recordingUrl,
                     'ended_at'      => now(),
                 ]);
-            CallingAgentActiveCall::where('call_sid', $callSid)->delete();
+            CallingAgentActiveCall::query()
+                ->withoutGlobalScopes()
+                ->where('call_sid', $callSid)
+                ->when(TenantContext::id() !== null, fn ($query) => $query->where('tenant_id', TenantContext::id()))
+                ->delete();
         } else {
             // Prompt to leave voicemail
             $r->say('Please leave your message after the tone. Press any key when finished.');

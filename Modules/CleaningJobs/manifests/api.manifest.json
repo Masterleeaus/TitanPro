@@ -1,18 +1,45 @@
 {
-  "enables": [
-    "single-module cleaning job operations",
-    "tenant-safe feature discovery",
-    "integrated job lifecycle capabilities"
-  ],
-  "integrations": [
-    "cleaning_jobs.timesheets",
-    "cleaning_jobs.resource_planning",
-    "cleaning_jobs.financial_tracking",
-    "cleaning_jobs.kanban",
-    "cleaning_jobs.milestones",
-    "cleaning_jobs.subtasks",
-    "cleaning_jobs.comments",
-    "cleaning_jobs.files",
-    "cleaning_jobs.activity_logs"
+  "enabled": true,
+  "public": [
+    {
+      "key": "cleaningjobs.orders.index",
+      "method": "GET",
+      "uri": "/api/cleaning-jobs/orders",
+      "controller": "Modules\\CleaningJobs\\Http\\Controllers\\Api\\WorkOrderApiController@index",
+      "auth": "sanctum",
+      "tenant_scoped": true
+    },
+    {
+      "key": "cleaningjobs.orders.store",
+      "method": "POST",
+      "uri": "/api/cleaning-jobs/orders",
+      "controller": "Modules\\CleaningJobs\\Http\\Controllers\\Api\\WorkOrderApiController@store",
+      "auth": "sanctum",
+      "tenant_scoped": true
+    },
+    {
+      "key": "cleaningjobs.orders.show",
+      "method": "GET",
+      "uri": "/api/cleaning-jobs/orders/{order}",
+      "controller": "Modules\\CleaningJobs\\Http\\Controllers\\Api\\WorkOrderApiController@show",
+      "auth": "sanctum",
+      "tenant_scoped": true
+    },
+    {
+      "key": "cleaningjobs.orders.update",
+      "method": "PUT",
+      "uri": "/api/cleaning-jobs/orders/{order}",
+      "controller": "Modules\\CleaningJobs\\Http\\Controllers\\Api\\WorkOrderApiController@update",
+      "auth": "sanctum",
+      "tenant_scoped": true
+    },
+    {
+      "key": "cleaningjobs.orders.destroy",
+      "method": "DELETE",
+      "uri": "/api/cleaning-jobs/orders/{order}",
+      "controller": "Modules\\CleaningJobs\\Http\\Controllers\\Api\\WorkOrderApiController@destroy",
+      "auth": "sanctum",
+      "tenant_scoped": true
+    }
   ]
 }

@@ -4,18 +4,44 @@ namespace Modules\CleaningJobs\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\CleaningJobs\Traits\BelongsToTenant;
 
 class WORequest extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
 
     protected $table = 'wo_requests';
 
     protected $fillable = [
-        'work_order_id', 'requested_by_id', 'channel', 'description',
-        'request_detail', 'client', 'asset', 'priority', 'due_date', 'status',
-        'assign', 'notes', 'preferred_date', 'preferred_time', 'preferred_note', 'parent_id',
+        'work_order_id',
+        'requested_by_id',
+        'channel',
+        'description',
+        'request_detail',
+        'client',
+        'asset',
+        'priority',
+        'due_date',
+        'status',
+        'assign',
+        'notes',
+        'preferred_date',
+        'preferred_time',
+        'preferred_note',
+        'parent_id',
+        'company_id',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'date',
+            'preferred_date' => 'date',
+            'company_id' => 'integer',
+            'parent_id' => 'integer',
+        ];
+    }
 
     public static $priority = [
         'low' => 'Low',
@@ -56,6 +82,9 @@ class WORequest extends Model
     public function assets()
     {
         $class = 'Modules\\CleaningJobs\\Models\\Asset';
-        return class_exists($class) ? $this->hasOne($class, 'id', 'asset') : $this->hasOne(static::class, 'id', 'asset')->whereRaw('1 = 0');
+
+        return class_exists($class)
+            ? $this->hasOne($class, 'id', 'asset')
+            : $this->hasOne(static::class, 'id', 'asset')->whereRaw('1 = 0');
     }
 }

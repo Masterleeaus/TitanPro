@@ -6,37 +6,43 @@ use Illuminate\Support\Facades\File;
  * Tests for the modules:manifest-cache artisan command.
  */
 describe('modules:manifest-cache command', function () {
-
-    /** Helper: resolve the default cache path used by the command. */
-    $defaultCachePath = base_path('bootstrap/cache/titan_manifests.php');
+    $defaultCachePath = static fn (): string => base_path('bootstrap/cache/titan_manifests.php');
 
     afterEach(function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         // Clean up the default cache file after each test
-        if (file_exists($defaultCachePath)) {
-            unlink($defaultCachePath);
+        if (file_exists($cachePath)) {
+            unlink($cachePath);
         }
     });
 
     test('writes the cache file and exits 0', function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         $this->artisan('modules:manifest-cache')
             ->assertExitCode(0);
 
-        expect(file_exists($defaultCachePath))->toBeTrue('Cache file should have been written');
+        expect(file_exists($cachePath))->toBeTrue('Cache file should have been written');
     });
 
     test('written cache file is valid PHP that returns an array', function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         $this->artisan('modules:manifest-cache')
             ->assertExitCode(0);
 
-        $data = require $defaultCachePath;
+        $data = require $cachePath;
         expect($data)->toBeArray();
     });
 
     test('written cache array keys are module names', function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         $this->artisan('modules:manifest-cache')
             ->assertExitCode(0);
 
-        $data = require $defaultCachePath;
+        $data = require $cachePath;
 
         foreach (array_keys($data) as $moduleName) {
             expect($moduleName)->toBeString()->not->toBeEmpty();
@@ -44,21 +50,25 @@ describe('modules:manifest-cache command', function () {
     });
 
     test('--clear removes the cache file', function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         // Write it first
         $this->artisan('modules:manifest-cache')->assertExitCode(0);
-        expect(file_exists($defaultCachePath))->toBeTrue();
+        expect(file_exists($cachePath))->toBeTrue();
 
         // Now clear it
         $this->artisan('modules:manifest-cache', ['--clear' => true])
             ->assertExitCode(0);
 
-        expect(file_exists($defaultCachePath))->toBeFalse('Cache file should have been deleted');
+        expect(file_exists($cachePath))->toBeFalse('Cache file should have been deleted');
     });
 
     test('--clear exits 0 even when cache file does not exist', function () use ($defaultCachePath) {
+        $cachePath = $defaultCachePath();
+
         // Ensure the file is absent
-        if (file_exists($defaultCachePath)) {
-            unlink($defaultCachePath);
+        if (file_exists($cachePath)) {
+            unlink($cachePath);
         }
 
         $this->artisan('modules:manifest-cache', ['--clear' => true])

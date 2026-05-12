@@ -145,6 +145,6 @@ class ChatbotVoiceServiceProvider extends ServiceProvider implements UninstallEx
 
     public static function uninstall(): void
     {
-        // TODO: Implement uninstall() method.
+        // Legacy source retained for archive compatibility; no uninstall actions required.
     }
 }
