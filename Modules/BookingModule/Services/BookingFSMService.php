@@ -12,8 +12,8 @@ use Modules\BookingModule\Models\CleaningBooking;
  * Validates and applies FSM status transitions for CleaningBooking records.
  *
  * Valid state machine:
- *   pending → confirmed → en_route → in_progress → completed → reclean
- *   Any state (except cancelled) → cancelled
+ *   draft → confirmed → dispatched → in_progress → completed → invoiced → paid
+ *   Alternate branches include pending_approval, rescheduled, no_show, cancelled
  */
 class BookingFSMService
 {
@@ -22,19 +22,59 @@ class BookingFSMService
      *
      * @throws ValidationException  When the transition is not allowed.
      */
-    public function transition(CleaningBooking $booking, string $newStatus): CleaningBooking
+    public function transition(CleaningBooking $booking, string $newStatus, array $context = []): CleaningBooking
     {
         $this->assertValidTransition($booking, $newStatus);
+        $this->assertGuardConditions($booking, $newStatus, $context);
 
         $booking->booking_status = $newStatus;
 
-        // Record clock-in / clock-out timestamps automatically.
+        if ($newStatus === 'pending_approval' && $booking->pending_approval_at === null) {
+            $booking->pending_approval_at = now();
+        }
+
+        if (
+            $newStatus === 'pending_approval'
+            && $booking->approval_due_at === null
+            && ! array_key_exists('approval_due_at', $context)
+        ) {
+            $booking->approval_due_at = now()->addHours((int) config('bookingmodule.automation.approval.timeout_hours', 24));
+        }
+
+        if ($newStatus === 'dispatched' && $booking->dispatched_at === null) {
+            $booking->dispatched_at = now();
+        }
+
         if ($newStatus === 'in_progress' && $booking->cleaner_arrived_at === null) {
             $booking->cleaner_arrived_at = now();
         }
 
         if ($newStatus === 'completed' && $booking->cleaner_departed_at === null) {
             $booking->cleaner_departed_at = now();
+        }
+
+        if ($newStatus === 'rescheduled' && $booking->rescheduled_at === null) {
+            $booking->rescheduled_at = now();
+        }
+
+        if ($newStatus === 'no_show' && $booking->no_show_at === null) {
+            $booking->no_show_at = now();
+        }
+
+        if ($newStatus === 'invoiced') {
+            $booking->invoice_generated = true;
+        }
+
+        if ($newStatus === 'paid' && $booking->paid_at === null) {
+            $booking->paid_at = now();
+        }
+
+        if (array_key_exists('approval_due_at', $context)) {
+            $booking->approval_due_at = $context['approval_due_at'];
+        }
+
+        if (array_key_exists('job_card_completed_at', $context)) {
+            $booking->job_card_completed_at = $context['job_card_completed_at'];
         }
 
         $booking->save();
@@ -77,5 +117,56 @@ class BookingFSMService
                 ],
             ]);
         }
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function assertGuardConditions(CleaningBooking $booking, string $newStatus, array $context): void
+    {
+        if ($booking->booking_status === 'confirmed' && $newStatus === 'dispatched') {
+            if ($this->assignedTechniciansCount($booking, $context) < 1) {
+                throw ValidationException::withMessages([
+                    'booking_status' => ['Transition confirmed -> dispatched requires at least one assigned technician.'],
+                ]);
+            }
+        }
+
+        if ($booking->booking_status === 'completed' && $newStatus === 'invoiced') {
+            $jobCardCompleted = (bool) ($context['job_card_completed'] ?? false)
+                || in_array('JobCardCompleted', (array) ($context['received_signals'] ?? []), true)
+                || $booking->job_card_completed_at !== null;
+
+            if (! $jobCardCompleted) {
+                throw ValidationException::withMessages([
+                    'booking_status' => ['Transition completed -> invoiced requires JobCardCompleted signal evidence.'],
+                ]);
+            }
+        }
+    }
+
+    private function assignedTechniciansCount(CleaningBooking $booking, array $context): int
+    {
+        if (isset($context['assigned_technician_ids']) && is_array($context['assigned_technician_ids'])) {
+            return count(array_filter($context['assigned_technician_ids']));
+        }
+
+        if (isset($context['assigned_technicians_count'])) {
+            return max(0, (int) $context['assigned_technicians_count']);
+        }
+
+        if (method_exists($booking, 'assignedTechniciansCount')) {
+            return max(0, (int) $booking->assignedTechniciansCount());
+        }
+
+        if (method_exists($booking, 'taskUsers')) {
+            try {
+                return (int) $booking->taskUsers()->count();
+            } catch (\Throwable) {
+                return 0;
+            }
+        }
+
+        return 0;
     }
 }

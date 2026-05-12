@@ -45,6 +45,27 @@ return [
         'class_c' => [],
     ],
 
+    'approval' => [
+        'high_value_threshold' => (float) env('BOOKING_APPROVAL_HIGH_VALUE_THRESHOLD', 1000),
+        'high_value_threshold_per_company' => [],
+        'timeout_hours' => (int) env('BOOKING_APPROVAL_TIMEOUT_HOURS', 24),
+        'timeout_hours_per_company' => [],
+    ],
+
+    'signals' => [
+        'booking_completed' => [
+            'EInvoice.DraftInvoice',
+            'CleanQuality.TriggerInspection',
+        ],
+        'booking_cancelled' => [
+            'ZeroFussPortal.NotifyCustomer',
+        ],
+        'consumes' => [
+            'QuoteEngine.QuoteAccepted',
+            'JobCardCompleted',
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Reminder Scheduling
@@ -81,4 +102,3 @@ return [
         'retention_days' => (int) env('BOOKING_REMINDER_RETENTION_DAYS', 90),
     ],
 ];
-

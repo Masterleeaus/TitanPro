@@ -20,7 +20,19 @@ class BookingResource extends Resource
     {
         return $form->schema([
             Forms\Components\TextInput::make('heading')->maxLength(255),
-            Forms\Components\Select::make('booking_status')->options(['pending'=>'Pending','confirmed'=>'Confirmed','en_route'=>'En Route','in_progress'=>'In Progress','completed'=>'Completed','cancelled'=>'Cancelled','reclean'=>'Reclean']),
+            Forms\Components\Select::make('booking_status')->options([
+                'draft' => 'Draft',
+                'pending_approval' => 'Pending Approval',
+                'confirmed' => 'Confirmed',
+                'dispatched' => 'Dispatched',
+                'in_progress' => 'In Progress',
+                'completed' => 'Completed',
+                'invoiced' => 'Invoiced',
+                'paid' => 'Paid',
+                'rescheduled' => 'Rescheduled',
+                'no_show' => 'No Show',
+                'cancelled' => 'Cancelled',
+            ]),
             Forms\Components\TextInput::make('service_type')->maxLength(80),
             Forms\Components\Textarea::make('service_address')->rows(3),
         ]);
