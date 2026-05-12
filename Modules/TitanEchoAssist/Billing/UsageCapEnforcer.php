@@ -20,10 +20,15 @@ class UsageCapEnforcer
      * Assert that the company has not exceeded its conversation cap.
      * Throws CapExceededException if the limit is reached.
      *
+     * Usage is always checked against the *current* billing period (YYYY-MM).
+     * When a new billing period starts the counter resets to zero, which is
+     * intentional — caps are per-period, not cumulative.
+     *
      * @throws CapExceededException
      */
     public function assertAllowed(int $companyId, string $channel = 'website'): void
     {
+        // Fetch usage once for the current billing period to avoid duplicate cache reads.
         $usage = $this->conversationLimit->getUsage($companyId);
 
         if ($usage >= $this->conversationLimit->getCap()) {
