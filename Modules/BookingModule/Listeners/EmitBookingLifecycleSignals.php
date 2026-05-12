@@ -2,6 +2,7 @@
 
 namespace Modules\BookingModule\Listeners;
 
+use Illuminate\Support\Facades\Log;
 use Modules\BookingModule\Events\BookingApprovalDecided;
 use Modules\BookingModule\Events\BookingApprovalRequested;
 use Modules\BookingModule\Events\BookingCancelled;
@@ -76,8 +77,13 @@ class EmitBookingLifecycleSignals
                     'source' => 'bookingmodule.lifecycle',
                 ],
             );
-        } catch (\Throwable) {
-            // Non-blocking signal bridge.
+        } catch (\Throwable $e) {
+            Log::debug('Failed to emit booking lifecycle signal - downstream module may not receive notification.', [
+                'signal_type' => $signalType,
+                'booking_id' => $bookingId,
+                'company_id' => $companyId,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }

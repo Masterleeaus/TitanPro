@@ -19,6 +19,12 @@ class TransitionCleaningBookingAction
         protected BookingApprovalRuntime $approvals,
     ) {}
 
+    /**
+     * Execute a booking transition.
+     *
+     * Note: when approval is required for draft->confirmed transitions, the effective
+     * transition is redirected to pending_approval.
+     */
     public function execute(CleaningBooking $booking, string $newStatus, array $payload = [], ?int $actorId = null): CleaningBooking
     {
         $fromStatus = (string) $booking->booking_status;

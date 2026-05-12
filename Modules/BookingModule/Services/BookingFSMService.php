@@ -2,6 +2,7 @@
 
 namespace Modules\BookingModule\Services;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 use Modules\BookingModule\Models\CleaningBooking;
@@ -133,11 +134,7 @@ class BookingFSMService
         }
 
         if ($booking->booking_status === 'completed' && $newStatus === 'invoiced') {
-            $jobCardCompleted = (bool) ($context['job_card_completed'] ?? false)
-                || in_array('JobCardCompleted', (array) ($context['received_signals'] ?? []), true)
-                || $booking->job_card_completed_at !== null;
-
-            if (! $jobCardCompleted) {
+            if (! $this->hasJobCardCompletedEvidence($booking, $context)) {
                 throw ValidationException::withMessages([
                     'booking_status' => ['Transition completed -> invoiced requires JobCardCompleted signal evidence.'],
                 ]);
@@ -162,11 +159,22 @@ class BookingFSMService
         if (method_exists($booking, 'taskUsers')) {
             try {
                 return (int) $booking->taskUsers()->count();
-            } catch (\Throwable) {
+            } catch (\BadMethodCallException $e) {
+                Log::debug('CleaningBooking taskUsers relation unavailable during guard check (model not persisted or relation not loaded).', [
+                    'booking_id' => $booking->id ?? null,
+                    'error' => $e->getMessage(),
+                ]);
                 return 0;
             }
         }
 
         return 0;
+    }
+
+    private function hasJobCardCompletedEvidence(CleaningBooking $booking, array $context): bool
+    {
+        return (bool) ($context['job_card_completed'] ?? false)
+            || in_array('JobCardCompleted', (array) ($context['received_signals'] ?? []), true)
+            || $booking->job_card_completed_at !== null;
     }
 }

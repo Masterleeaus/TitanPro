@@ -46,7 +46,7 @@ class CleaningBooking extends Task
      * 'reclean' is a re-opened completed booking (zero charge).
      */
     public const VALID_TRANSITIONS = [
-        'pending'          => ['draft', 'confirmed', 'cancelled'],
+        'pending'          => ['confirmed', 'cancelled'],
         'draft'            => ['pending_approval', 'confirmed', 'cancelled', 'no_show'],
         'pending_approval' => ['confirmed', 'cancelled'],
         'confirmed'        => ['dispatched', 'cancelled', 'rescheduled', 'no_show'],
