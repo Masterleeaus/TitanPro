@@ -64,7 +64,7 @@
         "gsap": "^3.13.0",
         "jquery": "^3.7.1",
         "laravel-vite-plugin": "^2.0.0",
-        "lucide-vue-next": "^0.468.0",
+        "lucide-vue-next": "^1.0.0",
         "magnific-popup": "^1.2.0",
         "owl.carousel": "^2.3.4",
         "reka-ui": "^2.4.1",
