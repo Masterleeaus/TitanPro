@@ -25,7 +25,7 @@
         "filament/filament": "^4.0",
         "filament/spatie-laravel-media-library-plugin": "^4.0",
         "filament/spatie-laravel-settings-plugin": "^4.0",
-        "inertiajs/inertia-laravel": "^2.0",
+        "inertiajs/inertia-laravel": "^3.1",
         "jeffersongoncalves/filament-ace-editor-field": "^1.0",
         "jeffersongoncalves/filament-topbar": "^2.1",
         "jeffgreco13/filament-breezy": "^3.1",
