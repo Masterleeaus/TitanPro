@@ -4,6 +4,8 @@ namespace Modules\CallingAgent\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Modules\CallingAgent\Services\CallingAgentCredentialResolver;
+use Modules\CallingAgent\Support\TenantContext;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateTwilioSignature
@@ -14,10 +16,15 @@ class ValidateTwilioSignature
             return $next($request);
         }
 
-        $authToken = config('services.twilio.token', env('TWILIO_AUTH_TOKEN', ''));
+        $expected = (string) $request->header('X-Twilio-Signature', '');
+        if ($expected === '') {
+            return response()->json(['error' => 'Missing Twilio signature'], 403);
+        }
 
-        if (empty($authToken)) {
-            return $next($request);
+        $tenantId = TenantContext::id($request->all());
+        $authToken = app(CallingAgentCredentialResolver::class)->twilioAuthToken($tenantId);
+        if (! is_string($authToken) || $authToken === '') {
+            return response()->json(['error' => 'Twilio auth token is not configured'], 403);
         }
 
         $url = $request->fullUrl();
@@ -29,8 +36,6 @@ class ValidateTwilioSignature
         }
 
         $signature = base64_encode(hash_hmac('sha1', $str, $authToken, true));
-        $expected = $request->header('X-Twilio-Signature', '');
-
         if (!hash_equals($signature, $expected)) {
             return response()->json(['error' => 'Invalid Twilio signature'], 403);
         }
