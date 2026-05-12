@@ -190,8 +190,7 @@ class ProjectTaskController extends Controller
 
         $taskData = $task->load(['status', 'priority', 'assignedToUser']);
 
-        // TODO: Need to fix the due date issue
-        // Convert to array and properly format the due_date
+        // Normalize due_date for front-end date inputs.
         $taskArray = $taskData->toArray();
         if (! empty($taskArray['due_date'])) {
             // Parse the date and format it as Y-m-d only (no time component)

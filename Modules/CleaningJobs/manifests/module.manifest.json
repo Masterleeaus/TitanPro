@@ -1,21 +1,19 @@
 {
-  "name": "TitanWork",
-  "domain": "titanwork_management",
+  "name": "CleaningJobs",
+  "alias": "cleaningjobs",
+  "domain": "cleaning_job_management",
   "single_module": true,
+  "version": "0.4.0",
   "enables": [
     "module discovery",
-    "version metadata",
-    "feature registry"
+    "tenant-safe job lifecycle",
+    "control-panel registry wiring"
   ],
   "integrations": [
-    "titanwork.timesheets",
-    "titanwork.resource_planning",
-    "titanwork.financial_tracking",
-    "titanwork.kanban",
-    "titanwork.milestones",
-    "titanwork.subtasks",
-    "titanwork.comments",
-    "titanwork.files",
-    "titanwork.activity_logs"
+    "cleaningjobs.timesheets",
+    "cleaningjobs.resource_planning",
+    "cleaningjobs.financial_tracking",
+    "cleaningjobs.automation",
+    "cleaningjobs.knowledge"
   ]
 }

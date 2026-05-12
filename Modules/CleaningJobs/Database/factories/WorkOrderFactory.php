@@ -2,8 +2,8 @@
 
 namespace Modules\CleaningJobs\Database\Factories;
 
-use Modules\CleaningJobs\Models\WorkOrder;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CleaningJobs\Models\WorkOrder;
 
 class WorkOrderFactory extends Factory
 {
@@ -13,11 +13,13 @@ class WorkOrderFactory extends Factory
     {
         return [
             'client_id' => 1,
-            'status' => $this->faker->randomElement(['open','in_progress','done']),
-            'priority' => $this->faker->randomElement(['low','normal','high']),
-            'scheduled_for' => now()->addDays(rand(0,10)),
-            'due_by' => now()->addDays(rand(1,14)),
+            'status' => $this->faker->randomElement(['open', 'in_progress', 'done']),
+            'priority' => $this->faker->randomElement(['low', 'normal', 'high']),
+            'scheduled_for' => now()->addDays(rand(0, 10)),
+            'due_by' => now()->addDays(rand(1, 14)),
             'notes' => $this->faker->sentence(),
+            'company_id' => 1,
+            'parent_id' => 1,
         ];
     }
 }
