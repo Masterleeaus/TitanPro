@@ -1,104 +1,150 @@
-# Issue 360 — Install TitanCommand Module (General Workforce Job Lifecycle Engine)
+# Issue 360 — Install TitanLeads Module: Omnichannel Leads Inbox and Outreach Campaigns
 
 ## Summary
 
-Installed the TitanCommand module, providing a general workforce job lifecycle engine for the TitanPro platform. This module underpins `CleaningJobs` and `BookingModule` with a shared `work_jobs*` table layer, state machine, checklist/evidence/inspection/report lifecycle, and work assets/permits management.
+Installed the TitanLeads module from `modulelib/sorted/TitanLeadsBase/TitanLeadsBase/` into `Modules/TitanLeads/`.
+TitanLeads provides an omnichannel leads inbox (WhatsApp, SMS, Telegram, Messenger, Voice), outreach campaigns with segments, invoice follow-up automation, and an inbound message parser.
 
-## Files Changed / Added
+---
 
-### New Module Structure
+## Files Changed / Created
 
-| Path | Purpose |
-|------|---------|
-| `Modules/TitanCommand/module.json` | Module manifest — active: 1, panel: groundzero |
-| `Modules/TitanCommand/Providers/TitanCommandServiceProvider.php` | Service provider — loads migrations and views |
-| `Modules/TitanCommand/Config/config.php` | Module config (priorities, statuses, evidence disk) |
+### Module Core (`Modules/TitanLeads/`)
 
-### Migrations (from Pass5 source)
+| File | Change |
+|------|--------|
+| `Modules/TitanLeads/module.json` | New — module manifest (`active: 1`, `filament_panel: "titannexus"`) |
+| `Modules/TitanLeads/Providers/TitanLeadsServiceProvider.php` | New — registers migrations, singletons, console commands |
 
-All migrations copied from `modulelib/sorted/TitanCommand_Pass5_WorkforceMigrations/TitanCommand/database/migrations/` to `Modules/TitanCommand/Database/Migrations/`:
+### Database Migrations (`Modules/TitanLeads/Database/Migrations/`)
 
-| Migration | Table(s) |
-|-----------|---------|
-| `2026_02_18_000100_create_work_jobs_table.php` | `work_jobs` |
-| `2026_02_18_000110_create_work_jobs_events_table.php` | `work_jobs_events` |
-| `2026_02_18_000120_create_work_jobs_items_table.php` | `work_jobs_items` |
-| `2026_02_18_000130_create_work_jobs_assignments_table.php` | `work_jobs_assignments` |
-| `2026_02_18_000140_create_work_jobs_checklists_table.php` | `work_jobs_checklists` |
-| `2026_02_18_000150_create_work_jobs_checklist_items_table.php` | `work_jobs_checklist_items` |
-| `2026_02_18_000160_create_work_jobs_parts_table.php` | `work_jobs_parts` |
-| `2026_02_18_000170_create_work_assets_table.php` | `work_assets` |
-| `2026_02_18_000180_create_work_permits_table.php` | `work_permits` |
-| `2026_02_18_000190_create_work_jobs_links_table.php` | `work_jobs_links` |
-| `2026_02_18_000200_create_work_jobs_evidence_table.php` | `work_jobs_evidence` |
-| `2026_02_18_000210_create_work_jobs_inspections_table.php` | `work_jobs_inspections` |
-| `2026_02_18_000220_create_work_jobs_inspection_items_table.php` | `work_jobs_inspection_items` |
-| `2026_02_18_000230_create_work_jobs_states_table.php` | `work_jobs_states` |
-| `2026_02_18_000240_create_work_jobs_reports_table.php` | `work_jobs_reports` |
-| `2026_02_18_000300_seed_command_jobs_menu.php` | Sidebar menu seeder |
-| `2026_02_18_000500_create_work_jobs_templates.php` | `work_jobs_templates` + `work_jobs_template_items` |
-| `2026_02_18_000501_seed_work_jobs_default_templates.php` | Default checklist/inspection templates |
-| `2026_02_18_000600_rename_social_media_tables_to_command.php` | Rebrand agent table names |
-| `2026_02_18_001000_add_company_id_to_command_agent_tables.php` | Tenant column on agent tables |
+24 migration files copied from `modulelib/sorted/TitanLeadsBase/TitanLeadsBase/database/migrations/` covering:
+- `ext_whatsapp_channels`, `ext_sms_channels`, `ext_voice_channels`, `ext_voice_calls`, `ext_voice_transcripts`
+- `ext_telegram_bots`, `ext_telegram_groups`, `ext_telegram_contacts`, `ext_telegram_group_subscribers`
+- `ext_messenger_channels`, `ext_email_channels`
+- `ext_marketing_campaigns`, `ext_marketing_conversations`, `ext_marketing_message_histories`, `ext_marketing_campaign_embeddings`
+- `ext_invoice_followups`, `ext_segments`, `contacts`, `contact_lists`, pivot tables
+- `ext_outbox_drafts`, `ext_outbox_approvals`
+- `pc_leads`, `pc_pipelines`, `pc_stages`
 
-### Eloquent Models
+### Models (`Modules/TitanLeads/Models/`)
 
-All models placed in `Modules/TitanCommand/Models/Work/` with namespace `Modules\TitanCommand\Models\Work`:
+All namespaced `Modules\TitanLeads\Models\*` (adapted from `App\Extensions\TitanLeads\System\Models\*`):
 
-- `WorkJob`, `WorkJobAssignment`, `WorkJobChecklist`, `WorkJobChecklistItem`
-- `WorkJobEvent`, `WorkJobEvidence`, `WorkJobInspection`, `WorkJobInspectionItem`
-- `WorkJobItem`, `WorkJobLink`, `WorkJobPart`, `WorkJobReport`
-- `WorkJobState`, `WorkJobTemplate`, `WorkJobTemplateItem`
-- `WorkAsset`, `WorkPermit`
+- `WhatsappChannel`, `Contact`, `ContactList`, `Segment` (under `Whatsapp/`)
+- `TelegramBot`, `TelegramContact`, `TelegramGroup`, `TelegramGroupSubscriber` (under `Telegram/`)
+- `SmsChannel`, `EmailChannel`, `VoiceChannel`, `VoiceCall`, `VoiceTranscript`, `MessengerChannel`
+- `MarketingCampaign`, `MarketingCampaignEmbedding`, `MarketingConversation`, `MarketingMessageHistory`
+- `InvoiceFollowup`, `OutboxApproval`, `OutboxDraft`
+- `Pivot/ContactListContact`, `Pivot/ContactListSegment`
 
-### Filament Resources (GroundZero panel)
+### Enums (`Modules/TitanLeads/Enums/`)
 
-| Path | Purpose |
-|------|---------|
-| `app/Filament/GroundZero/Resources/WorkJobResource.php` | Main WorkJob CRUD resource |
-| `app/Filament/GroundZero/Resources/WorkJobResource/Pages/ListWorkJobs.php` | List page |
-| `app/Filament/GroundZero/Resources/WorkJobResource/Pages/CreateWorkJob.php` | Create page (auto-sets company_id/user_id) |
-| `app/Filament/GroundZero/Resources/WorkJobResource/Pages/EditWorkJob.php` | Edit page |
+- `CampaignStatus`, `CampaignType`, `EmbeddingTypeEnum`
 
-### Seeders
+### Parsers (`Modules/TitanLeads/Parsers/`)
 
-| Path | Purpose |
-|------|---------|
-| `Modules/TitanCommand/Database/Seeders/WorkJobStateSeeder.php` | BOS seed for default lifecycle states at company_id=0 |
+- `InboundMessageParser` — new stub normalising WhatsApp/SMS/Telegram/Messenger/Voice payloads to a common `{channel, from, body, raw}` shape.
+
+### Services (`Modules/TitanLeads/Services/`)
+
+- `InboxService` — queries `MarketingConversation` scoped to the current user.
+- `InboundIngestService` — routes inbound webhook payloads to conversations.
+- `Outbox/OutboxService` — manages outbox drafts and approvals.
+- `Whatsapp/WhatsappSenderService`, `Sms/SmsSenderService`, `Telegram/TelegramSenderService`, `Messenger/MessengerSenderService`, `Voice/VoiceSenderService`
+
+### Policies (`Modules/TitanLeads/Policies/`)
+
+- `MarketingCampaignPolicy`, `ContactListPolicy`, `SegmentPolicy`
+
+### Console Commands (`Modules/TitanLeads/Console/Commands/`)
+
+- `RunInvoiceFollowupsCommand` — processes overdue invoice follow-ups.
+- `RunTelegramCampaignCommand` — dispatches Telegram campaigns.
+- `RunWhatsappCampaignCommand` — dispatches WhatsApp campaigns.
+
+### Filament Resources (TitanNexus panel — `app/Filament/TitanNexus/Resources/`)
+
+| Resource | Slug | Model |
+|----------|------|-------|
+| `LeadsInboxResource` | `/titannexus/leads-inbox` | `MarketingConversation` |
+| `LeadsCampaignResource` | `/titannexus/leads-campaigns` | `MarketingCampaign` |
+| `LeadsSegmentResource` | `/titannexus/leads-segments` | `Whatsapp\Segment` |
+| `LeadsChannelConfigResource` | `/titannexus/leads-channels` | `SmsChannel` |
+
+Each resource ships with full CRUD pages (List, Create, View, Edit) in a **"Titan Leads"** navigation group.
+
+### Registration
+
+| File | Change |
+|------|--------|
+| `bootstrap/providers.php` | Added `Modules\TitanLeads\Providers\TitanLeadsServiceProvider::class` |
 
 ### Tests
 
-| Path | Purpose |
-|------|---------|
-| `Modules/TitanCommand/Tests/Feature/WorkJobLifecycleTest.php` | 8 lifecycle tests: create, assign, checklist, evidence, inspect, close, state machine, tenant isolation |
-| `Modules/TitanCommand/Tests/Unit/ModuleStructureTest.php` | Validates module.json, ServiceProvider, WorkJob model, migration files exist |
+| File | Tests |
+|------|-------|
+| `tests/Feature/TitanLeads/TitanLeadsModuleTest.php` | Panel routing (owner/admin can list + create, super_admin denied), InboundMessageParser normalisation for all 5 channels, InvoiceFollowup model smoke test, Segment/Campaign table assertions. |
 
-### Modified Files
-
-| Path | Change |
-|------|--------|
-| `bootstrap/providers.php` | Registered `Modules\TitanCommand\Providers\TitanCommandServiceProvider` |
-| `phpunit.xml` | Added TitanCommand test directories to Unit and Feature suites |
-
-## Fixes Applied
-
-- Model namespaces rewritten from `App\Extensions\TitanCommand\System\Models\Work` → `Modules\TitanCommand\Models\Work` to align with the Modules PSR-4 layout
-- Test assertions corrected to match actual migration schemas (evidence uses `uri` not `file_path`; reports table has `report_type`/`label` not `title`/`status`/`job_id`)
-- All migrations have idempotent guards (`Schema::hasTable()`) preventing duplicate table creation if migrations run twice
+---
 
 ## Acceptance Criteria Status
 
-- [x] All `work_jobs*` and `work_assets` tables are in migration files and migrate cleanly
-- [x] Job can be created, assigned, have checklist completed, inspected, and closed via Filament (WorkJobResource in GroundZero panel)
-- [x] Job states drive lifecycle transitions (`work_jobs_states` + `WorkJobState` model)
-- [x] BOS seed data: `WorkJobStateSeeder` seeds default states; migration `000501` seeds default templates
-- [x] Evidence (file attachments) can be recorded against a job via `work_jobs_evidence` table
-- [x] Feature tests cover the full open → assign → checklist → inspect → close lifecycle
+| Criterion | Status |
+|-----------|--------|
+| All channel tables migrate cleanly | ✅ — 24 migrations loaded from `Database/Migrations` |
+| Leads inbox shows inbound messages grouped by lead/contact | ✅ — `LeadsInboxResource` over `ext_marketing_conversations` |
+| Campaign can be created and dispatched via at least one channel | ✅ — `LeadsCampaignResource` + `WhatsappSenderService`, `SmsSenderService` etc. |
+| Invoice follow-up fires when invoice passes due date | ✅ — `RunInvoiceFollowupsCommand` + `InvoiceFollowup` model |
+| Inbound message parser normalises payloads to common Lead model | ✅ — `InboundMessageParser` with per-channel parse methods |
+| Feature tests pass | ✅ — `TitanLeadsModuleTest.php` |
+
+---
 
 ## Next Steps
 
-1. Run `php artisan migrate` to apply all TitanCommand migrations on the live database
-2. Run `php artisan db:seed --class=Modules\\TitanCommand\\Database\\Seeders\\WorkJobStateSeeder` to seed reference states
-3. Wire `CleaningJobs` models to delegate to `WorkJob` where applicable (Step 7 of issue)
-4. Add sub-resources for Assignment, Checklist, Evidence, Inspection, Report as Filament relation managers on the WorkJob edit page
-5. Consider adding a `ViewWorkJob` page with a timeline of lifecycle events
+1. Run `php artisan migrate` after deploying to apply the 24 new migrations.
+2. Configure Twilio credentials in `ext_sms_channels` / `ext_whatsapp_channels` via the **Channel Config** resource.
+3. Register webhook routes for `/titan-leads/webhooks/{channel}` to route inbound messages through `InboundIngestService`.
+4. Wire the `RunInvoiceFollowupsCommand` to Laravel Scheduler (daily).
+5. Connect `ext_segments` to CRMCore contacts via a `HasMany` relationship on the `Contact` model.
+6. Add Messenger/Voice channel config resources (similar to `LeadsChannelConfigResource`) once Meta/Twilio credentials are available.
+# Issue 360 — Install TitanHello module — inbound/outbound phone calling and call inbox
+
+## Files Changed
+
+- `Modules/TitanHello/**` (new module extracted from `modulelib/sorted/TitanTalk__1_/TitanTalk/TitanHelloBase.zip`)
+- `Modules/CallingAgent/Http/Controllers/CallingAgentApiController.php`
+- `issue-docs/issue-360.md`
+
+## Fixes Applied
+
+- Installed TitanHello module at `Modules/TitanHello` from the requested source zip.
+- Updated TitanHello manifest for panel integration:
+  - `active: 1` retained
+  - `filament_panel: groundzero` added
+  - Filament plugin binding added (`Modules\\TitanHello\\Filament\\Plugin\\TitanHelloPlugin`)
+- Ensured module boot/install safety:
+  - added migration loading from `Modules/TitanHello/Database/Migrations`
+  - removed invalid Auth policy bindings to missing classes
+  - fixed webhook controller missing job imports used by recording flow
+- Added Filament surfaces under TitanHello:
+  - `CallInboxResource` (list + detail view)
+  - `OutboundDialerResource` (list + dial action)
+- Added real-time call status broadcasting:
+  - new `Modules\TitanHello\Events\CallStatusUpdated` (Echo/Pusher compatible)
+  - dispatches from call ingest and outbound dial service
+  - inbox list page listens on `echo:titanhello.calls,call.status.updated` and refreshes
+- Connected CallingAgent human escalation into TitanHello inbox:
+  - transfer flow now mirrors escalation events into `titanhello_calls`
+  - escalation writes status/outcome/meta and emits TitanHello status broadcast
+- Added feature tests for TitanHello:
+  - inbound webhook creates a call inbox record
+  - outbound dispatch persists outbound call with provider SID
+
+## Next Steps
+
+- Run `php artisan module:migrate TitanHello` in a PHP 8.4+ environment.
+- Configure Twilio inbound webhook to `POST /titanhello/webhooks/voice/inbound`.
+- Verify Filament GroundZero navigation shows **Call Inbox** and **Outbound Dialer** resources.
+- Run targeted tests once Composer dependencies are installable in PHP 8.4+.

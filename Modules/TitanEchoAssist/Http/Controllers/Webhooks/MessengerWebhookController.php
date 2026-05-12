@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\TitanEchoAssist\DTOs\MessagePayload;
 use Modules\TitanEchoAssist\Services\ConversationRouter;
+use Modules\TitanTalk\Services\ConversationThreadService;
 
 class MessengerWebhookController extends Controller
 {
@@ -72,7 +73,14 @@ class MessengerWebhookController extends Controller
             'metadata'   => $event,
         ]);
 
-        app(ConversationRouter::class)->route($payload);
+        if (class_exists(ConversationThreadService::class)) {
+            $thread = app(ConversationThreadService::class);
+            $conversation = $thread->recordInbound('messenger', (string) $senderId, $text, $event);
+            $reply = (string) app(ConversationRouter::class)->route($payload);
+            $thread->recordOutbound($conversation, $reply, ['channel_id' => $channelId, 'source' => 'TitanEchoAssist']);
+        } else {
+            app(ConversationRouter::class)->route($payload);
+        }
     }
 
     private function resolveChatbotId(int $channelId): int

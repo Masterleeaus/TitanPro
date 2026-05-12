@@ -23,7 +23,6 @@
   ],
   "active": 1,
   "order": 0,
-  "filament_panel": "titanquotes",
   "blueprint": {
     "standard": "titan-ai-native-module",
     "version": "master-aligned-v9",
@@ -92,5 +91,6 @@
     "retrieval": "AI/Retrieval/retrieval.policy.json",
     "actions": "AI/Actions/action-map.json",
     "guardrails": "AI/Guardrails/guardrails.json"
-  }
+  },
+  "filament_panel": "groundzero"
 }

@@ -3,6 +3,7 @@
 namespace Modules\BookingModule\Services\Dispatch;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Modules\BookingModule\Entities\Schedule;
 
@@ -18,6 +19,8 @@ class DispatchBoardQueryService
         $schedules = Schedule::query()
             ->whereDate('date', $dateObj->toDateString())
             ->when($workspaceId > 0, fn($q) => $q->where('workspace', $workspaceId))
+            ->when($this->getCreatorId() > 0, fn($q) => $q->where('created_by', $this->getCreatorId()))
+            ->when($this->getCompanyId() > 0, fn($q) => $q->where('company_id', $this->getCompanyId()))
             ->orderBy('start_time')
             ->get();
 
@@ -76,5 +79,25 @@ class DispatchBoardQueryService
         } catch (\Throwable $e) {
             return false;
         }
+    }
+
+    protected function getCreatorId(): int
+    {
+        if (function_exists('creatorId')) {
+            return (int) creatorId();
+        }
+
+        return (int) (Auth::id() ?? 0);
+    }
+
+    protected function getCompanyId(): int
+    {
+        if (function_exists('company') && company()) {
+            return (int) company()->id;
+        }
+
+        $user = Auth::user();
+
+        return (int) ($user->company_id ?? $user->organization_id ?? 0);
     }
 }

@@ -49,6 +49,7 @@
     "actions": "AI/Actions/action-map.json",
     "telemetry": "AI/Telemetry/telemetry.manifest.json"
   },
-  "boundary": "invoicing_accounting_followup_only_no_payment_execution",
-  "keywords": []
+  "boundary": "accounting_only_no_payment_execution",
+  "keywords": [],
+  "filament_panel": "zeropay"
 }

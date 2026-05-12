@@ -1,0 +1,10 @@
+{
+  "name": "TitanProAdmin",
+  "description": "Platform administration hub for the TitanPro super-admin panel. Provides system configuration, tenant management, module toggle UI, license tracking, global audit log viewer, and platform health dashboard — features not covered by any domain module.",
+  "active": 1,
+  "filament_panel": "titanpro",
+  "providers": [
+    "Modules\\TitanProAdmin\\Providers\\TitanProAdminServiceProvider"
+  ],
+  "keywords": ["admin", "platform", "tenancy", "audit", "health", "configuration"]
+}

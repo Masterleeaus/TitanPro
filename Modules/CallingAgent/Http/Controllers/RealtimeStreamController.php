@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\CallingAgent\Services\Realtime\TwilioMediaStreamRelay;
 use Modules\CallingAgent\Services\Realtime\RealtimeSessionTokenService;
+use Modules\CallingAgent\Support\TenantContext;
 
 /**
  * Handles Twilio Media Stream HTTP lifecycle events (start / media / stop)
@@ -59,6 +60,8 @@ final class RealtimeStreamController
      */
     public function token(Request $request): \Illuminate\Http\JsonResponse
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         $callSid   = $request->input('call_sid');
         $sessionId = $callSid ? 'ca_' . $callSid : 'ca_' . uniqid('', true);
         $token     = $this->tokenService->generate($sessionId);
@@ -91,6 +94,8 @@ final class RealtimeStreamController
 
     private function handleStart(Request $request, ?string $streamSid, ?string $callSid): \Illuminate\Http\JsonResponse
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         $sessionId = $streamSid ?? ('ca_' . uniqid('', true));
         $token     = $this->tokenService->generate($sessionId);
 
@@ -98,6 +103,7 @@ final class RealtimeStreamController
             \DB::table('calling_agent_realtime_sessions')->updateOrInsert(
                 ['session_id' => $sessionId],
                 [
+                    'tenant_id'  => TenantContext::id(['call_sid' => $callSid]),
                     'provider'   => 'twilio',
                     'call_sid'   => $callSid,
                     'state'      => 'listening',
@@ -131,10 +137,13 @@ final class RealtimeStreamController
 
     private function handleStop(Request $request, ?string $streamSid): \Illuminate\Http\JsonResponse
     {
+        TenantContext::setTenantId(TenantContext::id($request->all()));
+
         if ($streamSid) {
             try {
                 \DB::table('calling_agent_realtime_sessions')
                     ->where('session_id', $streamSid)
+                    ->when(TenantContext::id() !== null, fn ($query) => $query->where('tenant_id', TenantContext::id()))
                     ->update([
                         'state'      => 'completed',
                         'updated_at' => now(),

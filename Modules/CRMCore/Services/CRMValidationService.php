@@ -39,25 +39,22 @@ class CRMValidationService
             'is_active' => 'boolean',
         ];
 
-        // Email validation - temporarily disable unique constraint due to existing duplicates
-        // TODO: Clean up duplicate contacts before re-enabling unique validation
         $rules['email_primary'] = 'nullable|email|max:255';
         $rules['email_secondary'] = 'nullable|email|max:255';
 
-        /* Temporarily disabled due to existing duplicates in database
-        $emailUniqueRule = Rule::unique('contacts', 'email_primary');
-        if ($contactId) {
-            $emailUniqueRule->ignore($contactId);
-        }
-        $rules['email_primary'] = ['nullable', 'email', 'max:255', $emailUniqueRule];
-        */
+        if ($this->settingsService->get('CRMCore', 'strict_contact_uniqueness', false)) {
+            $emailUniqueRule = Rule::unique('contacts', 'email_primary');
+            if ($contactId) {
+                $emailUniqueRule->ignore($contactId);
+            }
 
-        // Phone validation - temporarily disable unique constraint due to existing duplicates
-        // TODO: Clean up duplicate contacts before re-enabling unique validation
+            $rules['email_primary'] = ['nullable', 'email', 'max:255', $emailUniqueRule];
+        }
+
         $rules['phone_primary'] = 'nullable|string|max:50';
 
-        /* Temporarily disabled due to existing duplicates in database
-        if ($this->settingsService->get('CRMCore', 'enable_contact_duplicate_detection', true)) {
+        if ($this->settingsService->get('CRMCore', 'strict_contact_uniqueness', false)
+            && $this->settingsService->get('CRMCore', 'enable_contact_duplicate_detection', true)) {
             $detectionFields = $this->settingsService->get('CRMCore', 'duplicate_detection_fields', 'email_and_phone');
 
             if (in_array($detectionFields, ['phone', 'email_and_phone', 'email_or_phone'])) {
@@ -69,10 +66,7 @@ class CRMValidationService
             } else {
                 $rules['phone_primary'] = 'nullable|string|max:50';
             }
-        } else {
-            $rules['phone_primary'] = 'nullable|string|max:50';
         }
-        */
 
         $rules['phone_mobile'] = 'nullable|string|max:50';
         $rules['phone_office'] = 'nullable|string|max:50';

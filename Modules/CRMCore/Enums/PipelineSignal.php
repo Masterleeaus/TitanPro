@@ -4,7 +4,7 @@ namespace Modules\CRMCore\Enums;
 
 enum PipelineSignal: string
 {
-    case LeadScored = 'lead_scored';
-    case DealReadyForProject = 'deal_ready_for_project';
-    case DealConvertedToProject = 'deal_converted_to_project';
+    case LeadScored = 'crmcore.lead.scored';
+    case DealReadyForProject = 'crmcore.deal.ready_for_project';
+    case DealConvertedToProject = 'crmcore.deal.converted_to_project';
 }

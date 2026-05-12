@@ -1,5 +1,6 @@
 {
   "schema": "titan.events.manifest.v1",
+  "module": "CRMCore",
   "emits": [
     "crmcore.lead.scored",
     "crmcore.deal.converted_to_project"

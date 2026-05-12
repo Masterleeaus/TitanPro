@@ -5,6 +5,7 @@ namespace Modules\BookingModule\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Modules\BookingModule\Entities\Schedule;
 use Modules\BookingModule\Http\Requests\Dispatch\DispatchMoveRequest;
 use Modules\BookingModule\Services\Dispatch\DispatchBoardQueryService;
@@ -22,6 +23,7 @@ class DispatchBoardController extends Controller
     public function index(Request $request)
     {
         $this->authorizeDispatch();
+        Gate::authorize('manage', Schedule::class);
 
         $date = $request->input('date');
         $workspace = $request->input('workspace');
@@ -34,6 +36,8 @@ class DispatchBoardController extends Controller
     public function move(DispatchMoveRequest $request)
     {
         $this->authorizeDispatch();
+        $schedule = Schedule::findOrFail((int) $request->input('schedule_id'));
+        Gate::authorize('update', $schedule);
 
         $result = $this->moveService->move(
             scheduleId: (int)$request->input('schedule_id'),
@@ -44,7 +48,7 @@ class DispatchBoardController extends Controller
             note: (string)($request->input('note') ?? '')
         );
 
-        return response()->json($result, $result['ok'] ? 200 : 422);
+        return response()->json($result, $result['status'] ?? ($result['ok'] ? 200 : 422));
     }
 
     protected function authorizeDispatch(): void

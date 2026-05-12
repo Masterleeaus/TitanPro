@@ -1,9 +1,11 @@
 {
+  "enabled": true,
   "enables": [
     "web/api/internal/tenant route discovery"
   ],
   "prefixes": {
     "web": "cleaning-jobs",
-    "api": "api/cleaning-jobs"
+    "api": "api/cleaning-jobs",
+    "tenant": "cleaning-jobs"
   }
 }
