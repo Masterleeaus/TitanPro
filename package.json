@@ -62,7 +62,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "gsap": "^3.13.0",
-        "jquery": "^3.7.1",
+        "jquery": "^4.0.0",
         "laravel-vite-plugin": "^2.0.0",
         "lucide-vue-next": "^0.468.0",
         "magnific-popup": "^1.2.0",
