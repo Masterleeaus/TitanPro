@@ -1,0 +1,17 @@
+{
+  "schema": "titan.omni.manifest.v1",
+  "module": "CRMCore",
+  "channels": [],
+  "auto_response": {
+    "enabled": false,
+    "triggers": []
+  },
+  "campaign_compatibility": {
+    "enabled": false,
+    "entity_types": ["contact", "lead"]
+  },
+  "inbound_routing": {
+    "enabled": false,
+    "notes": "CRMCore does not directly handle inbound omni-channel messages. Route through OmniChannel module and emit BookingModule::CustomerCreated or TitanLeads::LeadConverted signals to trigger CRM contact sync."
+  }
+}

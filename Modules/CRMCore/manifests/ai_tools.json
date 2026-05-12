@@ -1,0 +1,81 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "CRMCore",
+  "tools": [
+    {
+      "id": "client_pipeline_context",
+      "description": "Returns a summary of the current CRM pipeline for a given company tenant, including lead counts, deal stages, and recent activities.",
+      "input_schema": {
+        "company_id": {"type": "integer", "required": true},
+        "pipeline_id": {"type": "integer", "required": false}
+      },
+      "required_permissions": ["crmcore.view"],
+      "risk_class": "read",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "deal_project_advisor",
+      "description": "Advises whether a deal is ready to be converted to a project, and suggests optimal timing and team assignment based on deal value, stage, and lead history.",
+      "input_schema": {
+        "deal_id": {"type": "integer", "required": true},
+        "company_id": {"type": "integer", "required": true}
+      },
+      "required_permissions": ["crmcore.view", "crmcore.deals.convert_to_project"],
+      "risk_class": "advisory",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "service_interest_matcher",
+      "description": "Matches a lead or deal to the most relevant service offerings based on service interest field, deal description, and historical conversion patterns.",
+      "input_schema": {
+        "lead_id": {"type": "integer", "required": false},
+        "deal_id": {"type": "integer", "required": false},
+        "company_id": {"type": "integer", "required": true}
+      },
+      "required_permissions": ["crmcore.view"],
+      "risk_class": "read",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "crm_contact_lookup",
+      "description": "Looks up a CRM contact by email, phone, or name within a company tenant.",
+      "input_schema": {
+        "company_id": {"type": "integer", "required": true},
+        "email": {"type": "string", "required": false},
+        "phone": {"type": "string", "required": false},
+        "name": {"type": "string", "required": false}
+      },
+      "required_permissions": ["crmcore.view"],
+      "risk_class": "read",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "create_crm_contact",
+      "description": "Creates a new CRM contact for the specified company tenant. Used when AI detects a new inbound lead or customer.",
+      "input_schema": {
+        "company_id": {"type": "integer", "required": true},
+        "first_name": {"type": "string", "required": true},
+        "last_name": {"type": "string", "required": false},
+        "email_primary": {"type": "string", "required": false},
+        "phone_primary": {"type": "string", "required": false}
+      },
+      "required_permissions": ["crmcore.contacts.create"],
+      "risk_class": "write",
+      "approval_mode": "require_approval"
+    },
+    {
+      "id": "log_crm_activity",
+      "description": "Logs an activity against a CRM entity (contact, lead, deal) for audit and AI memory purposes.",
+      "input_schema": {
+        "company_id": {"type": "integer", "required": true},
+        "subject_type": {"type": "string", "required": true},
+        "subject_id": {"type": "integer", "required": true},
+        "event": {"type": "string", "required": true},
+        "payload": {"type": "object", "required": false}
+      },
+      "required_permissions": ["crmcore.view"],
+      "risk_class": "write",
+      "approval_mode": "auto"
+    }
+  ]
+}

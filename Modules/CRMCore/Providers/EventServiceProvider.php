@@ -11,6 +11,9 @@ use Modules\CRMCore\Events\DealConvertedToProject;
 use Modules\CRMCore\Events\DealWon;
 use Modules\CRMCore\Events\LeadScored;
 use Modules\CRMCore\Listeners\CreateContactFromLeadConvertedSignal;
+use Modules\CRMCore\Listeners\LogContactCreatedActivity;
+use Modules\CRMCore\Listeners\QueueDealLostNotification;
+use Modules\CRMCore\Listeners\QueueDealWonNotification;
 use Modules\CRMCore\Listeners\RecordDealConvertedToProject;
 use Modules\CRMCore\Listeners\RecordLeadScored;
 use Modules\CRMCore\Listeners\SyncContactFromBookingCustomerCreated;
@@ -24,9 +27,15 @@ class EventServiceProvider extends ServiceProvider
         LeadScored::class => [
             RecordLeadScored::class,
         ],
-        ContactCreated::class => [],
-        DealWon::class => [],
-        DealLost::class => [],
+        ContactCreated::class => [
+            LogContactCreatedActivity::class,
+        ],
+        DealWon::class => [
+            QueueDealWonNotification::class,
+        ],
+        DealLost::class => [
+            QueueDealLostNotification::class,
+        ],
         ActivityLogged::class => [],
     ];
 
@@ -38,3 +47,4 @@ class EventServiceProvider extends ServiceProvider
         Event::listen('BookingModule::CustomerCreated', SyncContactFromBookingCustomerCreated::class);
     }
 }
+
