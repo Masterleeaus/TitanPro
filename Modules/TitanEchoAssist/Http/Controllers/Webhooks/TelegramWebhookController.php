@@ -15,6 +15,15 @@ class TelegramWebhookController extends Controller
 {
     public function handle(Request $request, int $channelId): Response
     {
+        // Blueprint 22: verify Telegram secret token before processing
+        if (! $this->verifySecretToken($request)) {
+            Log::warning('TelegramWebhook: invalid secret token', [
+                'channel_id' => $channelId,
+                'ip'         => $request->ip(),
+            ]);
+            return response('Forbidden', 403);
+        }
+
         try {
             $update  = $request->all();
             $message = $update['message'] ?? $update['edited_message'] ?? null;
@@ -58,6 +67,31 @@ class TelegramWebhookController extends Controller
     public function verify(Request $request, int $channelId): JsonResponse
     {
         return response()->json(['ok' => true, 'channel_id' => $channelId]);
+    }
+
+    /**
+     * Verify the X-Telegram-Bot-Api-Secret-Token header.
+     *
+     * When registering a Telegram webhook with setWebhook, a secret_token can be
+     * provided. Telegram sends this token in the X-Telegram-Bot-Api-Secret-Token
+     * header with every update. Requests missing or carrying the wrong token are rejected.
+     */
+    private function verifySecretToken(Request $request): bool
+    {
+        $expectedToken = config('titan-chatbot.channels.telegram.webhook_secret', '');
+
+        // If no secret is configured we skip verification (dev/test environments)
+        if ($expectedToken === '') {
+            return true;
+        }
+
+        $incomingToken = $request->header('X-Telegram-Bot-Api-Secret-Token', '');
+
+        if ($incomingToken === '') {
+            return false;
+        }
+
+        return hash_equals($expectedToken, $incomingToken);
     }
 
     private function resolveChatbotId(int $channelId): int
