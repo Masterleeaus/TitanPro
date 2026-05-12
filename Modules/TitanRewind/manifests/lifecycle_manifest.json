@@ -1,0 +1,31 @@
+{
+  "module": "TitanRewind",
+  "schema_version": "1.0.0",
+  "entity": "RewindRequest",
+  "lifecycle_stages": [
+    {
+      "stage": "requested",
+      "label": "Requested",
+      "entry_triggers": ["request_rewind"],
+      "exit_triggers": ["approve_rewind", "deny_rewind"]
+    },
+    {
+      "stage": "approved",
+      "label": "Approved",
+      "entry_triggers": ["approve_rewind"],
+      "exit_triggers": ["apply_rewind"]
+    },
+    {
+      "stage": "denied",
+      "label": "Denied",
+      "entry_triggers": ["deny_rewind"],
+      "exit_triggers": []
+    },
+    {
+      "stage": "applied",
+      "label": "Applied",
+      "entry_triggers": ["apply_rewind"],
+      "exit_triggers": []
+    }
+  ]
+}
