@@ -1,0 +1,80 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "tools": [
+    {
+      "name": "create_field_job",
+      "description": "Create a new field job / work order for a company technician",
+      "action_class": "Modules\\TitanGoField\\Actions\\CreateFieldJobAction",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id", "actor_id"],
+        "properties": {
+          "company_id":    { "type": "integer" },
+          "actor_id":      { "type": "integer" },
+          "client_id":     { "type": "integer" },
+          "technician_id": { "type": "integer" },
+          "type_id":       { "type": "integer" },
+          "priority":      { "type": "string", "enum": ["low","normal","high","urgent"] },
+          "description":   { "type": "string" },
+          "scheduled_start": { "type": "string", "format": "date-time" },
+          "due_at":        { "type": "string", "format": "date-time" }
+        }
+      },
+      "permissions": ["titango_field.field_jobs.create"],
+      "risk_class": "low",
+      "approval_mode": "auto"
+    },
+    {
+      "name": "update_field_job_status",
+      "description": "Transition a field job to a new status",
+      "action_class": "Modules\\TitanGoField\\Actions\\UpdateFieldJobStatusAction",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id", "actor_id", "job_id", "status"],
+        "properties": {
+          "company_id": { "type": "integer" },
+          "actor_id":   { "type": "integer" },
+          "job_id":     { "type": "integer" },
+          "status":     { "type": "string", "enum": ["pending","approved","scheduled","in_progress","on_hold","completed","cancelled"] }
+        }
+      },
+      "permissions": ["titango_field.field_jobs.update"],
+      "risk_class": "medium",
+      "approval_mode": "confirm"
+    },
+    {
+      "name": "complete_field_job",
+      "description": "Mark a field job as completed",
+      "action_class": "Modules\\TitanGoField\\Actions\\CompleteFieldJobAction",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id", "actor_id", "job_id"],
+        "properties": {
+          "company_id": { "type": "integer" },
+          "actor_id":   { "type": "integer" },
+          "job_id":     { "type": "integer" },
+          "notes":      { "type": "string" }
+        }
+      },
+      "permissions": ["titango_field.field_jobs.complete"],
+      "risk_class": "medium",
+      "approval_mode": "confirm"
+    },
+    {
+      "name": "get_field_job_summary",
+      "description": "Retrieve a summary of a field job including totals, status, and assigned technician",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id", "job_id"],
+        "properties": {
+          "company_id": { "type": "integer" },
+          "job_id":     { "type": "integer" }
+        }
+      },
+      "permissions": ["titango_field.field_jobs.view"],
+      "risk_class": "low",
+      "approval_mode": "auto"
+    }
+  ]
+}
