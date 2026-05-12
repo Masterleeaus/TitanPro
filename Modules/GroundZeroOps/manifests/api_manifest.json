@@ -1,0 +1,28 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "module": "GroundZeroOps",
+  "public_endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/groundzero-ops/dispatch/assign",
+      "name": "groundzeroops.api.dispatch.assign"
+    },
+    {
+      "method": "POST",
+      "path": "/api/groundzero-ops/shifts/start",
+      "name": "groundzeroops.api.shifts.start"
+    },
+    {
+      "method": "POST",
+      "path": "/api/groundzero-ops/incidents",
+      "name": "groundzeroops.api.incidents.store"
+    }
+  ],
+  "internal_endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/groundzero-ops/shifts/{shift}/end",
+      "name": "groundzeroops.api.shifts.end"
+    }
+  ]
+}

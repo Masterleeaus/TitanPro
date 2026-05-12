@@ -1,0 +1,21 @@
+<?php
+
+namespace Modules\GroundZeroOps\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class EndShiftRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return (bool) $this->user();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [];
+    }
+}
