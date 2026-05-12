@@ -21,7 +21,19 @@ class ValidateTwilioSignature
             return response()->json(['error' => 'Missing Twilio signature'], 403);
         }
 
-        $tenantId = TenantContext::id($request->all());
+        $tenantResolutionPayload = [
+            'To' => $request->input('To'),
+            'From' => $request->input('From'),
+            'CallSid' => $request->input('CallSid'),
+            'MessageSid' => $request->input('MessageSid'),
+            'SmsSid' => $request->input('SmsSid'),
+            'call_sid' => $request->input('call_sid'),
+            'message_sid' => $request->input('message_sid'),
+            'calling_agent_id' => $request->input('calling_agent_id'),
+            'agent_id' => $request->input('agent_id'),
+        ];
+
+        $tenantId = TenantContext::id($tenantResolutionPayload);
         $authToken = app(CallingAgentCredentialResolver::class)->twilioAuthToken($tenantId);
         if (! is_string($authToken) || $authToken === '') {
             return response()->json(['error' => 'Twilio auth token is not configured'], 403);

@@ -69,10 +69,18 @@ class CallingAgentCredentialResolver
             return [];
         }
 
-        return array_filter([
-            'username' => $config->sip_username,
-            'password' => $config->sip_password,
-            'domain' => $config->sip_domain,
-        ], static fn ($value): bool => is_string($value) && $value !== '');
+        $username = is_string($config->sip_username) && $config->sip_username !== '' ? $config->sip_username : null;
+        $password = is_string($config->sip_password) && $config->sip_password !== '' ? $config->sip_password : null;
+        $domain = is_string($config->sip_domain) && $config->sip_domain !== '' ? $config->sip_domain : null;
+
+        if ($username === null || $password === null || $domain === null) {
+            return [];
+        }
+
+        return [
+            'username' => $username,
+            'password' => $password,
+            'domain' => $domain,
+        ];
     }
 }

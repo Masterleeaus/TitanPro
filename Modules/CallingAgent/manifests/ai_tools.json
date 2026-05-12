@@ -34,7 +34,7 @@
       "class": "Modules\\CallingAgent\\AI\\Tools\\OutcomeIntelligenceTool",
       "description": "Extract structured outcome intelligence from call transcript turns.",
       "input_schema": {
-        "transcript": {"type": ["array", "string"], "required": true},
+        "transcript": {"type": "array", "required": true},
         "context": {"type": "object", "required": false}
       },
       "risk_class": "advisory",

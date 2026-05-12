@@ -35,8 +35,11 @@ final class CallerMemoryTool
             }
 
             if ($email !== null && $email !== '') {
-                $method = $phone !== null ? 'orWhere' : 'where';
-                $query->{$method}('email', $email);
+                if ($phone !== null) {
+                    $query->orWhere('email', $email);
+                } else {
+                    $query->where('email', $email);
+                }
             }
         });
 
