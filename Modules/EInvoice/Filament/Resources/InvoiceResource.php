@@ -102,7 +102,7 @@ class InvoiceResource extends Resource
 
                 Tables\Columns\TextColumn::make('grand_total')
                     ->label('Total')
-                    ->money(fn ($record) => strtolower($record->currency ?? 'aud'))
+                    ->money(fn ($record) => strtolower($record->currency ?? 'AUD'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('due_date')

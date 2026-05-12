@@ -136,9 +136,8 @@ describe('EInvoice Event Dispatch — action call sites', function (): void {
                 $invoice->id         = 1;
                 $invoice->company_id = $data['company_id'] ?? 0;
                 $invoice->status     = $data['status'] ?? 'draft';
-                // Simulate dispatching the event
+                // Simulate dispatching the event (context derives company_id from invoice)
                 event(new InvoiceCreated($invoice, [
-                    'company_id'  => $invoice->company_id,
                     'actor_id'    => $data['actor_id'] ?? null,
                     'occurred_at' => now()->toIso8601String(),
                 ]));

@@ -13,14 +13,9 @@ uses(Tests\TestCase::class, RefreshDatabase::class);
 describe('EInvoice Tenant Scoping', function (): void {
 
     it('assigns company_id from authenticated user on Invoice creation', function (): void {
-        // Create two fake users with different company IDs
-        $userA = \Illuminate\Foundation\Testing\WithFaker::class;
-
         $companyA = \App\Models\Company::factory()->create();
-        $companyB = \App\Models\Company::factory()->create();
 
         $userA = \App\Models\User::factory()->create(['company_id' => $companyA->id]);
-        $userB = \App\Models\User::factory()->create(['company_id' => $companyB->id]);
 
         // Authenticate as User A and create an invoice
         $this->actingAs($userA);

@@ -18,7 +18,7 @@ class GstExportWidget extends Widget
     public function getViewData(): array
     {
         $invoices = Invoice::query()
-            ->whereIn('status', ['paid'])
+            ->where('status', 'paid')
             ->selectRaw('currency, COUNT(*) as count, SUM(tax_total) as total_gst')
             ->groupBy('currency')
             ->get();
