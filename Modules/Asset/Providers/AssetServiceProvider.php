@@ -7,19 +7,7 @@ use Modules\Asset\Console\ActivateModuleCommand;
 
 class AssetServiceProvider extends ServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -28,22 +16,11 @@ class AssetServiceProvider extends ServiceProvider
         $this->registerCommands();
     }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
     }
 
-    /**
-     * Register config.
-     *
-     * @return void
-     */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->publishes([
             __DIR__.'/../Config/config.php' => config_path('asset.php'),
@@ -60,12 +37,7 @@ class AssetServiceProvider extends ServiceProvider
         );
     }
 
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    public function registerViews()
+    public function registerViews(): void
     {
         $viewPath = base_path('resources/views/modules/asset');
 
@@ -78,12 +50,7 @@ class AssetServiceProvider extends ServiceProvider
         $this->loadViewsFrom([$sourcePath], 'asset');
     }
 
-    /**
-     * Register translations.
-     *
-     * @return void
-     */
-    public function registerTranslations()
+    public function registerTranslations(): void
     {
         $langPath = base_path('resources/lang/modules/asset');
 
@@ -95,32 +62,7 @@ class AssetServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register an additional directory of factories.
-     *
-     * @return void
-     */
-    public function registerFactories()
-    {
-        if (! app()->environment('production') && $this->app->runningInConsole()) {
-            app(Factory::class)->load(__DIR__.'/../Database/factories');
-        }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
-    }
-
-    /**
-     * Register artisan commands
-     */
-    private function registerCommands()
+    private function registerCommands(): void
     {
         $this->commands(
             [
