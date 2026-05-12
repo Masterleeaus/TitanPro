@@ -2,6 +2,7 @@ name: 📦 Filament Plugin Surface Review
 
 on:
   schedule:
+    # Runs quarterly: 07:00 UTC on the 1st of Jan, Apr, Jul, Oct
     - cron: '0 7 1 */3 *'
   workflow_dispatch:
 
