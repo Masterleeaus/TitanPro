@@ -23,11 +23,14 @@ class BiometricDeviceResource extends Resource
                 Tables\Columns\TextColumn::make('device_name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('serial_number')->searchable(),
                 Tables\Columns\TextColumn::make('device_ip')->label('IP')->toggleable(),
-                Tables\Columns\BadgeColumn::make('status')->colors([
-                    'success' => 'online',
-                    'danger' => 'offline',
-                    'warning' => 'pending',
-                ]),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'online' => 'success',
+                        'offline' => 'danger',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('last_online')->dateTime()->sortable(),
             ])
             ->defaultSort('updated_at', 'desc');
@@ -40,4 +43,3 @@ class BiometricDeviceResource extends Resource
         ];
     }
 }
-

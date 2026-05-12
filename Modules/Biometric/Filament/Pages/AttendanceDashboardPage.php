@@ -34,11 +34,10 @@ class AttendanceDashboardPage extends Dashboard
                     TextInput::make('company_id')->required()->numeric(),
                     TextInput::make('employee_id')->required(),
                     TextInput::make('user_id')->numeric(),
-                    TextInput::make('device_name')->default('Dashboard entry'),
+                    TextInput::make('device_name')->default('Manual entry'),
                     TextInput::make('device_serial_number')->default('dashboard'),
                 ])
                 ->action(fn (array $data) => app(RecordAttendanceAction::class)->execute($data)),
         ];
     }
 }
-

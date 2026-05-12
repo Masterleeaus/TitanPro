@@ -2,6 +2,7 @@
 
 namespace Modules\Biometric\Actions;
 
+use InvalidArgumentException;
 use Modules\Biometric\Events\EmployeeDeregisteredFromDevice;
 
 class DeregisterEmployeeAction
@@ -12,9 +13,14 @@ class DeregisterEmployeeAction
      */
     public function execute(array $payload): array
     {
+        $companyId = (int) ($payload['company_id'] ?? 0);
+        if ($companyId <= 0) {
+            throw new InvalidArgumentException('company_id is required.');
+        }
+
         $result = [
             'status' => 'deregistered',
-            'company_id' => (int) ($payload['company_id'] ?? 0),
+            'company_id' => $companyId,
             'employee_id' => (string) ($payload['employee_id'] ?? ''),
             'device_serial_number' => isset($payload['device_serial_number']) ? (string) $payload['device_serial_number'] : null,
         ];
@@ -28,4 +34,3 @@ class DeregisterEmployeeAction
         return $result;
     }
 }
-

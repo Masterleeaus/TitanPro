@@ -4,6 +4,9 @@ namespace Modules\Biometric\AI\Tools;
 
 class PredictOvertimeRiskTool
 {
+    private const HIGH_RISK_THRESHOLD = 12.0;
+    private const MEDIUM_RISK_THRESHOLD = 9.5;
+
     /**
      * @param  array{worked_hours?:float,scheduled_hours?:float}  $input
      * @return array{risk_level:string, projected_hours:float}
@@ -15,8 +18,8 @@ class PredictOvertimeRiskTool
         $projected = max($worked, $scheduled + (($worked - $scheduled) * 0.5));
 
         $riskLevel = match (true) {
-            $projected >= 12.0 => 'high',
-            $projected >= 9.5 => 'medium',
+            $projected >= self::HIGH_RISK_THRESHOLD => 'high',
+            $projected >= self::MEDIUM_RISK_THRESHOLD => 'medium',
             default => 'low',
         };
 
@@ -26,4 +29,3 @@ class PredictOvertimeRiskTool
         ];
     }
 }
-

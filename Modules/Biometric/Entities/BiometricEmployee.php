@@ -264,6 +264,7 @@ class BiometricEmployee extends BaseModel
         $clockIn = Carbon::createFromFormat('Y-m-d H:i:s', $timestamp, $user->company->timezone);
         $appTimezone = $clockIn->copy();
         $carbonDate = $clockIn->copy()->startOfDay();
+        $attendance = null;
 
         // Get the last attendance record for this user on this day
         $lastAttendance = Attendance::where('user_id', $user->id)
@@ -283,16 +284,16 @@ class BiometricEmployee extends BaseModel
             ]);
         } else {
             // Clock Out - if last record exists and has no clock_out_time
+            $attendance = $lastAttendance;
             $lastAttendance->update([
                 'clock_out_time' => $appTimezone,
                 'clock_out_type' => 'biometric',
                 'work_from_type' => 'office',
                 'clock_out_ip' => request()->ip(),
             ]);
-            $attendance = $lastAttendance->fresh();
         }
 
-        if ($attendance) {
+        if ($attendance !== null) {
             event(new BiometricClockIn(
                 attendance: $attendance,
                 user: $user,

@@ -20,17 +20,17 @@ class BiometricPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->resources(array_values(array_filter([
-                class_exists(AttendanceResource::class) ? AttendanceResource::class : null,
-                class_exists(BiometricDeviceResource::class) ? BiometricDeviceResource::class : null,
-            ])))
-            ->pages(array_values(array_filter([
-                class_exists(AttendanceDashboardPage::class) ? AttendanceDashboardPage::class : null,
-            ])))
-            ->widgets(array_values(array_filter([
-                class_exists(ShiftCoverageWidget::class) ? ShiftCoverageWidget::class : null,
-                class_exists(OvertimeAlertWidget::class) ? OvertimeAlertWidget::class : null,
-            ])));
+            ->resources([
+                AttendanceResource::class,
+                BiometricDeviceResource::class,
+            ])
+            ->pages([
+                AttendanceDashboardPage::class,
+            ])
+            ->widgets([
+                ShiftCoverageWidget::class,
+                OvertimeAlertWidget::class,
+            ]);
     }
 
     public function boot(Panel $panel): void {}

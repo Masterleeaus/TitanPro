@@ -2,6 +2,7 @@
 
 namespace Modules\Biometric\Actions;
 
+use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Modules\Biometric\Entities\BiometricAttendance;
 use Modules\Biometric\Entities\BiometricDevice;
@@ -12,8 +13,13 @@ class RecordAttendanceAction
 {
     public function execute(array $payload): BiometricAttendance
     {
+        $companyId = (int) ($payload['company_id'] ?? 0);
+        if ($companyId <= 0) {
+            throw new InvalidArgumentException('company_id is required.');
+        }
+
         $attendance = BiometricAttendance::query()->create([
-            'company_id' => (int) ($payload['company_id'] ?? 0),
+            'company_id' => $companyId,
             'user_id' => isset($payload['user_id']) ? (int) $payload['user_id'] : null,
             'device_name' => (string) ($payload['device_name'] ?? 'Unknown device'),
             'device_serial_number' => (string) ($payload['device_serial_number'] ?? 'N/A'),
@@ -46,4 +52,3 @@ class RecordAttendanceAction
         BiometricEmployee::markAttendanceToDeviceAndApplication($rows, $device, $request);
     }
 }
-

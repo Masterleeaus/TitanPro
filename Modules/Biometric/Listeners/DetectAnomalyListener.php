@@ -10,6 +10,9 @@ use Modules\Biometric\Events\OvertimeThresholdReached;
 
 class DetectAnomalyListener
 {
+    private const DEFAULT_LATE_MINUTES_ON_CLOCK_OUT = 5;
+    private const DEFAULT_SCHEDULED_HOURS = 8.0;
+
     public function __construct(
         private readonly DetectAttendanceAnomalyTool $anomalyTool,
         private readonly PredictOvertimeRiskTool $overtimeTool,
@@ -19,7 +22,7 @@ class DetectAnomalyListener
     {
         $anomaly = $this->anomalyTool->execute([
             'employee_id' => (int) $event->employeeId,
-            'late_minutes' => $event->clockIn ? 0 : 5,
+            'late_minutes' => $event->clockIn ? 0 : self::DEFAULT_LATE_MINUTES_ON_CLOCK_OUT,
         ]);
 
         if (($anomaly['anomaly_type'] ?? 'none') !== 'none') {
@@ -33,7 +36,7 @@ class DetectAnomalyListener
 
         $overtime = $this->overtimeTool->execute([
             'worked_hours' => $event->workedHours,
-            'scheduled_hours' => 8.0,
+            'scheduled_hours' => self::DEFAULT_SCHEDULED_HOURS,
         ]);
 
         if (($overtime['risk_level'] ?? 'low') !== 'low') {
@@ -46,4 +49,3 @@ class DetectAnomalyListener
         }
     }
 }
-
