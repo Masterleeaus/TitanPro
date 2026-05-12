@@ -53,6 +53,7 @@ class TaskSeeder extends Seeder
         $completedStatusId = TaskStatus::where('is_completed_status', true)->where('name', 'Completed')->first()?->id; // Specific completed
         $taskPriorityIds = TaskPriority::pluck('id');
         $defaultPriorityId = TaskPriority::where('is_default', true)->first()?->id ?? $taskPriorityIds->first();
+        $companyIds = Company::pluck('id');
 
         $taskableModels = [
             Contact::class => Contact::pluck('id'),
@@ -94,8 +95,13 @@ class TaskSeeder extends Seeder
             } // Fallback if randomElement somehow fails on empty subset
 
             $dueDate = fake()->dateTimeBetween('-1 month', '+2 months');
+            $companyId = $this->resolveTaskCompanyId($taskableType, $taskableId) ?? ($companyIds->isNotEmpty() ? $companyIds->random() : null);
+            if (! is_numeric($companyId)) {
+                continue;
+            }
 
             Task::factory()->create([
+                'company_id' => (int) $companyId,
                 'task_status_id' => $statusId,
                 'task_priority_id' => fake()->optional(0.8, $defaultPriorityId)->randomElement($taskPriorityIds->all()),
                 'assigned_to_user_id' => $activeUsers->isNotEmpty() ? $activeUsers->random() : null,
@@ -136,5 +142,27 @@ class TaskSeeder extends Seeder
         }
 
         return fake()->randomElement($baseActions).' '.$suffix;
+    }
+
+    private function resolveTaskCompanyId(?string $taskableType, mixed $taskableId): ?int
+    {
+        if (! is_string($taskableType) || ! is_numeric($taskableId)) {
+            return null;
+        }
+
+        $model = app($taskableType)->find((int) $taskableId);
+        if (! $model) {
+            return null;
+        }
+
+        if (isset($model->company_id) && is_numeric($model->company_id)) {
+            return (int) $model->company_id;
+        }
+
+        if ($model instanceof Company) {
+            return (int) $model->id;
+        }
+
+        return null;
     }
 }

@@ -18,6 +18,7 @@ use Modules\CRMCore\Filament\Resources\DealProjectResource\Pages;
 use Modules\CRMCore\Models\Deal;
 use Modules\CRMCore\Models\DealPipeline;
 use Modules\CRMCore\Models\DealStage;
+use Modules\CRMCore\Scopes\ScopedByCompany;
 
 class DealProjectResource extends Resource
 {
@@ -130,9 +131,16 @@ class DealProjectResource extends Resource
 
     public static function defaultPipelineId(): ?int
     {
+        $companyId = ScopedByCompany::resolveCompanyId();
+        if ($companyId === null) {
+            return DealPipeline::query()->where('is_default', true)->value('id')
+                ?? DealPipeline::query()->orderBy('position')->value('id');
+        }
+
         return DealPipeline::query()->where('is_default', true)->value('id')
             ?? DealPipeline::query()->orderBy('position')->value('id')
             ?? DealPipeline::query()->create([
+                'company_id' => $companyId,
                 'name' => 'Sales Pipeline',
                 'description' => 'Default CRM sales pipeline',
                 'is_default' => true,

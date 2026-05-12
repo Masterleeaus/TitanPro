@@ -10,7 +10,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Modules\\CRMCore\\Providers\\ModuleServiceProvider"
+                "Modules\\CRMCore\\Providers\\CRMCoreServiceProvider"
             ]
         }
     },

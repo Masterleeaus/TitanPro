@@ -46,12 +46,6 @@ class ContactSeeder extends Seeder
             $progressBar->advance();
         }
 
-        // Create some additional contacts that are not linked to any company
-        Contact::factory()->count(25)->create([
-            'company_id' => null,
-            'assigned_to_user_id' => $users->random(),
-        ]);
-
         $progressBar->finish();
         $this->command->info("\nContact seeding completed.");
     }

@@ -20,6 +20,7 @@ class CRMCoreDatabaseSeeder extends Seeder
             LeadSeeder::class,
             DealSeeder::class,
             TaskSeeder::class,
+            CRMCoreTestFixturesSeeder::class,
         ]);
     }
 }
