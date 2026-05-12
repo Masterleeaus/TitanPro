@@ -21,16 +21,43 @@ class RewindRequestPage extends Page
 
     public function requestRewind(RewindCase $case, array $proposal, array $actor = []): RewindFix
     {
-        return app(RequestRewindAction::class)->execute($case, $proposal, $actor);
+        return app(RequestRewindAction::class)->execute($case, $proposal, $this->actorEnvelope($actor));
     }
 
     public function approveRequest(RewindFix $fix, array $actor = []): RewindFix
     {
-        return app(ApproveRewindAction::class)->execute($fix, $actor);
+        return app(ApproveRewindAction::class)->execute($fix, $this->actorEnvelope($actor));
     }
 
     public function applyApprovedRequest(RewindFix $fix, array $actor = []): RewindFix
     {
-        return app(ApplyRewindAction::class)->execute($fix, $actor);
+        return app(ApplyRewindAction::class)->execute($fix, $this->actorEnvelope($actor));
+    }
+
+    private function actorEnvelope(array $actor): array
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            if ($actor === []) {
+                throw new \RuntimeException('Authenticated actor context is required.');
+            }
+
+            return $actor;
+        }
+
+        if (isset($actor['id']) && (int) $actor['id'] !== (int) $user->id) {
+            throw new \RuntimeException('Actor override is not allowed.');
+        }
+
+        if (isset($actor['company_id']) && (int) $actor['company_id'] !== (int) $user->company_id) {
+            throw new \RuntimeException('Actor tenant override is not allowed.');
+        }
+
+        return [
+            'type' => 'user',
+            'id' => (int) $user->id,
+            'company_id' => (int) $user->company_id,
+        ];
     }
 }

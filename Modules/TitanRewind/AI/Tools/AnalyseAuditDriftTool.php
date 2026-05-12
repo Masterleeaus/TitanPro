@@ -6,6 +6,11 @@ use Modules\TitanRewind\Models\RewindEvent;
 
 class AnalyseAuditDriftTool
 {
+    private const BASE_CONFIDENCE = 0.25;
+    private const CONFIDENCE_FLOOR = 0.5;
+    private const CONFIDENCE_STEP = 0.1;
+    private const CONFIDENCE_MAX = 0.99;
+
     /** @return array{anomalies: array<int, array<string, mixed>>, confidence: float} */
     public function execute(array $input): array
     {
@@ -29,7 +34,9 @@ class AnalyseAuditDriftTool
             'count' => (int) $row->total,
         ])->values()->all();
 
-        $confidence = count($anomalies) === 0 ? 0.25 : min(0.99, 0.5 + (count($anomalies) * 0.1));
+        $confidence = count($anomalies) === 0
+            ? self::BASE_CONFIDENCE
+            : min(self::CONFIDENCE_MAX, self::CONFIDENCE_FLOOR + (count($anomalies) * self::CONFIDENCE_STEP));
 
         return [
             'anomalies' => $anomalies,

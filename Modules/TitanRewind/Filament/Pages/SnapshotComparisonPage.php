@@ -17,7 +17,10 @@ class SnapshotComparisonPage extends Page
 
     public function compareLatest(int $caseId): array
     {
+        $companyId = (int) (auth()->user()?->company_id ?? 0);
+
         $events = RewindEvent::query()
+            ->where('company_id', $companyId)
             ->where('case_id', $caseId)
             ->latest('id')
             ->limit(2)

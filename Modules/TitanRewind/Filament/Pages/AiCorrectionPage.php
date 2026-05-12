@@ -18,11 +18,28 @@ class AiCorrectionPage extends Page
 
     public function analyseDrift(array $input): array
     {
+        $this->assertTenantBoundary($input);
+
         return app(AnalyseAuditDriftTool::class)->execute($input);
     }
 
     public function suggestCorrection(array $input): array
     {
+        $this->assertTenantBoundary($input);
+
         return app(SuggestCorrectionTool::class)->execute($input);
+    }
+
+    private function assertTenantBoundary(array $input): void
+    {
+        $actorCompanyId = auth()->user()?->company_id;
+
+        if ($actorCompanyId === null) {
+            throw new \RuntimeException('Authenticated tenant context is required.');
+        }
+
+        if (isset($input['company_id']) && (int) $input['company_id'] !== (int) $actorCompanyId) {
+            throw new \RuntimeException('Cross-tenant AI requests are not allowed.');
+        }
     }
 }

@@ -16,8 +16,10 @@ class AuditTrailPage extends Page
 
     protected static ?int $navigationSort = 11;
 
-    public function events(): Collection
+    public function events(int $limit = 50): Collection
     {
-        return RewindEvent::query()->latest('id')->limit(50)->get();
+        $safeLimit = max(1, min(100, $limit));
+
+        return RewindEvent::query()->latest('id')->limit($safeLimit)->get();
     }
 }
