@@ -1,0 +1,18 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "permissions": [
+    { "key": "titango_field.field_jobs.view-any",  "label": "View all field jobs",        "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.view",      "label": "View a field job",           "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.create",    "label": "Create field jobs",          "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.update",    "label": "Update field jobs",          "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.delete",    "label": "Delete field jobs",          "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.start",     "label": "Start / check in to a job",  "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.complete",  "label": "Complete a field job",       "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.approve",   "label": "Approve field jobs",         "group": "Field Jobs" },
+    { "key": "titango_field.field_jobs.invoice",   "label": "Invoice from field jobs",    "group": "Field Jobs" },
+    { "key": "titango_field.checklists.manage",    "label": "Manage checklist templates", "group": "Checklists" },
+    { "key": "titango_field.checklists.complete",  "label": "Complete checklists",        "group": "Checklists" },
+    { "key": "titango_field.settings.manage",      "label": "Manage FSM settings",        "group": "Settings" }
+  ]
+}

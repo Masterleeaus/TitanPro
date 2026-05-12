@@ -1,0 +1,21 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "base_prefix": "/api/titango/field",
+  "auth": "sanctum",
+  "tenant_resolution": "auth.user.company_id",
+  "endpoints": [
+    { "method": "GET",    "path": "/health",             "name": "titango_field.api.health",       "auth": false },
+    { "method": "GET",    "path": "/jobs",               "name": "titango_field.api.jobs.index",   "permission": "titango_field.field_jobs.view-any" },
+    { "method": "POST",   "path": "/jobs",               "name": "titango_field.api.jobs.store",   "permission": "titango_field.field_jobs.create" },
+    { "method": "GET",    "path": "/jobs/{job}",         "name": "titango_field.api.jobs.show",    "permission": "titango_field.field_jobs.view" },
+    { "method": "PUT",    "path": "/jobs/{job}",         "name": "titango_field.api.jobs.update",  "permission": "titango_field.field_jobs.update" },
+    { "method": "DELETE", "path": "/jobs/{job}",         "name": "titango_field.api.jobs.destroy", "permission": "titango_field.field_jobs.delete" },
+    { "method": "POST",   "path": "/jobs/{job}/status",  "name": "titango_field.api.jobs.status",  "permission": "titango_field.field_jobs.update" },
+    { "method": "POST",   "path": "/jobs/{job}/checkin", "name": "titango_field.api.jobs.checkin", "permission": "titango_field.field_jobs.update" },
+    { "method": "POST",   "path": "/jobs/{job}/complete","name": "titango_field.api.jobs.complete","permission": "titango_field.field_jobs.complete" },
+    { "method": "POST",   "path": "/jobs/{job}/signoff", "name": "titango_field.api.jobs.signoff", "permission": "titango_field.field_jobs.complete" },
+    { "method": "POST",   "path": "/ai/assistant",       "name": "titango_field.api.ai.assistant", "permission": "titango_field.field_jobs.view" },
+    { "method": "POST",   "path": "/ai/tools",           "name": "titango_field.api.ai.tools",     "permission": "titango_field.field_jobs.update" }
+  ]
+}

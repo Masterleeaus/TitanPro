@@ -1,0 +1,39 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "offline_cards": [
+    "my_jobs",
+    "job_checklist",
+    "job_parts_log",
+    "check_in_out"
+  ],
+  "action_set": [
+    "check_in",
+    "check_out",
+    "complete_checklist_item",
+    "log_part_usage",
+    "capture_photo",
+    "capture_signature"
+  ],
+  "minimal_sync_fields": [
+    "id",
+    "reference",
+    "status",
+    "priority",
+    "description",
+    "scheduled_start",
+    "scheduled_end",
+    "technician_id",
+    "client_id",
+    "company_id"
+  ],
+  "push_triggers": [
+    "titango_field.job.created",
+    "titango_field.job.updated",
+    "titango_field.job.completed"
+  ],
+  "installable_surface_flags": {
+    "worker_pwa": true,
+    "client_portal": true
+  }
+}
