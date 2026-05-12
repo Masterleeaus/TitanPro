@@ -35,7 +35,7 @@
         "laravel/reverb": "^1.10",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
-        "leandrocfe/filament-apex-charts": "^4.0",
+        "leandrocfe/filament-apex-charts": "^5.1",
         "notebrainslab/filament-menu-manager": "^1.0",
         "novadaemon/filament-combobox": "^2.1",
         "openplain/filament-shadcn-theme": "^1.1",
