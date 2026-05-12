@@ -1,0 +1,31 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "Biometric",
+  "tools": [
+    {
+      "id": "detect_attendance_anomaly",
+      "name": "detect_attendance_anomaly",
+      "class": "Modules\\Biometric\\AI\\Tools\\DetectAttendanceAnomalyTool",
+      "description": "Detects likely attendance anomalies from biometric attendance context.",
+      "input_schema": {
+        "employee_id": {"type": "integer", "required": true},
+        "late_minutes": {"type": "integer", "required": false},
+        "location_delta_meters": {"type": "number", "required": false}
+      },
+      "risk_class": "medium",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "predict_overtime_risk",
+      "name": "predict_overtime_risk",
+      "class": "Modules\\Biometric\\AI\\Tools\\PredictOvertimeRiskTool",
+      "description": "Predicts overtime risk from worked and scheduled hours.",
+      "input_schema": {
+        "worked_hours": {"type": "number", "required": false},
+        "scheduled_hours": {"type": "number", "required": false}
+      },
+      "risk_class": "medium",
+      "approval_mode": "auto"
+    }
+  ]
+}

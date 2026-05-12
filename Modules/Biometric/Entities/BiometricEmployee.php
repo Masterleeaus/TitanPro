@@ -10,6 +10,8 @@ use App\Traits\HasCompany;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
+use Modules\Biometric\Events\AttendanceRecorded;
+use Modules\Biometric\Events\BiometricClockIn;
 
 class BiometricEmployee extends BaseModel
 {
@@ -228,6 +230,16 @@ class BiometricEmployee extends BaseModel
 
                 \DB::table('biometric_device_attendances')->insert($attendances);
 
+                event(new AttendanceRecorded(
+                    companyId: (int) $device->company_id,
+                    employeeId: (string) $deviceEmployeeId,
+                    userId: $biometricEmployee?->user_id ? (int) $biometricEmployee->user_id : null,
+                    occurredAt: Carbon::parse($timestamp),
+                    clockIn: $status === 0,
+                    workedHours: 0.0,
+                    deviceSerial: (string) $device->serial_number,
+                ));
+
                 if (! $biometricEmployee) {
                     $employeeDetails = EmployeeDetails::where('employee_id', $deviceEmployeeId)->where('company_id', $device->company_id)->first();
 
@@ -262,7 +274,7 @@ class BiometricEmployee extends BaseModel
         // If no record exists or last record has clock_out_time, create a new clock in
         if (! $lastAttendance || $lastAttendance->clock_out_time !== null) {
             // Clock In
-            $user->attendance()->create([
+            $attendance = $user->attendance()->create([
                 'clock_in_time' => $appTimezone,
                 'half_day' => 'no',
                 'clock_in_type' => 'biometric',
@@ -277,6 +289,20 @@ class BiometricEmployee extends BaseModel
                 'work_from_type' => 'office',
                 'clock_out_ip' => request()->ip(),
             ]);
+            $attendance = $lastAttendance->fresh();
+        }
+
+        if ($attendance) {
+            event(new BiometricClockIn(
+                attendance: $attendance,
+                user: $user,
+                method: 'biometric',
+                geofencePassed: true,
+                lat: null,
+                lng: null,
+                bookingId: null,
+                deviceId: null,
+            ));
         }
     }
 

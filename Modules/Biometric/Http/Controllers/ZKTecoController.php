@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Modules\Biometric\Actions\RecordAttendanceAction;
 use Modules\Biometric\Entities\BiometricCommands;
 use Modules\Biometric\Entities\BiometricDevice;
 use Modules\Biometric\Entities\BiometricEmployee;
@@ -60,7 +61,7 @@ class ZKTecoController extends Controller
 
         Log::info('Attendance payload received from biometric device', ['serial_number' => $sn]);
 
-        BiometricEmployee::markAttendanceToDeviceAndApplication($rows, $device, $request);
+        app(RecordAttendanceAction::class)->ingestDeviceRows($rows, $device, $request);
 
         return response('OK', 200)->header('Content-Type', 'text/plain');
     }
