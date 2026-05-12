@@ -6,6 +6,10 @@ use Modules\TitanRewind\Models\RewindEvent;
 
 class AnalyseAuditDriftTool
 {
+    /**
+     * Confidence scoring starts low when no anomaly clusters are found.
+     * Each detected anomaly increases confidence by a fixed step, capped below 1.0.
+     */
     private const BASE_CONFIDENCE = 0.25;
     private const CONFIDENCE_FLOOR = 0.5;
     private const CONFIDENCE_STEP = 0.1;

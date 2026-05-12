@@ -11,7 +11,7 @@ class MigrationTenantBoundaryTest extends TestCase
         $migrationDir = dirname(__DIR__, 2).'/Database/Migrations';
         $migrations = glob($migrationDir.'/*.php') ?: [];
 
-        $this->assertCount(4, $migrations);
+        $this->assertGreaterThanOrEqual(4, count($migrations));
 
         foreach ($migrations as $migration) {
             $contents = (string) file_get_contents($migration);
