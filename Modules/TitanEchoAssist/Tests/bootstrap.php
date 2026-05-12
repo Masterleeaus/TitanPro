@@ -16,8 +16,9 @@ spl_autoload_register(function (string $class): void {
         $file     = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relative) . '.php';
         if (file_exists($file)) {
             require_once $file;
+            return;
         }
-        return;
+        // File not found for this prefix; try next prefix
     }
 });
 

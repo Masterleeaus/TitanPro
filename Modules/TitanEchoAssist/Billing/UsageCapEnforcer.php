@@ -24,12 +24,14 @@ class UsageCapEnforcer
      */
     public function assertAllowed(int $companyId, string $channel = 'website'): void
     {
-        if ($this->conversationLimit->isExceeded($companyId)) {
+        $usage = $this->conversationLimit->getUsage($companyId);
+
+        if ($usage >= $this->conversationLimit->getCap()) {
             Log::warning('UsageCapEnforcer: conversation cap exceeded', [
                 'company_id' => $companyId,
                 'channel'    => $channel,
                 'cap'        => $this->conversationLimit->getCap(),
-                'usage'      => $this->conversationLimit->getUsage($companyId),
+                'usage'      => $usage,
             ]);
 
             throw new CapExceededException(
