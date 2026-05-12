@@ -42,6 +42,33 @@ class CallingAgentCredentialResolver
             ?: config('services.twilio.token');
     }
 
+    /**
+     * @return list<array{company_id:int|null, token:string}>
+     */
+    public function twilioAuthTokenCandidates(): array
+    {
+        $candidates = CallingAgentConfig::query()
+            ->withoutGlobalScopes()
+            ->whereNotNull('twilio_auth_token')
+            ->get(['company_id', 'twilio_auth_token'])
+            ->map(function (CallingAgentConfig $config): array {
+                return [
+                    'company_id' => is_numeric($config->company_id) ? (int) $config->company_id : null,
+                    'token' => (string) $config->twilio_auth_token,
+                ];
+            })
+            ->filter(static fn (array $candidate): bool => $candidate['token'] !== '')
+            ->values()
+            ->all();
+
+        $globalToken = config('services.twilio.token');
+        if (is_string($globalToken) && $globalToken !== '') {
+            $candidates[] = ['company_id' => null, 'token' => $globalToken];
+        }
+
+        return $candidates;
+    }
+
     public function twilioFromNumber(?int $companyId = null): ?string
     {
         return $this->resolveConfig($companyId)?->twilio_from_number

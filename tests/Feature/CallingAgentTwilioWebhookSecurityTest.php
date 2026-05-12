@@ -1,6 +1,6 @@
 <?php
 
-test('calling agent voice webhook rejects tampered twilio signature', function () {
+test('calling_agent_voice_webhook_rejects_tampered_twilio_signature', function () {
     config([
         'calling-agent.skip_twilio_validation' => false,
         'services.twilio.token' => 'security-test-token',
@@ -17,7 +17,7 @@ test('calling agent voice webhook rejects tampered twilio signature', function (
     $response->assertStatus(403);
 });
 
-test('calling agent voice webhook rejects missing twilio signature header', function () {
+test('calling_agent_voice_webhook_rejects_missing_twilio_signature_header', function () {
     config([
         'calling-agent.skip_twilio_validation' => false,
         'services.twilio.token' => 'security-test-token',

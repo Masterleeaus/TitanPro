@@ -41,6 +41,7 @@ class CallingAgentModuleContractTest extends TestCase
 
         $this->assertStringContainsString("Database/Migrations", $providerSource);
         $this->assertDirectoryExists(base_path('Modules/CallingAgent/Database/Migrations'));
+        $this->assertDirectoryDoesNotExist(base_path('Modules/CallingAgent/Database/migrations'));
         $this->assertDirectoryDoesNotExist(base_path('Modules/CallingAgent/Upgrade/Migrations'));
 
         $migrationFiles = glob(base_path('Modules/CallingAgent/Database/Migrations/*.php')) ?: [];
