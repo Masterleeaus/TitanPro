@@ -60,6 +60,10 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
+      - name: Verify MANIFEST.sha256 (TitanCore integrity)
+        run: php artisan titan:verify-manifest
+        # Fails the build if any tracked TitanCore file has been modified without updating MANIFEST.sha256
+
       - name: Run production readiness gate
         run: php artisan modules:production-check --json
         # Exit code 1 automatically fails the CI job when blockers are found
