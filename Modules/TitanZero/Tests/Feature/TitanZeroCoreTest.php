@@ -128,4 +128,44 @@ class TitanZeroCoreTest extends TestCase
             $service
         );
     }
+
+    public function test_circuit_breaker_service_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists(\Modules\TitanZero\Services\CircuitBreaker\CircuitBreakerService::class),
+            'CircuitBreakerService must exist'
+        );
+    }
+
+    public function test_tool_invocation_logger_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists(\Modules\TitanZero\Services\ToolInvocationLogger::class),
+            'ToolInvocationLogger must exist'
+        );
+    }
+
+    public function test_cross_tenant_guard_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists(\Modules\TitanZero\Services\Security\CrossTenantGuard::class),
+            'CrossTenantGuard must exist'
+        );
+    }
+
+    public function test_agent_evaluator_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists(\Modules\TitanZero\Evaluation\AgentEvaluator::class),
+            'AgentEvaluator must exist'
+        );
+    }
+
+    public function test_agent_evaluation_page_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists(\Modules\TitanZero\Filament\Pages\AgentEvaluationPage::class),
+            'AgentEvaluationPage must exist'
+        );
+    }
 }
