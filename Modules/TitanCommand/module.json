@@ -5,7 +5,7 @@
   "description": "TitanCommand — General workforce job lifecycle engine. Provides work_jobs tables, state machine, checklist/evidence/inspection/report lifecycle, and work assets/permits.",
   "keywords": ["workforce", "jobs", "lifecycle", "checklist", "evidence", "inspection", "field-service"],
   "priority": 5,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "providers": [
     "Modules\\TitanCommand\\Providers\\TitanCommandServiceProvider"
   ],
