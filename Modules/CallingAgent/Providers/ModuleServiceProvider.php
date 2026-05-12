@@ -87,7 +87,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../Routes/admin.php');
         $this->loadRoutesFrom(__DIR__.'/../Routes/channels.php');
         $this->loadRoutesFrom(__DIR__.'/../Routes/console.php');
-        $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'calling-agent');
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'calling-agent');
     }

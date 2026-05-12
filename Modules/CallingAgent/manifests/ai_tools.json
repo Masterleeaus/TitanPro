@@ -1,0 +1,44 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "CallingAgent",
+  "tools": [
+    {
+      "id": "caller_memory",
+      "name": "CallerMemoryTool",
+      "class": "Modules\\CallingAgent\\AI\\Tools\\CallerMemoryTool",
+      "description": "Resolve caller memory profile scoped to a single company.",
+      "input_schema": {
+        "phone": {"type": "string", "required": false},
+        "email": {"type": "string", "required": false},
+        "company_id": {"type": "integer", "required": false}
+      },
+      "risk_class": "read",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "transfer_routing",
+      "name": "TransferRoutingTool",
+      "class": "Modules\\CallingAgent\\AI\\Tools\\TransferRoutingTool",
+      "description": "Evaluate transfer routing decision tree from a structured call outcome.",
+      "input_schema": {
+        "outcome": {"type": "object", "required": true},
+        "routing": {"type": "object", "required": false},
+        "caller": {"type": "object", "required": false}
+      },
+      "risk_class": "advisory",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "outcome_intelligence",
+      "name": "OutcomeIntelligenceTool",
+      "class": "Modules\\CallingAgent\\AI\\Tools\\OutcomeIntelligenceTool",
+      "description": "Extract structured outcome intelligence from call transcript turns.",
+      "input_schema": {
+        "transcript": {"type": "array", "required": true},
+        "context": {"type": "object", "required": false}
+      },
+      "risk_class": "advisory",
+      "approval_mode": "auto"
+    }
+  ]
+}
