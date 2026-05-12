@@ -1,10 +1,13 @@
 {
   "name": "ZeroFussPortal",
-  "description": "Customer self-service portal shell for the ZeroFuss panel. Provides customer dashboard, booking history view, invoice and payment history, feedback and rating submission, loyalty point display, document download centre, and referral management — the customer-facing layer not owned by any domain module.",
+  "description": "Customer self-service portal shell for the ZeroFuss panel with tenancy-safe loyalty, feedback, and referrals.",
   "active": 1,
   "filament_panel": "zerofuss",
   "providers": [
-    "Modules\\\\ZeroFussPortal\\\\Providers\\\\ZeroFussPortalServiceProvider"
+    "Modules\\ZeroFussPortal\\Providers\\ZeroFussPortalServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\RouteServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\EventServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\FilamentServiceProvider"
   ],
   "keywords": [
     "portal",
@@ -12,6 +15,7 @@
     "customer",
     "booking-history",
     "loyalty",
-    "feedback"
+    "feedback",
+    "referral"
   ]
 }

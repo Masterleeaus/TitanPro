@@ -1,0 +1,12 @@
+{
+  "install": [
+    "migrate",
+    "clear-cache"
+  ],
+  "upgrade": [
+    "run-idempotent-migrations"
+  ],
+  "rollback": [
+    "restore-zerofussportal-settings"
+  ]
+}
