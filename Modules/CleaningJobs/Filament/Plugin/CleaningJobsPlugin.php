@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Modules\CleaningJobs\Filament\Plugin;
 
 use Filament\Contracts\Plugin;
@@ -19,7 +19,20 @@ class CleaningJobsPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        // Resources are registered by the module's FilamentServiceProvider.
+        $panel
+            ->resources([
+                \Modules\CleaningJobs\Filament\Resources\CleaningJobResource::class,
+                \Modules\CleaningJobs\Filament\Resources\ClientResource::class,
+                \Modules\CleaningJobs\Filament\Resources\RecurringJobResource::class,
+            ])
+            ->pages([
+                \Modules\CleaningJobs\Filament\Pages\JobSchedulePage::class,
+                \Modules\CleaningJobs\Filament\Pages\TitanWorkControlPanel::class,
+            ])
+            ->widgets([
+                \Modules\CleaningJobs\Filament\Widgets\JobBillingSummaryWidget::class,
+                \Modules\CleaningJobs\Filament\Widgets\LiveJobBoardWidget::class,
+            ]);
     }
 
     public function boot(Panel $panel): void {}
