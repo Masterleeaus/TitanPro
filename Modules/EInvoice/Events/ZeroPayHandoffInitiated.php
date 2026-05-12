@@ -4,7 +4,7 @@ namespace Modules\EInvoice\Events;
 
 use Modules\EInvoice\Entities\Invoice;
 
-class InvoicePaymentPlanSuggested
+class ZeroPayHandoffInitiated
 {
     public readonly int $companyId;
     public readonly ?int $actorId;
