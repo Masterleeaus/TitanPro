@@ -1,0 +1,45 @@
+{
+  "schema": "titan.cms.manifest.v1",
+  "module": "CRMCore",
+  "surfaces": [
+    {
+      "id": "crm_contact_card",
+      "type": "card",
+      "label": "Contact Card",
+      "description": "Embeddable summary card for a CRM contact with name, email, phone, and status.",
+      "props": ["contact_id", "company_id"],
+      "public": false,
+      "auth_required": true
+    },
+    {
+      "id": "crm_deal_summary",
+      "type": "card",
+      "label": "Deal Summary",
+      "description": "Summary card for a deal showing stage, value, and expected close date.",
+      "props": ["deal_id", "company_id"],
+      "public": false,
+      "auth_required": true
+    },
+    {
+      "id": "crm_pipeline_overview",
+      "type": "widget",
+      "label": "Pipeline Overview Widget",
+      "description": "Embeddable dashboard widget showing pipeline counts and totals per stage.",
+      "props": ["company_id", "pipeline_id"],
+      "public": false,
+      "auth_required": true,
+      "filament_widget": "Modules\\CRMCore\\Filament\\Widgets\\PipelineOverviewWidget"
+    },
+    {
+      "id": "crm_activity_feed",
+      "type": "widget",
+      "label": "CRM Activity Feed",
+      "description": "Recent CRM activity log feed for a company or specific entity.",
+      "props": ["company_id", "limit"],
+      "public": false,
+      "auth_required": true
+    }
+  ],
+  "fragments": [],
+  "public_pages": []
+}

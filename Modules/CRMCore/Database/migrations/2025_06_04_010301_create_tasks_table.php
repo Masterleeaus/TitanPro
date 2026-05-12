@@ -19,6 +19,7 @@ return new class extends Migration
 
             $table->foreignId('task_status_id')->constrained('task_statuses')->onDelete('restrict');
             $table->foreignId('task_priority_id')->nullable()->constrained('task_priorities')->onDelete('set null');
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->foreignId('assigned_to_user_id')->nullable()->constrained('users')->onDelete('set null');
 
             // Polymorphic relationship for "taskable" items (Contact, Company, Lead, Deal)

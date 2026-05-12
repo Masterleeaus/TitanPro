@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('contact_email')->nullable()->index();
             $table->string('contact_phone')->nullable();
             $table->string('company_name')->nullable();
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
 
             // Value & Source
             $table->decimal('value', 15, 2)->nullable()->comment('Estimated deal value');

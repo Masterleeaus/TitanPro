@@ -2,7 +2,13 @@
   "schema": "titan.listeners.manifest.v1",
   "module": "CRMCore",
   "listeners": [
+    "Modules\\CRMCore\\Listeners\\CreateContactFromLeadConvertedSignal",
+    "Modules\\CRMCore\\Listeners\\SyncContactFromBookingCustomerCreated",
     "Modules\\CRMCore\\Listeners\\RecordDealConvertedToProject",
-    "Modules\\CRMCore\\Listeners\\RecordLeadScored"
+    "Modules\\CRMCore\\Listeners\\RecordLeadScored",
+    "Modules\\CRMCore\\Listeners\\LogContactCreatedActivity",
+    "Modules\\CRMCore\\Listeners\\QueueDealWonNotification",
+    "Modules\\CRMCore\\Listeners\\QueueDealLostNotification"
   ]
 }
+

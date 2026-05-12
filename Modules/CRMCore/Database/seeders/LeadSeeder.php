@@ -5,6 +5,7 @@ namespace Modules\CRMCore\database\seeders;
 use App\Enums\UserAccountStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Modules\CRMCore\Models\Company;
 use Modules\CRMCore\Models\Lead;
 use Modules\CRMCore\Models\LeadSource;
 use Modules\CRMCore\Models\LeadStatus;
@@ -40,11 +41,12 @@ class LeadSeeder extends Seeder
         // --- 3. Seed Leads ---
         // Fetch required IDs for relationships
         $users = User::where('status', UserAccountStatus::ACTIVE)->pluck('id');
+        $companyIds = Company::pluck('id');
         $leadSourceIds = LeadSource::pluck('id');
         $leadStatusIds = LeadStatus::where('is_final', false)->pluck('id'); // Only seed leads into non-final statuses
 
-        if ($users->isEmpty()) {
-            $this->command->warn('No active users found. Skipping LeadSeeder. Please run UserSeeder first.');
+        if ($users->isEmpty() || $companyIds->isEmpty()) {
+            $this->command->warn('No active users or companies found. Skipping LeadSeeder. Please run UserSeeder and CompanySeeder first.');
 
             return;
         }
@@ -54,6 +56,7 @@ class LeadSeeder extends Seeder
         $progressBar = $this->command->getOutput()->createProgressBar($numberOfLeads);
 
         Lead::factory()->count($numberOfLeads)->create([
+            'company_id' => fn () => $companyIds->random(),
             'lead_source_id' => fn () => $leadSourceIds->random(),
             'lead_status_id' => fn () => $leadStatusIds->random(),
             'assigned_to_user_id' => fn () => $users->random(),

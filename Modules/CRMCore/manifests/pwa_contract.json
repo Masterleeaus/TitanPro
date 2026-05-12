@@ -1,0 +1,51 @@
+{
+  "schema": "titan.pwa.contract.v1",
+  "module": "CRMCore",
+  "offline_cards": [
+    {
+      "id": "crm_contact_card",
+      "label": "Contact",
+      "minimal_sync_fields": ["id", "first_name", "last_name", "email_primary", "phone_primary", "company_id"],
+      "ttl_seconds": 3600
+    },
+    {
+      "id": "crm_deal_card",
+      "label": "Deal",
+      "minimal_sync_fields": ["id", "title", "value", "deal_stage_id", "company_id", "expected_close_date"],
+      "ttl_seconds": 1800
+    },
+    {
+      "id": "crm_lead_card",
+      "label": "Lead",
+      "minimal_sync_fields": ["id", "title", "contact_name", "contact_email", "lead_status_id", "company_id"],
+      "ttl_seconds": 1800
+    }
+  ],
+  "action_set": [
+    {
+      "id": "log_crm_activity",
+      "label": "Log Activity",
+      "offline_capable": true,
+      "sync_on_reconnect": true
+    },
+    {
+      "id": "update_deal_stage",
+      "label": "Move Deal Stage",
+      "offline_capable": false,
+      "sync_on_reconnect": false
+    }
+  ],
+  "push_triggers": [
+    {
+      "event": "crmcore.deal.won",
+      "notification_id": "deal_won_notification",
+      "label": "Deal Won"
+    },
+    {
+      "event": "crmcore.deal.lost",
+      "notification_id": "deal_lost_notification",
+      "label": "Deal Lost"
+    }
+  ],
+  "installable_surface": false
+}

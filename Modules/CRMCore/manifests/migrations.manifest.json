@@ -1,7 +1,24 @@
 {
   "schema": "titan.migrations.manifest.v1",
   "active": [
-    "2026_04_28_000001_create_crmcore_activity_logs_table.php"
+    "2025_05_12_000627_create_companies_table.php",
+    "2025_05_12_000717_create_contacts_table.php",
+    "2025_06_03_223043_create_lead_statuses_table.php",
+    "2025_06_03_223109_create_lead_sources_table.php",
+    "2025_06_03_223123_create_leads_table.php",
+    "2025_06_03_232125_create_deal_pipelines_table.php",
+    "2025_06_03_232159_create_deal_stages_table.php",
+    "2025_06_03_232215_create_deals_table.php",
+    "2025_06_04_010228_create_task_statuses_table.php",
+    "2025_06_04_010248_create_task_priorities_table.php",
+    "2025_06_04_010301_create_tasks_table.php",
+    "2025_06_06_021142_add_converted_to_deal_id_in_leads.php",
+    "2025_07_10_001724_add_project_fields_to_crm_tasks_table.php",
+    "2025_08_11_203157_add_is_active_to_deal_pipelines_table.php",
+    "2026_04_28_000001_create_crmcore_activity_logs_table.php",
+    "2026_04_28_000002_bridge_crmcore_to_site_customers_and_jobs.php",
+    "2026_05_12_000003_create_crm_notes_table.php",
+    "2026_05_12_000004_create_crm_tags_tables.php"
   ],
   "legacy_preserved": "_legacy_original_migrations",
   "safe_idempotent": true
