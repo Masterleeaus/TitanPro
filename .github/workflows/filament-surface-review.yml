@@ -1,0 +1,41 @@
+name: 📦 Filament Plugin Surface Review
+
+on:
+  schedule:
+    # Runs quarterly: 07:00 UTC on the 1st of Jan, Apr, Jul, Oct
+    - cron: '0 7 1 */3 *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  filament-plugin-inventory:
+    name: filament:direct-dependency-inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate Filament-related dependency report
+        run: |
+          mkdir -p reports
+          composer show --direct --no-ansi | grep -Ei "filament|awcodes|bezhansalleh|jeffersongoncalves|lara-zeus|novadaemon|osamaatef|openplain|pxlrbt|savannabits|spykapps|tomatophp|tapp|solution-forest|redberry" > reports/filament-plugin-surface.txt
+
+      - name: Upload dependency report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: filament-plugin-surface
+          path: reports/filament-plugin-surface.txt
+          retention-days: 30
