@@ -1,0 +1,17 @@
+{
+  "name": "TitanSoloDash",
+  "description": "Solo operator command centre for the TitanSolo panel. Provides a unified daily planner, quick-create workflows spanning jobs/quotes/invoices/contacts, a solo KPI summary widget, and mobile-optimised views — the consolidated dashboard layer for operators running a one-person business across multiple domains.",
+  "active": 1,
+  "filament_panel": "titansolo",
+  "providers": [
+    "Modules\\\\TitanSoloDash\\\\Providers\\\\TitanSoloDashServiceProvider"
+  ],
+  "keywords": [
+    "solo",
+    "operator",
+    "daily-planner",
+    "quick-create",
+    "mobile",
+    "unified"
+  ]
+}

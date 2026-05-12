@@ -74,24 +74,45 @@ const calendarOptions = ref({
 <style>
 /* Ensure FullCalendar renders cleanly inside Tailwind's reset */
 .fc .fc-button {
-    @apply rounded border border-slate-200 bg-white text-sm text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none;
+    border: 1px solid rgb(226 232 240);
+    border-radius: 0.25rem;
+    background-color: rgb(255 255 255);
+    color: rgb(51 65 85);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05);
 }
 .fc .fc-button-primary {
-    @apply border-slate-800 bg-slate-800 text-white hover:bg-slate-700;
+    border-color: rgb(30 41 59);
+    background-color: rgb(30 41 59);
+    color: rgb(255 255 255);
 }
 .fc .fc-button-primary:not(:disabled):active,
 .fc .fc-button-primary.fc-button-active {
-    @apply border-slate-900 bg-slate-900;
+    border-color: rgb(15 23 42);
+    background-color: rgb(15 23 42);
 }
 .fc .fc-toolbar-title {
-    @apply text-lg font-semibold text-slate-800;
+    color: rgb(30 41 59);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
 }
 .fc-theme-standard td,
 .fc-theme-standard th {
-    @apply border-slate-100;
+    border-color: rgb(241 245 249);
 }
 .fc .fc-daygrid-day.fc-day-today,
 .fc .fc-timegrid-col.fc-day-today {
-    @apply bg-blue-50;
+    background-color: rgb(239 246 255);
+}
+.fc .fc-button:hover {
+    background-color: rgb(248 250 252);
+}
+.fc .fc-button:focus {
+    outline: none;
+}
+.fc .fc-button-primary:hover {
+    background-color: rgb(51 65 85);
 }
 </style>

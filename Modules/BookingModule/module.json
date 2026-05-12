@@ -92,5 +92,6 @@
     "retrieval": "AI/Retrieval/retrieval.policy.json",
     "actions": "AI/Actions/action-map.json",
     "guardrails": "AI/Guardrails/guardrails.json"
-  }
+  },
+  "filament_panel": "groundzero"
 }

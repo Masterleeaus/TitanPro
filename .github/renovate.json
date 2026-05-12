@@ -1,0 +1,92 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergePatch",
+    "group:allNonMajor"
+  ],
+  "timezone": "Australia/Sydney",
+  "schedule": ["every weekend"],
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "assignees": ["Masterleeaus"],
+  "reviewers": ["Masterleeaus"],
+  "baseBranches": ["main"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/vendor/**"
+  ],
+  "packageRules": [
+    {
+      "description": "Group all Laravel/PHP framework packages",
+      "matchManagers": ["composer"],
+      "matchPackagePrefixes": ["laravel/", "illuminate/"],
+      "groupName": "Laravel framework",
+      "automerge": false
+    },
+    {
+      "description": "Group all Filament packages",
+      "matchManagers": ["composer"],
+      "matchPackagePrefixes": ["filament/", "bezhansalleh/filament", "awcodes/"],
+      "groupName": "Filament & plugins",
+      "automerge": false
+    },
+    {
+      "description": "Group Spatie packages",
+      "matchManagers": ["composer"],
+      "matchPackagePrefixes": ["spatie/"],
+      "groupName": "Spatie packages",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group Vue 3 ecosystem",
+      "matchManagers": ["npm"],
+      "matchPackagePrefixes": ["vue", "@vue/", "vite", "@vitejs/", "unplugin-"],
+      "groupName": "Vue + Vite ecosystem",
+      "automerge": false
+    },
+    {
+      "description": "Auto-merge patch npm dev dependencies",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Auto-merge patch PHP dev dependencies",
+      "matchManagers": ["composer"],
+      "matchDepTypes": ["require-dev"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Never auto-merge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "major-update"]
+    },
+    {
+      "description": "Stripe SDK — hold for manual review",
+      "matchPackageNames": ["stripe/stripe-php", "stripe"],
+      "automerge": false,
+      "labels": ["dependencies", "payment-critical"]
+    },
+    {
+      "description": "Twilio SDK — hold for manual review",
+      "matchPackageNames": ["twilio/sdk"],
+      "automerge": false,
+      "labels": ["dependencies", "comms-critical"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security", "dependencies"],
+    "assignees": ["Masterleeaus"],
+    "automerge": false
+  }
+}
