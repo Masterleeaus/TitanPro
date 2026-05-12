@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\TitanRewind\Observers\TitanRewindObserver;
+use Modules\TitanRewind\Providers\EventServiceProvider as ModuleEventServiceProvider;
+use Modules\TitanRewind\Providers\FilamentServiceProvider as ModuleFilamentServiceProvider;
+use Modules\TitanRewind\Providers\RouteServiceProvider as ModuleRouteServiceProvider;
 use Modules\TitanRewind\Services\RewindAuditService;
 use Modules\TitanRewind\Services\RewindCaseService;
 use Modules\TitanRewind\Services\RewindFixService;
@@ -24,6 +27,10 @@ class TitanRewindServiceProvider extends ServiceProvider
         $this->app->singleton(RewindAuditService::class);
         $this->app->singleton(RewindFixService::class);
         $this->app->singleton(TitanRewindObserver::class);
+
+        $this->app->register(ModuleRouteServiceProvider::class);
+        $this->app->register(ModuleEventServiceProvider::class);
+        $this->app->register(ModuleFilamentServiceProvider::class);
     }
 
     public function boot(): void
