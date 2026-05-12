@@ -52,8 +52,14 @@ class CallingAgentCredentialResolver
             ->whereNotNull('twilio_auth_token')
             ->get(['company_id', 'twilio_auth_token'])
             ->map(function (CallingAgentConfig $config): array {
+                $companyId = filter_var(
+                    $config->company_id,
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['min_range' => 1]],
+                );
+
                 return [
-                    'company_id' => is_numeric($config->company_id) ? (int) $config->company_id : null,
+                    'company_id' => $companyId !== false ? $companyId : null,
                     'token' => (string) $config->twilio_auth_token,
                 ];
             })

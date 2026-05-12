@@ -15,7 +15,10 @@ class CallingAgentModuleContractTest extends TestCase
         $manifestPath = base_path('Modules/CallingAgent/manifests/ai_tools.json');
         $this->assertFileExists($manifestPath);
 
-        $manifest = json_decode((string) file_get_contents($manifestPath), true);
+        $manifestContents = file_get_contents($manifestPath);
+        $this->assertNotFalse($manifestContents, 'Failed to read CallingAgent ai_tools.json manifest.');
+
+        $manifest = json_decode($manifestContents, true);
         $this->assertIsArray($manifest);
         $this->assertIsArray($manifest['tools'] ?? null);
 

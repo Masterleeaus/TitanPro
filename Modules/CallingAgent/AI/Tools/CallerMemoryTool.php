@@ -11,9 +11,12 @@ final class CallerMemoryTool
     {
         $phone = TenantContext::normalizeAddress($input['phone'] ?? null);
         $email = is_string($input['email'] ?? null) ? trim((string) $input['email']) : null;
-        $companyId = isset($input['company_id']) && is_numeric($input['company_id'])
-            ? (int) $input['company_id']
-            : TenantContext::id();
+        $companyId = filter_var(
+            $input['company_id'] ?? null,
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1]],
+        );
+        $companyId = $companyId !== false ? $companyId : TenantContext::id();
 
         if ($phone === null && ($email === null || $email === '')) {
             return [
