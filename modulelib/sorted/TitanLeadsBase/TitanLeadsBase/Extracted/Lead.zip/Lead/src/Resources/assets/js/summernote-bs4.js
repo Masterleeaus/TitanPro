@@ -611,7 +611,7 @@ var lists = {
     unique: unique
 };
 
-var isSupportAmd = typeof define === 'function' && define.amd;  
+var isSupportAmd = typeof define === 'function' && define.amd; // eslint-disable-line
 /**
  * returns whether font is installed or not.
  *

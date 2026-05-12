@@ -16,7 +16,7 @@ const props = defineProps({
     },
 });
 
-const open = ref(false);
+let open = ref(false);
 
 const closeOnEscape = (e) => {
     if (open.value && e.key === 'Escape') {
