@@ -1,1 +1,38 @@
-{"module":"bookingmodule","events":["BookingRequested","BookingCompleted","BookingCancelled","BookingStatusChanged","ScheduleAssigned","ScheduleRescheduled"],"jobs":["GenerateBookingInvoiceJob","SendBookingReminderJob","SyncDispatchBoardJob","RecordBookingLifecycleLogJob"]}
+{
+  "module": "bookingmodule",
+  "workflow": {
+    "states": [
+      "draft",
+      "pending_approval",
+      "confirmed",
+      "dispatched",
+      "in_progress",
+      "completed",
+      "invoiced",
+      "paid",
+      "cancelled",
+      "rescheduled",
+      "no_show"
+    ],
+    "guards": [
+      "confirmed->dispatched requires assigned technician",
+      "completed->invoiced requires JobCardCompleted signal"
+    ]
+  },
+  "events": [
+    "BookingRequested",
+    "BookingCompleted",
+    "BookingCancelled",
+    "BookingStatusChanged",
+    "BookingApprovalRequested",
+    "BookingApprovalDecided",
+    "ScheduleAssigned",
+    "ScheduleRescheduled"
+  ],
+  "jobs": [
+    "GenerateBookingInvoiceJob",
+    "SendBookingReminderJob",
+    "SyncDispatchBoardJob",
+    "RecordBookingLifecycleLogJob"
+  ]
+}

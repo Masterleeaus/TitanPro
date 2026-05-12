@@ -8,6 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Modules\BookingModule\Actions\Bookings\TransitionCleaningBookingAction;
+use Modules\BookingModule\Automation\BookingApprovalRuntime;
+use Modules\BookingModule\Events\BookingApprovalRequested;
+use Modules\BookingModule\Events\BookingStatusChanged;
 use Modules\BookingModule\Models\CleaningBooking;
 use Modules\BookingModule\Services\BookingFSMService;
 
@@ -22,6 +25,7 @@ class CleaningBookingController extends AccountBaseController
     public function __construct(
         private readonly BookingFSMService $fsmService,
         private readonly TransitionCleaningBookingAction $transitionAction,
+        private readonly BookingApprovalRuntime $approvalRuntime,
     ) {
         parent::__construct();
     }
@@ -52,6 +56,7 @@ class CleaningBookingController extends AccountBaseController
             'alarm_code'               => ['nullable', 'string', 'max:50'],
             'key_number'               => ['nullable', 'string', 'max:50'],
             'estimated_duration_hours' => ['nullable', 'numeric', 'min:0', 'max:24'],
+            'booking_value'            => ['nullable', 'numeric', 'min:0'],
             'supplies_required'        => ['nullable', 'boolean'],
             'num_cleaners_required'    => ['nullable', 'integer', 'min:1'],
             'due_date'                 => ['nullable', 'date'],
@@ -64,13 +69,25 @@ class CleaningBookingController extends AccountBaseController
             isset($data['service_lng']) ? (float) $data['service_lng'] : null,
         );
 
-        $booking = CleaningBooking::create(array_merge($data, [
+        $booking = new CleaningBooking(array_merge($data, [
             'task_type'      => 'booking',
-            'booking_status' => 'pending',
             'added_by'       => user()->id,
             'created_by'     => user()->id,
             'company_id'     => user()->company_id,
         ]));
+        $booking->booking_status = $this->approvalRuntime->initialStatus($booking, $data);
+        if ($booking->booking_status === 'pending_approval') {
+            $booking->pending_approval_at = now();
+            $booking->approval_due_at = now()->addHours($this->approvalRuntime->timeoutHours((int) user()->company_id));
+        }
+        $booking->save();
+
+        if ($booking->booking_status === 'pending_approval') {
+            event(new BookingStatusChanged($booking, null, 'pending_approval', (int) user()->company_id, (int) user()->id, [
+                'approval_required' => true,
+            ]));
+            event(new BookingApprovalRequested($booking, (int) user()->company_id, (int) user()->id));
+        }
 
         return response()->json([
             'status'  => 'success',
