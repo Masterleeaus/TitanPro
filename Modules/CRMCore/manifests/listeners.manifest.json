@@ -1,7 +1,8 @@
 {
   "schema": "titan.listeners.manifest.v1",
+  "module": "CRMCore",
   "listeners": [
-    "RecordDealConvertedToProject",
-    "RecordLeadScored"
+    "Modules\\CRMCore\\Listeners\\RecordDealConvertedToProject",
+    "Modules\\CRMCore\\Listeners\\RecordLeadScored"
   ]
 }
