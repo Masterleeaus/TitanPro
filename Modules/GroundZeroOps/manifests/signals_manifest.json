@@ -1,0 +1,15 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "GroundZeroOps",
+  "schema_version": "1.0",
+  "produced": [
+    "JobAssigned",
+    "ShiftStarted",
+    "ShiftEnded",
+    "IncidentLogged"
+  ],
+  "consumed": [
+    "CleaningJobs.JobCreated",
+    "BookingModule.BookingConfirmed"
+  ]
+}
