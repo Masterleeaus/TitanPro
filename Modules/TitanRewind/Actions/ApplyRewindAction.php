@@ -57,7 +57,8 @@ class ApplyRewindAction
             ->where('company_id', $fix->company_id)
             ->where('case_id', $fix->case_id)
             ->where('event_type', 'rewind_approved')
-            ->exists();
+            ->get()
+            ->contains(static fn (RewindEvent $event): bool => (int) ($event->payload_json['fix_id'] ?? 0) === (int) $fix->id);
 
         if (! $approved) {
             throw new \RuntimeException('ApplyRewindAction requires a prior RewindApproved event.');

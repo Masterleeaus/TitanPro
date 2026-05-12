@@ -2,6 +2,7 @@
 
 namespace Modules\TitanRewind\Listeners;
 
+use Illuminate\Support\Facades\Log;
 use Modules\Accountings\Events\InvoiceJournalPosted;
 use Modules\EInvoice\Events\InvoiceSent;
 use Modules\TitanRewind\Services\RewindAuditService;
@@ -62,6 +63,12 @@ class CaptureSnapshotListener
     private function appendSnapshot(int $companyId, string $sourceType, string $entityType, string $entityId, array $payload): void
     {
         if ($companyId <= 0) {
+            Log::warning('TitanRewind snapshot skipped: unresolved company_id.', [
+                'source_type' => $sourceType,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+            ]);
+
             return;
         }
 
