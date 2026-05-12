@@ -133,8 +133,8 @@ class DealProjectResource extends Resource
     {
         $companyId = ScopedByCompany::resolveCompanyId();
         if ($companyId === null) {
-            return DealPipeline::query()->where('is_default', true)->value('id')
-                ?? DealPipeline::query()->orderBy('position')->value('id');
+            return DealPipeline::withoutGlobalScopes()->where('is_default', true)->value('id')
+                ?? DealPipeline::withoutGlobalScopes()->orderBy('position')->value('id');
         }
 
         return DealPipeline::query()->where('is_default', true)->value('id')

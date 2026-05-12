@@ -28,7 +28,9 @@ class CRMCoreServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../Config/billing.php', 'crmcore.billing');
         $this->mergeConfigFrom(__DIR__ . '/../Config/search.php', 'crmcore.search');
 
+        // BillingEntityDetector resolves CRM entities that can be linked to billing surfaces.
         $this->app->singleton(BillingEntityDetector::class);
+        // PipelineMetricProvider exposes tenant-scoped lead/deal metrics for dashboards and AI tools.
         $this->app->bind(PipelineMetricProvider::class, PipelineRepository::class);
 
         $this->app->register(RouteServiceProvider::class);
@@ -105,7 +107,12 @@ class CRMCoreServiceProvider extends ServiceProvider
             return [DealToProjectWorkflow::class];
         }
 
-        $manifest = json_decode((string) file_get_contents($manifestPath), true);
+        $raw = file_get_contents($manifestPath);
+        if ($raw === false) {
+            return [DealToProjectWorkflow::class];
+        }
+
+        $manifest = json_decode($raw, true);
         if (! is_array($manifest)) {
             return [DealToProjectWorkflow::class];
         }

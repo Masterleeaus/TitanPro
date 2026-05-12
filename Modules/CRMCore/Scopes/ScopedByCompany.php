@@ -9,13 +9,18 @@ use Illuminate\Support\Facades\Schema;
 
 class ScopedByCompany implements Scope
 {
+    /**
+     * @var array<string, bool>
+     */
+    private static array $tableHasCompanyColumn = [];
+
     public function apply(Builder $builder, Model $model): void
     {
-        if (! Schema::hasColumn($model->getTable(), 'company_id')) {
+        if (! $this->tableHasCompanyColumn($model)) {
             return;
         }
 
-        $companyId = $this->resolveCompanyId();
+        $companyId = self::resolveCompanyId();
         if ($companyId === null) {
             return;
         }
@@ -23,10 +28,25 @@ class ScopedByCompany implements Scope
         $builder->where($model->qualifyColumn('company_id'), $companyId);
     }
 
+    private function tableHasCompanyColumn(Model $model): bool
+    {
+        return self::$tableHasCompanyColumn[$model->getTable()]
+            ??= Schema::hasColumn($model->getTable(), 'company_id');
+    }
+
     public static function resolveCompanyId(): ?int
     {
         $headerCompanyId = request()?->header('X-Company-Id');
         if (is_numeric($headerCompanyId)) {
+            $authenticatedUser = auth()->user();
+            if ($authenticatedUser && isset($authenticatedUser->company_id) && is_numeric($authenticatedUser->company_id)) {
+                $authenticatedCompanyId = (int) $authenticatedUser->company_id;
+
+                return $authenticatedCompanyId === (int) $headerCompanyId
+                    ? $authenticatedCompanyId
+                    : null;
+            }
+
             return (int) $headerCompanyId;
         }
 

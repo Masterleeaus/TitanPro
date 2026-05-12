@@ -18,7 +18,7 @@ beforeEach(function () {
 test('crmcore contact creation is scoped to company_id', function () {
     Event::fake([ContactCreated::class]);
 
-    $company = Company::create(['name' => 'Company A']);
+    $company = Company::withoutGlobalScopes()->create(['name' => 'Company A']);
     request()->headers->set('X-Company-Id', (string) $company->id);
 
     $contact = Contact::create([
@@ -34,8 +34,8 @@ test('crmcore contact creation is scoped to company_id', function () {
 });
 
 test('crmcore cross tenant contact query returns zero results', function () {
-    $companyA = Company::create(['name' => 'Company A']);
-    $companyB = Company::create(['name' => 'Company B']);
+    $companyA = Company::withoutGlobalScopes()->create(['name' => 'Company A']);
+    $companyB = Company::withoutGlobalScopes()->create(['name' => 'Company B']);
 
     Contact::withoutGlobalScopes()->create([
         'company_id' => $companyA->id,
@@ -59,7 +59,7 @@ test('crmcore cross tenant contact query returns zero results', function () {
 test('crmcore deal won and lost states dispatch the correct signals', function () {
     Event::fake([DealWon::class, DealLost::class]);
 
-    $company = Company::create(['name' => 'Company A']);
+    $company = Company::withoutGlobalScopes()->create(['name' => 'Company A']);
     request()->headers->set('X-Company-Id', (string) $company->id);
 
     $pipeline = DealPipeline::withoutGlobalScope(ScopedByCompany::class)->create([
@@ -69,7 +69,7 @@ test('crmcore deal won and lost states dispatch the correct signals', function (
         'position' => 1,
     ]);
 
-    $stage = DealStage::create([
+    $stage = DealStage::withoutGlobalScopes()->create([
         'pipeline_id' => $pipeline->id,
         'name' => 'Qualified',
         'position' => 1,

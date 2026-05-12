@@ -95,13 +95,17 @@ class TaskSeeder extends Seeder
             } // Fallback if randomElement somehow fails on empty subset
 
             $dueDate = fake()->dateTimeBetween('-1 month', '+2 months');
-            $companyId = $this->resolveTaskCompanyId($taskableType, $taskableId) ?? ($companyIds->isNotEmpty() ? $companyIds->random() : null);
-            if (! is_numeric($companyId)) {
+            $companyId = $this->resolveTaskCompanyId($taskableType, $taskableId);
+            if ($companyId === null && $companyIds->isNotEmpty()) {
+                $companyId = (int) $companyIds->random();
+            }
+
+            if ($companyId === null) {
                 continue;
             }
 
             Task::factory()->create([
-                'company_id' => (int) $companyId,
+                'company_id' => $companyId,
                 'task_status_id' => $statusId,
                 'task_priority_id' => fake()->optional(0.8, $defaultPriorityId)->randomElement($taskPriorityIds->all()),
                 'assigned_to_user_id' => $activeUsers->isNotEmpty() ? $activeUsers->random() : null,
@@ -150,7 +154,7 @@ class TaskSeeder extends Seeder
             return null;
         }
 
-        $model = app($taskableType)->find((int) $taskableId);
+        $model = $taskableType::query()->find((int) $taskableId);
         if (! $model) {
             return null;
         }

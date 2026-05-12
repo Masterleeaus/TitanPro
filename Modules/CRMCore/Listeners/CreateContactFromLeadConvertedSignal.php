@@ -25,7 +25,12 @@ class CreateContactFromLeadConvertedSignal
         }
 
         $query = Contact::withoutGlobalScopes()->where('company_id', $companyId);
-        if (filled($email)) {
+        if (filled($email) && filled($phone)) {
+            $query->where(function ($contactQuery) use ($email, $phone): void {
+                $contactQuery->where('email_primary', $email)
+                    ->orWhere('phone_primary', $phone);
+            });
+        } elseif (filled($email)) {
             $query->where('email_primary', $email);
         } else {
             $query->where('phone_primary', $phone);
@@ -35,7 +40,7 @@ class CreateContactFromLeadConvertedSignal
 
         $attributes = [
             'company_id' => $companyId,
-            'first_name' => Arr::get($payload, 'first_name', Arr::get($payload, 'contact_name', 'Lead')),
+            'first_name' => Arr::get($payload, 'first_name', Arr::get($payload, 'contact_name', 'Unknown')),
             'last_name' => Arr::get($payload, 'last_name'),
             'email_primary' => $email,
             'phone_primary' => $phone,

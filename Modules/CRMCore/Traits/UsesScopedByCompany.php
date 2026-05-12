@@ -7,12 +7,21 @@ use Modules\CRMCore\Scopes\ScopedByCompany;
 
 trait UsesScopedByCompany
 {
+    /**
+     * @var array<string, bool>
+     */
+    protected static array $hasCompanyColumnCache = [];
+
     protected static function bootUsesScopedByCompany(): void
     {
         static::addGlobalScope(new ScopedByCompany);
 
         static::creating(function ($model): void {
-            if (! Schema::hasColumn($model->getTable(), 'company_id')) {
+            $table = $model->getTable();
+            $hasCompanyColumn = self::$hasCompanyColumnCache[$table]
+                ??= Schema::hasColumn($table, 'company_id');
+
+            if (! $hasCompanyColumn) {
                 return;
             }
 

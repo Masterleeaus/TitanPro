@@ -27,10 +27,9 @@ class DealSeeder extends Seeder
             return;
         }
 
-        $standardPipeline = DealPipeline::firstOrCreate(
+        $companyStandardPipeline = DealPipeline::firstOrCreate(
             ['company_id' => $defaultCompanyId, 'name' => 'Standard Sales Pipeline'],
             [
-                'company_id' => $defaultCompanyId,
                 'description' => 'Default sales pipeline for most deals.',
                 'is_default' => true,
                 'position' => 1,
@@ -48,8 +47,8 @@ class DealSeeder extends Seeder
 
         foreach ($stagesData as $stageData) {
             DealStage::firstOrCreate(
-                ['pipeline_id' => $standardPipeline->id, 'name' => $stageData['name']],
-                array_merge($stageData, ['pipeline_id' => $standardPipeline->id])
+                ['pipeline_id' => $companyStandardPipeline->id, 'name' => $stageData['name']],
+                array_merge($stageData, ['pipeline_id' => $companyStandardPipeline->id])
             );
         }
 

@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CRMCore\Traits\HasCRMCode;
-use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class Company extends Model
 {
-    use HasCRMCode, HasFactory, SoftDeletes, UsesScopedByCompany;
+    use HasCRMCode, HasFactory, SoftDeletes;
 
     protected $table = 'companies';
 

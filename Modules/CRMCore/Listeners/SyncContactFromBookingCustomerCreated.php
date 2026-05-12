@@ -21,7 +21,7 @@ class SyncContactFromBookingCustomerCreated
 
         $attributes = [
             'company_id' => $companyId,
-            'first_name' => Arr::get($payload, 'first_name', Arr::get($payload, 'name', 'Customer')),
+            'first_name' => Arr::get($payload, 'first_name', Arr::get($payload, 'name', 'Unknown')),
             'last_name' => Arr::get($payload, 'last_name'),
             'email_primary' => $email,
             'phone_primary' => Arr::get($payload, 'phone'),
