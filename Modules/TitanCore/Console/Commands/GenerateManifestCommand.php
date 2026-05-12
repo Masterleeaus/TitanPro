@@ -107,7 +107,8 @@ class GenerateManifestCommand extends Command
             }
 
             // Skip excluded directories
-            $relSegments = explode(DIRECTORY_SEPARATOR, ltrim(str_replace($dir, '', $file->getPathname()), DIRECTORY_SEPARATOR.'/'));
+            $relPath     = ltrim(str_replace($dir, '', $file->getPathname()), DIRECTORY_SEPARATOR.'/');
+            $relSegments = explode(DIRECTORY_SEPARATOR, $relPath);
             foreach (self::SKIP_DIRS as $skipDir) {
                 if (in_array($skipDir, $relSegments, true)) {
                     continue 2;

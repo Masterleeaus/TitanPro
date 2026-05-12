@@ -117,8 +117,9 @@ class VerifyManifestCommand extends Command
         }
 
         foreach ($lines as $line) {
-            // Each line: "<hash>  <relative/path>"  (two spaces between hash and path)
-            if (preg_match('/^([a-f0-9]{64})\s{2}(.+)$/', trim($line), $m)) {
+            // Format: "<sha256-hash>  <relative/path>" (two spaces separator, as written by titan:generate-manifest)
+            // We accept one or more whitespace characters to tolerate minor formatting variations.
+            if (preg_match('/^([a-f0-9]{64})\s+(.+)$/', trim($line), $m)) {
                 $entries[$m[2]] = $m[1];
             }
         }

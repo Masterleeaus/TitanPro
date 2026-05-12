@@ -142,8 +142,7 @@ class PlatformHealthController extends BaseController
     private function checkOpenAI(): array
     {
         $key = config('titan-ai.providers.openai.api_key')
-            ?? config('openai.api_key')
-            ?? env('OPENAI_API_KEY');
+            ?? config('openai.api_key');
 
         if (empty($key)) {
             return ['status' => 'warning', 'message' => 'OpenAI API key not configured'];
@@ -155,8 +154,7 @@ class PlatformHealthController extends BaseController
     /** @return array{status: string, message: string} */
     private function checkElevenLabs(): array
     {
-        $key = config('services.elevenlabs.api_key')
-            ?? env('ELEVENLABS_API_KEY');
+        $key = config('services.elevenlabs.api_key');
 
         if (empty($key)) {
             return ['status' => 'warning', 'message' => 'ElevenLabs API key not configured'];
@@ -168,8 +166,8 @@ class PlatformHealthController extends BaseController
     /** @return array{status: string, message: string} */
     private function checkTwilio(): array
     {
-        $sid   = config('services.twilio.account_sid') ?? env('TWILIO_ACCOUNT_SID');
-        $token = config('services.twilio.auth_token')  ?? env('TWILIO_AUTH_TOKEN');
+        $sid   = config('services.twilio.account_sid');
+        $token = config('services.twilio.auth_token');
 
         if (empty($sid) || empty($token)) {
             return ['status' => 'warning', 'message' => 'Twilio credentials not configured'];
