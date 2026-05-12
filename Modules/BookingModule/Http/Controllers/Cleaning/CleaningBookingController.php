@@ -3,10 +3,11 @@
 namespace Modules\BookingModule\Http\Controllers\Cleaning;
 
 use App\Http\Controllers\AccountBaseController;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Modules\BookingModule\Events\BookingCompleted;
+use Modules\BookingModule\Actions\Bookings\TransitionCleaningBookingAction;
 use Modules\BookingModule\Models\CleaningBooking;
 use Modules\BookingModule\Services\BookingFSMService;
 
@@ -20,6 +21,7 @@ class CleaningBookingController extends AccountBaseController
 {
     public function __construct(
         private readonly BookingFSMService $fsmService,
+        private readonly TransitionCleaningBookingAction $transitionAction,
     ) {
         parent::__construct();
     }
@@ -92,18 +94,14 @@ class CleaningBookingController extends AccountBaseController
         ]);
 
         try {
-            $booking = $this->fsmService->transition($booking, $data['status']);
+            $this->assertBookingTenantBoundary($booking);
+            $booking = $this->transitionAction->execute($booking, $data['status']);
         } catch (ValidationException $e) {
             return response()->json([
                 'status'  => 'error',
                 'message' => $e->getMessage(),
                 'errors'  => $e->errors(),
             ], 422);
-        }
-
-        // Trigger event-driven invoice automation on completion.
-        if ($booking->booking_status === 'completed') {
-            event(new BookingCompleted($booking->fresh()));
         }
 
         return response()->json([
@@ -121,10 +119,13 @@ class CleaningBookingController extends AccountBaseController
     public function assignCleaner(Request $request, CleaningBooking $booking): JsonResponse
     {
         abort_if(user()->permission('assign_cleaners') !== 'all', 403);
+        $this->assertBookingTenantBoundary($booking);
 
         $data = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);
+        $assignee = User::query()->findOrFail((int) $data['user_id']);
+        abort_if((int) ($assignee->company_id ?? 0) !== (int) ($booking->company_id ?? 0), 403);
 
         // Use the existing task_users pivot table.
         $booking->taskUsers()->firstOrCreate(['user_id' => $data['user_id']]);
@@ -133,5 +134,12 @@ class CleaningBookingController extends AccountBaseController
             'status'  => 'success',
             'message' => __('messages.updateSuccess'),
         ]);
+    }
+
+    private function assertBookingTenantBoundary(CleaningBooking $booking): void
+    {
+        $actorCompanyId = (int) (user()->company_id ?? user()->organization_id ?? 0);
+        $bookingCompanyId = (int) ($booking->company_id ?? 0);
+        abort_if($actorCompanyId <= 0 || $bookingCompanyId <= 0 || $actorCompanyId !== $bookingCompanyId, 403);
     }
 }
