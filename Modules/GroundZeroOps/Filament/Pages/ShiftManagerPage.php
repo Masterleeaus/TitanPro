@@ -32,6 +32,7 @@ class ShiftManagerPage extends Page
     public function endShift(int $shiftId): void
     {
         $shift = Shift::query()->findOrFail($shiftId);
+        abort_unless((int) (auth()->user()?->company_id ?? 0) === (int) $shift->company_id, 403);
 
         app(EndShiftAction::class)->execute(
             shift: $shift,

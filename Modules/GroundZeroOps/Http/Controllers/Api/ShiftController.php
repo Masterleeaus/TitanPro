@@ -2,7 +2,9 @@
 
 namespace Modules\GroundZeroOps\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Modules\GroundZeroOps\Actions\EndShiftAction;
 use Modules\GroundZeroOps\Actions\StartShiftAction;
 use Modules\GroundZeroOps\Http\Requests\EndShiftRequest;
@@ -10,7 +12,7 @@ use Modules\GroundZeroOps\Http\Requests\StartShiftRequest;
 use Modules\GroundZeroOps\Http\Resources\ShiftResource;
 use Modules\GroundZeroOps\Models\Shift;
 
-class ShiftController
+class ShiftController extends Controller
 {
     public function start(StartShiftRequest $request, StartShiftAction $action): JsonResponse
     {
@@ -36,6 +38,6 @@ class ShiftController
 
     private function authorizeShift(EndShiftRequest $request, Shift $shift): void
     {
-        abort_unless((int) ($request->user()?->company_id ?? 0) === (int) $shift->company_id, 403);
+        Gate::forUser($request->user())->authorize('update', $shift);
     }
 }

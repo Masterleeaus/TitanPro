@@ -11,6 +11,7 @@ class DispatchService
 {
     /**
      * @param  array{company_id:int,job_id:int,technician_id:int,assigned_by:int|null,status?:string}  $payload
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function assign(array $payload): Dispatch
     {
