@@ -1,0 +1,20 @@
+{
+    "name": "Security",
+    "active": 1,
+    "alias": "security",
+    "description": "Unified and blueprint-structured security operations module with API dashboard, diagnostics, workflows, legacy compatibility, and health checks.",
+    "keywords": [
+        "security",
+        "permits",
+        "work-permits",
+        "access-card",
+        "goods-transfer"
+    ],
+    "priority": 0,
+    "providers": [
+        "Modules\\Security\\Providers\\ModuleServiceProvider"
+    ],
+    "files": [],
+    "filament_panel": "compliancesafety",
+    "version": "1.3.1-real-pass-a"
+}

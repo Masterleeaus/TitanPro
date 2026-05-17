@@ -1,0 +1,22 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Security Module Readiness API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/security/readiness": {
+      "get": {
+        "summary": "Security module production readiness",
+        "responses": {
+          "200": {
+            "description": "Ready"
+          },
+          "503": {
+            "description": "Degraded"
+          }
+        }
+      }
+    }
+  }
+}

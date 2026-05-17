@@ -1,0 +1,13 @@
+{
+  "module": "Security",
+  "pass": "REAL-C-SCAFFOLD-COMPLIANCE",
+  "blueprint_expected_directories": 279,
+  "blueprint_present_directories": 279,
+  "blueprint_missing_directories": [],
+  "blueprint_expected_files": 49,
+  "blueprint_present_files": 49,
+  "blueprint_missing_files": [],
+  "total_directories": 364,
+  "total_files": 520,
+  "php_files": 183
+}

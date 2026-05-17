@@ -1,0 +1,10 @@
+{
+  "module": "security",
+  "source": "Config/permissions.php",
+  "groups": [
+    "security-transfer",
+    "trinoutpermit",
+    "work-permits",
+    "card-access"
+  ]
+}

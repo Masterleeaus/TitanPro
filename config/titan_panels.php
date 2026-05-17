@@ -185,6 +185,15 @@ return [
             'roles'       => ['owner', 'admin', 'dispatcher'],
         ],
 
+        'compliancesafety' => [
+            'label'       => 'Compliance & Safety',
+            'description' => 'Security, compliance, and risk controls',
+            'path'        => 'compliancesafety',
+            'color'       => 'amber',
+            'icon'        => 'heroicon-o-shield-check',
+            'roles'       => ['owner', 'admin', 'dispatcher', 'supervisor'],
+        ],
+
     ],
 
     /*
@@ -212,6 +221,7 @@ return [
         ['label' => 'TITAN SOCIAL', 'description' => 'Social Media Management', 'path' => 'titansocial', 'url' => '/titansocial', 'icon_key' => 'social', 'gradient' => 'linear-gradient(135deg,#ec4899,#831843)'],
         ['label' => 'TITAN TEAM', 'description' => 'Team Management & HR', 'path' => 'titanteam', 'url' => '/titanteam', 'icon_key' => 'team', 'gradient' => 'linear-gradient(135deg,#6366f1,#312e81)'],
         ['label' => 'ZEROISSUES', 'description' => 'Issue Tracking & Safety', 'path' => 'zeroissues', 'url' => '/zeroissues', 'icon_key' => 'warning', 'gradient' => 'linear-gradient(135deg,#a855f7,#581c87)'],
+        ['label' => 'COMPLIANCE & SAFETY', 'description' => 'Security, Compliance & Risk Controls', 'path' => 'compliancesafety', 'url' => '/compliancesafety', 'icon_key' => 'shield', 'gradient' => 'linear-gradient(135deg,#f59e0b,#78350f)'],
     ],
 
 ];

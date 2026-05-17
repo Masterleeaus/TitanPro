@@ -1,0 +1,23 @@
+{
+  "name": "Security",
+  "alias": "security",
+  "version": "1.3.0",
+  "providers": [
+    "Modules\\Security\\Providers\\ModuleServiceProvider",
+    "Modules\\Security\\Providers\\EventServiceProvider"
+  ],
+  "capabilities": [
+    "goods_in_out_permits",
+    "work_permits",
+    "work_permit_files",
+    "access_cards",
+    "security_validation",
+    "pdf_exports",
+    "api_dashboard",
+    "health_checks",
+    "repository_layer",
+    "workflow_actions",
+    "status_api",
+    "workflow_definitions"
+  ]
+}

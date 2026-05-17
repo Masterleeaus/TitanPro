@@ -1,0 +1,24 @@
+{
+    "name": "nwidart/security-combined",
+    "description": "Unified Security module with goods in/out permits, work permits, files, access cards, APIs, diagnostics, and blueprint structure.",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Security\\Providers\\ModuleServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Security\\": ""
+        },
+        "files": []
+    }
+}
