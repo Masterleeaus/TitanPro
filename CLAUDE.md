@@ -37,6 +37,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - All state-changing flows must be auditable, retry-aware, and approval-capable where risk requires.
 - Modules communicate via signals, not direct service calls.
 
+## Issue Documentation Requirement
+
+**Every agent that works a GitHub issue MUST create an issue doc before committing.**
+
+### Rule
+
+When resolving any GitHub issue (by number), create `issue-docs/issue-{N}.md` **before** making the commit. One file per issue — never combine multiple issues into a single doc.
+
+### Required format
+
+```markdown
+# Issue #{N} — {Issue Title}
+
+## Files Changed
+- `path/to/file.php` — description of what changed
+- `path/to/another.ts` — description of what changed
+
+## Fixes Applied
+- Bullet describing each fix or change applied
+
+## Next Steps
+- Anything remaining, follow-on work, or known limitations
+- "None" if fully resolved
+```
+
+### Rules
+- File path: `issue-docs/issue-{N}.md` where `{N}` is the GitHub issue number.
+- Create the `issue-docs/` directory at repo root if it does not yet exist.
+- Write the doc **before** staging and committing — include it in the same commit as the fix.
+- Each issue gets its own file — never merge two issues into one doc.
+- If an issue is closed as `not_planned` with no code changes, still create the doc noting why no changes were made.
+
+---
+
 ## Stack
 
 Laravel 12 (PHP 8.2+) backend + Vue 3 + TypeScript frontend, connected via Inertia.js. Authentication is handled by Laravel Fortify (with 2FA support). UI components come from a Reka UI / shadcn-style library with Tailwind CSS v4.
