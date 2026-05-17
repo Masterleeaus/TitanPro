@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Schema;
 class ThemeRuntime
 {
     public const CACHE_KEY = 'theme-manager.active-theme';
+    protected const ENGINE_FORMAT_VERSION = 1;
+    protected const DEFAULT_THEME_STYLESHEET = 'css/theme.css';
 
     protected const PRESET_CACHE_KEY = 'theme-manager.active-preset';
 
@@ -102,7 +104,7 @@ class ThemeRuntime
         foreach (File::directories($basePath) as $directory) {
             $slug = basename($directory);
 
-            if (self::themeManifest($slug) !== null || File::exists($directory . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css')) {
+            if (self::isValidThemeDirectory($directory, $slug)) {
                 $themes[] = $slug;
             }
         }
@@ -161,7 +163,7 @@ class ThemeRuntime
             $cssPath = self::themePath($activeTheme) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css';
 
             if (File::exists($cssPath)) {
-                $version = (string) @filemtime($cssPath);
+                $version = self::fileVersion($cssPath);
                 $assets['theme_css'] = url('/theme-assets/' . rawurlencode($activeTheme) . '/css/theme.css') . ($version ? '?v=' . $version : '');
             }
         }
@@ -406,7 +408,7 @@ class ThemeRuntime
             $cssPath = self::themePath($activeTheme) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css';
 
             if (File::exists($cssPath)) {
-                $version = (string) @filemtime($cssPath);
+                $version = self::fileVersion($cssPath);
                 $href = url('/theme-assets/' . rawurlencode($activeTheme) . '/css/theme.css') . ($version ? '?v=' . $version : '');
 
                 return '<link rel="stylesheet" id="theme-manager-runtime" href="' . e($href) . '">';
@@ -479,16 +481,16 @@ CSS;
     protected static function normalizeThemeManifest(array $manifest, string $fallbackSlug): array
     {
         $formatVersion = (int) ($manifest['format_version'] ?? $manifest['theme_format_version'] ?? 1);
-        $stylesheet = $manifest['stylesheet'] ?? $manifest['css'] ?? 'css/theme.css';
+        $stylesheet = $manifest['stylesheet'] ?? $manifest['css'] ?? self::DEFAULT_THEME_STYLESHEET;
 
         return [
             'slug' => (string) ($manifest['slug'] ?? $fallbackSlug),
             'name' => (string) ($manifest['name'] ?? $manifest['title'] ?? $fallbackSlug),
             'version' => (string) ($manifest['version'] ?? '1.0.0'),
             'format_version' => $formatVersion,
-            'engine_format_version' => 1,
-            'compatible' => $formatVersion <= 1,
-            'stylesheet' => is_string($stylesheet) ? $stylesheet : 'css/theme.css',
+            'engine_format_version' => self::ENGINE_FORMAT_VERSION,
+            'compatible' => $formatVersion <= self::ENGINE_FORMAT_VERSION,
+            'stylesheet' => is_string($stylesheet) ? $stylesheet : self::DEFAULT_THEME_STYLESHEET,
         ];
     }
 
@@ -512,7 +514,7 @@ CSS;
             return $decoded;
         }
 
-        return ['slug' => $raw];
+        return ['active_theme' => $raw];
     }
 
     protected static function writeActiveState(array $state): void
@@ -540,11 +542,18 @@ CSS;
     protected static function extractThemeSlug(array $state, array $installed): ?string
     {
         $themeField = $state['theme'] ?? null;
+        $themeCandidate = null;
+
+        if (is_array($themeField)) {
+            $themeCandidate = $themeField['slug'] ?? null;
+        } elseif (is_string($themeField)) {
+            $themeCandidate = $themeField;
+        }
 
         $candidates = [
             $state['active_theme'] ?? null,
             $state['theme_slug'] ?? null,
-            is_array($themeField) ? ($themeField['slug'] ?? null) : (is_string($themeField) ? $themeField : null),
+            $themeCandidate,
             $state['slug'] ?? null,
             config('theme.active'),
         ];
@@ -628,5 +637,24 @@ CSS;
         } catch (\Throwable) {
             return 0;
         }
+    }
+
+    protected static function isValidThemeDirectory(string $directory, string $slug): bool
+    {
+        return self::themeManifest($slug) !== null
+            || File::exists($directory . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css');
+    }
+
+    protected static function fileVersion(string $path): string
+    {
+        $mtime = filemtime($path);
+
+        if ($mtime === false) {
+            logger()->warning('Unable to resolve theme asset file modification time. Check that the file exists and is readable.', ['path' => $path]);
+
+            return '';
+        }
+
+        return (string) $mtime;
     }
 }

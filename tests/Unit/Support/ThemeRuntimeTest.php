@@ -3,12 +3,13 @@
 use App\Support\ThemeRuntime;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function (): void {
-    $this->themesPath = storage_path('framework/testing/theme-runtime-themes-' . uniqid());
+    $this->themesPath = storage_path('framework/testing/theme-runtime-themes-' . Str::uuid()->toString());
 
     config(['theme.base_path' => $this->themesPath]);
 
@@ -35,9 +36,18 @@ afterEach(function (): void {
 function createThemeFixture(string $basePath, string $slug): void
 {
     $themeDir = $basePath . DIRECTORY_SEPARATOR . $slug;
-    File::makeDirectory($themeDir . DIRECTORY_SEPARATOR . 'css', 0755, true, true);
+    File::makeDirectory($themeDir . DIRECTORY_SEPARATOR . 'css', 0755, true);
     File::put($themeDir . DIRECTORY_SEPARATOR . 'theme.json', json_encode(['name' => $slug, 'slug' => $slug]));
     File::put($themeDir . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css', 'body { color: #123; }');
+}
+
+function ensureThemeManagerStorageDirectory(): void
+{
+    $path = storage_path('app/theme-manager');
+
+    if (! File::isDirectory($path)) {
+        File::makeDirectory($path, 0755, true);
+    }
 }
 
 it('activates one theme at a time and persists the active theme state', function () {
@@ -57,7 +67,7 @@ it('activates one theme at a time and persists the active theme state', function
 });
 
 it('repairs legacy invalid active theme state and falls back safely', function () {
-    File::makeDirectory(storage_path('app/theme-manager'), 0755, true, true);
+    ensureThemeManagerStorageDirectory();
     File::put(storage_path('app/theme-manager/active-preset.json'), json_encode([
         'theme_slug' => 'missing-theme',
         'updated_at' => now()->toIso8601String(),
@@ -84,7 +94,7 @@ it('falls back to filament default when active theme css is missing', function (
 it('supports legacy persisted key names and reports missing marker file in diagnostics', function () {
     createThemeFixture($this->themesPath, 'alpha');
 
-    File::makeDirectory(storage_path('app/theme-manager'), 0755, true, true);
+    ensureThemeManagerStorageDirectory();
     File::put(storage_path('app/theme-manager/active-preset.json'), json_encode([
         'theme_slug' => 'alpha',
         'updated_at' => now()->toIso8601String(),
@@ -98,12 +108,12 @@ it('supports legacy persisted key names and reports missing marker file in diagn
     $diagnostics = ThemeRuntime::diagnostics();
 
     expect($diagnostics['issues'])->toBeArray()
-        ->and(collect($diagnostics['issues'])->contains(fn (string $issue): bool => str_contains($issue, 'marker file is missing')))->toBeTrue();
+        ->and(implode(' | ', $diagnostics['issues']))->toContain('marker file is missing');
 });
 
 it('normalizes older theme manifest formats for compatibility', function () {
     $themeDir = $this->themesPath . DIRECTORY_SEPARATOR . 'legacy-theme';
-    File::makeDirectory($themeDir . DIRECTORY_SEPARATOR . 'css', 0755, true, true);
+    File::makeDirectory($themeDir . DIRECTORY_SEPARATOR . 'css', 0755, true);
     File::put($themeDir . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css', 'body { color: #456; }');
     File::put($themeDir . DIRECTORY_SEPARATOR . 'theme.json', json_encode([
         'title' => 'Legacy Theme',
