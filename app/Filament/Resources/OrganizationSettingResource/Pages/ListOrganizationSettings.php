@@ -11,7 +11,7 @@ class ListOrganizationSettings extends ListRecords
 {
     protected static string $resource = OrganizationSettingResource::class;
 
-    protected ?bool $hasOrganizationSettings = null;
+    protected ?bool $cachedHasOrganizationSettings = null;
 
     protected function getHeaderActions(): array
     {
@@ -19,23 +19,33 @@ class ListOrganizationSettings extends ListRecords
             Actions\Action::make('initializeSettings')
                 ->label('Initialise settings')
                 ->icon('heroicon-o-cog-6-tooth')
-                ->url(OrganizationSettingResource::getUrl('create'))
+                ->action(function () {
+                    $organizationId = auth()->user()?->organization_id;
+
+                    abort_if($organizationId === null, 404);
+
+                    $setting = OrganizationSetting::firstOrCreateForOrganization($organizationId);
+
+                    return redirect()->to(
+                        OrganizationSettingResource::getUrl('edit', ['record' => $setting])
+                    );
+                })
                 ->visible(fn (): bool => ! $this->hasOrganizationSettings()),
         ];
     }
 
     protected function hasOrganizationSettings(): bool
     {
-        if ($this->hasOrganizationSettings !== null) {
-            return $this->hasOrganizationSettings;
+        if ($this->cachedHasOrganizationSettings !== null) {
+            return $this->cachedHasOrganizationSettings;
         }
 
         $organizationId = auth()->user()?->organization_id;
 
         if ($organizationId === null) {
-            return $this->hasOrganizationSettings = false;
+            return $this->cachedHasOrganizationSettings = false;
         }
 
-        return $this->hasOrganizationSettings = OrganizationSetting::where('organization_id', $organizationId)->exists();
+        return $this->cachedHasOrganizationSettings = OrganizationSetting::where('organization_id', $organizationId)->exists();
     }
 }

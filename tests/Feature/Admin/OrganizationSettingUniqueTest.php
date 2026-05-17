@@ -50,21 +50,14 @@ test('create page redirects to edit when org already has a settings row', functi
         ->assertRedirect($expectedUrl);
 });
 
-test('create page initialises settings and redirects to edit when org has no settings row', function () {
+test('create page renders when org has no settings row', function () {
     $org  = Organization::factory()->create();
     $user = User::factory()->create(['organization_id' => $org->id]);
     $user->assignRole('owner');
 
-    expect(OrganizationSetting::where('organization_id', $org->id)->exists())->toBeFalse();
-
-    $response = $this->actingAs($user)
-        ->get(OrganizationSettingResource::getUrl('create'));
-
-    $setting = OrganizationSetting::where('organization_id', $org->id)->sole();
-
-    $response->assertRedirect(
-        OrganizationSettingResource::getUrl('edit', ['record' => $setting])
-    );
+    $this->actingAs($user)
+        ->get(OrganizationSettingResource::getUrl('create'))
+        ->assertOk();
 });
 
 test('organization settings index only shows initialise settings before a row exists', function () {

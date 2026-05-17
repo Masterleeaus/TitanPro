@@ -10,8 +10,9 @@
 
 - Replaced the unrestricted Filament create button with a single `Initialise settings` action.
 - Hid that action once the current organization already has an `OrganizationSetting` row.
-- Updated the create route to use `OrganizationSetting::firstOrCreateForOrganization()` and always redirect to the edit page for the canonical row.
-- Added feature coverage for the initialise-and-redirect flow, the action visibility on the index page, and the database unique constraint blocking a second direct insert for the same organization.
+- Updated the list-page action to use `OrganizationSetting::firstOrCreateForOrganization()` and redirect straight to the edit page for the canonical row.
+- Kept the create route guarded so direct visits still redirect to edit when settings already exist for the current organization.
+- Added feature coverage for the guarded create-page redirect, the action visibility on the index page, and the database unique constraint blocking a second direct insert for the same organization.
 
 ## Next Steps
 

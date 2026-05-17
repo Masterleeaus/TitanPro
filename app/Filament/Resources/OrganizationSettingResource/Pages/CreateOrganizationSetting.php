@@ -11,19 +11,32 @@ class CreateOrganizationSetting extends CreateRecord
     protected static string $resource = OrganizationSettingResource::class;
 
     /**
-     * Keep the existing Filament create route as an idempotent initializer so
-     * older links still land on the singleton settings record for this org.
+     * Keep the create route guarded so direct visits still land on the
+     * canonical row when one already exists for the current organization.
      */
     public function mount(): void
     {
         $organizationId = auth()->user()?->organization_id;
 
-        abort_if($organizationId === null, 404);
+        if ($organizationId !== null) {
+            $setting = OrganizationSetting::where('organization_id', $organizationId)->first();
 
-        $setting = OrganizationSetting::firstOrCreateForOrganization($organizationId);
+            if ($setting !== null) {
+                $this->redirect(
+                    OrganizationSettingResource::getUrl('edit', ['record' => $setting])
+                );
 
-        $this->redirect(
-            OrganizationSettingResource::getUrl('edit', ['record' => $setting])
-        );
+                return;
+            }
+        }
+
+        parent::mount();
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['organization_id'] = auth()->user()?->organization_id;
+
+        return $data;
     }
 }
