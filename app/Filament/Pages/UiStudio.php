@@ -207,6 +207,8 @@ class UiStudio extends Page
     /** @var array<string, string|null> */
     private array $savedThemeSnapshot = [];
 
+    private bool $suppressThemeVersionOnNextPublish = false;
+
     // ── AI Theme Generator modal state ────────────────────────────────────────
 
     /** Whether the AI theme modal is visible. */
@@ -1367,7 +1369,8 @@ class UiStudio extends Page
 
         $this->applyThemeVersionSnapshot($version->token_snapshot);
         $this->versionLabel = "Rollback from v{$versionNumber}";
-        $this->publish(false);
+        $this->suppressThemeVersionOnNextPublish = true;
+        $this->publish();
         $this->createThemeVersion($this->versionLabel);
         $this->versionLabel = '';
     }
@@ -1421,7 +1424,7 @@ class UiStudio extends Page
     // Publish
     // ─────────────────────────────────────────────────────────────────────────
 
-    public function publish(bool $createThemeVersion = true): void
+    public function publish(): void
     {
         $validated = $this->validate([
             'logoUpload' => 'nullable|image|max:2048',
@@ -1559,11 +1562,12 @@ class UiStudio extends Page
             }
         }
 
-        if ($createThemeVersion) {
+        if (! $this->suppressThemeVersionOnNextPublish) {
             $label = trim($this->versionLabel);
             $this->createThemeVersion($label !== '' ? $label : 'Manual save');
             $this->versionLabel = '';
         }
+        $this->suppressThemeVersionOnNextPublish = false;
 
         Notification::make()
             ->title('UI Studio layout published')
