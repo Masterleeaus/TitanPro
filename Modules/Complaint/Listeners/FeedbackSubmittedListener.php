@@ -25,7 +25,7 @@ class FeedbackSubmittedListener
             'user_id' => $customerId,
             'added_by' => $customerId,
             'last_update_by' => $customerId,
-            'subject' => 'Auto complaint from low feedback rating',
+            'subject' => 'Complaint auto-generated from low feedback rating',
             'description' => $message !== '' ? $message : 'Auto-generated from ZeroFussPortal.FeedbackSubmitted',
             'no_hp' => CreateComplaintAction::DEFAULT_NO_HP,
             'priority' => 'high',

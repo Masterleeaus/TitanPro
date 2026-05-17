@@ -54,6 +54,7 @@ class CreateComplaintAction
             $complaint->last_update_by = $data['last_update_by'] ?? null;
             $complaint->save();
 
+            $firstReplyId = null;
             if ($description !== '') {
                 $reply = new ComplaintReply();
                 $reply->message = $this->sanitizeDescription($description);
@@ -61,12 +62,17 @@ class CreateComplaintAction
                 $reply->user_id = $data['reply_user_id'] ?? $complaint->user_id;
                 $reply->company_id = $complaint->company_id;
                 $reply->save();
+                $firstReplyId = $reply->id;
             }
 
             $tags = $this->normaliseTags($data['tags'] ?? []);
+            $tagIds = [];
             foreach ($tags as $tagName) {
                 $tag = ComplaintTagList::firstOrCreate(['tag_name' => $tagName]);
-                $complaint->complaintTags()->syncWithoutDetaching([$tag->id]);
+                $tagIds[] = $tag->id;
+            }
+            if (! empty($tagIds)) {
+                $complaint->complaintTags()->syncWithoutDetaching($tagIds);
             }
 
             if (($data['create_work_request'] ?? false) === true) {
@@ -74,6 +80,7 @@ class CreateComplaintAction
             }
 
             ComplaintReceived::dispatch($complaint);
+            $complaint->setAttribute('first_reply_id', $firstReplyId);
 
             return $complaint;
         });
@@ -108,11 +115,10 @@ class CreateComplaintAction
     private function createWorkRequest(Complaint $complaint): void
     {
         $number = WorkRequest::lastInvoiceNumber() + 1;
-        $zero = str_repeat('0', max(0, self::WORK_REQUEST_NUMBER_WIDTH - strlen((string) $number)));
 
         $wr = new WorkRequest();
         $wr->complaint_id = $complaint->id;
-        $wr->wr_no = 'WR-' . Carbon::now()->format('ym') . '-' . $zero . $number;
+        $wr->wr_no = 'WR-' . Carbon::now()->format('ym') . '-' . str_pad((string) $number, self::WORK_REQUEST_NUMBER_WIDTH, '0', STR_PAD_LEFT);
         $wr->check_time = now();
         $wr->problem = $complaint->subject;
         $wr->house_id = $complaint->house_id;
