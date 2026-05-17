@@ -76,7 +76,7 @@ class ConversationController extends Controller
         $request->validate([
             'content'     => 'required|string',
             'title'       => 'sometimes|string|max:255',
-            'source_type' => 'sometimes|string|in:text,qa,pdf,url',
+            'source_type' => 'sometimes|string|in:text,qa,file,website,pdf,url',
             'metadata'    => 'sometimes|array',
         ]);
 

@@ -106,9 +106,10 @@ app(\Modules\TitanEchoAssist\Services\TrainingPipeline::class)
     ->ingest($chatbotId, 'qa', $content, ['title' => 'FAQ', 'engine' => 'default']);
 ```
 
-Supported `sourceType` values: `text`, `qa`, `pdf`, `url`.
+Supported `sourceType` values: `text`, `qa`, `file`, `website` (legacy aliases: `pdf` → `file`, `url` → `website`).
 
 `RagPipeline` retrieves the most relevant chunks (default: 5) and injects them into the AI prompt at inference time.
+Vector similarity is currently computed in PHP over stored JSON embeddings (suitable for small/medium datasets). For larger production datasets, migrate to pgvector/native vector indexes.
 
 ---
 
