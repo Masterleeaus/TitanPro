@@ -46,7 +46,7 @@ class CreateComplaintAction
             $complaint->agent_id = $data['agent_id'] ?? null;
             $complaint->type_id = $data['type_id'] ?? null;
             $complaint->channel_id = $data['channel_id'] ?? null;
-            $complaint->company_id = $data['company_id'] ?? ($complaint->company_id ?? null);
+            $complaint->company_id = $data['company_id'] ?? null;
             $complaint->added_by = $data['added_by'] ?? null;
             $complaint->last_update_by = $data['last_update_by'] ?? null;
             $complaint->save();

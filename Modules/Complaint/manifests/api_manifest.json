@@ -3,7 +3,7 @@
   "module": "Complaint",
   "prefix": "/api/complaint",
   "endpoints": [
-    "GET /complaint",
+    "GET /complaints",
     "POST /complaints",
     "PATCH /complaints/{complaint}",
     "POST /complaints/{complaint}/resolve",
