@@ -5,6 +5,7 @@ namespace Modules\Complaint\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Modules\Complaint\Entities\Complaint;
+use Modules\Complaint\Support\Enums\ComplaintStatus;
 
 class SatisfactionWidget extends BaseWidget
 {
@@ -12,9 +13,9 @@ class SatisfactionWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $resolved = Complaint::query()->where('status', 'resolved')->count();
-        $open = Complaint::query()->where('status', 'open')->count();
-        $pending = Complaint::query()->where('status', 'pending')->count();
+        $resolved = Complaint::query()->where('status', ComplaintStatus::RESOLVED->value)->count();
+        $open = Complaint::query()->where('status', ComplaintStatus::OPEN->value)->count();
+        $pending = Complaint::query()->where('status', ComplaintStatus::PENDING->value)->count();
 
         return [
             Stat::make('Resolved complaints', $resolved)

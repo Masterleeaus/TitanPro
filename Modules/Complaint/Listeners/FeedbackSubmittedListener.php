@@ -8,8 +8,6 @@ use Modules\ZeroFussPortal\Events\FeedbackSubmitted;
 
 class FeedbackSubmittedListener
 {
-    private const DEFAULT_PHONE_PLACEHOLDER = 'N/A';
-
     public function __construct(private readonly CreateComplaintAction $createComplaintAction)
     {
     }
@@ -29,7 +27,7 @@ class FeedbackSubmittedListener
             'last_update_by' => $customerId,
             'subject' => 'Auto complaint from low feedback rating',
             'description' => $message !== '' ? $message : 'Auto-generated from ZeroFussPortal.FeedbackSubmitted',
-            'no_hp' => self::DEFAULT_PHONE_PLACEHOLDER,
+            'no_hp' => CreateComplaintAction::DEFAULT_NO_HP,
             'priority' => 'high',
             'tags' => ['feedback', 'auto-generated'],
         ]);

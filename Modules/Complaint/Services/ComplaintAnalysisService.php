@@ -4,6 +4,13 @@ namespace Modules\Complaint\Services;
 
 class ComplaintAnalysisService
 {
+    private const URGENT_KEYWORDS = ['urgent', 'immediately', 'danger'];
+    private const HIGH_KEYWORDS = ['bad', 'unhappy', 'refund'];
+    private const LOW_KEYWORDS = ['minor', 'small'];
+    private const BILLING_KEYWORDS = ['refund', 'billing', 'invoice'];
+    private const DELAY_KEYWORDS = ['late', 'delay'];
+    private const QUALITY_KEYWORDS = ['clean', 'quality'];
+
     /**
      * @return array{severity: string, category: string, resolution_suggestion: string}
      */
@@ -12,20 +19,20 @@ class ComplaintAnalysisService
         $text = strtolower(trim($subject . ' ' . $description));
 
         $severity = 'medium';
-        if (str_contains($text, 'urgent') || str_contains($text, 'immediately') || str_contains($text, 'danger')) {
+        if ($this->containsAny($text, self::URGENT_KEYWORDS)) {
             $severity = 'urgent';
-        } elseif (str_contains($text, 'bad') || str_contains($text, 'unhappy') || str_contains($text, 'refund')) {
+        } elseif ($this->containsAny($text, self::HIGH_KEYWORDS)) {
             $severity = 'high';
-        } elseif (str_contains($text, 'minor') || str_contains($text, 'small')) {
+        } elseif ($this->containsAny($text, self::LOW_KEYWORDS)) {
             $severity = 'low';
         }
 
         $category = 'general';
-        if (str_contains($text, 'refund') || str_contains($text, 'billing') || str_contains($text, 'invoice')) {
+        if ($this->containsAny($text, self::BILLING_KEYWORDS)) {
             $category = 'billing';
-        } elseif (str_contains($text, 'late') || str_contains($text, 'delay')) {
+        } elseif ($this->containsAny($text, self::DELAY_KEYWORDS)) {
             $category = 'service-delay';
-        } elseif (str_contains($text, 'clean') || str_contains($text, 'quality')) {
+        } elseif ($this->containsAny($text, self::QUALITY_KEYWORDS)) {
             $category = 'service-quality';
         }
 
@@ -56,5 +63,19 @@ class ComplaintAnalysisService
             ),
             'tone' => $tone,
         ];
+    }
+
+    /**
+     * @param array<int, string> $needles
+     */
+    private function containsAny(string $haystack, array $needles): bool
+    {
+        foreach ($needles as $needle) {
+            if (str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

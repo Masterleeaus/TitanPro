@@ -17,6 +17,7 @@ use Modules\Engineerings\Entities\WorkRequest;
 class CreateComplaintAction
 {
     private const WORK_REQUEST_NUMBER_WIDTH = 4;
+    public const DEFAULT_NO_HP = 'N/A';
 
     public function __construct(private readonly ComplaintAnalysisService $analysisService)
     {
@@ -42,7 +43,7 @@ class CreateComplaintAction
             $complaint->subject = $subject;
             $complaint->status = (string) ($data['status'] ?? ComplaintStatus::OPEN->value);
             $complaint->priority = (string) ($data['priority'] ?? $severity->value);
-            $complaint->no_hp = (string) ($data['no_hp'] ?? 'N/A');
+            $complaint->no_hp = (string) ($data['no_hp'] ?? self::DEFAULT_NO_HP);
             $complaint->house_id = $data['house_id'] ?? null;
             $complaint->user_id = $data['user_id'] ?? null;
             $complaint->agent_id = $data['agent_id'] ?? null;
@@ -55,7 +56,7 @@ class CreateComplaintAction
 
             if ($description !== '') {
                 $reply = new ComplaintReply();
-                $reply->message = function_exists('trim_editor') ? trim_editor($description) : trim($description);
+                $reply->message = $this->sanitizeDescription($description);
                 $reply->complaint_id = $complaint->id;
                 $reply->user_id = $data['reply_user_id'] ?? $complaint->user_id;
                 $reply->company_id = $complaint->company_id;
@@ -118,5 +119,10 @@ class CreateComplaintAction
         $wr->assign_to = $complaint->agent_id;
         $wr->created_by = $complaint->added_by ?? $complaint->user_id;
         $wr->save();
+    }
+
+    private function sanitizeDescription(string $description): string
+    {
+        return function_exists('trim_editor') ? trim_editor($description) : trim($description);
     }
 }
