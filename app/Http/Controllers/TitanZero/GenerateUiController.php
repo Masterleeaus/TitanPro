@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Modules\TitanEchoAssist\Services\WorkcorePortalDataService;
 
 /**
  * POST /api/titan/zero/generate-ui
@@ -72,7 +73,8 @@ class GenerateUiController extends Controller
         ]);
 
         // ── Build system prompt ──────────────────────────────────────────────
-        $systemPrompt = $this->buildSystemPrompt($appKey, $page);
+        $portalSnapshot = $this->portalSnapshot($appKey, $context, (int) ($orgId ?? 0));
+        $systemPrompt = $this->buildSystemPrompt($appKey, $page, $portalSnapshot);
 
         // ── AI generation ────────────────────────────────────────────────────
         [$aiText, $parts] = $this->generate($message, $systemPrompt, $thread->messages ?? []);
@@ -110,11 +112,17 @@ class GenerateUiController extends Controller
 
     // ── Internals ────────────────────────────────────────────────────────────
 
-    private function buildSystemPrompt(string $appKey, string $page): string
+    private function buildSystemPrompt(string $appKey, string $page, array $portalSnapshot = []): string
     {
+        $snapshotBlock = '';
+        if ($appKey === 'portal' && $portalSnapshot !== []) {
+            $snapshotBlock = "\nPortal customer data snapshot:\n" . json_encode($portalSnapshot, JSON_PRETTY_PRINT) . "\n";
+        }
+
         return <<<PROMPT
 You are Titan Zero, the intelligent AI assistant embedded in the Business OS platform.
 Current context: app_key={$appKey}, page={$page}
+{$snapshotBlock}
 
 Respond ONLY with valid JSON matching this exact structure:
 {
@@ -135,6 +143,50 @@ Rules:
 - Keep "message" conversational and helpful.
 - Do NOT include any text outside the JSON object.
 PROMPT;
+    }
+
+    private function portalSnapshot(string $appKey, array $context, int $defaultCompanyId): array
+    {
+        if ($appKey !== 'portal' || ! class_exists(WorkcorePortalDataService::class)) {
+            return [];
+        }
+
+        $customerId = (int) ($context['customerId'] ?? $context['customer_id'] ?? 0);
+        $companyId = (int) ($context['companyId'] ?? $context['company_id'] ?? $defaultCompanyId);
+        if ($customerId <= 0 || $companyId <= 0) {
+            return [];
+        }
+
+        try {
+            /** @var WorkcorePortalDataService $workcore */
+            $workcore = app(WorkcorePortalDataService::class);
+            $snapshot = $workcore->getCustomerProfile($customerId, $companyId);
+            if ($snapshot === []) {
+                return [];
+            }
+
+            $snapshot['upcoming'] = $workcore->getUpcomingVisits($customerId, $companyId);
+            $snapshot['balance'] = $workcore->getOutstandingBalance($customerId, $companyId);
+            $snapshot['invoices'] = $workcore->getInvoices($customerId, $companyId);
+            $snapshot['quotes'] = $workcore->getQuotes($customerId, $companyId);
+
+            $snapshotJson = json_encode($snapshot);
+            if (is_string($snapshotJson) && strlen($snapshotJson) > 5000) {
+                $snapshot['upcoming'] = array_slice($snapshot['upcoming'], 0, 3);
+                $snapshot['invoices'] = array_slice($snapshot['invoices'], 0, 3);
+                $snapshot['quotes'] = array_slice($snapshot['quotes'], 0, 3);
+                Log::info('GenerateUiController: portal snapshot trimmed due to size', [
+                    'customer_id' => $customerId,
+                    'company_id' => $companyId,
+                    'size' => strlen($snapshotJson),
+                ]);
+            }
+
+            return $snapshot;
+        } catch (\Throwable $e) {
+            Log::warning('GenerateUiController: unable to build portal snapshot', ['error' => $e->getMessage()]);
+            return [];
+        }
     }
 
     /**
