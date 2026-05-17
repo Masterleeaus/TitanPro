@@ -43,6 +43,7 @@ class TitanMoneyPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'AlizHarb\ActivityLog\ActivityLogPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\ZeroPayHub\Filament\Plugin\ZeroPayHubPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanMoney/Resources'), for: 'App\Filament\TitanMoney\Resources')

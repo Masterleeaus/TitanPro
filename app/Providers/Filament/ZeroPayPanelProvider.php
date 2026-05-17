@@ -53,6 +53,8 @@ class ZeroPayPanelProvider extends PanelProvider
                     'TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin',
                     'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\ZeroPayModule\Filament\ZeroPayModulePlugin',
+                    'Modules\EInvoice\Filament\Plugin\EInvoicePlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroPay/Resources'), for: 'App\\Filament\\ZeroPay\\Resources')

@@ -44,6 +44,7 @@ class QualityAuditsPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                     'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'Modules\CleanQuality\Filament\Plugin\CleanQualityPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/QualityAudits/Resources'), for: 'App\Filament\QualityAudits\Resources')

@@ -64,6 +64,8 @@ class TitanProPanelProvider extends PanelProvider
                     'Modules\BookingModule\Filament\BookingModulePlugin',
                     'Modules\CleaningJobs\Filament\Plugin\CleaningJobsPlugin',
                     'Modules\TitanRewind\Filament\Plugin\TitanRewindPlugin',
+                    'Modules\TitanProAdmin\Filament\Plugin\TitanProAdminPlugin',
+                    'Modules\TitanOperator\Filament\Plugin\TitanOperatorPlugin',
 
                     'Awcodes\Curator\CuratorPlugin',
                     'AlizHarb\ActivityLog\ActivityLogPlugin',
