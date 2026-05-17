@@ -81,7 +81,7 @@ class GeneratorBridge
         }
 
         $provider         = config('titan-chatbot.ai.provider', 'openai');
-        $model            = config("titan-chatbot.ai.{$provider}.model", config('titan-chatbot.ai.model', 'gpt-4o-mini'));
+        $model            = $this->resolveProviderModel($provider);
         $messages         = $this->buildMessages($context);
         $reply            = $this->fallbackMessage;
         $promptTokens     = 0;
@@ -176,6 +176,19 @@ class GeneratorBridge
         }
 
         return null;
+    }
+
+    /**
+     * Resolve the active model name for the given provider.
+     * Checks the per-provider config block first, then falls back to the
+     * shared legacy `titan-chatbot.ai.model` key.
+     */
+    private function resolveProviderModel(string $provider): string
+    {
+        return (string) (
+            config("titan-chatbot.ai.{$provider}.model")
+            ?? config('titan-chatbot.ai.model', 'gpt-4o-mini')
+        );
     }
 }
 

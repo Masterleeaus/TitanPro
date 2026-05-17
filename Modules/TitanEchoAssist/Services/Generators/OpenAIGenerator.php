@@ -16,7 +16,7 @@ class OpenAIGenerator implements GeneratorInterface
 
     public function __construct()
     {
-        $this->apiKey    = (string) config('titan-chatbot.ai.openai.key', config('openai.api_key', env('OPENAI_API_KEY', '')));
+        $this->apiKey    = (string) $this->resolveApiKey();
         $this->model     = (string) config('titan-chatbot.ai.openai.model', 'gpt-4o-mini');
         $this->maxTokens = (int)    config('titan-chatbot.ai.openai.max_tokens', 4096);
     }
@@ -88,5 +88,18 @@ class OpenAIGenerator implements GeneratorInterface
         }
 
         return $body;
+    }
+
+    /**
+     * Resolve the OpenAI API key, checking module config then the shared
+     * openai config and finally the environment variable directly.
+     */
+    private function resolveApiKey(): string
+    {
+        return (string) (
+            config('titan-chatbot.ai.openai.key')
+            ?? config('openai.api_key')
+            ?? env('OPENAI_API_KEY', '')
+        );
     }
 }
