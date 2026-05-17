@@ -4,12 +4,12 @@
 // messages to the conversation list and displaying generic suggestions.
 // Actual AI integration is not included in this shell pass.
 
-let cleanupAssistantListeners = null;
+let assistantCleanup = null;
 
 const initializeTitanZeroAssistant = () => {
-    if (cleanupAssistantListeners) {
-        cleanupAssistantListeners();
-        cleanupAssistantListeners = null;
+    if (assistantCleanup) {
+        assistantCleanup();
+        assistantCleanup = null;
     }
 
     const panel = document.querySelector('#titan-zero-chat-panel');
@@ -531,7 +531,7 @@ const initializeTitanZeroAssistant = () => {
     };
     form.addEventListener('submit', handleFormSubmit);
 
-    cleanupAssistantListeners = () => {
+    assistantCleanup = () => {
         document.removeEventListener('click', handleDocumentClick);
         form.removeEventListener('submit', handleFormSubmit);
     };
@@ -540,8 +540,8 @@ const initializeTitanZeroAssistant = () => {
 document.addEventListener('DOMContentLoaded', initializeTitanZeroAssistant);
 document.addEventListener('inertia:navigate', initializeTitanZeroAssistant);
 document.addEventListener('inertia:before', () => {
-    if (cleanupAssistantListeners) {
-        cleanupAssistantListeners();
-        cleanupAssistantListeners = null;
+    if (assistantCleanup) {
+        assistantCleanup();
+        assistantCleanup = null;
     }
 });
