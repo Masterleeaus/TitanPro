@@ -1364,7 +1364,9 @@ class UiStudio extends Page
 
         $this->applyThemeVersionSnapshot($version->token_snapshot);
         $this->versionLabel = "Rollback from v{$versionNumber}";
-        $this->publish();
+        $this->publish(false);
+        $this->createThemeVersion($this->versionLabel);
+        $this->versionLabel = '';
     }
 
     public function refreshVersionDiff(): void
@@ -1387,8 +1389,15 @@ class UiStudio extends Page
             ->get()
             ->keyBy('version_number');
 
-        $left = $this->flattenThemeSnapshot((array) ($versions[$this->diffFromVersion]->token_snapshot ?? []));
-        $right = $this->flattenThemeSnapshot((array) ($versions[$this->diffToVersion]->token_snapshot ?? []));
+        $fromVersion = $versions->get($this->diffFromVersion);
+        $toVersion = $versions->get($this->diffToVersion);
+
+        if (! $fromVersion || ! $toVersion) {
+            return;
+        }
+
+        $left = $this->flattenThemeSnapshot((array) $fromVersion->token_snapshot);
+        $right = $this->flattenThemeSnapshot((array) $toVersion->token_snapshot);
 
         $keys = array_values(array_unique(array_merge(array_keys($left), array_keys($right))));
         sort($keys);
@@ -1409,7 +1418,7 @@ class UiStudio extends Page
     // Publish
     // ─────────────────────────────────────────────────────────────────────────
 
-    public function publish(): void
+    public function publish(bool $createThemeVersion = true): void
     {
         $validated = $this->validate([
             'logoUpload' => 'nullable|image|max:2048',
@@ -1547,9 +1556,11 @@ class UiStudio extends Page
             }
         }
 
-        $label = trim($this->versionLabel);
-        $this->createThemeVersion($label !== '' ? $label : 'Manual save');
-        $this->versionLabel = '';
+        if ($createThemeVersion) {
+            $label = trim($this->versionLabel);
+            $this->createThemeVersion($label !== '' ? $label : 'Manual save');
+            $this->versionLabel = '';
+        }
 
         Notification::make()
             ->title('UI Studio layout published')
@@ -1611,7 +1622,7 @@ class UiStudio extends Page
             $this->resolveCurrentPanelId(),
             $this->themeVersionSnapshot(),
             $label,
-            (int) (auth()->id() ?? 0) ?: null
+            auth()->id()
         );
 
         $this->loadThemeVersions();

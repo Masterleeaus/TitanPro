@@ -398,7 +398,12 @@
                                                 <tbody>
                                                     @foreach ($versionDiffRows as $row)
                                                         <tr class="{{ $row['changed'] ? 'bg-amber-50 dark:bg-amber-900/10' : '' }}">
-                                                            <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-600 dark:text-gray-300">{{ $row['token'] }}</td>
+                                                            <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-600 dark:text-gray-300">
+                                                                {{ $row['token'] }}
+                                                                @if ($row['changed'])
+                                                                    <span class="ml-1 rounded bg-amber-100 px-1 py-0.5 text-[9px] font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Changed</span>
+                                                                @endif
+                                                            </td>
                                                             <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-500">{{ $row['left'] }}</td>
                                                             <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-500">{{ $row['right'] }}</td>
                                                         </tr>

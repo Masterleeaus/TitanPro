@@ -44,13 +44,14 @@ class TitanThemeVersion extends Model
             ->where('org_id', $orgId)
             ->where('panel', $panel)
             ->max('version_number')) + 1;
+        $normalizedLabel = trim((string) $label);
 
         $version = static::query()->create([
             'org_id' => $orgId,
             'panel' => $panel,
             'version_number' => $nextVersion,
             'token_snapshot' => $tokenSnapshot,
-            'label' => trim((string) $label) !== '' ? trim((string) $label) : "v{$nextVersion}",
+            'label' => $normalizedLabel !== '' ? $normalizedLabel : "v{$nextVersion}",
             'created_by' => $createdBy,
             'created_at' => now(),
         ]);
