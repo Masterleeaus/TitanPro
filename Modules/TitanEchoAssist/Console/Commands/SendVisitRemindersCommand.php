@@ -3,6 +3,7 @@
 namespace Modules\TitanEchoAssist\Console\Commands;
 
 use App\Models\Job;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Modules\TitanEchoAssist\Listeners\PortalAutomation\HandleVisitTomorrow;
 
@@ -19,13 +20,13 @@ class SendVisitRemindersCommand extends Command
 
     public function handle(): int
     {
-        $tomorrow = now()->addDay()->toDateString();
+        $tomorrow = Carbon::tomorrow(config('app.timezone', 'UTC'));
         $count = 0;
 
         Job::query()
             ->whereIn('status', [Job::STATUS_SCHEDULED, Job::STATUS_ASSIGNED])
             ->whereNotNull('scheduled_at')
-            ->whereDate('scheduled_at', $tomorrow)
+            ->whereBetween('scheduled_at', [$tomorrow->copy()->startOfDay(), $tomorrow->copy()->endOfDay()])
             ->with('customer')
             ->chunkById(100, function ($jobs) use (&$count): void {
                 foreach ($jobs as $job) {
@@ -39,4 +40,3 @@ class SendVisitRemindersCommand extends Command
         return self::SUCCESS;
     }
 }
-

@@ -4,6 +4,7 @@ namespace Modules\TitanEchoAssist\Console\Commands;
 
 use App\Models\Invoice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Modules\TitanEchoAssist\Listeners\PortalAutomation\HandleInvoiceOverdue;
 
 class CheckOverdueInvoicesCommand extends Command
@@ -19,13 +20,14 @@ class CheckOverdueInvoicesCommand extends Command
 
     public function handle(): int
     {
+        $now = Carbon::now(config('app.timezone', 'UTC'));
         $count = 0;
 
         Invoice::query()
             ->whereNotIn('status', [Invoice::STATUS_PAID, Invoice::STATUS_VOID])
             ->where('balance_due', '>', 0)
             ->whereNotNull('due_at')
-            ->whereDate('due_at', '<', now()->toDateString())
+            ->where('due_at', '<', $now)
             ->with('customer')
             ->chunkById(100, function ($invoices) use (&$count): void {
                 foreach ($invoices as $invoice) {
@@ -39,4 +41,3 @@ class CheckOverdueInvoicesCommand extends Command
         return self::SUCCESS;
     }
 }
-

@@ -33,6 +33,8 @@ class ChatbotPortalAutomationService
             return;
         }
 
+        // Product rule: follow-up applies when quote is still not accepted,
+        // including both draft and sent lifecycle states.
         if (! in_array($estimate->status, [Estimate::STATUS_DRAFT, Estimate::STATUS_SENT], true)) {
             $this->storeAutomationLog('quote_sent', 'followup_after_24h', $payload, [
                 'estimate_id' => $estimate->id,
@@ -71,8 +73,8 @@ class ChatbotPortalAutomationService
     private function sendPaymentReminder(array $payload): void
     {
         $invoice = $this->resolveInvoice($payload);
-        $number = $invoice?->invoice_number ?: ($payload['invoice_number'] ?? 'N/A');
-        $amount = number_format((float) ($invoice?->balance_due ?? $payload['balance_due'] ?? 0), 2, '.', '');
+        $number = $invoice?->invoice_number ?? $payload['invoice_number'] ?? 'N/A';
+        $amount = number_format((float) ($invoice?->balance_due ?? $payload['balance_due'] ?? 0), 2, '.', ',');
 
         $this->createNotification(
             'invoice_overdue',
@@ -143,7 +145,7 @@ class ChatbotPortalAutomationService
             return;
         }
 
-        $channel = (string) ($payload['channel'] ?? 'in_app');
+        $channel = $payload['channel'] ?? 'in_app';
 
         $notification = ChatbotPortalNotification::query()->create([
             'company_id' => $this->resolveCompanyId($chatbot, $payload),
@@ -202,8 +204,7 @@ class ChatbotPortalAutomationService
     {
         return $payload['company_id']
             ?? $payload['organization_id']
-            ?? $chatbot->company_id
-            ?? null;
+            ?? $chatbot->company_id;
     }
 
     private function resolveChatbot(array $payload): ?Chatbot
@@ -218,13 +219,14 @@ class ChatbotPortalAutomationService
             return null;
         }
 
-        $query = Chatbot::query()->where('active', true);
-
-        if (Schema::hasColumn('ext_chatbots', 'company_id')) {
-            $query->where('company_id', $companyId);
+        if (! Schema::hasColumn('ext_chatbots', 'company_id')) {
+            return null;
         }
 
-        return $query->first();
+        return Chatbot::query()
+            ->where('active', true)
+            ->where('company_id', $companyId)
+            ->first();
     }
 
     private function resolveChatbotCustomerId(Chatbot $chatbot, array $payload): ?int
@@ -233,34 +235,39 @@ class ChatbotPortalAutomationService
             return (int) $payload['chatbot_customer_id'];
         }
 
-        $email = trim((string) ($payload['customer_email'] ?? ''));
-        $phone = trim((string) ($payload['customer_phone'] ?? ''));
+        $email = trim($payload['customer_email'] ?? '');
+        $phone = trim($payload['customer_phone'] ?? '');
         if ($email === '' && $phone === '') {
             return null;
         }
 
-        return ChatbotCustomer::query()
-            ->where('chatbot_id', $chatbot->id)
-            ->where(function ($query) use ($email, $phone): void {
-                if ($email !== '') {
-                    $query->where('email', $email);
-                }
+        $query = ChatbotCustomer::query()
+            ->where('chatbot_id', $chatbot->id);
 
-                if ($phone !== '') {
-                    $query->orWhere('phone', $phone);
-                }
-            })
-            ->value('id');
+        if ($email !== '') {
+            $emailMatch = (clone $query)->where('email', $email)->value('id');
+            if ($emailMatch !== null) {
+                return $emailMatch;
+            }
+        }
+
+        if ($phone !== '') {
+            return (clone $query)->where('phone', $phone)->value('id');
+        }
+
+        return null;
     }
 
     private function idempotencyKey(string $event, array $payload): string
     {
+        $fallbackHash = hash('sha256', json_encode($payload));
+
         return match ($event) {
-            'job_completed' => 'job_completed:'.($payload['job_id'] ?? ''),
-            'invoice_overdue' => 'invoice_overdue:'.($payload['invoice_id'] ?? ''),
-            'quote_sent' => 'quote_sent:'.($payload['estimate_id'] ?? ''),
-            'visit_tomorrow' => 'visit_tomorrow:'.($payload['job_id'] ?? '').':'.($payload['scheduled_date'] ?? ''),
-            default => $event.':'.md5(json_encode($payload)),
+            'job_completed' => 'job_completed:'.($payload['job_id'] ?? $fallbackHash),
+            'invoice_overdue' => 'invoice_overdue:'.($payload['invoice_id'] ?? $fallbackHash),
+            'quote_sent' => 'quote_sent:'.($payload['estimate_id'] ?? $fallbackHash),
+            'visit_tomorrow' => 'visit_tomorrow:'.($payload['job_id'] ?? $fallbackHash).':'.($payload['scheduled_date'] ?? $fallbackHash),
+            default => $event.':'.$fallbackHash,
         };
     }
 
@@ -293,7 +300,9 @@ class ChatbotPortalAutomationService
 
     public function payloadFromCustomer(int $organizationId, int $customerId): array
     {
-        $customer = Customer::query()->find($customerId);
+        $customer = Customer::query()
+            ->where('organization_id', $organizationId)
+            ->find($customerId);
 
         return [
             'organization_id' => $organizationId,
@@ -303,4 +312,3 @@ class ChatbotPortalAutomationService
         ];
     }
 }
-
