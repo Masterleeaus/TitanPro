@@ -177,10 +177,10 @@ test('thread show enforces tenant isolation', function () {
         'widgets'         => [],
     ]);
 
-    // $user belongs to a different org — should get 404 due to TenantScope
+    // $user belongs to a different org — should get an authorization failure
     $this->actingAs($user)
         ->getJson("/api/titan/threads/{$thread->id}")
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
 // ── GET /api/titan/suggestions ───────────────────────────────────────────────
@@ -215,6 +215,26 @@ test('suggestions returns owner-specific chips for owner appKey', function () {
     expect($suggestions)->toContain('Show jobs today');
 });
 
+test('suggestions use thread context when threadId is provided', function () {
+    [$user, $org] = tzSetup();
+
+    $thread = TitanZeroThread::create([
+        'organization_id' => $org->id,
+        'user_id'         => $user->id,
+        'app_key'         => 'owner',
+        'title'           => 'Owner thread',
+        'messages'        => [],
+        'widgets'         => [],
+    ]);
+
+    $response = $this->actingAs($user)
+        ->getJson("/api/titan/suggestions?threadId={$thread->id}")
+        ->assertOk();
+
+    $suggestions = $response->json('suggestions');
+    expect($suggestions)->toContain('Show jobs today');
+});
+
 test('suggestions returns default chips for unknown appKey', function () {
     [$user] = tzSetup();
 
@@ -223,6 +243,11 @@ test('suggestions returns default chips for unknown appKey', function () {
         ->assertOk();
 
     $suggestions = $response->json('suggestions');
-    expect($suggestions)->toBeArray();
-    expect(count($suggestions))->toBeGreaterThan(0);
+    expect($suggestions)->toBe([
+        'Open app',
+        'Search workspace',
+        'Explain this screen',
+        'Show recent activity',
+        'Help me navigate',
+    ]);
 });
