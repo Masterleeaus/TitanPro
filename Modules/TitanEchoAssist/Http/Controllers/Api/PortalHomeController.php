@@ -5,7 +5,7 @@ namespace Modules\TitanEchoAssist\Http\Controllers\Api;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Modules\TitanEchoAssist\Models\Chatbot;
+use Modules\TitanEchoAssist\Http\Controllers\Api\Concerns\ResolvesPortalContext;
 use Modules\TitanEchoAssist\Models\ChatbotCustomer;
 use Modules\TitanEchoAssist\Services\ChatbotPortalWidgetMenuService;
 use Modules\TitanEchoAssist\Services\WorkcorePortalDataService;
@@ -13,6 +13,8 @@ use Modules\TitanEchoAssist\Services\WorkcoreSchedulingDataService;
 
 class PortalHomeController extends Controller
 {
+    use ResolvesPortalContext;
+
     public function __construct(
         private readonly ChatbotPortalWidgetMenuService $menuService,
         private readonly WorkcorePortalDataService $workcore,
@@ -43,50 +45,13 @@ class PortalHomeController extends Controller
                 'customer_name' => $this->fullName($customer, $chatbotCustomer),
                 'customer_email' => (string) ($customer?->email ?: $chatbotCustomer->email ?: ''),
                 'properties' => $customer ? ($this->workcore->getCustomerProfile((int) $customer->id, $companyId)['properties'] ?? []) : [],
-                'next_visit_label' => $nextVisit['scheduled_at'] ?? "You're all caught up for now",
+                'next_visit_label' => $this->nextVisitLabel($nextVisit),
                 'show_pay_invoice' => $outstandingBalance > 0,
                 'show_approve_quote' => $pendingQuotes > 0,
                 'show_request_reclean' => false,
                 'show_rate_visit' => false,
             ]),
         ]);
-    }
-
-    private function resolveContext(string $uuid, string $sessionId): array
-    {
-        $chatbot = Chatbot::query()->where('uuid', $uuid)->firstOrFail();
-        $chatbotCustomer = ChatbotCustomer::query()
-            ->where('chatbot_id', $chatbot->id)
-            ->where('session_id', $sessionId)
-            ->firstOrFail();
-
-        $customer = $this->resolveCustomer($chatbot, $chatbotCustomer);
-
-        return [$chatbot, $chatbotCustomer, $customer];
-    }
-
-    private function resolveCustomer(Chatbot $chatbot, ChatbotCustomer $chatbotCustomer): ?Customer
-    {
-        $email = trim((string) ($chatbotCustomer->email ?? ''));
-        $phone = trim((string) ($chatbotCustomer->phone ?? ''));
-        if ($email === '' && $phone === '') {
-            return null;
-        }
-
-        return Customer::query()
-            ->where('organization_id', $chatbot->company_id)
-            ->where(function ($query) use ($email, $phone): void {
-                if ($email !== '') {
-                    $query->where('email', $email);
-                    if ($phone !== '') {
-                        $query->orWhere('phone', $phone)->orWhere('mobile', $phone);
-                    }
-                    return;
-                }
-
-                $query->where('phone', $phone)->orWhere('mobile', $phone);
-            })
-            ->first();
     }
 
     private function firstName(?Customer $customer, ChatbotCustomer $chatbotCustomer): string
@@ -96,8 +61,16 @@ class PortalHomeController extends Controller
         }
 
         $name = trim((string) $chatbotCustomer->name);
+        if ($name === '') {
+            return 'there';
+        }
 
-        return $name !== '' ? explode(' ', $name)[0] : 'there';
+        $parts = preg_split('/\s+/', $name);
+        if (! is_array($parts) || $parts === []) {
+            return $name;
+        }
+
+        return $parts[0];
     }
 
     private function fullName(?Customer $customer, ChatbotCustomer $chatbotCustomer): string
@@ -107,5 +80,23 @@ class PortalHomeController extends Controller
         }
 
         return trim((string) $chatbotCustomer->name) ?: 'Customer';
+    }
+
+    private function nextVisitLabel(?array $nextVisit): string
+    {
+        if ($nextVisit === null) {
+            return "You're all caught up for now";
+        }
+
+        $scheduledAt = (string) ($nextVisit['scheduled_at'] ?? '');
+        if ($scheduledAt === '') {
+            return 'Visit scheduled';
+        }
+
+        try {
+            return \Illuminate\Support\Carbon::parse($scheduledAt)->format('l j M');
+        } catch (\Throwable) {
+            return $scheduledAt;
+        }
     }
 }

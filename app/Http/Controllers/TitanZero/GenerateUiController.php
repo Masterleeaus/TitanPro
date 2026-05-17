@@ -170,6 +170,18 @@ PROMPT;
             $snapshot['invoices'] = $workcore->getInvoices($customerId, $companyId);
             $snapshot['quotes'] = $workcore->getQuotes($customerId, $companyId);
 
+            $snapshotJson = json_encode($snapshot);
+            if (is_string($snapshotJson) && strlen($snapshotJson) > 5000) {
+                $snapshot['upcoming'] = array_slice($snapshot['upcoming'], 0, 3);
+                $snapshot['invoices'] = array_slice($snapshot['invoices'], 0, 3);
+                $snapshot['quotes'] = array_slice($snapshot['quotes'], 0, 3);
+                Log::info('GenerateUiController: portal snapshot trimmed due to size', [
+                    'customer_id' => $customerId,
+                    'company_id' => $companyId,
+                    'size' => strlen($snapshotJson),
+                ]);
+            }
+
             return $snapshot;
         } catch (\Throwable $e) {
             Log::warning('GenerateUiController: unable to build portal snapshot', ['error' => $e->getMessage()]);

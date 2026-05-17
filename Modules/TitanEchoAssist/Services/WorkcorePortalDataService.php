@@ -271,7 +271,7 @@ class WorkcorePortalDataService
         }
 
         $profile = (array) $customer;
-        $profile['full_name'] = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
+        $profile['full_name'] = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? '')) ?: 'Customer';
 
         if (Schema::hasTable(WorkcoreSchemaMap::PROPERTIES_TABLE)) {
             $profile['properties'] = DB::table(WorkcoreSchemaMap::PROPERTIES_TABLE)
@@ -321,7 +321,7 @@ class WorkcorePortalDataService
         return $property ? (array) $property : [];
     }
 
-    private function companyField(string $table): string
+    protected function companyField(string $table): string
     {
         if (Schema::hasColumn($table, WorkcoreSchemaMap::COMPANY_ID_FIELD)) {
             return WorkcoreSchemaMap::COMPANY_ID_FIELD;
