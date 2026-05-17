@@ -2,6 +2,8 @@
 
 namespace Modules\TitanEchoAssist\Providers;
 
+use App\Events\EstimateSent;
+use App\Events\JobStatusChanged;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\TitanEchoAssist\Automation\Handlers\EscalateToAgentHandler;
 use Modules\TitanEchoAssist\Automation\Handlers\SendSuggestedPromptsHandler;
@@ -14,6 +16,8 @@ use Modules\TitanEchoAssist\Events\MessageReceived;
 use Modules\TitanEchoAssist\Events\VoiceSessionDurationRecorded;
 use Modules\TitanEchoAssist\Events\VoiceSessionStarted;
 use Modules\TitanEchoAssist\Listeners\RecordVoiceSessionBillingListener;
+use Modules\TitanEchoAssist\Listeners\PortalAutomation\HandleJobCompleted;
+use Modules\TitanEchoAssist\Listeners\PortalAutomation\HandleQuoteSent;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -32,5 +36,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         MessageReceived::class => [],
         MessageBilled::class   => [],
+        JobStatusChanged::class => [
+            HandleJobCompleted::class,
+        ],
+        EstimateSent::class => [
+            HandleQuoteSent::class,
+        ],
     ];
 }

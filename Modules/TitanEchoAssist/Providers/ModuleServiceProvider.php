@@ -21,6 +21,7 @@ use Modules\TitanEchoAssist\Services\Embedders\OpenAIEmbedder;
 use Modules\TitanEchoAssist\Services\GeneratorBridge;
 use Modules\TitanEchoAssist\Services\KnowledgeRetriever;
 use Modules\TitanEchoAssist\Services\MessengerChannel;
+use Modules\TitanEchoAssist\Services\ChatbotPortalAutomationService;
 use Modules\TitanEchoAssist\Services\TelegramChannel;
 use Modules\TitanEchoAssist\Services\Contracts\TitanChatbotServiceContract;
 use Modules\TitanEchoAssist\Services\ModuleAgentBindingService;
@@ -55,6 +56,8 @@ class ModuleServiceProvider extends ServiceProvider
             'tenancy'      => 'titan-chatbot.tenancy',
         ]);
 
+        $this->app->register(EventServiceProvider::class);
+
         // Core services
         $this->app->singleton(ConversationRouter::class);
         $this->app->singleton(ConversationSessionManager::class);
@@ -65,6 +68,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(ChatbotAnalyticsService::class);
         $this->app->singleton(TrainingPipeline::class);
         $this->app->singleton(KnowledgeRetriever::class);
+        $this->app->singleton(ChatbotPortalAutomationService::class);
         $this->app->singleton(TitanChatbotService::class);
         $this->app->singleton(ModuleAgentBindingService::class);
         $this->app->singleton(ModuleAgentControlService::class);
@@ -93,7 +97,7 @@ class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        foreach (['api', 'web', 'admin', 'tenant', 'channels'] as $routeFile) {
+        foreach (['api', 'web', 'admin', 'tenant', 'channels', 'console'] as $routeFile) {
             $path = __DIR__ . "/../Routes/{$routeFile}.php";
             if (is_file($path)) {
                 $this->loadRoutesFrom($path);
@@ -118,6 +122,8 @@ class ModuleServiceProvider extends ServiceProvider
                 \Modules\TitanEchoAssist\Console\Commands\MakeAgentCommand::class,
                 \Modules\TitanEchoAssist\Console\Commands\MakeToolCommand::class,
                 \Modules\TitanEchoAssist\Console\Commands\ClearMemoryCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\CheckOverdueInvoicesCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\SendVisitRemindersCommand::class,
             ]);
         }
     }

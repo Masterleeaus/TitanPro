@@ -73,7 +73,6 @@ class GenerateUiController extends Controller
         ]);
 
         // ── Build system prompt ──────────────────────────────────────────────
-        $systemPrompt = $this->buildSystemPrompt($appKey, $page);
         $portalSnapshot = $this->portalSnapshot($appKey, $context, (int) ($orgId ?? 0));
         $systemPrompt = $this->buildSystemPrompt($appKey, $page, $portalSnapshot);
 

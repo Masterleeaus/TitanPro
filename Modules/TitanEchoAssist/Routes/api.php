@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\TitanEchoAssist\Http\Controllers\Api\ConversationController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\ModuleAgentController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalActionController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalBookingController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalConversationController;
@@ -13,8 +14,9 @@ use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalRecurringControlle
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalSessionController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalSiteProfileController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalWorkDataController;
-use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotApiController;
-use Modules\TitanEchoAssist\Http\Controllers\Api\ModuleAgentController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\TitanChatbotApiController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\TitanGoVoiceController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\TitanGoWorkerController;
 use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotController;
 use Modules\TitanEchoAssist\Http\Middleware\EnsureTitanChatbotEnabled;
 use Modules\TitanEchoAssist\Http\Middleware\ValidatePortalSessionToken;
@@ -78,3 +80,13 @@ Route::middleware(['api', EnsureTitanChatbotEnabled::class])
                 Route::get('/portal/documents/{customerId}', [PortalDocumentController::class, 'index'])->name('documents.index');
             });
     });
+Route::middleware(['api', 'auth:sanctum', 'role:technician'])->prefix('api/titango')->name('api.titango.')->group(function () {
+    Route::post('/voice/transcribe', [TitanGoVoiceController::class, 'transcribe'])->name('voice.transcribe');
+    Route::post('/voice/map-action', [TitanGoVoiceController::class, 'mapAction'])->name('voice.map-action');
+    Route::post('/voice/confirm/{eventId}', [TitanGoVoiceController::class, 'confirm'])->name('voice.confirm');
+
+    Route::get('/worker/jobs-today', [TitanGoWorkerController::class, 'jobsToday'])->name('worker.jobs-today');
+    Route::get('/worker/current-job', [TitanGoWorkerController::class, 'currentJob'])->name('worker.current-job');
+    Route::get('/worker/jobs/{id}', [TitanGoWorkerController::class, 'show'])->name('worker.jobs.show');
+    Route::post('/worker/diary', [TitanGoWorkerController::class, 'diary'])->name('worker.diary');
+});
