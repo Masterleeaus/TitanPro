@@ -4,7 +4,6 @@ namespace Modules\TitanProAdmin\Services;
 
 use App\Models\Organization;
 use App\Models\User;
-use Illuminate\Support\Facades\Schema;
 use Modules\TitanProAdmin\Models\TenantConfig;
 
 class TenantService
@@ -41,13 +40,7 @@ class TenantService
 
     public function assertCrossTenantAccess(int $tenantId): void
     {
-        $query = User::withoutGlobalScopes();
-
-        if (Schema::hasColumn('users', 'company_id')) {
-            $query->where('company_id', $tenantId);
-        } else {
-            $query->where('organization_id', $tenantId);
-        }
+        $query = User::withoutGlobalScopes()->where('organization_id', $tenantId);
 
         if (! $query->exists()) {
             throw new \RuntimeException("No cross-tenant identity context found for tenant [{$tenantId}].");

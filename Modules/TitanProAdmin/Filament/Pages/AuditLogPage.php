@@ -9,6 +9,9 @@ use Modules\TitanProAdmin\Policies\SuperAdminPolicy;
 
 class AuditLogPage extends Page
 {
+    private const MIN_LOG_LIMIT = 1;
+    private const MAX_LOG_LIMIT = 100;
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Audit Log';
     protected static ?string $navigationGroup = 'System';
@@ -29,7 +32,7 @@ class AuditLogPage extends Page
 
     public function auditLogs(int $limit = 50): Collection
     {
-        $safeLimit = max(1, min(100, $limit));
+        $safeLimit = max(self::MIN_LOG_LIMIT, min(self::MAX_LOG_LIMIT, $limit));
 
         return AdminAuditLog::query()->latest('id')->limit($safeLimit)->get();
     }
