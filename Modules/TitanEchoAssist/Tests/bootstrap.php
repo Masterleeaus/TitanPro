@@ -5,15 +5,20 @@
 
 // ── PSR-4 autoloader for this module ────────────────────────────────────────
 spl_autoload_register(function (string $class): void {
-    $prefix  = 'Modules\\TitanChatbot\\';
     $baseDir = __DIR__ . '/../';
 
-    if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
-        return;
-    }
-    $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix))) . '.php';
-    if (file_exists($file)) {
-        require_once $file;
+    // Support both the legacy TitanChatbot namespace and the current TitanEchoAssist namespace
+    foreach (['Modules\\TitanEchoAssist\\', 'Modules\\TitanChatbot\\'] as $prefix) {
+        if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
+            continue;
+        }
+        $relative = substr($class, strlen($prefix));
+        $file     = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relative) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+        // File not found for this prefix; try next prefix
     }
 });
 

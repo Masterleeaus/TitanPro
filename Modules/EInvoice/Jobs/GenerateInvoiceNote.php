@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\EInvoice\AI\ClientInterface;
 use Modules\EInvoice\Entities\EInvoiceNote;
+use Modules\EInvoice\Events\AiNoteGenerated;
 use App\Models\Invoice;
 
 class GenerateInvoiceNote implements ShouldQueue
@@ -38,10 +39,16 @@ class GenerateInvoiceNote implements ShouldQueue
             'max_tokens' => 200,
         ]));
 
-        EInvoiceNote::create([
+        $note = EInvoiceNote::create([
             'invoice_id' => $invoice->id,
             'user_id' => $this->userId,
             'content' => $content,
         ]);
+
+        event(new AiNoteGenerated($note, [
+            'company_id'  => $note->company_id ?? $invoice->company_id ?? null,
+            'actor_id'    => $this->userId,
+            'occurred_at' => now()->toIso8601String(),
+        ]));
     }
 }

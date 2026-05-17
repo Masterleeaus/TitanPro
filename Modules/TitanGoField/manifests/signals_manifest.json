@@ -1,0 +1,43 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "produced_signals": [
+    {
+      "signal_name": "titango_field.job.created",
+      "event_class": "Modules\\TitanGoField\\Events\\FieldJobCreated",
+      "payload_shape": {
+        "company_id":   "integer",
+        "actor_id":     "integer",
+        "field_job_id": "integer",
+        "status":       "string"
+      }
+    },
+    {
+      "signal_name": "titango_field.job.updated",
+      "event_class": "Modules\\TitanGoField\\Events\\FieldJobUpdated",
+      "payload_shape": {
+        "company_id":   "integer",
+        "actor_id":     "integer",
+        "field_job_id": "integer",
+        "changes":      "object"
+      }
+    },
+    {
+      "signal_name": "titango_field.job.completed",
+      "event_class": "Modules\\TitanGoField\\Events\\FieldJobCompleted",
+      "payload_shape": {
+        "company_id":   "integer",
+        "actor_id":     "integer",
+        "field_job_id": "integer",
+        "completed_at": "datetime"
+      }
+    }
+  ],
+  "consumed_signals": [
+    {
+      "signal_name": "invoice.requested",
+      "handler": "Modules\\TitanGoField\\Listeners\\FieldJobAutoInvoiceListener",
+      "notes": "Only consumed when auto_invoice feature is enabled in fsm_settings"
+    }
+  ]
+}

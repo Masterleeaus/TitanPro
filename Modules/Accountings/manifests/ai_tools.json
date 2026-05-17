@@ -1,0 +1,9 @@
+{
+  "schema": "titan.module.ai-tools.v1",
+  "module": "accountings",
+  "tools": [
+    {"name":"accounting.lookup_ledger","class":"Modules\\Accountings\\Tools\\LookupLedgerTool"},
+    {"name":"accounting.post_invoice_journal","class":"Modules\\Accountings\\Tools\\PostInvoiceJournalTool"},
+    {"name":"accounting.match_reconciliation_record","class":"Modules\\Accountings\\Tools\\MatchBankDepositTool"}
+  ]
+}

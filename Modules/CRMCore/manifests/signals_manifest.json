@@ -1,0 +1,85 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "CRMCore",
+  "schema_version": "1.0",
+  "emits": [
+    {
+      "signal": "crmcore.contact.created",
+      "event_class": "Modules\\CRMCore\\Events\\ContactCreated",
+      "description": "Fired when a new CRM contact is created.",
+      "payload_schema": {
+        "contact_id": "integer",
+        "company_id": "integer",
+        "email_primary": "string|null",
+        "first_name": "string",
+        "last_name": "string|null"
+      }
+    },
+    {
+      "signal": "crmcore.deal.won",
+      "event_class": "Modules\\CRMCore\\Events\\DealWon",
+      "description": "Fired when a deal is marked as won.",
+      "payload_schema": {
+        "deal_id": "integer",
+        "company_id": "integer",
+        "value": "decimal",
+        "won_at": "datetime"
+      }
+    },
+    {
+      "signal": "crmcore.deal.lost",
+      "event_class": "Modules\\CRMCore\\Events\\DealLost",
+      "description": "Fired when a deal is marked as lost.",
+      "payload_schema": {
+        "deal_id": "integer",
+        "company_id": "integer",
+        "lost_reason": "string|null",
+        "lost_at": "datetime"
+      }
+    },
+    {
+      "signal": "crmcore.activity.logged",
+      "event_class": "Modules\\CRMCore\\Events\\ActivityLogged",
+      "description": "Fired when a CRM activity is logged against any entity.",
+      "payload_schema": {
+        "activity_id": "integer",
+        "company_id": "integer",
+        "event": "string",
+        "subject_type": "string|null",
+        "subject_id": "integer|null"
+      }
+    },
+    {
+      "signal": "crmcore.lead.scored",
+      "event_class": "Modules\\CRMCore\\Events\\LeadScored",
+      "description": "Fired when a lead's score is updated.",
+      "payload_schema": {
+        "lead_id": "integer",
+        "company_id": "integer",
+        "score": "integer"
+      }
+    },
+    {
+      "signal": "crmcore.deal.converted_to_project",
+      "event_class": "Modules\\CRMCore\\Events\\DealConvertedToProject",
+      "description": "Fired when a deal is converted to a project/job.",
+      "payload_schema": {
+        "deal_id": "integer",
+        "company_id": "integer",
+        "project_id": "integer"
+      }
+    }
+  ],
+  "consumes": [
+    {
+      "signal": "TitanLeads::LeadConverted",
+      "handler": "Modules\\CRMCore\\Listeners\\CreateContactFromLeadConvertedSignal",
+      "description": "Creates or updates a CRM contact when a lead is converted in TitanLeads."
+    },
+    {
+      "signal": "BookingModule::CustomerCreated",
+      "handler": "Modules\\CRMCore\\Listeners\\SyncContactFromBookingCustomerCreated",
+      "description": "Creates or updates a CRM contact when a booking customer is created."
+    }
+  ]
+}

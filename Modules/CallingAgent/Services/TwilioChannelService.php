@@ -2,6 +2,7 @@
 
 namespace Modules\CallingAgent\Services;
 
+use Modules\CallingAgent\Support\TenantContext;
 use Twilio\TwiML\VoiceResponse;
 
 /**
@@ -10,6 +11,13 @@ use Twilio\TwiML\VoiceResponse;
  */
 class TwilioChannelService
 {
+    private CallingAgentCredentialResolver $credentialResolver;
+
+    public function __construct(?CallingAgentCredentialResolver $credentialResolver = null)
+    {
+        $this->credentialResolver = $credentialResolver ?? app(CallingAgentCredentialResolver::class);
+    }
+
     // ── SDK / config availability ─────────────────────────────────────────────
 
     /** True when the twilio/sdk Composer package is installed. */
@@ -21,8 +29,8 @@ class TwilioChannelService
     /** True when both TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN are present. */
     public function isConfigured(): bool
     {
-        return !empty(config('services.twilio.sid', env('TWILIO_ACCOUNT_SID')))
-            && !empty(config('services.twilio.token', env('TWILIO_AUTH_TOKEN')));
+        return !empty($this->accountSid())
+            && !empty($this->authToken());
     }
 
     /** True when the SDK is installed AND credentials are present. */
@@ -51,8 +59,8 @@ class TwilioChannelService
             );
         }
         return new \Twilio\Rest\Client(
-            config('services.twilio.sid', env('TWILIO_ACCOUNT_SID')),
-            config('services.twilio.token', env('TWILIO_AUTH_TOKEN'))
+            $this->accountSid(),
+            $this->authToken()
         );
     }
 
@@ -64,7 +72,7 @@ class TwilioChannelService
             return $this->sdkUnavailableResponse(['to' => $to, 'body' => $body]);
         }
         $m = $this->client()->messages->create($to, [
-            'from' => $from ?: env('TWILIO_FROM_NUMBER'),
+            'from' => $from ?: $this->fromNumber(),
             'body' => $body,
         ]);
         return $this->messageProperties($m);
@@ -76,7 +84,7 @@ class TwilioChannelService
             return $this->sdkUnavailableResponse(['to' => $to, 'body' => $body]);
         }
         $to   = str_starts_with($to, 'whatsapp:') ? $to : 'whatsapp:' . $to;
-        $from = $from ?: env('TWILIO_WHATSAPP_FROM', env('TWILIO_FROM_NUMBER'));
+        $from = $from ?: $this->whatsappFromNumber();
         $from = str_starts_with($from, 'whatsapp:') ? $from : 'whatsapp:' . $from;
         $m    = $this->client()->messages->create($to, ['from' => $from, 'body' => $body]);
         return $this->messageProperties($m);
@@ -100,11 +108,11 @@ class TwilioChannelService
                 'sid'    => 'CA' . str_pad('0', 32, '0'),
                 'status' => 'sdk-unavailable',
                 'to'     => $to,
-                'from'   => $from ?: env('TWILIO_FROM_NUMBER', 'unknown'),
+                'from'   => $from ?: $this->fromNumber() ?: 'unknown',
                 '_mock'  => true,
             ];
         }
-        $payload = ['from' => $from ?: env('TWILIO_FROM_NUMBER'), 'url' => $url];
+        $payload = ['from' => $from ?: $this->fromNumber(), 'url' => $url];
         if ($statusCallback) {
             $payload['statusCallback']      = $statusCallback;
             $payload['statusCallbackEvent'] = ['initiated', 'ringing', 'answered', 'completed'];
@@ -167,5 +175,25 @@ class TwilioChannelService
             'status' => 'sdk-unavailable',
             '_mock'  => true,
         ], $extra);
+    }
+
+    private function accountSid(): ?string
+    {
+        return $this->credentialResolver->twilioAccountSid(TenantContext::id());
+    }
+
+    private function authToken(): ?string
+    {
+        return $this->credentialResolver->twilioAuthToken(TenantContext::id());
+    }
+
+    private function fromNumber(): ?string
+    {
+        return $this->credentialResolver->twilioFromNumber(TenantContext::id());
+    }
+
+    private function whatsappFromNumber(): ?string
+    {
+        return $this->credentialResolver->twilioWhatsappFrom(TenantContext::id());
     }
 }

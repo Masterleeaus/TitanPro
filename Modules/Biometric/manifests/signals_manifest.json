@@ -1,0 +1,34 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "Biometric",
+  "schema_version": "1.0",
+  "emits": [
+    {
+      "signal": "biometric.attendance.recorded",
+      "event_class": "Modules\\Biometric\\Events\\AttendanceRecorded",
+      "description": "Attendance entry recorded from biometric feed or panel action."
+    },
+    {
+      "signal": "biometric.attendance.anomaly_detected",
+      "event_class": "Modules\\Biometric\\Events\\AnomalyDetected",
+      "description": "AI anomaly detection raised from recorded attendance."
+    },
+    {
+      "signal": "biometric.overtime.threshold_reached",
+      "event_class": "Modules\\Biometric\\Events\\OvertimeThresholdReached",
+      "description": "Overtime risk prediction crossed threshold."
+    }
+  ],
+  "consumes": [
+    {
+      "signal": "HRCore.EmployeeOnboarded",
+      "handler": "Modules\\Biometric\\Listeners\\RegisterEmployeeOnDeviceListener",
+      "description": "Registers newly onboarded employees on biometric devices."
+    },
+    {
+      "signal": "HRCore.EmployeeOffboarded",
+      "handler": "Modules\\Biometric\\Listeners\\DeregisterEmployeeListener",
+      "description": "Deregisters offboarded employees from biometric devices."
+    }
+  ]
+}

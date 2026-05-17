@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('deal_stage_id')->constrained('deal_stages')->onDelete('restrict');
 
             // A deal is typically primarily associated with one company and one main contact from that company
-            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->foreignId('contact_id')->nullable()->constrained('contacts')->onDelete('set null');
             // You could add a pivot table later if a deal needs multiple contacts (e.g., deal_contact_pivot)
 

@@ -4,10 +4,11 @@ namespace Modules\ZeroFussPortal\Filament\Plugin;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Modules\ZeroFussPortal\Filament\Pages\BookingHistoryPage;
 use Modules\ZeroFussPortal\Filament\Pages\CustomerDashboardPage;
-use Modules\ZeroFussPortal\Filament\Pages\MyBookingsPage;
-use Modules\ZeroFussPortal\Filament\Pages\MyInvoicesPage;
-use Modules\ZeroFussPortal\Filament\Pages\FeedbackCentrePage;
+use Modules\ZeroFussPortal\Filament\Pages\DocumentDownloadPage;
+use Modules\ZeroFussPortal\Filament\Pages\InvoiceHistoryPage;
+use Modules\ZeroFussPortal\Filament\Pages\ReferralPage;
 
 class ZeroFussPortalPlugin implements Plugin
 {
@@ -20,13 +21,16 @@ class ZeroFussPortalPlugin implements Plugin
     {
         $panel->pages([
             CustomerDashboardPage::class,
-            MyBookingsPage::class,
-            MyInvoicesPage::class,
-            FeedbackCentrePage::class,
+            BookingHistoryPage::class,
+            InvoiceHistoryPage::class,
+            DocumentDownloadPage::class,
+            ReferralPage::class,
         ]);
     }
 
-    public function boot(Panel $panel): void {}
+    public function boot(Panel $panel): void
+    {
+    }
 
     public static function make(): static
     {

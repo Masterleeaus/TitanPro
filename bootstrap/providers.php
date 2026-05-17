@@ -22,7 +22,7 @@ return [
     App\Providers\Filament\TitanStudioPanelProvider::class,
     App\Providers\Filament\TitanNexusPanelProvider::class,
     App\Providers\FortifyServiceProvider::class,
-    Modules\CRMCore\Providers\ModuleServiceProvider::class,
+    Modules\CRMCore\Providers\CRMCoreServiceProvider::class,
     Modules\TitanCommand\Providers\TitanCommandServiceProvider::class,
     Modules\TitanLeads\Providers\TitanLeadsServiceProvider::class,
     // Only registered when Telescope is installed (dev environments only)

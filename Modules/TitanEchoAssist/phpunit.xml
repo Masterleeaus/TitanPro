@@ -13,5 +13,14 @@
         <testsuite name="TitanChatbot Integration">
             <directory>Tests/Integration</directory>
         </testsuite>
+        <testsuite name="TitanChatbot Security">
+            <directory>Tests/Security</directory>
+        </testsuite>
+        <testsuite name="TitanChatbot Contract">
+            <directory>Tests/Contract</directory>
+        </testsuite>
+        <testsuite name="TitanChatbot Observability">
+            <directory>Tests/Observability</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

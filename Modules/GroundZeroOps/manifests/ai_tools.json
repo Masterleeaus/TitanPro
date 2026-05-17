@@ -1,0 +1,18 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "GroundZeroOps",
+  "tools": [
+    {
+      "id": "suggest_dispatch",
+      "name": "SuggestDispatchTool",
+      "class": "Modules\\GroundZeroOps\\AI\\Tools\\SuggestDispatchTool",
+      "description": "Ranks technicians for a job using active shifts and current dispatch load.",
+      "input_schema": {
+        "job_id": {"type": "integer", "required": true},
+        "company_id": {"type": "integer", "required": false}
+      },
+      "risk_class": "low",
+      "approval_mode": "auto"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "prefix": "/api/zerofuss-portal",
+  "endpoints": [
+    "GET /dashboard",
+    "POST /feedback",
+    "POST /referrals",
+    "GET /referrals"
+  ]
+}

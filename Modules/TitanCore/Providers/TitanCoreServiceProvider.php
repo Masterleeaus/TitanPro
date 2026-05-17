@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Modules\TitanCore\AI\VectorStore\VectorStoreFactory;
 use Modules\TitanCore\Contracts\AI\VectorStoreContract;
+use Modules\TitanCore\AI\ManifestValidator;
+use Modules\TitanCore\Console\Commands\GenerateManifestCommand;
 use Modules\TitanCore\Console\Commands\ModulesBlueprintDoctorCommand;
 use Modules\TitanCore\Console\Commands\ModulesDepsCommand;
 use Modules\TitanCore\Console\Commands\ModulesDisableCommand;
@@ -19,6 +21,8 @@ use Modules\TitanCore\Console\Commands\ModulesSchemaDocs;
 use Modules\TitanCore\Console\Commands\ModulesStatusCommand;
 use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
 use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
+use Modules\TitanCore\Console\Commands\ValidateManifestsCommand;
+use Modules\TitanCore\Console\Commands\VerifyManifestCommand;
 use Modules\TitanCore\Console\SyncTitanAgentsCommand;
 use Modules\TitanCore\Services\Providers\TitanAiProvider;
 use Modules\TitanCore\Services\TitanAiClient;
@@ -74,8 +78,26 @@ class TitanCoreServiceProvider extends ServiceProvider
                 ModulesEnableCommand::class,
                 ModulesDisableCommand::class,
                 ModulesSchemaDocs::class,
+                ValidateManifestsCommand::class,
+                GenerateManifestCommand::class,
+                VerifyManifestCommand::class,
             ]);
         }
+
+        // Boot-time AI manifest validation — logs critical on failure.
+        $this->booted(function () {
+            if ($this->app->runningInConsole()) {
+                return;
+            }
+
+            try {
+                (new ManifestValidator())->bootCheck();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::critical('TitanCore.ManifestValidator: boot check threw an exception', [
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        });
     }
 
     public function register(): void

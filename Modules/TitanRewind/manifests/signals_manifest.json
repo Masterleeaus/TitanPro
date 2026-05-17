@@ -1,0 +1,32 @@
+{
+  "module": "TitanRewind",
+  "schema_version": "1.0.0",
+  "produced_signals": [
+    {
+      "signal_name": "titan_rewind.requested",
+      "event_class": "Modules\\TitanRewind\\Events\\RewindRequested"
+    },
+    {
+      "signal_name": "titan_rewind.approved",
+      "event_class": "Modules\\TitanRewind\\Events\\RewindApproved"
+    },
+    {
+      "signal_name": "titan_rewind.applied",
+      "event_class": "Modules\\TitanRewind\\Events\\RewindApplied"
+    }
+  ],
+  "consumed_signals": [
+    {
+      "signal_name": "TitanCore.AuditEventLogged",
+      "handler": "Modules\\TitanRewind\\Listeners\\CaptureSnapshotListener"
+    },
+    {
+      "signal_name": "Accountings.JournalPosted",
+      "handler": "Modules\\TitanRewind\\Listeners\\CaptureSnapshotListener"
+    },
+    {
+      "signal_name": "EInvoice.InvoiceSent",
+      "handler": "Modules\\TitanRewind\\Listeners\\CaptureSnapshotListener"
+    }
+  ]
+}

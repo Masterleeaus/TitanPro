@@ -1,1 +1,17 @@
-{"module":"bookingmodule","signals":["booking.requested","booking.completed","booking.cancelled","schedule.assigned","schedule.rescheduled"]}
+{
+  "schema": "titan.signals.v1",
+  "module": "bookingmodule",
+  "consumes": [
+    "QuoteEngine.QuoteAccepted",
+    "JobCardCompleted"
+  ],
+  "emits": [
+    "BookingCompleted",
+    "BookingCancelled",
+    "EInvoice.DraftInvoice",
+    "CleanQuality.TriggerInspection",
+    "ZeroFussPortal.NotifyCustomer",
+    "booking.approval.requested",
+    "booking.approval.decided"
+  ]
+}

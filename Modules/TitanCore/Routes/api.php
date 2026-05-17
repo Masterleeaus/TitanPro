@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\TitanCore\Http\Controllers\Api\TitanAiProxyController;
 use Modules\TitanCore\Http\Controllers\Api\ChatApiController;
-use Modules\TitanCore\Http\Controllers\Api\PromptApiController;
 use Modules\TitanCore\Http\Controllers\Api\KbApiController;
-use Modules\TitanCore\Http\Controllers\Api\ToolsApiController;
 use Modules\TitanCore\Http\Controllers\Api\MetricsController;
+use Modules\TitanCore\Http\Controllers\Api\PlatformHealthController;
+use Modules\TitanCore\Http\Controllers\Api\PromptApiController;
+use Modules\TitanCore\Http\Controllers\Api\TitanAiProxyController;
+use Modules\TitanCore\Http\Controllers\Api\ToolsApiController;
 use Modules\TitanCore\Http\Controllers\HealthController;
 
 /*
@@ -46,3 +47,17 @@ Route::prefix('titancore')
             ->name('titanai.proxy.any');
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| Platform Health Endpoint — /api/v1/platform/health
+|--------------------------------------------------------------------------
+| Authenticated, super-admin only.
+| Returns per-check status (ok/warning/critical) for all platform layers.
+*/
+Route::prefix('v1/platform')
+    ->middleware(['auth', 'super-admin'])
+    ->as('titancore.platform.')
+    ->group(function () {
+        Route::get('/health', PlatformHealthController::class)->name('health');
+    });

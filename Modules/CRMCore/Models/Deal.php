@@ -7,11 +7,14 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\CRMCore\Events\DealLost;
+use Modules\CRMCore\Events\DealWon;
 use Modules\CRMCore\Traits\HasCRMCode;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class Deal extends Model
 {
-    use HasCRMCode, HasFactory, SoftDeletes;
+    use HasCRMCode, HasFactory, SoftDeletes, UsesScopedByCompany;
 
     protected $table = 'deals';
 
@@ -154,5 +157,28 @@ class Deal extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::created(static function (self $deal): void {
+            if ($deal->won_at !== null) {
+                DealWon::dispatch($deal);
+            }
+
+            if ($deal->lost_at !== null) {
+                DealLost::dispatch($deal);
+            }
+        });
+
+        static::updated(static function (self $deal): void {
+            if ($deal->wasChanged('won_at') && $deal->won_at !== null) {
+                DealWon::dispatch($deal);
+            }
+
+            if ($deal->wasChanged('lost_at') && $deal->lost_at !== null) {
+                DealLost::dispatch($deal);
+            }
+        });
     }
 }

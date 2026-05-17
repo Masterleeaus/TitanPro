@@ -8,10 +8,14 @@
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
             <directory>Modules/TitanCommand/Tests/Unit</directory>
+            <directory>Modules/TitanZero/Tests/Unit</directory>
+            <directory>Modules/TitanZero/Tests/Architecture</directory>
+            <directory>Modules/TitanZero/Tests/Contract</directory>
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
             <directory>Modules/TitanCommand/Tests/Feature</directory>
+            <directory>Modules/TitanZero/Tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>

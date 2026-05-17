@@ -8,7 +8,11 @@ use App\Models\ClientDetails;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 use Modules\EInvoice\DataTables\InvoicesDataTable;
 use Modules\EInvoice\Entities\EInvoiceCompanySetting;
 use Modules\EInvoice\Entities\EInvoiceDraft;
@@ -19,6 +23,7 @@ use Modules\EInvoice\Entities\Invoice as ModInvoice;
 use Modules\EInvoice\Entities\InvoiceItem as ModInvoiceItem;
 use Saloon\XmlWrangler\Data\RootElement;
 use Saloon\XmlWrangler\XmlWriter;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EInvoiceController extends AccountBaseController
 {
@@ -26,13 +31,13 @@ class EInvoiceController extends AccountBaseController
     // AI helpers
     // -----------------------------------------------------------------------
 
-    public function aiSettings()
+    public function aiSettings(): View
     {
         $this->pageTitle = 'E-Invoice AI Settings';
         return view('einvoice::settings.ai', $this->data);
     }
 
-    public function aiTest(Request $request)
+    public function aiTest(Request $request): JsonResponse
     {
         /** @var ClientInterface $ai */
         $ai = app(ClientInterface::class);
@@ -40,29 +45,29 @@ class EInvoiceController extends AccountBaseController
         return response()->json(['ok' => true, 'output' => $out]);
     }
 
-    public function aiHealth()
+    public function aiHealth(): JsonResponse
     {
         /** @var ClientInterface $ai */
         $ai = app(ClientInterface::class);
         return response()->json($ai->health());
     }
 
-    public function generateNote($invoiceId)
+    public function generateNote(int $invoiceId): JsonResponse
     {
         $viewPermission = user()->permission('view_invoices');
         abort_403(!in_array($viewPermission, ['all', 'added', 'owned', 'both']));
 
-        GenerateInvoiceNote::dispatch((int) $invoiceId, optional(user())->id);
+        GenerateInvoiceNote::dispatch($invoiceId, optional(user())->id);
 
         return response()->json(['ok' => true, 'queued' => true]);
     }
 
-    public function latestNote($invoiceId)
+    public function latestNote(int $invoiceId): JsonResponse
     {
         $viewPermission = user()->permission('view_invoices');
         abort_403(!in_array($viewPermission, ['all', 'added', 'owned', 'both']));
 
-        $note = \Modules\EInvoice\Entities\EInvoiceNote::where('invoice_id', (int) $invoiceId)
+        $note = \Modules\EInvoice\Entities\EInvoiceNote::where('invoice_id', $invoiceId)
             ->orderByDesc('updated_at')
             ->orderByDesc('created_at')
             ->first();
@@ -77,7 +82,7 @@ class EInvoiceController extends AccountBaseController
     /**
      * Build an invoice DRAFT from a natural-language prompt.
      */
-    public function aiInvoiceDraft(Request $request)
+    public function aiInvoiceDraft(Request $request): JsonResponse
     {
         $perm = user()->permission('add_invoices') ?? user()->permission('create_invoices');
         abort_403(!in_array($perm, ['all', 'added', 'owned', 'both', 'yes', 'allow']));
@@ -122,12 +127,12 @@ class EInvoiceController extends AccountBaseController
     /**
      * Try to create a real Invoice from a DRAFT (best-effort, schema tolerant).
      */
-    public function createInvoiceFromDraft(Request $request, $draftId)
+    public function createInvoiceFromDraft(Request $request, int $draftId): JsonResponse
     {
         $perm = user()->permission('add_invoices') ?? user()->permission('create_invoices');
         abort_403(!in_array($perm, ['all', 'added', 'owned', 'both', 'yes', 'allow']));
 
-        $draft = EInvoiceDraft::findOrFail((int) $draftId);
+        $draft = EInvoiceDraft::findOrFail($draftId);
         $data  = $draft->payload ?: [];
 
         try {
@@ -162,7 +167,7 @@ class EInvoiceController extends AccountBaseController
         });
     }
 
-    public function index(InvoicesDataTable $dataTable)
+    public function index(InvoicesDataTable $dataTable): mixed
     {
         $viewPermission = user()->permission('view_invoices');
         abort_403(!in_array($viewPermission, ['all', 'added', 'owned', 'both']));
@@ -180,7 +185,7 @@ class EInvoiceController extends AccountBaseController
         return $dataTable->render('einvoice::index', $this->data);
     }
 
-    public function exportXml($id)
+    public function exportXml(int $id): StreamedResponse|RedirectResponse
     {
         $viewPermission = user()->permission('view_invoices');
         abort_403(!in_array($viewPermission, ['all', 'added', 'owned', 'both']));
@@ -207,7 +212,7 @@ class EInvoiceController extends AccountBaseController
         }, $invoice->invoice_number . '.xml');
     }
 
-    public function settings()
+    public function settings(): View
     {
         abort_403(user()->permission('manage_finance_setting') != 'all');
 
@@ -217,13 +222,13 @@ class EInvoiceController extends AccountBaseController
         return view('einvoice::settings.index', $this->data);
     }
 
-    public function settingsModal()
+    public function settingsModal(): View
     {
         abort_403(user()->permission('manage_finance_setting') != 'all');
         return view('einvoice::settings.modal');
     }
 
-    public function saveSettings(Request $request)
+    public function saveSettings(Request $request): array
     {
         abort_403(user()->permission('manage_finance_setting') != 'all');
 
@@ -240,13 +245,13 @@ class EInvoiceController extends AccountBaseController
         return Reply::success(__('messages.updateSuccess'));
     }
 
-    public function clientModal($id)
+    public function clientModal(int $id): View
     {
         $this->clientDetails = ClientDetails::findOrFail($id);
         return view('einvoice::client.modal', $this->data);
     }
 
-    public function clientSave(Request $request, $id)
+    public function clientSave(Request $request, int $id): array
     {
         $clientDetails = ClientDetails::findOrFail($id);
         $clientDetails->electronic_address        = $request->electronic_address;
