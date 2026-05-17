@@ -8,6 +8,7 @@ use Modules\TitanEchoAssist\Billing\Usage\UsageRecord;
 use Modules\TitanEchoAssist\Billing\Usage\UsageTracker;
 use Modules\TitanEchoAssist\Events\AI\EngineError;
 use Modules\TitanEchoAssist\Services\KnowledgeRetriever;
+use Modules\TitanEchoAssist\Services\Generators\AnthropicGenerator;
 use Modules\TitanEchoAssist\Services\Generators\GeneratorFactory;
 use Modules\TitanEchoAssist\Services\Generators\OpenAIGenerator;
 
@@ -17,7 +18,6 @@ class GeneratorBridge
     private mixed  $conversation      = null;
     private string $fakeResponse      = '';
     private array  $fallbackProviders = [];
-    private string $fallbackMessage   = "Sorry, I can't answer right now.";
     private ?string $ragContext       = null;
 
     public function fake(string $response = ''): self
@@ -42,12 +42,18 @@ class GeneratorBridge
 
         $provider = config('titan-chatbot.ai.provider', 'openai');
         $messages = $this->buildMessages($context);
+        $errors = [];
 
         // Try primary provider
         try {
-            $generator = GeneratorFactory::make($provider);
+            $generator = match ($provider) {
+                'anthropic' => new AnthropicGenerator(),
+                default => GeneratorFactory::make($provider),
+            };
+
             return $generator->generate($prompt, $messages);
         } catch (\Throwable $e) {
+            $errors[] = ['provider' => $provider, 'error' => $e->getMessage()];
             Log::warning('GeneratorBridge: primary provider failed.', ['provider' => $provider, 'error' => $e->getMessage()]);
             Event::dispatch(new EngineError($e, static::class, ''));
         }
@@ -58,12 +64,17 @@ class GeneratorBridge
                 $generator = GeneratorFactory::make($fallback);
                 return $generator->generate($prompt, $messages);
             } catch (\Throwable $e) {
+                $errors[] = ['provider' => $fallback, 'error' => $e->getMessage()];
                 Log::warning("GeneratorBridge: fallback provider '{$fallback}' failed.", ['error' => $e->getMessage()]);
                 Event::dispatch(new EngineError($e, static::class, ''));
             }
         }
 
-        return $this->fallbackMessage;
+        return json_encode([
+            'ok' => false,
+            'reason' => 'ai_provider_failure',
+            'errors' => $errors,
+        ], JSON_UNESCAPED_SLASHES);
     }
 
     public function generateWithUsageTracking(
@@ -89,29 +100,61 @@ class GeneratorBridge
         $provider         = config('titan-chatbot.ai.provider', 'openai');
         $model            = $this->resolveProviderModel($provider);
         $messages         = $this->buildMessages($context);
-        $reply            = $this->fallbackMessage;
+        $reply            = '';
         $promptTokens     = 0;
         $completionTokens = 0;
         $totalTokens      = 0;
         $usedProvider     = $provider;
+        $errors           = [];
 
         try {
-            if ($provider === 'openai') {
-                // OpenAI generator exposes usage data directly
-                $generator = new OpenAIGenerator();
-                $result    = $generator->generateWithUsage($prompt, $messages);
-                $reply            = $result['reply'];
-                $promptTokens     = $result['prompt_tokens'];
-                $completionTokens = $result['completion_tokens'];
-                $totalTokens      = $result['total_tokens'];
-            } else {
-                $generator    = GeneratorFactory::make($provider);
-                $reply        = $generator->generate($prompt, $messages);
-                $usedProvider = $provider;
+            switch ($provider) {
+                case 'openai':
+                    $generator = new OpenAIGenerator();
+                    $result    = $generator->generateWithUsage($prompt, $messages);
+                    $reply            = $result['reply'];
+                    $promptTokens     = $result['prompt_tokens'];
+                    $completionTokens = $result['completion_tokens'];
+                    $totalTokens      = $result['total_tokens'];
+                    break;
+                case 'anthropic':
+                    $generator    = new AnthropicGenerator();
+                    $reply        = $generator->generate($prompt, $messages);
+                    $usedProvider = 'anthropic';
+                    break;
+                default:
+                    $generator    = GeneratorFactory::make($provider);
+                    $reply        = $generator->generate($prompt, $messages);
+                    $usedProvider = $provider;
+                    break;
             }
         } catch (\Throwable $e) {
+            $errors[] = ['provider' => $provider, 'error' => $e->getMessage()];
             Log::warning('GeneratorBridge: primary provider failed in usage tracking.', ['error' => $e->getMessage()]);
             Event::dispatch(new EngineError($e, static::class, $sessionId));
+        }
+
+        if ($reply === '') {
+            foreach ($this->fallbackProviders as $fallback) {
+                try {
+                    $generator = GeneratorFactory::make($fallback);
+                    $reply = $generator->generate($prompt, $messages);
+                    $usedProvider = $fallback;
+                    break;
+                } catch (\Throwable $e) {
+                    $errors[] = ['provider' => $fallback, 'error' => $e->getMessage()];
+                    Log::warning("GeneratorBridge: fallback provider '{$fallback}' failed in usage tracking.", ['error' => $e->getMessage()]);
+                    Event::dispatch(new EngineError($e, static::class, $sessionId));
+                }
+            }
+        }
+
+        if ($reply === '') {
+            $reply = json_encode([
+                'ok' => false,
+                'reason' => 'ai_provider_failure',
+                'errors' => $errors,
+            ], JSON_UNESCAPED_SLASHES);
         }
 
         $usage = new UsageRecord(
