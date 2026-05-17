@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "bindings",
+    "migrations",
+    "routes",
+    "queue",
+    "config"
+  ],
+  "critical": [
+    "PayrollCalculationServiceContract",
+    "PayrollRunServiceContract",
+    "SalarySlipRepositoryContract"
+  ],
+  "version": "1.1.0-upgrade-pass-1",
+  "upgrade_pass_2": {
+    "status": "added",
+    "features": [
+      "persistent_runs",
+      "approvals",
+      "audit_logs",
+      "bank_exports",
+      "adjustment_imports",
+      "health_checks"
+    ]
+  }
+}

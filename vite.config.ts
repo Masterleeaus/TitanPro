@@ -22,6 +22,8 @@ export default defineConfig({
                 'resources/js/titan-os.js',
                 'resources/css/titan-zero-assistant.css',
                 'resources/js/titan-zero-assistant.js',
+                // Vue-powered Business OS chat panel
+                'resources/js/titan-os-panel.ts',
             ],
             ssr: 'resources/js/ssr.ts',
             refresh: true,

@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info:
+  title: Payroll Module API
+  version: 1.1.0
+paths:
+  /api/payroll/runs/preview:
+    post:
+      summary: Preview a payroll run
+      responses:
+        '200': {description: Payroll preview generated}
+  /api/payroll/runs:
+    post:
+      summary: Generate payroll slips for a period
+      responses:
+        '201': {description: Payroll run generated}

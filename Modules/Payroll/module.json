@@ -1,0 +1,20 @@
+{
+    "name": "Payroll",
+    "active": 1,
+    "alias": "payroll",
+    "description": "Payroll module for payroll runs, payslips, approvals, compliance, and reporting.",
+    "priority": 30,
+    "keywords": [],
+    "providers": [
+        "Modules\\Payroll\\Providers\\PayrollServiceProvider",
+        "Modules\\Payroll\\Providers\\EventServiceProvider",
+        "Modules\\Payroll\\Providers\\FilamentServiceProvider"
+    ],
+    "filament_panel": "titanpayroll",
+    "filament": {
+        "plugin": "Modules\\Payroll\\Filament\\Plugin\\PayrollPlugin"
+    },
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -7,9 +7,11 @@
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
+            <directory>Modules/TitanCommand/Tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <directory>Modules/TitanCommand/Tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>
