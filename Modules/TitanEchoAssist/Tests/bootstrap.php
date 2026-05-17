@@ -6,11 +6,12 @@
 // ── PSR-4 autoloader for this module ────────────────────────────────────────
 spl_autoload_register(function (string $class): void {
     $defaultBaseDir = __DIR__ . '/../';
+    $modulesBaseDir = dirname(__DIR__, 2) . '/';
 
     $prefixMap = [
         'Modules\\TitanEchoAssist\\' => $defaultBaseDir,
         'Modules\\TitanChatbot\\' => $defaultBaseDir,
-        'Modules\\TitanCore\\' => dirname(__DIR__, 2) . '/TitanCore/',
+        'Modules\\TitanCore\\' => $modulesBaseDir . 'TitanCore/',
     ];
 
     foreach ($prefixMap as $prefix => $baseDir) {
@@ -39,7 +40,7 @@ if (!function_exists('app')) {
 if (!function_exists('config')) {
     class TitanChatbotConfigStub {
         private static array $values = [];
-        public static function set(array $values): void { static::$values = $values + static::$values; }
+        public static function set(array $values): void { static::$values = array_merge(static::$values, $values); }
         public static function reset(): void { static::$values = []; }
         public static function get(string $key = null, mixed $default = null): mixed
         {
@@ -160,7 +161,6 @@ if (!class_exists('Illuminate\\Support\\Facades\\Http')) {
         /** @var array<string, array{response:array, failed:bool}> */
         private static array $mockByUrl = [];
         private static ?array $lastRequest = null;
-        private static array $pendingHeaders = [];
         private array $headers = [];
 
         public static function fake(array $response = [], bool $failed = false): void
@@ -168,7 +168,6 @@ if (!class_exists('Illuminate\\Support\\Facades\\Http')) {
             static::$mockResponse = $response;
             static::$mockFailed   = $failed;
             static::$mockByUrl    = [];
-            static::$pendingHeaders = [];
         }
 
         public static function fakeForUrl(string $url, array $response = [], bool $failed = false): void
@@ -182,20 +181,20 @@ if (!class_exists('Illuminate\\Support\\Facades\\Http')) {
             static::$mockFailed   = false;
             static::$mockByUrl    = [];
             static::$lastRequest  = null;
-            static::$pendingHeaders = [];
         }
 
         public static function withToken(string $t): static
         {
-            static::$pendingHeaders = ['Authorization' => 'Bearer ' . $t];
-            return new static();
+            $instance = new static();
+            $instance->headers['Authorization'] = 'Bearer ' . $t;
+
+            return $instance;
         }
 
         public static function withHeaders(array $h): static
         {
             $instance = new static();
-            $instance->headers = array_merge(static::$pendingHeaders, $h);
-            static::$pendingHeaders = [];
+            $instance->headers = $h;
 
             return $instance;
         }

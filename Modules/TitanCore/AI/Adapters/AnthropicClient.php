@@ -125,8 +125,8 @@ class AnthropicClient implements ClientInterface
         }
 
         try {
-            $response = Http::withToken($this->openAiApiKey)
-                ->withHeaders([
+            $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $this->openAiApiKey,
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ])
@@ -143,7 +143,8 @@ class AnthropicClient implements ClientInterface
                 'total_tokens' => (int) ($json['usage']['total_tokens'] ?? 0),
             ];
 
-            $this->logUsage($usage['total_tokens'] ?: $usage['prompt_tokens']);
+            $tokens = $json['usage']['total_tokens'] ?? $json['usage']['prompt_tokens'] ?? 0;
+            $this->logUsage((int) $tokens);
 
             return [
                 'ok' => true,
