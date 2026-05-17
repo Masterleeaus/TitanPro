@@ -25,7 +25,7 @@ use App\Http\Controllers\PublicEstimateController;
 use App\Http\Controllers\Technician\DashboardController as TechnicianDashboardController;
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use Modules\TitanZero\Http\Controllers\TitanZeroController;
 
 // Legacy Filament panel aliases.
 // /admin is the Super Admin panel. Some iOS/Safari sessions cached an old
@@ -281,24 +281,8 @@ Route::post('/theme-presets/delete', [\App\Http\Controllers\ThemePresetControlle
 
 Route::get('/theme-presets/export', [\App\Http\Controllers\ThemePresetController::class, 'export'])->middleware(['web'])->name('theme-presets.export');
 
-// -------------------------------------------------------------------------
-// Titan Zero assistant web endpoint for Business OS
-//
-// Provides a session-authenticated fallback for the assistant within the
-// Filament shell.  The response structure mirrors the API endpoint used
-// in earlier passes.  Only generic fields are returned to avoid exposing
-// unfinished module functionality.
-
-Route::post('/titan/zero/generate-ui', function (Request $request) {
-    return response()->json([
-        'ok' => true,
-        'reply' => 'Titan Zero is connected to the Business OS shell.',
-        'message' => 'Titan Zero is connected to the Business OS shell.',
-        'widgets' => [],
-        'thread' => null,
-        'context' => $request->input('context', []),
-    ]);
-})->middleware(['auth']);
+Route::post('/titan/zero/generate-ui', [TitanZeroController::class, 'generateUi'])
+    ->middleware(['auth']);
 
 // ── Titan OS shell routes ───────────────────────────────────────────────────
 // Expose the Business OS shell under the /os prefix.  These simple

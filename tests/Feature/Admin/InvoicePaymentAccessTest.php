@@ -1,17 +1,34 @@
 <?php
 
+use App\Models\Customer;
+use App\Models\Invoice;
+use App\Models\Organization;
+use App\Models\Payment;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 /**
- * Issue 197 — Restrict InvoiceResource / PaymentResource in the TitanPro panel to super_admin only.
+ * Issue 197 follow-up — repurpose TitanPro InvoiceResource / PaymentResource as
+ * cross-tenant super-admin finance views while ZeroPay remains the canonical
+ * org-scoped finance panel for owner/admin/bookkeeper roles.
  *
- * The canonical finance surface lives at /zeropay (ZeroPay panel), accessible to
- * bookkeeper / owner / admin. These tests confirm that:
- *  - a non-super-admin user is denied access to the TitanPro panel invoice and payment routes
- *  - the old /admin/invoices path (no longer registered) returns 404 for any authenticated user
- *  - super_admin retains access to the /titanpro invoice and payment routes
+ * These tests confirm that:
+ *  - legacy /admin finance paths return 404
+ *  - TitanPro invoice/payment routes remain super_admin-only
+ *  - super_admin can review cross-tenant TitanPro finance routes
+ *  - ZeroPay owner/admin/bookkeeper finance routes remain org-scoped
  */
+
+function zeroPayFinanceUser(string $role): array
+{
+    (new RolesAndPermissionsSeeder)->run();
+
+    $organization = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $organization->id]);
+    $user->assignRole($role);
+
+    return [$user, $organization];
+}
 
 // ── /admin/invoices — legacy path ────────────────────────────────────────────
 
@@ -94,4 +111,113 @@ test('bookkeeper user is forbidden from the titanpro payments page', function ()
     $this->actingAs($user)
         ->get('/titanpro/payments')
         ->assertForbidden();
+});
+
+test('owner user is forbidden from the titanpro payments page', function () {
+    (new RolesAndPermissionsSeeder)->run();
+
+    $user = User::factory()->create();
+    $user->assignRole('owner');
+
+    $this->actingAs($user)
+        ->get('/titanpro/payments')
+        ->assertForbidden();
+});
+
+test('super admin can review cross-tenant invoices in titanpro', function () {
+    (new RolesAndPermissionsSeeder)->run();
+
+    $homeOrg = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $homeOrg->id]);
+    $user->assignRole('super_admin');
+
+    $otherOrg = Organization::factory()->create();
+    $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
+    $invoice = Invoice::factory()->forCustomer($otherCustomer)->create([
+        'invoice_number' => 'INV-OTHER-ORG-001',
+    ]);
+
+    $this->actingAs($user)
+        ->get('/titanpro/invoices')
+        ->assertOk()
+        ->assertSee('INV-OTHER-ORG-001');
+
+    $this->actingAs($user)
+        ->get("/titanpro/invoices/{$invoice->id}/edit")
+        ->assertOk();
+});
+
+test('super admin can review cross-tenant payments in titanpro', function () {
+    (new RolesAndPermissionsSeeder)->run();
+
+    $homeOrg = Organization::factory()->create();
+    $user = User::factory()->create(['organization_id' => $homeOrg->id]);
+    $user->assignRole('super_admin');
+
+    $otherOrg = Organization::factory()->create();
+    $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
+    $invoice = Invoice::factory()->forCustomer($otherCustomer)->create();
+    $payment = Payment::factory()->forInvoice($invoice)->create([
+        'amount' => 321.09,
+    ]);
+
+    $this->actingAs($user)
+        ->get('/titanpro/payments')
+        ->assertOk()
+        ->assertSee('321.09');
+
+    $this->actingAs($user)
+        ->get("/titanpro/payments/{$payment->id}/edit")
+        ->assertOk();
+});
+
+test('owner sees only their organization invoices in zeropay', function () {
+    [$user, $organization] = zeroPayFinanceUser('owner');
+
+    $customer = Customer::factory()->create(['organization_id' => $organization->id]);
+    Invoice::factory()->forCustomer($customer)->create(['invoice_number' => 'INV-ZP-OWNER-OWN']);
+
+    $otherOrg = Organization::factory()->create();
+    $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
+    Invoice::factory()->forCustomer($otherCustomer)->create(['invoice_number' => 'INV-ZP-OWNER-OTHER']);
+
+    $this->actingAs($user)
+        ->get('/zeropay/invoices')
+        ->assertOk()
+        ->assertSee('INV-ZP-OWNER-OWN')
+        ->assertDontSee('INV-ZP-OWNER-OTHER');
+});
+
+test('admin sees only their organization invoices in zeropay', function () {
+    [$user, $organization] = zeroPayFinanceUser('admin');
+
+    $customer = Customer::factory()->create(['organization_id' => $organization->id]);
+    Invoice::factory()->forCustomer($customer)->create(['invoice_number' => 'INV-ZP-ADMIN-OWN']);
+
+    $otherOrg = Organization::factory()->create();
+    $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
+    Invoice::factory()->forCustomer($otherCustomer)->create(['invoice_number' => 'INV-ZP-ADMIN-OTHER']);
+
+    $this->actingAs($user)
+        ->get('/zeropay/invoices')
+        ->assertOk()
+        ->assertSee('INV-ZP-ADMIN-OWN')
+        ->assertDontSee('INV-ZP-ADMIN-OTHER');
+});
+
+test('bookkeeper sees only their organization invoices in zeropay', function () {
+    [$user, $organization] = zeroPayFinanceUser('bookkeeper');
+
+    $customer = Customer::factory()->create(['organization_id' => $organization->id]);
+    Invoice::factory()->forCustomer($customer)->create(['invoice_number' => 'INV-ZP-BOOK-OWN']);
+
+    $otherOrg = Organization::factory()->create();
+    $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
+    Invoice::factory()->forCustomer($otherCustomer)->create(['invoice_number' => 'INV-ZP-BOOK-OTHER']);
+
+    $this->actingAs($user)
+        ->get('/zeropay/invoices')
+        ->assertOk()
+        ->assertSee('INV-ZP-BOOK-OWN')
+        ->assertDontSee('INV-ZP-BOOK-OTHER');
 });
