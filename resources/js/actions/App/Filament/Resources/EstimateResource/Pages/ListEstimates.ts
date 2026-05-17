@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 const ListEstimates = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListEstimates.url(options),
@@ -11,13 +11,13 @@ const ListEstimates = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 ListEstimates.definition = {
     methods: ["get","head"],
-    url: '/admin/estimates',
+    url: '/titanpro/estimates',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 ListEstimates.url = (options?: RouteQueryOptions) => {
     return ListEstimates.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListEstimates.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 ListEstimates.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListEstimates.url(options),
@@ -36,7 +36,7 @@ ListEstimates.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 ListEstimates.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListEstimates.url(options),
@@ -46,7 +46,7 @@ ListEstimates.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 const ListEstimatesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimates.url(options),
@@ -56,7 +56,7 @@ const ListEstimatesForm = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 ListEstimatesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimates.url(options),
@@ -66,7 +66,7 @@ ListEstimatesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\ListEstimates::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/ListEstimates.php:7
-* @route '/admin/estimates'
+* @route '/titanpro/estimates'
 */
 ListEstimatesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimates.url({

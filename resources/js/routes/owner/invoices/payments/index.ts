@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:135
+* @see app/Http/Controllers/Owner/InvoiceController.php:145
 * @route '/owner/invoices/{invoice}/payments'
 */
 export const store = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:135
+* @see app/Http/Controllers/Owner/InvoiceController.php:145
 * @route '/owner/invoices/{invoice}/payments'
 */
 store.url = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ store.url = (args: { invoice: number | { id: number } } | [invoice: number | { i
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:135
+* @see app/Http/Controllers/Owner/InvoiceController.php:145
 * @route '/owner/invoices/{invoice}/payments'
 */
 store.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -59,7 +59,7 @@ store.post = (args: { invoice: number | { id: number } } | [invoice: number | { 
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:135
+* @see app/Http/Controllers/Owner/InvoiceController.php:145
 * @route '/owner/invoices/{invoice}/payments'
 */
 const storeForm = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -69,7 +69,7 @@ const storeForm = (args: { invoice: number | { id: number } } | [invoice: number
 
 /**
 * @see \App\Http\Controllers\Owner\InvoiceController::store
-* @see app/Http/Controllers/Owner/InvoiceController.php:135
+* @see app/Http/Controllers/Owner/InvoiceController.php:145
 * @route '/owner/invoices/{invoice}/payments'
 */
 storeForm.post = (args: { invoice: number | { id: number } } | [invoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

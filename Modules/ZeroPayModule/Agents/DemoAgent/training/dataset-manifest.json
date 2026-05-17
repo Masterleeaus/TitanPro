@@ -1,0 +1,6 @@
+{
+  "dataset": "demo.module.knowledge",
+  "scaffold": true,
+  "replace_required": true,
+  "sources": ["Knowledge/**"]
+}

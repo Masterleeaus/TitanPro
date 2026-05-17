@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 const EditJob = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJob.url(args, options),
@@ -11,13 +11,13 @@ const EditJob = (args: { record: string | number } | [record: string | number ] 
 
 EditJob.definition = {
     methods: ["get","head"],
-    url: '/admin/jobs/{record}/edit',
+    url: '/titanpro/jobs/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 EditJob.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditJob.url = (args: { record: string | number } | [record: string | number ] | 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 EditJob.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJob.url(args, options),
@@ -54,7 +54,7 @@ EditJob.get = (args: { record: string | number } | [record: string | number ] | 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 EditJob.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditJob.url(args, options),
@@ -64,7 +64,7 @@ EditJob.head = (args: { record: string | number } | [record: string | number ] |
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 const EditJobForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, options),
@@ -74,7 +74,7 @@ const EditJobForm = (args: { record: string | number } | [record: string | numbe
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 EditJobForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, options),
@@ -84,7 +84,7 @@ EditJobForm.get = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
-* @route '/admin/jobs/{record}/edit'
+* @route '/titanpro/jobs/{record}/edit'
 */
 EditJobForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, {

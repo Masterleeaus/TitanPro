@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 const EditEstimatePackage = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditEstimatePackage.url(args, options),
@@ -11,13 +11,13 @@ const EditEstimatePackage = (args: { record: string | number } | [record: string
 
 EditEstimatePackage.definition = {
     methods: ["get","head"],
-    url: '/admin/estimate-packages/{record}/edit',
+    url: '/titanpro/estimate-packages/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 EditEstimatePackage.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditEstimatePackage.url = (args: { record: string | number } | [record: string |
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 EditEstimatePackage.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditEstimatePackage.url(args, options),
@@ -54,7 +54,7 @@ EditEstimatePackage.get = (args: { record: string | number } | [record: string |
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 EditEstimatePackage.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditEstimatePackage.url(args, options),
@@ -64,7 +64,7 @@ EditEstimatePackage.head = (args: { record: string | number } | [record: string 
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 const EditEstimatePackageForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimatePackage.url(args, options),
@@ -74,7 +74,7 @@ const EditEstimatePackageForm = (args: { record: string | number } | [record: st
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 EditEstimatePackageForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimatePackage.url(args, options),
@@ -84,7 +84,7 @@ EditEstimatePackageForm.get = (args: { record: string | number } | [record: stri
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\EditEstimatePackage::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/EditEstimatePackage.php:7
-* @route '/admin/estimate-packages/{record}/edit'
+* @route '/titanpro/estimate-packages/{record}/edit'
 */
 EditEstimatePackageForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimatePackage.url(args, {

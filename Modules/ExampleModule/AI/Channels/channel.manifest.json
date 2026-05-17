@@ -1,0 +1,8 @@
+{
+  "user_facing_ai": "Zero",
+  "zero_chat_runtime": "UI/ZeroChat",
+  "rich_ui_channels": ["filament", "pwa", "webchat"],
+  "fallback_channels": ["whatsapp", "sms", "email", "voice"],
+  "supports_actions": true,
+  "supports_deep_links": true
+}

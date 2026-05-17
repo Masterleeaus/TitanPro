@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+
+use App\Support\ThemeRuntime;
 use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
 use App\Support\ThemeTokenManager;
@@ -66,6 +68,12 @@ class HandleAppearance
 
         View::share('appearance', in_array($appearance, ['light', 'dark', 'system']) ? $appearance : 'system');
         View::share('platformBranding', $branding);
+
+        
+        View::share('activeThemeSlug', ThemeRuntime::activeThemeSlug());
+        View::share('activeThemeManifest', ThemeRuntime::activeThemeManifest());
+        View::share('activeThemeAssets', ThemeRuntime::assetUrls());
+        View::share('themeDiagnostics', ThemeRuntime::diagnostics());
 
         return $next($request);
     }

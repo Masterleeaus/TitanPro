@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 const ListCustomers = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCustomers.url(options),
@@ -11,13 +11,13 @@ const ListCustomers = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 ListCustomers.definition = {
     methods: ["get","head"],
-    url: '/admin/customers',
+    url: '/titanpro/customers',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 ListCustomers.url = (options?: RouteQueryOptions) => {
     return ListCustomers.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListCustomers.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 ListCustomers.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListCustomers.url(options),
@@ -36,7 +36,7 @@ ListCustomers.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 ListCustomers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListCustomers.url(options),
@@ -46,7 +46,7 @@ ListCustomers.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 const ListCustomersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCustomers.url(options),
@@ -56,7 +56,7 @@ const ListCustomersForm = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 ListCustomersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCustomers.url(options),
@@ -66,7 +66,7 @@ ListCustomersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\ListCustomers::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/ListCustomers.php:7
-* @route '/admin/customers'
+* @route '/titanpro/customers'
 */
 ListCustomersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListCustomers.url({

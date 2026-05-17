@@ -1,0 +1,45 @@
+{
+  "module": "zeropay-module",
+  "sidebar": {
+    "enabled": true,
+    "single_link": true,
+    "label": "Example Module",
+    "icon": "heroicon-o-squares-2x2",
+    "group": "Operations",
+    "sort": 100,
+    "permission": "zeropay.view"
+  },
+  "layout": {
+    "top_half": [
+      "metrics_cards",
+      "widget_grid",
+      "module_agent_chat",
+      "shortcuts_card",
+      "settings_card"
+    ],
+    "bottom_half": [
+      "single_tabbed_table_card"
+    ]
+  },
+  "chat": {
+    "agent": "zeropay.module.agent",
+    "provider": "TitanAgents",
+    "system_supervisor": "TitanZero",
+    "supports": [
+      "text",
+      "voice",
+      "pwa",
+      "web_chat",
+      "external_channels"
+    ],
+    "mode": "grounded_with_citations_and_tool_control"
+  },
+  "tables": {
+    "mode": "single_card_with_tabs",
+    "manifest": "Filament/Tables/table-tabs.json"
+  },
+  "resources_navigation": {
+    "register_resource_sidebar_links": false,
+    "open_resource_pages_from_table_tabs": true
+  }
+}

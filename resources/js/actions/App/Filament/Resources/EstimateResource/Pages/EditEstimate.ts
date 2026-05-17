@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 const EditEstimate = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditEstimate.url(args, options),
@@ -11,13 +11,13 @@ const EditEstimate = (args: { record: string | number } | [record: string | numb
 
 EditEstimate.definition = {
     methods: ["get","head"],
-    url: '/admin/estimates/{record}/edit',
+    url: '/titanpro/estimates/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 EditEstimate.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditEstimate.url = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 EditEstimate.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditEstimate.url(args, options),
@@ -54,7 +54,7 @@ EditEstimate.get = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 EditEstimate.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditEstimate.url(args, options),
@@ -64,7 +64,7 @@ EditEstimate.head = (args: { record: string | number } | [record: string | numbe
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 const EditEstimateForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimate.url(args, options),
@@ -74,7 +74,7 @@ const EditEstimateForm = (args: { record: string | number } | [record: string | 
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 EditEstimateForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimate.url(args, options),
@@ -84,7 +84,7 @@ EditEstimateForm.get = (args: { record: string | number } | [record: string | nu
 /**
 * @see \App\Filament\Resources\EstimateResource\Pages\EditEstimate::__invoke
 * @see app/Filament/Resources/EstimateResource/Pages/EditEstimate.php:7
-* @route '/admin/estimates/{record}/edit'
+* @route '/titanpro/estimates/{record}/edit'
 */
 EditEstimateForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditEstimate.url(args, {

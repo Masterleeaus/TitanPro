@@ -1,0 +1,6 @@
+{
+  "emits": [
+    "zeropay.created"
+  ],
+  "listens": []
+}

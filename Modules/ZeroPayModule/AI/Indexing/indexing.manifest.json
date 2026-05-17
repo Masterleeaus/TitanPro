@@ -1,0 +1,10 @@
+{
+  "schema": "titan.module_indexing.v1",
+  "owner": "TitanCore",
+  "module": "zeropay-module",
+  "source_roots": ["Knowledge"],
+  "dataset_manifest": "Agents/ModuleAgent/training/dataset-manifest.json",
+  "chunking": {"strategy": "semantic", "max_tokens": 900, "overlap_tokens": 120},
+  "metadata": {"tenant_column": "company_id", "module": "zeropay-module", "citation_required": true},
+  "on_change": ["reindex_changed_file", "invalidate_agent_cache"]
+}

@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::create('example_records',function(Blueprint $table){$table->id();$table->unsignedBigInteger('company_id')->index();$table->unsignedBigInteger('user_id')->nullable()->index();$table->string('name');$table->string('status')->default('draft')->index();$table->json('meta')->nullable();$table->timestamps();$table->softDeletes();$table->index(['company_id','status']);});}public function down():void{Schema::dropIfExists('example_records');}};

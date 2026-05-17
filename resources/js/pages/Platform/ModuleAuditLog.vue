@@ -42,10 +42,10 @@ function actionBadge(action: string): string {
 
 <template>
     <PlatformLayout>
-        <Head title="Module Audit Log" />
+        <Head title="Module Health Audit" />
 
         <div class="px-6 py-8 max-w-7xl mx-auto">
-            <h1 class="text-2xl font-bold mb-6">Module Audit Log</h1>
+            <h1 class="text-2xl font-bold mb-6">Module Health Audit</h1>
 
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -61,7 +61,7 @@ function actionBadge(action: string): string {
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <tr v-if="entries.data.length === 0">
-                            <td colspan="6" class="px-4 py-6 text-center text-gray-400">No audit entries found.</td>
+                            <td colspan="6" class="px-4 py-6 text-center text-gray-400">No module health audit entries found.</td>
                         </tr>
                         <tr v-for="entry in entries.data" :key="entry.id" class="hover:bg-gray-50">
                             <td class="px-4 py-3 text-gray-500">{{ entry.id }}</td>

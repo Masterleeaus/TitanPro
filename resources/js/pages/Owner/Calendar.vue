@@ -59,13 +59,13 @@ const calendarOptions = ref({
             <h2 class="text-xl font-semibold text-slate-800">Calendar</h2>
             <Link
                 href="/owner/jobs/create"
-                class="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                class="inline-flex items-center gap-2 rounded-md-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
             >
                 + New Job
             </Link>
         </div>
 
-        <div class="rounded-xl bg-white p-4 shadow">
+        <div class="rounded-md-xl bg-white p-4 shadow">
             <FullCalendar :options="calendarOptions" />
         </div>
     </OwnerLayout>
@@ -74,45 +74,18 @@ const calendarOptions = ref({
 <style>
 /* Ensure FullCalendar renders cleanly inside Tailwind's reset */
 .fc .fc-button {
-    border: 1px solid rgb(226 232 240);
-    border-radius: 0.25rem;
-    background-color: rgb(255 255 255);
-    color: rgb(51 65 85);
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05);
 }
 .fc .fc-button-primary {
-    border-color: rgb(30 41 59);
-    background-color: rgb(30 41 59);
-    color: rgb(255 255 255);
 }
 .fc .fc-button-primary:not(:disabled):active,
 .fc .fc-button-primary.fc-button-active {
-    border-color: rgb(15 23 42);
-    background-color: rgb(15 23 42);
 }
 .fc .fc-toolbar-title {
-    color: rgb(30 41 59);
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 1.75rem;
 }
 .fc-theme-standard td,
 .fc-theme-standard th {
-    border-color: rgb(241 245 249);
 }
 .fc .fc-daygrid-day.fc-day-today,
 .fc .fc-timegrid-col.fc-day-today {
-    background-color: rgb(239 246 255);
-}
-.fc .fc-button:hover {
-    background-color: rgb(248 250 252);
-}
-.fc .fc-button:focus {
-    outline: none;
-}
-.fc .fc-button-primary:hover {
-    background-color: rgb(51 65 85);
 }
 </style>
