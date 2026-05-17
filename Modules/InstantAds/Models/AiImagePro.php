@@ -21,6 +21,7 @@ class AiImagePro extends Model
     protected $table = 'ai_image_pro';
 
     protected $fillable = [
+        'company_id',
         'user_id',
         'guest_ip',
         'model',

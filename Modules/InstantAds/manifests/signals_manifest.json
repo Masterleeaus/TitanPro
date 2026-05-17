@@ -1,0 +1,20 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "InstantAds",
+  "schema_version": "1.0",
+  "emits": [
+    {
+      "signal": "InstantAds::AdCreativeGenerated",
+      "event_class": "Modules\\InstantAds\\Events\\AdCreativeGenerated",
+      "description": "Fired when an ad creative image has been generated.",
+      "payload_schema": {
+        "creative_id": "integer",
+        "company_id": "integer",
+        "url": "string",
+        "provider": "string",
+        "prompt": "string"
+      }
+    }
+  ],
+  "consumes": []
+}

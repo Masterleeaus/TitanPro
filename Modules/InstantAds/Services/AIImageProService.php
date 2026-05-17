@@ -3,8 +3,7 @@
 namespace Modules\InstantAds\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\InstantAds\Jobs\GenerateAdImageJob;
-use Modules\InstantAds\Models\AiImagePro;
+use Modules\InstantAds\Actions\GenerateAdImageAction;
 
 class AIImageProService
 {
@@ -85,20 +84,10 @@ class AIImageProService
      *
      * @return int The new record's ID
      */
+    public function __construct(private readonly GenerateAdImageAction $generateAdImageAction) {}
+
     public function dispatchImageGenerationJob(array $params, ?int $userId, mixed $driver): int
     {
-        $record = AiImagePro::create([
-            'user_id'  => $userId,
-            'guest_ip' => $userId ? null : request()->ip(),
-            'model'    => $params['model'] ?? 'dall-e-3',
-            'engine'   => $params['engine'] ?? '',
-            'prompt'   => $params['prompt'],
-            'params'   => $params,
-            'status'   => 'pending',
-        ]);
-
-        GenerateAdImageJob::dispatch($record->id, $userId, $driver);
-
-        return $record->id;
+        return $this->generateAdImageAction->dispatch($params, $userId, $driver);
     }
 }

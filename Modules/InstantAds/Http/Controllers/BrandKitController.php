@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\InstantAds\Entities\InstantAdsBrandKit;
+use Modules\InstantAds\Support\Scopes\ScopedByCompany;
 
 class BrandKitController extends Controller
 {
@@ -75,6 +76,12 @@ class BrandKitController extends Controller
             return (int) $user->company_id;
         }
 
-        return (int) $request->input('company_id', 1);
+        $companyId = ScopedByCompany::resolveCompanyId();
+
+        if ($companyId !== null) {
+            return $companyId;
+        }
+
+        abort(403, 'Company tenant context is required but was not resolved from the authenticated request.');
     }
 }

@@ -62,7 +62,7 @@ class RealtimeGenerationService
     private function generateViaTogether(AiImagePro $record, string $prompt): AiImagePro
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->getApiKey(),
+            'Authorization' => 'Bearer ' . $this->getApiKey($record->company_id),
         ])->post(self::API_URL, [
             'prompt' => $prompt,
             'model'  => self::DEFAULT_MODEL,
@@ -139,8 +139,25 @@ class RealtimeGenerationService
         }
     }
 
-    private function getApiKey(): string
+    private function getApiKey(?int $companyId): string
     {
+        if ($companyId) {
+            $mappedKey = config('instantads.ai.company_api_keys.' . $companyId);
+
+            if (is_string($mappedKey) && $mappedKey !== '') {
+                return $mappedKey;
+            }
+
+            if (function_exists('setting')) {
+                $tenantSettingKey = 'together_api_key_company_' . $companyId;
+                $tenantKey = (string) setting($tenantSettingKey, '');
+
+                if ($tenantKey !== '') {
+                    return $tenantKey;
+                }
+            }
+        }
+
         if (function_exists('setting')) {
             return setting('together_api_key', '');
         }

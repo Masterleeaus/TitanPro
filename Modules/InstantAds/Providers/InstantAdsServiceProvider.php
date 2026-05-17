@@ -24,14 +24,18 @@ class InstantAdsServiceProvider extends ServiceProvider
 
     protected function registerConfig(): void
     {
-        $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'),
-            $this->moduleNameLower
-        );
+        $configFiles = ['config', 'features', 'permissions', 'ai'];
 
-        $this->publishes([
-            module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
-        ], 'config');
+        foreach ($configFiles as $configFile) {
+            $this->mergeConfigFrom(
+                module_path($this->moduleName, 'Config/' . $configFile . '.php'),
+                $configFile === 'config' ? $this->moduleNameLower : $this->moduleNameLower . '.' . $configFile
+            );
+
+            $this->publishes([
+                module_path($this->moduleName, 'Config/' . $configFile . '.php') => config_path($this->moduleNameLower . ($configFile === 'config' ? '' : '.' . $configFile) . '.php'),
+            ], 'config');
+        }
     }
 
     public function registerViews(): void
