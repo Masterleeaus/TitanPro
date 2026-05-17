@@ -17,7 +17,7 @@ class PortalBookingController extends PortalBaseController
             ->where('chatbot_id', $chatbot->getKey())
             ->when($chatbot->company_id !== null, fn ($query) => $query->where('company_id', $chatbot->company_id))
             ->latest('id')
-            ->paginate((int) $request->integer('per_page', 10));
+            ->paginate($request->integer('per_page', 10));
 
         return response()->json($bookings);
     }

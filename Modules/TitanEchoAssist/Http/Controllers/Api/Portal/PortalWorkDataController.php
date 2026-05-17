@@ -65,7 +65,7 @@ class PortalWorkDataController extends PortalBaseController
 
         return response()->json([
             'invoice_id' => $id,
-            'payment_url' => $invoice->payment_url ?? null,
+            'payment_url' => is_object($invoice) ? ($invoice->payment_url ?? null) : null,
         ]);
     }
 }

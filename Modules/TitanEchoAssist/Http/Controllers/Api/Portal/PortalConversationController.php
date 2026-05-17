@@ -75,7 +75,7 @@ class PortalConversationController extends PortalBaseController
             ->where('chatbot_id', $chatbot->getKey())
             ->where('conversation_id', $conversationId)
             ->orderByDesc('id')
-            ->paginate((int) $request->integer('per_page', 20));
+            ->paginate($request->integer('per_page', 20));
 
         return response()->json($messages);
     }
