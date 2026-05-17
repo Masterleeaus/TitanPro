@@ -3,11 +3,12 @@
 namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Modules\TitanEchoAssist\Billing\Usage\UsageRecord;
 use Modules\TitanEchoAssist\Billing\Usage\UsageTracker;
 use Modules\TitanEchoAssist\Events\AI\EngineError;
+use Modules\TitanEchoAssist\Services\Generators\GeneratorFactory;
+use Modules\TitanEchoAssist\Services\Generators\OpenAIGenerator;
 
 class GeneratorBridge
 {
@@ -36,27 +37,22 @@ class GeneratorBridge
         }
 
         $provider = config('titan-chatbot.ai.provider', 'openai');
+        $messages = $this->buildMessages($context);
 
         // Try primary provider
         try {
-            if ($provider !== 'openai' && $this->hasLegacyGeneratorService()) {
-                return $this->generateViaLegacyService($prompt);
-            }
-            return $this->generateViaOpenAi($prompt, $context);
+            $generator = GeneratorFactory::make($provider);
+            return $generator->generate($prompt, $messages);
         } catch (\Throwable $e) {
-            Log::warning('GeneratorBridge: primary provider failed.', ['error' => $e->getMessage()]);
+            Log::warning('GeneratorBridge: primary provider failed.', ['provider' => $provider, 'error' => $e->getMessage()]);
             Event::dispatch(new EngineError($e, static::class, ''));
         }
 
         // Try each fallback provider in sequence
         foreach ($this->fallbackProviders as $fallback) {
             try {
-                if ($fallback === 'openai') {
-                    return $this->generateViaOpenAi($prompt, $context);
-                }
-                if ($fallback === 'legacy' && $this->hasLegacyGeneratorService()) {
-                    return $this->generateViaLegacyService($prompt);
-                }
+                $generator = GeneratorFactory::make($fallback);
+                return $generator->generate($prompt, $messages);
             } catch (\Throwable $e) {
                 Log::warning("GeneratorBridge: fallback provider '{$fallback}' failed.", ['error' => $e->getMessage()]);
                 Event::dispatch(new EngineError($e, static::class, ''));
@@ -84,22 +80,28 @@ class GeneratorBridge
             return ['reply' => $reply, 'usage' => $usage->normalize()];
         }
 
-        $provider = config('titan-chatbot.ai.provider', 'openai');
-        $model    = config('titan-chatbot.ai.model', 'gpt-4o-mini');
-
-        $reply          = $this->fallbackMessage;
-        $promptTokens   = 0;
+        $provider         = config('titan-chatbot.ai.provider', 'openai');
+        $model            = config("titan-chatbot.ai.{$provider}.model", config('titan-chatbot.ai.model', 'gpt-4o-mini'));
+        $messages         = $this->buildMessages($context);
+        $reply            = $this->fallbackMessage;
+        $promptTokens     = 0;
         $completionTokens = 0;
-        $totalTokens    = 0;
-        $usedProvider   = $provider;
+        $totalTokens      = 0;
+        $usedProvider     = $provider;
 
         try {
-            if ($provider !== 'openai' && $this->hasLegacyGeneratorService()) {
-                $reply = $this->generateViaLegacyService($prompt);
-                $usedProvider = 'legacy';
+            if ($provider === 'openai') {
+                // OpenAI generator exposes usage data directly
+                $generator = new OpenAIGenerator();
+                $result    = $generator->generateWithUsage($prompt, $messages);
+                $reply            = $result['reply'];
+                $promptTokens     = $result['prompt_tokens'];
+                $completionTokens = $result['completion_tokens'];
+                $totalTokens      = $result['total_tokens'];
             } else {
-                [$reply, $promptTokens, $completionTokens, $totalTokens] = $this->generateViaOpenAiWithUsage($prompt, $context);
-                $usedProvider = 'openai';
+                $generator    = GeneratorFactory::make($provider);
+                $reply        = $generator->generate($prompt, $messages);
+                $usedProvider = $provider;
             }
         } catch (\Throwable $e) {
             Log::warning('GeneratorBridge: primary provider failed in usage tracking.', ['error' => $e->getMessage()]);
@@ -138,42 +140,12 @@ class GeneratorBridge
         return $this;
     }
 
-    private function hasLegacyGeneratorService(): bool
+    /**
+     * Build the messages array including a system prompt (if any) followed
+     * by the provided context messages.
+     */
+    private function buildMessages(array $context): array
     {
-        return class_exists('App\Extensions\Chatbot\System\Services\GeneratorService');
-    }
-
-    private function generateViaLegacyService(string $prompt): string
-    {
-        try {
-            /** @var \App\Extensions\Chatbot\System\Services\GeneratorService $service */
-            $service = app('App\Extensions\Chatbot\System\Services\GeneratorService');
-
-            $service->setPrompt($prompt);
-
-            if ($this->chatbot) {
-                $service->setChatbot($this->chatbot);
-            }
-
-            if ($this->conversation) {
-                $service->setConversation($this->conversation);
-            }
-
-            return (string) $service->generate();
-        } catch (\Throwable $e) {
-            Log::warning('GeneratorBridge: legacy service failed, falling back to OpenAI.', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return $this->generateViaOpenAi($prompt);
-        }
-    }
-
-    private function generateViaOpenAi(string $prompt, array $context = []): string
-    {
-        $apiKey = config('titan-chatbot.ai.openai_api_key', config('openai.api_key', env('OPENAI_API_KEY')));
-        $model  = config('titan-chatbot.ai.model', 'gpt-4o-mini');
-
         $messages = [];
 
         if ($systemPrompt = $this->buildSystemPrompt()) {
@@ -184,58 +156,7 @@ class GeneratorBridge
             $messages[] = $ctx;
         }
 
-        $messages[] = ['role' => 'user', 'content' => $prompt];
-
-        $response = Http::withToken($apiKey)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model'    => $model,
-                'messages' => $messages,
-            ]);
-
-        if ($response->failed()) {
-            Log::error('GeneratorBridge: OpenAI request failed.', ['status' => $response->status()]);
-
-            return "Sorry, I can't answer right now.";
-        }
-
-        return $response->json('choices.0.message.content', "Sorry, I can't answer right now.");
-    }
-
-    private function generateViaOpenAiWithUsage(string $prompt, array $context = []): array
-    {
-        $apiKey = config('titan-chatbot.ai.openai_api_key', config('openai.api_key', env('OPENAI_API_KEY')));
-        $model  = config('titan-chatbot.ai.model', 'gpt-4o-mini');
-
-        $messages = [];
-
-        if ($systemPrompt = $this->buildSystemPrompt()) {
-            $messages[] = ['role' => 'system', 'content' => $systemPrompt];
-        }
-
-        foreach ($context as $ctx) {
-            $messages[] = $ctx;
-        }
-
-        $messages[] = ['role' => 'user', 'content' => $prompt];
-
-        $response = Http::withToken($apiKey)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model'    => $model,
-                'messages' => $messages,
-            ]);
-
-        if ($response->failed()) {
-            Log::error('GeneratorBridge: OpenAI request failed.', ['status' => $response->status()]);
-            return [$this->fallbackMessage, 0, 0, 0];
-        }
-
-        $json             = $response->json();
-        $reply            = $json['choices'][0]['message']['content'] ?? $this->fallbackMessage;
-        $promptTokens     = $json['usage']['prompt_tokens'] ?? 0;
-        $completionTokens = $json['usage']['completion_tokens'] ?? 0;
-        $totalTokens      = $json['usage']['total_tokens'] ?? 0;
-
-        return [$reply, $promptTokens, $completionTokens, $totalTokens];
+        return $messages;
     }
 
     private function buildSystemPrompt(): ?string
@@ -257,3 +178,4 @@ class GeneratorBridge
         return null;
     }
 }
+
