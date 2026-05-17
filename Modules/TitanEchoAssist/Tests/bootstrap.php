@@ -5,10 +5,16 @@
 
 // ── PSR-4 autoloader for this module ────────────────────────────────────────
 spl_autoload_register(function (string $class): void {
-    $baseDir = __DIR__ . '/../';
+    $defaultBaseDir = __DIR__ . '/../';
+    $modulesBaseDir = dirname(__DIR__, 2) . '/';
 
-    // Support both the legacy TitanChatbot namespace and the current TitanEchoAssist namespace
-    foreach (['Modules\\TitanEchoAssist\\', 'Modules\\TitanChatbot\\'] as $prefix) {
+    $prefixMap = [
+        'Modules\\TitanEchoAssist\\' => $defaultBaseDir,
+        'Modules\\TitanChatbot\\' => $defaultBaseDir,
+        'Modules\\TitanCore\\' => $modulesBaseDir . 'TitanCore/',
+    ];
+
+    foreach ($prefixMap as $prefix => $baseDir) {
         if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
             continue;
         }
@@ -32,7 +38,33 @@ if (!function_exists('app')) {
     }
 }
 if (!function_exists('config')) {
-    function config(string $key = null, $default = null) { return $default; }
+    class TitanChatbotConfigStub {
+        private static array $values = [];
+        public static function set(array $values): void { static::$values = array_merge(static::$values, $values); }
+        public static function reset(): void { static::$values = []; }
+        public static function get(string $key = null, mixed $default = null): mixed
+        {
+            if ($key === null) {
+                return static::$values;
+            }
+
+            if (array_key_exists($key, static::$values)) {
+                return static::$values[$key];
+            }
+
+            $value = static::$values;
+            foreach (explode('.', $key) as $segment) {
+                if (!is_array($value) || !array_key_exists($segment, $value)) {
+                    return $default;
+                }
+                $value = $value[$segment];
+            }
+
+            return $value;
+        }
+    }
+
+    function config(string $key = null, $default = null) { return TitanChatbotConfigStub::get($key, $default); }
 }
 if (!function_exists('env')) {
     function env(string $key, mixed $default = null): mixed
@@ -53,6 +85,47 @@ if (!function_exists('now')) {
 }
 if (!function_exists('report')) {
     function report(\Throwable $e): void {}
+}
+if (!function_exists('data_get')) {
+    function data_get(mixed $target, string|array|null $key, mixed $default = null): mixed
+    {
+        if ($key === null) {
+            return $target;
+        }
+
+        $segments = is_array($key) ? $key : explode('.', $key);
+        foreach ($segments as $segment) {
+            if (is_array($target) && array_key_exists($segment, $target)) {
+                $target = $target[$segment];
+                continue;
+            }
+
+            return $default;
+        }
+
+        return $target;
+    }
+}
+if (!function_exists('data_set')) {
+    function data_set(array &$target, string|array|null $key, mixed $value): array
+    {
+        if ($key === null) {
+            $target = $value;
+            return $target;
+        }
+
+        $segments = is_array($key) ? $key : explode('.', $key);
+        $current = &$target;
+        foreach ($segments as $segment) {
+            if (!isset($current[$segment]) || !is_array($current[$segment])) {
+                $current[$segment] = [];
+            }
+            $current = &$current[$segment];
+        }
+        $current = $value;
+
+        return $target;
+    }
 }
 
 // ── Minimal Illuminate facade stubs ──────────────────────────────────────────
@@ -85,26 +158,59 @@ if (!class_exists('Illuminate\\Support\\Facades\\Http')) {
         /** @var array|null Preset response payload for the next request. */
         private static ?array $mockResponse = null;
         private static bool   $mockFailed   = false;
+        /** @var array<string, array{response:array, failed:bool}> */
+        private static array $mockByUrl = [];
+        private static ?array $lastRequest = null;
+        private array $headers = [];
 
         public static function fake(array $response = [], bool $failed = false): void
         {
             static::$mockResponse = $response;
             static::$mockFailed   = $failed;
+            static::$mockByUrl    = [];
+        }
+
+        public static function fakeForUrl(string $url, array $response = [], bool $failed = false): void
+        {
+            static::$mockByUrl[$url] = ['response' => $response, 'failed' => $failed];
         }
 
         public static function resetFake(): void
         {
             static::$mockResponse = null;
             static::$mockFailed   = false;
+            static::$mockByUrl    = [];
+            static::$lastRequest  = null;
         }
 
-        public static function withToken(string $t): static { return new static(); }
-        public static function withHeaders(array $h): static { return new static(); }
+        public static function withToken(string $t): static
+        {
+            $instance = new static();
+            $instance->headers['Authorization'] = 'Bearer ' . $t;
+
+            return $instance;
+        }
+
+        public static function withHeaders(array $h): static
+        {
+            $instance = new static();
+            $instance->headers = $h;
+
+            return $instance;
+        }
+
         public static function withQueryParameters(array $p): static { return new static(); }
 
+        public static function lastRequest(): ?array
+        {
+            return static::$lastRequest;
+        }
+
         public function post(string $u, array $d = []): object {
-            $failed   = static::$mockFailed;
-            $response = static::$mockResponse;
+            $mock = static::$mockByUrl[$u] ?? null;
+            $failed   = $mock['failed'] ?? static::$mockFailed;
+            $response = $mock['response'] ?? static::$mockResponse;
+            static::$lastRequest = ['url' => $u, 'body' => $d, 'headers' => $this->headers];
             return new class($failed, $response) {
                 public function __construct(private bool $failed, private ?array $resp) {}
                 public function failed(): bool { return $this->failed; }

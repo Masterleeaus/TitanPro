@@ -49,17 +49,16 @@ Route::middleware(['auth', 'role:technician'])
  * All routes require an authenticated session (web/CSRF middleware is already
  * applied by the bootstrap/app.php route group).
  */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('titan')->group(function () {
     // Main generate-ui endpoint - accepts a message and returns an AgentUiResponse
-    Route::post('/titan/zero/generate-ui', [TitanZeroController::class, 'generateUi'])
+    Route::post('/zero/generate-ui', [TitanZeroController::class, 'generateUi'])
         ->name('titan.zero.generate-ui');
 
     // Thread history - returns messages + widgets for a persisted thread
-    Route::get('/titan/threads/{threadId}', [ThreadController::class, 'show'])
-        ->name('titan.threads.show')
-        ->where('threadId', '[0-9]+');
+    Route::get('/threads/{threadId}', [ThreadController::class, 'show'])
+        ->name('titan.threads.show');
 
     // Context-aware suggestion chips
-    Route::get('/titan/suggestions', SuggestionsController::class)
+    Route::get('/suggestions', SuggestionsController::class)
         ->name('titan.suggestions');
 });
