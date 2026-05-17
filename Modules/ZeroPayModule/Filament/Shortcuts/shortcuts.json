@@ -1,0 +1,29 @@
+{
+  "module": "zeropay-module",
+  "shortcuts": [
+    {
+      "key": "create_record",
+      "label": "Create record",
+      "action": "zeropay.create_record",
+      "permission": "zeropay.create"
+    },
+    {
+      "key": "ask_agent",
+      "label": "Ask module agent",
+      "action": "zeropay.agent.ask",
+      "permission": "zeropay.agent.use"
+    },
+    {
+      "key": "scan_knowledge",
+      "label": "Re-scan knowledge pack",
+      "action": "zeropay.knowledge.reindex",
+      "permission": "zeropay.agent.train"
+    },
+    {
+      "key": "open_settings",
+      "label": "Module settings",
+      "action": "zeropay.settings.open",
+      "permission": "zeropay.settings.manage"
+    }
+  ]
+}

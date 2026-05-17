@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 const CreateCustomer = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateCustomer.url(options),
@@ -11,13 +11,13 @@ const CreateCustomer = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 
 CreateCustomer.definition = {
     methods: ["get","head"],
-    url: '/admin/customers/create',
+    url: '/titanpro/customers/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 CreateCustomer.url = (options?: RouteQueryOptions) => {
     return CreateCustomer.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateCustomer.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 CreateCustomer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateCustomer.url(options),
@@ -36,7 +36,7 @@ CreateCustomer.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 CreateCustomer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateCustomer.url(options),
@@ -46,7 +46,7 @@ CreateCustomer.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 const CreateCustomerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCustomer.url(options),
@@ -56,7 +56,7 @@ const CreateCustomerForm = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 CreateCustomerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCustomer.url(options),
@@ -66,7 +66,7 @@ CreateCustomerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\CreateCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/CreateCustomer.php:7
-* @route '/admin/customers/create'
+* @route '/titanpro/customers/create'
 */
 CreateCustomerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateCustomer.url({

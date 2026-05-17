@@ -1,0 +1,6 @@
+{
+  "emits": [
+    "example.created"
+  ],
+  "listens": []
+}

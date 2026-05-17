@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 const ListProperties = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListProperties.url(options),
@@ -11,13 +11,13 @@ const ListProperties = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 
 ListProperties.definition = {
     methods: ["get","head"],
-    url: '/admin/properties',
+    url: '/titanpro/properties',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 ListProperties.url = (options?: RouteQueryOptions) => {
     return ListProperties.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListProperties.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 ListProperties.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListProperties.url(options),
@@ -36,7 +36,7 @@ ListProperties.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 ListProperties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListProperties.url(options),
@@ -46,7 +46,7 @@ ListProperties.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 const ListPropertiesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListProperties.url(options),
@@ -56,7 +56,7 @@ const ListPropertiesForm = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 ListPropertiesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListProperties.url(options),
@@ -66,7 +66,7 @@ ListPropertiesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\ListProperties::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/ListProperties.php:7
-* @route '/admin/properties'
+* @route '/titanpro/properties'
 */
 ListPropertiesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListProperties.url({

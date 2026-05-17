@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Filament\Pages\ThemeManager;
 use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -40,8 +41,18 @@ class TitanStudioPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
-                    'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'Awcodes\Curator\CuratorPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Andreia\FilamentUiSwitcher\FilamentUiSwitcherPlugin',
+                    'JeffersonGoncalves\FilamentTopbar\FilamentTopbarPlugin',
+                    'TomatoPHP\FilamentCms\FilamentCMSPlugin',
+                    'TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin',
+                    'TomatoPHP\FilamentIcons\FilamentIconsPlugin',
+                    'TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentPlugin',
+                    'Devonab\FilamentEasyFooter\EasyFooterPlugin',
                 ]),
             ])
             ->resources([
@@ -54,6 +65,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/TitanStudio/Pages'), for: 'App\\Filament\\TitanStudio\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                ThemeManager::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanStudio/Widgets'), for: 'App\\Filament\\TitanStudio\\Widgets')
             ->widgets([
@@ -73,7 +85,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiOverrideSsrHook())
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

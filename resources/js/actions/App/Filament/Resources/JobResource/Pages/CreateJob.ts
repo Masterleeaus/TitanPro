@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 const CreateJob = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateJob.url(options),
@@ -11,13 +11,13 @@ const CreateJob = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 CreateJob.definition = {
     methods: ["get","head"],
-    url: '/admin/jobs/create',
+    url: '/titanpro/jobs/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 CreateJob.url = (options?: RouteQueryOptions) => {
     return CreateJob.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateJob.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 CreateJob.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateJob.url(options),
@@ -36,7 +36,7 @@ CreateJob.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 CreateJob.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateJob.url(options),
@@ -46,7 +46,7 @@ CreateJob.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 const CreateJobForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJob.url(options),
@@ -56,7 +56,7 @@ const CreateJobForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 CreateJobForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJob.url(options),
@@ -66,7 +66,7 @@ CreateJobForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 /**
 * @see \App\Filament\Resources\JobResource\Pages\CreateJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/CreateJob.php:7
-* @route '/admin/jobs/create'
+* @route '/titanpro/jobs/create'
 */
 CreateJobForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJob.url({

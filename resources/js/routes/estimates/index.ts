@@ -100,7 +100,7 @@ publicMethod.form = publicMethodForm
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::accept
-* @see app/Http/Controllers/PublicEstimateController.php:29
+* @see app/Http/Controllers/PublicEstimateController.php:31
 * @route '/estimates/{token}/accept'
 */
 export const accept = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ accept.definition = {
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::accept
-* @see app/Http/Controllers/PublicEstimateController.php:29
+* @see app/Http/Controllers/PublicEstimateController.php:31
 * @route '/estimates/{token}/accept'
 */
 accept.url = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -142,7 +142,7 @@ accept.url = (args: { token: string | number } | [token: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::accept
-* @see app/Http/Controllers/PublicEstimateController.php:29
+* @see app/Http/Controllers/PublicEstimateController.php:31
 * @route '/estimates/{token}/accept'
 */
 accept.post = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -152,7 +152,7 @@ accept.post = (args: { token: string | number } | [token: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::accept
-* @see app/Http/Controllers/PublicEstimateController.php:29
+* @see app/Http/Controllers/PublicEstimateController.php:31
 * @route '/estimates/{token}/accept'
 */
 const acceptForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -162,7 +162,7 @@ const acceptForm = (args: { token: string | number } | [token: string | number ]
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::accept
-* @see app/Http/Controllers/PublicEstimateController.php:29
+* @see app/Http/Controllers/PublicEstimateController.php:31
 * @route '/estimates/{token}/accept'
 */
 acceptForm.post = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -174,7 +174,7 @@ accept.form = acceptForm
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::decline
-* @see app/Http/Controllers/PublicEstimateController.php:54
+* @see app/Http/Controllers/PublicEstimateController.php:58
 * @route '/estimates/{token}/decline'
 */
 export const decline = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -189,7 +189,7 @@ decline.definition = {
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::decline
-* @see app/Http/Controllers/PublicEstimateController.php:54
+* @see app/Http/Controllers/PublicEstimateController.php:58
 * @route '/estimates/{token}/decline'
 */
 decline.url = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -216,7 +216,7 @@ decline.url = (args: { token: string | number } | [token: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::decline
-* @see app/Http/Controllers/PublicEstimateController.php:54
+* @see app/Http/Controllers/PublicEstimateController.php:58
 * @route '/estimates/{token}/decline'
 */
 decline.post = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -226,7 +226,7 @@ decline.post = (args: { token: string | number } | [token: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::decline
-* @see app/Http/Controllers/PublicEstimateController.php:54
+* @see app/Http/Controllers/PublicEstimateController.php:58
 * @route '/estimates/{token}/decline'
 */
 const declineForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -236,7 +236,7 @@ const declineForm = (args: { token: string | number } | [token: string | number 
 
 /**
 * @see \App\Http\Controllers\PublicEstimateController::decline
-* @see app/Http/Controllers/PublicEstimateController.php:54
+* @see app/Http/Controllers/PublicEstimateController.php:58
 * @route '/estimates/{token}/decline'
 */
 declineForm.post = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

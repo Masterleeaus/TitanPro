@@ -19,6 +19,11 @@ class DispatchBoard extends Page
 
     protected static ?int $navigationSort = 5;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected string $view = 'filament.groundzero.pages.dispatch-board';
 
     public function getActiveJobs(): Collection

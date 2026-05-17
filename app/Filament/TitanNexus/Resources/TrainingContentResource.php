@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Filament\TitanNexus\Resources;
+
+use App\Filament\TitanNexus\Resources\TrainingContentResource\Pages;
+use App\Models\TitanNexus\NexusTrainingContent;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class TrainingContentResource extends Resource
+{
+    protected static ?string $model = NexusTrainingContent::class;
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Delivery Readiness';
+
+    protected static ?string $navigationLabel = 'Training Content';
+
+    protected static ?string $modelLabel = 'Training Content';
+
+    protected static ?string $pluralModelLabel = 'Training Content';
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
+                TextInput::make('title')->label('Title')->maxLength(255),
+                TextInput::make('vertical')->label('Service Vertical')->maxLength(255),
+                Select::make('status')->label('Status')->options(['draft'=>'Draft','new'=>'New','active'=>'Active','pending'=>'Pending','contacted'=>'Contacted','qualified'=>'Qualified','booked'=>'Booked','closed'=>'Closed','inactive'=>'Inactive'])->default('new'),
+                Textarea::make('content')->label('Instructions / Details')->rows(8)->columnSpanFull(),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('id')->label('Id')->searchable()->sortable()->toggleable(),
+                TextColumn::make('title')->label('Title')->searchable()->sortable()->toggleable(),
+                TextColumn::make('vertical')->label('Vertical')->searchable()->sortable()->toggleable(),
+                TextColumn::make('status')->badge()->searchable()->sortable(),
+                TextColumn::make('created_at')->label('Created At')->dateTime()->sortable()->toggleable(),
+            ])
+            ->defaultSort('id', 'desc');
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListTrainingContent::route('/'),
+            'create' => Pages\CreateTrainingContent::route('/create'),
+            'edit' => Pages\EditTrainingContent::route('/{record}/edit'),
+        ];
+    }
+}

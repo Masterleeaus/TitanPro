@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 const EditItem = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditItem.url(args, options),
@@ -11,13 +11,13 @@ const EditItem = (args: { record: string | number } | [record: string | number ]
 
 EditItem.definition = {
     methods: ["get","head"],
-    url: '/admin/items/{record}/edit',
+    url: '/titanpro/items/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 EditItem.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditItem.url = (args: { record: string | number } | [record: string | number ] |
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 EditItem.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditItem.url(args, options),
@@ -54,7 +54,7 @@ EditItem.get = (args: { record: string | number } | [record: string | number ] |
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 EditItem.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditItem.url(args, options),
@@ -64,7 +64,7 @@ EditItem.head = (args: { record: string | number } | [record: string | number ] 
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 const EditItemForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditItem.url(args, options),
@@ -74,7 +74,7 @@ const EditItemForm = (args: { record: string | number } | [record: string | numb
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 EditItemForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditItem.url(args, options),
@@ -84,7 +84,7 @@ EditItemForm.get = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\EditItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/EditItem.php:7
-* @route '/admin/items/{record}/edit'
+* @route '/titanpro/items/{record}/edit'
 */
 EditItemForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditItem.url(args, {

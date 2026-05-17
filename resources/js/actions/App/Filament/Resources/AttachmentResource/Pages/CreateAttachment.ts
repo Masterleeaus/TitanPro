@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 const CreateAttachment = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateAttachment.url(options),
@@ -11,13 +11,13 @@ const CreateAttachment = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 CreateAttachment.definition = {
     methods: ["get","head"],
-    url: '/admin/attachments/create',
+    url: '/titanpro/attachments/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 CreateAttachment.url = (options?: RouteQueryOptions) => {
     return CreateAttachment.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateAttachment.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 CreateAttachment.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateAttachment.url(options),
@@ -36,7 +36,7 @@ CreateAttachment.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 CreateAttachment.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateAttachment.url(options),
@@ -46,7 +46,7 @@ CreateAttachment.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 const CreateAttachmentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateAttachment.url(options),
@@ -56,7 +56,7 @@ const CreateAttachmentForm = (options?: RouteQueryOptions): RouteFormDefinition<
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 CreateAttachmentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateAttachment.url(options),
@@ -66,7 +66,7 @@ CreateAttachmentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\CreateAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/CreateAttachment.php:7
-* @route '/admin/attachments/create'
+* @route '/titanpro/attachments/create'
 */
 CreateAttachmentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateAttachment.url({

@@ -1,0 +1,10 @@
+{
+  "channels": [
+    "web",
+    "api",
+    "filament"
+  ],
+  "events": [
+    "example.created"
+  ]
+}

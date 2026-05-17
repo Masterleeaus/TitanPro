@@ -6,6 +6,11 @@
     RewriteEngine On
 
     # Handle Authorization MemberHeader
+
+    # Force dynamic Filament/PWA routes through Laravel even when matching
+    # folders exist under /public (for example public/titango assets).
+    # This prevents /titango from being internally served as /public/titango.
+    RewriteRule ^titango(?:/.*)?$ /public/index.php [L,QSA]
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 

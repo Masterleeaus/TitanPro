@@ -39,6 +39,13 @@ class ZeroFussPanelProvider extends PanelProvider
             ])
             ->plugins([
                 ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Shreejan\DashArrange\DashArrangePlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroFuss/Resources'), for: 'App\\Filament\\ZeroFuss\\Resources')
             ->discoverPages(in: app_path('Filament/ZeroFuss/Pages'), for: 'App\\Filament\\ZeroFuss\\Pages')
@@ -63,7 +70,7 @@ class ZeroFussPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiOverrideSsrHook())
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

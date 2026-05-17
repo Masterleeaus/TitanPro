@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 const EditCustomer = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCustomer.url(args, options),
@@ -11,13 +11,13 @@ const EditCustomer = (args: { record: string | number } | [record: string | numb
 
 EditCustomer.definition = {
     methods: ["get","head"],
-    url: '/admin/customers/{record}/edit',
+    url: '/titanpro/customers/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 EditCustomer.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditCustomer.url = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 EditCustomer.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCustomer.url(args, options),
@@ -54,7 +54,7 @@ EditCustomer.get = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 EditCustomer.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditCustomer.url(args, options),
@@ -64,7 +64,7 @@ EditCustomer.head = (args: { record: string | number } | [record: string | numbe
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 const EditCustomerForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, options),
@@ -74,7 +74,7 @@ const EditCustomerForm = (args: { record: string | number } | [record: string | 
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 EditCustomerForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, options),
@@ -84,7 +84,7 @@ EditCustomerForm.get = (args: { record: string | number } | [record: string | nu
 /**
 * @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
-* @route '/admin/customers/{record}/edit'
+* @route '/titanpro/customers/{record}/edit'
 */
 EditCustomerForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, {

@@ -19,7 +19,6 @@ use App\Services\TwilioSmsService;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use LaraZeus\DynamicDashboard\Models\Layout;
@@ -69,34 +68,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(JobCreated::class, SendJobConfirmationEmail::class);
         Event::listen(JobCreated::class, SendJobConfirmationSms::class);
         Event::listen(JobStatusChanged::class, SendJobStatusMessages::class);
-        Event::listen(JobStatusChanged::class, function (JobStatusChanged $event): void {
-            if (! class_exists(\App\Extensions\TitanPulse\Services\SignalBus\SignalEmitter::class)) {
-                return;
-            }
-
-            try {
-                \App\Extensions\TitanPulse\Services\SignalBus\SignalEmitter::emit(
-                    'work.job.status_changed',
-                    'field_job',
-                    $event->job->id,
-                    [
-                        'old_status' => $event->oldStatus,
-                        'new_status' => $event->newStatus,
-                        'job_id' => $event->job->id,
-                    ],
-                    [
-                        'team_id' => $event->job->organization_id,
-                        'company_id' => $event->job->organization_id,
-                        'source' => 'app.job-status',
-                    ],
-                );
-            } catch (\Throwable $e) {
-                Log::warning('Failed to emit TitanPulse job status signal', [
-                    'job_id' => $event->job->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        });
         Event::listen(JobFailed::class, AlertOnFailedMailJob::class);
 
         if (class_exists(FilamentCMS::class)

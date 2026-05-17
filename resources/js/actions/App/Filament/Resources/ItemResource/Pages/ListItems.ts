@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 const ListItems = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListItems.url(options),
@@ -11,13 +11,13 @@ const ListItems = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListItems.definition = {
     methods: ["get","head"],
-    url: '/admin/items',
+    url: '/titanpro/items',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 ListItems.url = (options?: RouteQueryOptions) => {
     return ListItems.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListItems.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 ListItems.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListItems.url(options),
@@ -36,7 +36,7 @@ ListItems.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 ListItems.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListItems.url(options),
@@ -46,7 +46,7 @@ ListItems.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 const ListItemsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListItems.url(options),
@@ -56,7 +56,7 @@ const ListItemsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 ListItemsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListItems.url(options),
@@ -66,7 +66,7 @@ ListItemsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\ListItems::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/ListItems.php:7
-* @route '/admin/items'
+* @route '/titanpro/items'
 */
 ListItemsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListItems.url({

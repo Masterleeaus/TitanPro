@@ -18,6 +18,11 @@ class CalendarPage extends Page
 
     protected static ?int $navigationSort = 10;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected string $view = 'filament.groundzero.pages.calendar';
 
     public function getUpcomingJobs(): Collection

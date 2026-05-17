@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 const ListJobMessages = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobMessages.url(options),
@@ -11,13 +11,13 @@ const ListJobMessages = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 ListJobMessages.definition = {
     methods: ["get","head"],
-    url: '/admin/job-messages',
+    url: '/titanpro/job-messages',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 ListJobMessages.url = (options?: RouteQueryOptions) => {
     return ListJobMessages.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListJobMessages.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 ListJobMessages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobMessages.url(options),
@@ -36,7 +36,7 @@ ListJobMessages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 ListJobMessages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListJobMessages.url(options),
@@ -46,7 +46,7 @@ ListJobMessages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 const ListJobMessagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobMessages.url(options),
@@ -56,7 +56,7 @@ const ListJobMessagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 ListJobMessagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobMessages.url(options),
@@ -66,7 +66,7 @@ ListJobMessagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\ListJobMessages::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/ListJobMessages.php:7
-* @route '/admin/job-messages'
+* @route '/titanpro/job-messages'
 */
 ListJobMessagesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobMessages.url({

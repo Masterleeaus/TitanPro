@@ -53,10 +53,10 @@ return [
     |--------------------------------------------------------------------------
     */
     'navigation' => [
-        'group' => 'Settings',
+        'group' => 'Appearance',
         'icon'  => 'heroicon-o-bars-3',
-        'sort'  => 99,
-        'label' => 'Menu Manager',
+        'sort'  => 20,
+        'label' => 'Menus',
     ],
 
     /*

@@ -1,5 +1,206 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+export const alias = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: alias.url(options),
+    method: 'get',
+})
+
+alias.definition = {
+    methods: ["get","head","post","put","patch","delete","options"],
+    url: '/owner/estimates',
+} satisfies RouteDefinition<["get","head","post","put","patch","delete","options"]>
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.url = (options?: RouteQueryOptions) => {
+    return alias.definition.url + queryParams(options)
+}
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: alias.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: alias.url(options),
+    method: 'head',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: alias.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: alias.url(options),
+    method: 'put',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: alias.url(options),
+    method: 'patch',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: alias.url(options),
+    method: 'delete',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+alias.options = (options?: RouteQueryOptions): RouteDefinition<'options'> => ({
+    url: alias.url(options),
+    method: 'options',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+const aliasForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: alias.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: alias.url(options),
+    method: 'get',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: alias.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: alias.url(options),
+    method: 'post',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: alias.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.patch = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: alias.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: alias.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Illuminate\Routing\RedirectController::__invoke
+* @see vendor/laravel/framework/src/Illuminate/Routing/RedirectController.php:19
+* @route '/owner/estimates'
+*/
+aliasForm.options = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: alias.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'OPTIONS',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+alias.form = aliasForm
+
+/**
 * @see \App\Http\Controllers\Owner\EstimateController::index
 * @see app/Http/Controllers/Owner/EstimateController.php:22
 * @route '/owner/estimates'
@@ -544,7 +745,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 export const destroy = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -559,7 +760,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroy.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -592,7 +793,7 @@ destroy.url = (args: { estimate: number | { id: number } } | [estimate: number |
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroy.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -602,7 +803,7 @@ destroy.delete = (args: { estimate: number | { id: number } } | [estimate: numbe
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 const destroyForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -617,7 +818,7 @@ const destroyForm = (args: { estimate: number | { id: number } } | [estimate: nu
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroyForm.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -793,6 +994,7 @@ convertForm.post = (args: { estimate: number | { id: number } } | [estimate: num
 convert.form = convertForm
 
 const estimates = {
+    alias: Object.assign(alias, alias),
     index: Object.assign(index, index),
     create: Object.assign(create, create),
     store: Object.assign(store, store),
