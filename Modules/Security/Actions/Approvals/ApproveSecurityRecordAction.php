@@ -25,8 +25,7 @@ class ApproveSecurityRecordAction
             DB::transaction(function () use ($record, $user, $approvalColumn, $approvedByColumn): void {
                 $record->setAttribute($approvalColumn, true);
 
-                if ($approvedByColumn && $user && $record->isFillable($approvedByColumn) === false) {
-                    // Existing module models use guarded fields, so set directly when the column exists.
+                if ($approvedByColumn && $user) {
                     $record->setAttribute($approvedByColumn, $user->id ?? null);
                 }
 
