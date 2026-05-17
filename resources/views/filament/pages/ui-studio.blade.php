@@ -366,13 +366,13 @@
                                     <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Diff view</p>
                                     <div class="grid grid-cols-2 gap-2">
                                         <select wire:model.live="diffFromVersion" class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300">
-                                            <option value="">From version</option>
+                                            <option value="">From version (older)</option>
                                             @foreach ($themeVersions as $version)
                                                 <option value="{{ $version['version_number'] }}">v{{ $version['version_number'] }}</option>
                                             @endforeach
                                         </select>
                                         <select wire:model.live="diffToVersion" class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300">
-                                            <option value="">To version</option>
+                                            <option value="">To version (newer)</option>
                                             @foreach ($themeVersions as $version)
                                                 <option value="{{ $version['version_number'] }}">v{{ $version['version_number'] }}</option>
                                             @endforeach

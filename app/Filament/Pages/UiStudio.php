@@ -1592,8 +1592,8 @@ class UiStudio extends Page
         ])->values()->all();
 
         if (count($this->themeVersions) >= 2) {
-            $this->diffFromVersion = $this->themeVersions[0]['version_number'];
-            $this->diffToVersion = $this->themeVersions[1]['version_number'];
+            $this->diffFromVersion = $this->themeVersions[1]['version_number'];
+            $this->diffToVersion = $this->themeVersions[0]['version_number'];
             $this->refreshVersionDiff();
         }
     }
