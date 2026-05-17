@@ -72,10 +72,19 @@
         @endif
 
         <!-- Scripts -->
-        @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
+        @php
+            $viteManifestExists = file_exists(public_path('build/manifest.json'));
+        @endphp
+        @if ($viteManifestExists)
+            @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
+        @else
+            <style>body:before{content:'Titan assets are not built yet. Run npm install && npm run build, then clear Laravel caches.';display:block;background:#7f1d1d;color:white;padding:12px;font-family:Arial,sans-serif}</style>
+        @endif
         @inertiaHead
-    </head>
+        @includeIf('vendor.filament.theme-presets')
+</head>
     <body class="font-sans antialiased">
         @inertia
+        <noscript><div style="padding:16px;background:#7f1d1d;color:white;font-family:Arial,sans-serif">JavaScript is required. If this page is blank, check /titan-rescue.php and confirm public/build/manifest.json exists.</div></noscript>
     </body>
 </html>

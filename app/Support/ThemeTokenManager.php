@@ -140,6 +140,82 @@ class ThemeTokenManager
         ])->save();
     }
 
+    public function responsiveEditorState(?PlatformSetting $settings = null, ?string $panel = null): array
+    {
+        $definitions = [
+            '--sidebar-width' => ['desktop' => '280px', 'tablet' => '220px', 'mobile' => '64px'],
+            '--content-gap' => ['desktop' => '24px', 'tablet' => '20px', 'mobile' => '12px'],
+            '--card-padding' => ['desktop' => '24px', 'tablet' => '18px', 'mobile' => '12px'],
+            '--heading-xl-size' => ['desktop' => '32px', 'tablet' => '28px', 'mobile' => '22px'],
+            '--heading-lg-size' => ['desktop' => '24px', 'tablet' => '22px', 'mobile' => '18px'],
+            '--body-font-size' => ['desktop' => '16px', 'tablet' => '15px', 'mobile' => '14px'],
+            '--table-cell-padding-x' => ['desktop' => '16px', 'tablet' => '12px', 'mobile' => '8px'],
+        ];
+
+        $state = [];
+
+        foreach (['desktop', 'tablet', 'mobile'] as $breakpoint) {
+            foreach ($definitions as $token => $values) {
+                $state[$breakpoint][$token] = $values[$breakpoint] ?? $values['desktop'];
+            }
+        }
+
+        if (! $this->canUseLaravel() || ! Schema::hasTable('titan_theme_tokens')) {
+            return $state;
+        }
+
+        $normalizedPanel = $this->normalizePanel($panel);
+        $rows = TitanThemeToken::query()
+            ->where('panel', $normalizedPanel)
+            ->whereIn('scope', ['responsive:desktop', 'responsive:tablet', 'responsive:mobile'])
+            ->get(['scope', 'key', 'value']);
+
+        foreach ($rows as $row) {
+            $breakpoint = Str::after((string) $row->scope, 'responsive:');
+            if (isset($state[$breakpoint][$row->key])) {
+                $state[$breakpoint][$row->key] = $this->sanitizeLengthToken((string) $row->value, $state[$breakpoint][$row->key]);
+            }
+        }
+
+        return $state;
+    }
+
+    public function saveResponsiveOverrides(array $state, array $definitions, ?string $panel = null): void
+    {
+        if (! Schema::hasTable('titan_theme_tokens')) {
+            return;
+        }
+
+        $timestamp = now();
+        $normalizedPanel = $this->normalizePanel($panel);
+        $rows = [];
+
+        foreach (['desktop', 'tablet', 'mobile'] as $breakpoint) {
+            foreach ($definitions as $token => $definition) {
+                $fallback = (string) ($definition[$breakpoint] ?? $definition['desktop'] ?? '0px');
+                $rows[] = [
+                    'panel' => $normalizedPanel,
+                    'scope' => 'responsive:' . $breakpoint,
+                    'key' => $token,
+                    'value' => $this->sanitizeLengthToken((string) ($state[$breakpoint][$token] ?? $fallback), $fallback),
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
+                ];
+            }
+        }
+
+        TitanThemeToken::query()->upsert($rows, ['panel', 'scope', 'key'], ['value', 'updated_at']);
+    }
+
+    private function sanitizeLengthToken(string $value, string $fallback): string
+    {
+        $value = trim($value);
+
+        return preg_match('/^-?\d+(?:\.\d+)?(px|rem|em|%)$/', $value) === 1
+            ? $value
+            : $fallback;
+    }
+
     public function css(?PlatformSetting $settings = null, ?string $panel = null): string
     {
         $tokens = $this->load($settings, $panel);
@@ -152,6 +228,22 @@ class ThemeTokenManager
         }
 
         $lines[] = '}';
+
+        foreach ($this->responsiveEditorState($settings, $panel) as $breakpoint => $values) {
+            $query = match ($breakpoint) {
+                'mobile' => '@media (max-width: 639px)',
+                'tablet' => '@media (min-width: 640px) and (max-width: 1199px)',
+                default => '@media (min-width: 1200px)',
+            };
+
+            $lines[] = $query . ' {';
+            $lines[] = '  :root {';
+            foreach ($values as $key => $value) {
+                $lines[] = sprintf('    %s: %s;', $key, $value);
+            }
+            $lines[] = '  }';
+            $lines[] = '}';
+        }
 
         return implode("\n", $lines);
     }

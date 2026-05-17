@@ -2,8 +2,12 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\UiStudio;
-use App\Filament\GroundZero\Widgets\JobsByStatusChartWidget;
+use App\Filament\GroundZero\Pages\Actions;
+use App\Filament\GroundZero\Pages\Agents;
+use App\Filament\GroundZero\Pages\Dashboard;
+use App\Filament\GroundZero\Pages\Memory;
+use App\Filament\GroundZero\Pages\Timeline;
+use App\Filament\GroundZero\Pages\TitanWorkControlPanel;
 use App\Http\Middleware\CheckSubscription;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Support\OrganizationBrandingResolver;
@@ -11,11 +15,9 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -47,22 +49,24 @@ class GroundZeroPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
-                    'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
-                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Shreejan\DashArrange\DashArrangePlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                 ]),
             ])
-            ->discoverResources(in: app_path('Filament/GroundZero/Resources'), for: 'App\\Filament\\GroundZero\\Resources')
-            ->discoverPages(in: app_path('Filament/GroundZero/Pages'), for: 'App\\Filament\\GroundZero\\Pages')
             ->pages([
-                Pages\Dashboard::class,
-                UiStudio::class,
+                Dashboard::class,
+                TitanWorkControlPanel::class,
+                Timeline::class,
+                Agents::class,
+                Memory::class,
+                Actions::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/GroundZero/Widgets'), for: 'App\\Filament\\GroundZero\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                JobsByStatusChartWidget::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -78,7 +82,7 @@ class GroundZeroPanelProvider extends PanelProvider
                 Authenticate::class,
                 CheckSubscription::class,
             ])
-            ->renderHook(...$this->uiOverrideSsrHook())
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

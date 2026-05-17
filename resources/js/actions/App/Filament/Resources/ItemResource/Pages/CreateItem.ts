@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 const CreateItem = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateItem.url(options),
@@ -11,13 +11,13 @@ const CreateItem = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 CreateItem.definition = {
     methods: ["get","head"],
-    url: '/admin/items/create',
+    url: '/titanpro/items/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 CreateItem.url = (options?: RouteQueryOptions) => {
     return CreateItem.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateItem.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 CreateItem.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateItem.url(options),
@@ -36,7 +36,7 @@ CreateItem.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 CreateItem.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateItem.url(options),
@@ -46,7 +46,7 @@ CreateItem.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 const CreateItemForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateItem.url(options),
@@ -56,7 +56,7 @@ const CreateItemForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 CreateItemForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateItem.url(options),
@@ -66,7 +66,7 @@ CreateItemForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 /**
 * @see \App\Filament\Resources\ItemResource\Pages\CreateItem::__invoke
 * @see app/Filament/Resources/ItemResource/Pages/CreateItem.php:7
-* @route '/admin/items/create'
+* @route '/titanpro/items/create'
 */
 CreateItemForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateItem.url({

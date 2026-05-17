@@ -1,0 +1,18 @@
+{
+  "type": "delta-only",
+  "files": [
+    "THEME_RUNTIME_CONTRACT_COMPLETE_README.md",
+    "app/Support/ThemeRuntime.php",
+    "theme_runtime_contract_complete_cleanup.sh"
+  ],
+  "handle_appearance_file": "app/Http/Middleware/HandleAppearance.php",
+  "theme_runtime_methods_called_by_handle_appearance": [
+    "activeThemeManifest",
+    "activeThemeSlug",
+    "assetUrls",
+    "diagnostics"
+  ],
+  "fixes": [
+    "ThemeRuntime::diagnostics"
+  ]
+}

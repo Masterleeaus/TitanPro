@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 const ListDealProjects = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListDealProjects.url(options),
@@ -11,13 +11,13 @@ const ListDealProjects = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 ListDealProjects.definition = {
     methods: ["get","head"],
-    url: '/admin/deal-projects',
+    url: '/titanpro/deal-projects',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 ListDealProjects.url = (options?: RouteQueryOptions) => {
     return ListDealProjects.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListDealProjects.url = (options?: RouteQueryOptions) => {
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 ListDealProjects.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListDealProjects.url(options),
@@ -36,7 +36,7 @@ ListDealProjects.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 ListDealProjects.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListDealProjects.url(options),
@@ -46,7 +46,7 @@ ListDealProjects.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 const ListDealProjectsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDealProjects.url(options),
@@ -56,7 +56,7 @@ const ListDealProjectsForm = (options?: RouteQueryOptions): RouteFormDefinition<
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 ListDealProjectsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDealProjects.url(options),
@@ -66,7 +66,7 @@ ListDealProjectsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\ListDealProjects::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/ListDealProjects.php:7
-* @route '/admin/deal-projects'
+* @route '/titanpro/deal-projects'
 */
 ListDealProjectsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDealProjects.url({

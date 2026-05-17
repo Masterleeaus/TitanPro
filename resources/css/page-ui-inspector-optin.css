@@ -1,0 +1,7 @@
+/* Safe placeholder for PAGE UI inspector opt-in CSS. */
+html:not(.page-ui-edit-enabled) [data-ui-inspector],
+html:not(.page-ui-edit-enabled) [data-page-ui-settings],
+html:not(.page-ui-edit-enabled) .ui-inspector-panel,
+html:not(.page-ui-edit-enabled) .page-ui-settings {
+    display: none !important;
+}

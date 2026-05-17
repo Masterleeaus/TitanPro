@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 const EditOrganizationSetting = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditOrganizationSetting.url(args, options),
@@ -11,13 +11,13 @@ const EditOrganizationSetting = (args: { record: string | number } | [record: st
 
 EditOrganizationSetting.definition = {
     methods: ["get","head"],
-    url: '/admin/organization-settings/{record}/edit',
+    url: '/titanpro/organization-settings/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 EditOrganizationSetting.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditOrganizationSetting.url = (args: { record: string | number } | [record: stri
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 EditOrganizationSetting.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditOrganizationSetting.url(args, options),
@@ -54,7 +54,7 @@ EditOrganizationSetting.get = (args: { record: string | number } | [record: stri
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 EditOrganizationSetting.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditOrganizationSetting.url(args, options),
@@ -64,7 +64,7 @@ EditOrganizationSetting.head = (args: { record: string | number } | [record: str
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 const EditOrganizationSettingForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditOrganizationSetting.url(args, options),
@@ -74,7 +74,7 @@ const EditOrganizationSettingForm = (args: { record: string | number } | [record
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 EditOrganizationSettingForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditOrganizationSetting.url(args, options),
@@ -84,7 +84,7 @@ EditOrganizationSettingForm.get = (args: { record: string | number } | [record: 
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\EditOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/EditOrganizationSetting.php:7
-* @route '/admin/organization-settings/{record}/edit'
+* @route '/titanpro/organization-settings/{record}/edit'
 */
 EditOrganizationSettingForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditOrganizationSetting.url(args, {

@@ -2,36 +2,49 @@
     @vite('resources/js/filament/ui-studio.js')
 
     {{--
-        UI Studio — split-screen visual design surface.
+        UI Studio <span class="ml-2 rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-bold text-white">PASS51 STACKED</span> — split-screen visual design surface.
         Left  : controls (component tree + property editor)
         Right : live sandboxed panel preview
     --}}
 
     <style>
         .ui-studio-shell {
-            display: grid;
-            grid-template-columns: minmax(220px, 16fr) minmax(260px, 24fr) minmax(420px, 60fr);
-            grid-template-areas: "catalogue editor preview";
-            grid-template-rows: 1fr;
-            height: calc(100vh - 10rem);
-            min-height: 520px;
-            overflow: hidden;
+            /* PASS51: force one editor panel per row */
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) !important;
+            grid-template-areas:
+                "catalogue"
+                "editor"
+                "preview" !important;
+            grid-template-rows: auto auto auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            gap: 1rem !important;
             border-radius: 0.75rem;
             border: 1px solid rgba(0,0,0,0.08);
         }
         @media (max-width: 1024px) {
-            .ui-studio-shell { grid-template-columns: 1fr; grid-template-areas: "catalogue" "editor" "preview"; grid-template-rows: auto auto auto; height: auto; }
+            .ui-studio-shell {
+                grid-template-columns: minmax(0, 1fr) !important;
+                grid-template-areas: "catalogue" "editor" "preview" !important;
+                grid-template-rows: auto auto auto !important;
+                height: auto !important;
+            }
         }
         .studio-panel {
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow-y: visible !important;
+            overflow-x: hidden !important;
+            min-width: 0 !important;
+            width: 100% !important;
         }
         .ui-studio-catalogue-panel { grid-area: catalogue; }
         .ui-studio-editor-panel { grid-area: editor; }
         .ui-studio-preview-panel { grid-area: preview; }
         .ui-preview-frame {
             width: 100%;
-            height: 100%;
+            min-height: 720px;
+            height: 72vh;
             border: 0;
             background: white;
         }
@@ -39,15 +52,21 @@
             width: 100%;
             max-width: 100%;
             margin: 0 auto;
-            height: 100%;
+            min-height: 720px;
+            height: auto;
             border-radius: 0.75rem;
             overflow: hidden;
             border: 1px solid rgba(148, 163, 184, 0.5);
             transition: max-width 0.2s ease;
         }
-        .ui-preview-shell[data-frame="desktop"] { max-width: 100%; }
-        .ui-preview-shell[data-frame="tablet"] { max-width: 820px; }
-        .ui-preview-shell[data-frame="mobile"] { max-width: 430px; }
+        .ui-preview-shell[data-frame="desktop"] { --ui-preview-width: 1440px; }
+        .ui-preview-shell[data-frame="tablet"] { --ui-preview-width: 1024px; }
+        .ui-preview-shell[data-frame="mobile"] { --ui-preview-width: 390px; }
+        .ui-preview-shell[data-frame="collapsed"] { --ui-preview-width: 1440px; }
+        .ui-preview-shell[data-frame="customer"] { --ui-preview-width: 390px; }
+        .ui-preview-shell[data-frame="mobile"],
+        .ui-preview-shell[data-frame="customer"] { min-width: 390px; }
+        .ui-preview-frame { min-width: 0; }
     </style>
 
     <div class="ui-studio-shell bg-white dark:bg-gray-900 shadow-sm">
@@ -138,17 +157,19 @@
                                 <option value="{{ $panelId }}">{{ $panelMeta['label'] ?? $panelId }}</option>
                             @endforeach
                         </select>
-                        <div class="inline-flex rounded-md border border-gray-200 dark:border-white/10 overflow-hidden">
-                            @foreach (['desktop' => 'Desktop', 'tablet' => 'Tablet', 'mobile' => 'Mobile'] as $frameSize => $label)
+                        <div class="inline-flex rounded-md border border-gray-200 dark:border-white/10 overflow-hidden" title="Device frame switcher">
+                            @foreach ($this->previewModes() as $frameSize => $mode)
                                 <button
                                     type="button"
                                     wire:click="setPreviewFrameSize('{{ $frameSize }}')"
                                     class="px-2.5 py-1 text-[11px] {{ $previewFrameSize === $frameSize ? 'bg-primary-500 text-white' : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400' }}"
+                                    title="{{ $mode['description'] }}"
                                 >
-                                    {{ $label }}
+                                    {{ $mode['label'] }}
                                 </button>
                             @endforeach
                         </div>
+                        <span class="rounded bg-gray-100 dark:bg-white/5 px-2 py-1 text-[10px] font-mono text-gray-500">{{ $this->previewFrameWidth() }}px</span>
                         <label class="inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
                             <input type="checkbox" wire:model.live="syncPreviewScroll" class="rounded border-gray-300 dark:border-white/10" />
                             Sync scroll
@@ -179,8 +200,10 @@
                 id="ui-studio-preview-payload"
                 data-preview-url="{{ $this->previewPanelUrl() }}"
                 data-preview-frame="{{ $previewFrameSize }}"
+                data-preview-width="{{ $this->previewFrameWidth() }}"
                 data-sync-scroll="{{ $syncPreviewScroll ? '1' : '0' }}"
                 data-preview-css='@json($this->previewCssVariables())'
+                data-responsive-preview='@json($this->responsivePreviewPayload())'
                 hidden
             ></div>
         </main>
@@ -326,7 +349,9 @@
                                 </div>
                             </div>
                             <div class="h-8 rounded-md border border-dashed border-gray-200" style="background: {{ e($this->safeColor($surfaceColor)) }}"></div>
-                            @php($backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue))
+                            @php
+    $backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue);
+@endphp
                             @if ($backgroundPreviewStyle)
                                 <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ e($backgroundPreviewStyle) }}"></div>
                             @endif
@@ -336,8 +361,56 @@
 
                 {{-- ── Layout / Widget tab ─────────────────────────── --}}
                 @if ($activeTab === 'layout')
+                    <section class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Responsive Overrides</h4>
+                                <p class="mt-1 text-[10px] text-gray-400">Stored separately from base tokens and applied to the selected preview breakpoint.</p>
+                            </div>
+                            <div class="inline-flex overflow-hidden rounded-md border border-gray-200 dark:border-white/10">
+                                @foreach (['desktop' => 'Desktop', 'tablet' => 'Tablet', 'mobile' => 'Mobile'] as $breakpoint => $label)
+                                    <button
+                                        type="button"
+                                        wire:click="setActiveResponsiveBreakpoint('{{ $breakpoint }}')"
+                                        class="px-2 py-1 text-[10px] {{ $activeResponsiveBreakpoint === $breakpoint ? 'bg-primary-500 text-white' : 'bg-white dark:bg-gray-900 text-gray-500' }}"
+                                    >{{ $label }}</button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-2">
+                            @foreach ($this->responsiveTokenDefinitions() as $token => $definition)
+                                <label class="flex items-center justify-between gap-2 text-xs">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $definition['label'] }}</span>
+                                    <input
+                                        type="text"
+                                        value="{{ $responsiveTokens[$activeResponsiveBreakpoint][$token] ?? $definition[$activeResponsiveBreakpoint] ?? $definition['desktop'] }}"
+                                        wire:change="updateResponsiveToken('{{ $activeResponsiveBreakpoint }}', '{{ $token }}', $event.target.value)"
+                                        class="w-24 rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 font-mono text-[11px] text-gray-700 dark:text-gray-300"
+                                    />
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="rounded-md border border-dashed border-gray-300 dark:border-white/10 p-2">
+                            <p class="mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Small-screen table columns</p>
+                            @foreach (($responsiveTableColumns['resource_tables'] ?? []) as $column => $visible)
+                                <label class="mr-3 inline-flex items-center gap-1 text-[11px] text-gray-500">
+                                    <input
+                                        type="checkbox"
+                                        @checked($visible)
+                                        wire:change="updateResponsiveTableColumn('resource_tables', '{{ $column }}', $event.target.checked)"
+                                        class="rounded border-gray-300"
+                                    />
+                                    {{ $column }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </section>
                     @if ($selectedWidgetId !== null)
-                        @php($selectedWidget = collect($canvasWidgets)->firstWhere('id', $selectedWidgetId))
+                        @php
+    $selectedWidget = collect($canvasWidgets)->firstWhere('id', $selectedWidgetId);
+@endphp
                         @if ($selectedWidget)
                             <section>
                                 <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
@@ -371,7 +444,9 @@
                                     </div>
 
                                     {{-- ── Per-widget property fields ─────────────────── --}}
-                                    @php($widgetSchema = \App\Filament\Pages\UiStudio\WidgetPropertyRegistry::schema($selectedWidget['type']))
+                                    @php
+    $widgetSchema = \App\Filament\Pages\UiStudio\WidgetPropertyRegistry::schema($selectedWidget['type']);
+@endphp
                                     @if (count($widgetSchema) > 0)
                                         <div class="border-t border-gray-200 dark:border-white/10 pt-4 space-y-3">
                                             <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Properties</p>
@@ -675,7 +750,9 @@
                             <p class="text-xs">Click <strong class="text-gray-500">Style</strong> next to any component in the left panel to open it here.</p>
                         </div>
                     @else
-                        @php($componentDef = \App\Platform\Ui\ComponentRegistry::get($activeComponentKey))
+                        @php
+    $componentDef = \App\Platform\Ui\ComponentRegistry::get($activeComponentKey);
+@endphp
                         @if ($componentDef)
                             {{-- Component header --}}
                             <div class="flex items-center justify-between mb-1">
@@ -867,7 +944,9 @@
                                                 </div>
                                                 {{-- Star rating --}}
                                                 <div class="flex items-center gap-0.5 mt-1">
-                                                    @php($fullStars = (int) floor($theme['rating']); $hasHalf = ($theme['rating'] - $fullStars) >= 0.5)
+                                                    @php
+    $fullStars = (int) floor($theme['rating']); $hasHalf = ($theme['rating'] - $fullStars) >= 0.5;
+@endphp
                                                     @for ($i = 1; $i <= 5; $i++)
                                                         @if ($i <= $fullStars)
                                                             <span class="text-amber-400 text-[11px]">★</span>
@@ -1163,7 +1242,9 @@
                                         'surface_color'   => 'Surface',
                                         'sidebar_color'   => 'Sidebar',
                                     ] as $colorKey => $colorLabel)
-                                        @php($colorVal = $aiGeneratedTheme[$colorKey] ?? '#cccccc')
+                                        @php
+    $colorVal = $aiGeneratedTheme[$colorKey] ?? '#cccccc';
+@endphp
                                         <div class="text-center">
                                             <div
                                                 class="h-9 rounded-md border border-gray-200 dark:border-white/10 mb-1"
@@ -1332,9 +1413,20 @@
                                 var data = event.data || {};
                                 if (data.type !== 'titan-ui-theme-vars' || !data.payload) return;
                                 var root = document.documentElement;
-                                Object.keys(data.payload).forEach(function (key) {
-                                    root.style.setProperty(key, String(data.payload[key]));
+                                Object.keys(data.payload.vars || {}).forEach(function (key) {
+                                    root.style.setProperty(key, String(data.payload.vars[key]));
                                 });
+                                root.dataset.titanPreviewMode = data.payload.mode || 'desktop';
+                                document.body.classList.toggle('titan-preview-sidebar-collapsed', data.payload.mode === 'collapsed');
+                                document.body.classList.toggle('titan-preview-customer-portal', data.payload.mode === 'customer');
+
+                                var style = document.getElementById('titan-responsive-preview-style');
+                                if (!style) {
+                                    style = document.createElement('style');
+                                    style.id = 'titan-responsive-preview-style';
+                                    document.head.appendChild(style);
+                                }
+                                style.textContent = '\nhtml,body{max-width:100%;overflow-x:hidden;}\n.fi-sidebar{width:var(--sidebar-width,280px)!important;}\n.fi-section,.fi-card{padding:var(--card-padding,1rem)!important;}\n.fi-main,.fi-page{gap:var(--content-gap,1rem)!important;}\nh1,.fi-header-heading{font-size:var(--heading-xl-size,2rem)!important;}\nh2,.fi-section-header-heading{font-size:var(--heading-lg-size,1.5rem)!important;}\nbody{font-size:var(--body-font-size,16px)!important;}\ntable th,table td{padding-left:var(--table-cell-padding-x,.75rem)!important;padding-right:var(--table-cell-padding-x,.75rem)!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar{width:64px!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar span:not(.fi-badge){display:none!important;}\n@media(max-width:640px){.fi-ta-table{min-width:0!important;width:100%!important}.fi-ta-table th:nth-child(1),.fi-ta-table td:nth-child(1),.fi-ta-table th:nth-child(4),.fi-ta-table td:nth-child(4){display:none!important}}';
                             });
                         })();
                     `;
@@ -1350,7 +1442,11 @@
                     iframe.contentWindow?.postMessage(
                         {
                             type: 'titan-ui-theme-vars',
-                            payload: vars,
+                            payload: {
+                                vars,
+                                mode: payload.dataset.previewFrame ?? 'desktop',
+                                width: payload.dataset.previewWidth ?? '1440',
+                            },
                         },
                         window.location.origin
                     );
@@ -1412,11 +1508,13 @@
             const applyState = () => {
                 const nextUrl = payload.dataset.previewUrl ?? '';
                 const nextFrame = payload.dataset.previewFrame ?? 'desktop';
+                const nextWidth = payload.dataset.previewWidth ?? '1440';
                 syncScrollEnabled = payload.dataset.syncScroll === '1';
 
                 const shell = iframe.closest('.ui-preview-shell');
                 if (shell) {
                     shell.dataset.frame = nextFrame;
+                    shell.style.setProperty('--ui-preview-width', `${nextWidth}px`);
                 }
 
                 if (nextUrl && iframe.src !== nextUrl) {
@@ -1443,7 +1541,7 @@
             const observer = new MutationObserver(applyState);
             observer.observe(payload, {
                 attributes: true,
-                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-sync-scroll', 'data-preview-css'],
+                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-preview-width', 'data-sync-scroll', 'data-preview-css'],
             });
 
             applyState();

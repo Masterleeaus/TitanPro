@@ -36,19 +36,23 @@ use Illuminate\Support\Str;
  */
 class UiStudio extends Page
 {
+    public string $customCss = '';
+    public string $previewMode = 'desktop';
+    public int $previewViewportWidth = 1440;
+
     use WithFileUploads;
 
     private const HEX_COLOR_REGEX = '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-swatch';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Platform';
+    protected static string|\UnitEnum|null $navigationGroup = 'Appearance';
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'UI Studio';
+    protected static ?string $navigationLabel = 'UI Manager';
 
-    protected static ?string $title = 'UI Studio';
+    protected static ?string $title = 'UI Manager';
 
     protected string $view = 'filament.pages.ui-studio';
 
@@ -161,8 +165,25 @@ class UiStudio extends Page
     /** Active panel id rendered in the live preview iframe. */
     public string $previewPanel = 'titanstudio';
 
-    /** Desktop | tablet | mobile frame width preset. */
+    /** Live Preview device/frame mode. */
     public string $previewFrameSize = 'desktop';
+
+    /** Breakpoint whose responsive token overrides are visible in the editor. */
+    public string $activeResponsiveBreakpoint = 'desktop';
+
+    /**
+     * Responsive token overrides, stored separately from base theme tokens.
+     *
+     * @var array<string, array<string, string>>
+     */
+    public array $responsiveTokens = [];
+
+    /**
+     * Per-table mobile visibility controls. Keys map to table/resource identifiers.
+     *
+     * @var array<string, array<string, bool>>
+     */
+    public array $responsiveTableColumns = [];
 
     /** Keep controls scroll aligned with preview scroll. */
     public bool $syncPreviewScroll = false;
@@ -214,6 +235,9 @@ class UiStudio extends Page
         $this->backgroundValue = $branding['background_value'] ?? null;
         $this->logoPath       = $this->storagePathFromUrl($branding['logo_url'] ?? null);
         $this->faviconPath    = $this->storagePathFromUrl($branding['favicon_url'] ?? null);
+
+        $this->responsiveTokens = app(ThemeTokenManager::class)->responsiveEditorState($settings);
+        $this->responsiveTableColumns = $this->loadResponsiveTableColumns();
 
         $this->widgetCatalogue = $this->buildWidgetCatalogue();
         $this->canvasWidgets   = $this->loadCanvasWidgets();
@@ -636,11 +660,146 @@ class UiStudio extends Page
 
     public function setPreviewFrameSize(string $size): void
     {
-        if (! in_array($size, ['desktop', 'tablet', 'mobile'], true)) {
+        if (! array_key_exists($size, $this->previewModes())) {
             return;
         }
 
         $this->previewFrameSize = $size;
+        $this->activeResponsiveBreakpoint = $this->breakpointForPreviewMode($size);
+    }
+
+    public function setActiveResponsiveBreakpoint(string $breakpoint): void
+    {
+        if (! in_array($breakpoint, ['desktop', 'tablet', 'mobile'], true)) {
+            return;
+        }
+
+        $this->activeResponsiveBreakpoint = $breakpoint;
+    }
+
+    public function updateResponsiveToken(string $breakpoint, string $token, string $value): void
+    {
+        if (! in_array($breakpoint, ['desktop', 'tablet', 'mobile'], true)) {
+            return;
+        }
+
+        if (! array_key_exists($token, $this->responsiveTokenDefinitions())) {
+            return;
+        }
+
+        $this->responsiveTokens[$breakpoint][$token] = $this->sanitizeResponsiveTokenValue($token, $value);
+    }
+
+    public function updateResponsiveTableColumn(string $table, string $column, bool $visible): void
+    {
+        $this->responsiveTableColumns[$table][$column] = $visible;
+    }
+
+    public function previewModes(): array
+    {
+        return [
+            'desktop' => ['label' => 'Desktop', 'width' => 1440, 'breakpoint' => 'desktop', 'description' => '1440px admin dashboard'],
+            'tablet' => ['label' => 'Tablet', 'width' => 1024, 'breakpoint' => 'tablet', 'description' => '1024px tablet view'],
+            'mobile' => ['label' => 'Mobile', 'width' => 390, 'breakpoint' => 'mobile', 'description' => '390px no-scroll mobile view'],
+            'collapsed' => ['label' => 'Collapsed sidebar', 'width' => 1440, 'breakpoint' => 'desktop', 'description' => '1440px with icon-only sidebar'],
+            'customer' => ['label' => 'Customer portal', 'width' => 390, 'breakpoint' => 'mobile', 'description' => 'Customer-facing portal simulation'],
+        ];
+    }
+
+    public function previewFrameWidth(): int
+    {
+        return (int) ($this->previewModes()[$this->previewFrameSize]['width'] ?? 1440);
+    }
+
+    public function responsiveTokenDefinitions(): array
+    {
+        return [
+            '--sidebar-width' => ['label' => 'Sidebar width', 'type' => 'length', 'desktop' => '280px', 'tablet' => '220px', 'mobile' => '64px'],
+            '--content-gap' => ['label' => 'Layout gap', 'type' => 'length', 'desktop' => '24px', 'tablet' => '20px', 'mobile' => '12px'],
+            '--card-padding' => ['label' => 'Card padding', 'type' => 'length', 'desktop' => '24px', 'tablet' => '18px', 'mobile' => '12px'],
+            '--heading-xl-size' => ['label' => 'Heading XL', 'type' => 'length', 'desktop' => '32px', 'tablet' => '28px', 'mobile' => '22px'],
+            '--heading-lg-size' => ['label' => 'Heading LG', 'type' => 'length', 'desktop' => '24px', 'tablet' => '22px', 'mobile' => '18px'],
+            '--body-font-size' => ['label' => 'Body font size', 'type' => 'length', 'desktop' => '16px', 'tablet' => '15px', 'mobile' => '14px'],
+            '--table-cell-padding-x' => ['label' => 'Table X padding', 'type' => 'length', 'desktop' => '16px', 'tablet' => '12px', 'mobile' => '8px'],
+        ];
+    }
+
+    private function breakpointForPreviewMode(string $mode): string
+    {
+        return (string) ($this->previewModes()[$mode]['breakpoint'] ?? 'desktop');
+    }
+
+    private function defaultResponsiveTableColumns(): array
+    {
+        return [
+            'resource_tables' => [
+                'id' => false,
+                'created_at' => false,
+                'updated_at' => false,
+                'status' => true,
+                'actions' => true,
+            ],
+        ];
+    }
+
+    private function loadResponsiveTableColumns(): array
+    {
+        $defaults = $this->defaultResponsiveTableColumns();
+
+        if (! Schema::hasTable('titan_theme_tokens')) {
+            return $defaults;
+        }
+
+        $stored = DB::table('titan_theme_tokens')
+            ->where('panel', 'global')
+            ->where('scope', 'responsive:tables')
+            ->where('key', 'resource_tables')
+            ->value('value');
+
+        if (! is_string($stored) || $stored === '') {
+            return $defaults;
+        }
+
+        $decoded = json_decode($stored, true);
+
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        return array_replace_recursive($defaults, $decoded);
+    }
+
+    private function saveResponsiveTableColumns(): void
+    {
+        if (! Schema::hasTable('titan_theme_tokens')) {
+            return;
+        }
+
+        DB::table('titan_theme_tokens')->updateOrInsert(
+            [
+                'panel' => 'global',
+                'scope' => 'responsive:tables',
+                'key' => 'resource_tables',
+            ],
+            [
+                'value' => json_encode($this->responsiveTableColumns, JSON_THROW_ON_ERROR),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+
+    private function sanitizeResponsiveTokenValue(string $token, string $value): string
+    {
+        $value = trim($value);
+
+        if (preg_match('/^-?\d+(?:\.\d+)?(px|rem|em|%)$/', $value) === 1) {
+            return $value;
+        }
+
+        $definition = $this->responsiveTokenDefinitions()[$token] ?? null;
+
+        return (string) ($definition[$this->activeResponsiveBreakpoint] ?? $definition['desktop'] ?? '0px');
     }
 
     public function previewPanelOptions(): array
@@ -652,6 +811,10 @@ class UiStudio extends Page
             return [];
         }
 
+        if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
+            return $panels;
+        }
+
         return array_filter(
             $panels,
             fn (array $panel): bool => empty($panel['roles']) || $user->hasAnyRole($panel['roles'])
@@ -660,6 +823,14 @@ class UiStudio extends Page
 
     public function previewPanelUrl(): string
     {
+        if ($this->previewFrameSize === 'customer') {
+            $panels = $this->previewPanelOptions();
+            $customerPanel = $panels['zerofuss'] ?? null;
+            $path = trim((string) ($customerPanel['path'] ?? 'zerofuss'), '/');
+
+            return $path === '' ? url('/') : url('/' . $path);
+        }
+
         $panels = $this->previewPanelOptions();
         $fallbackPanelId = $this->resolveCurrentPanelId();
         $panel = $panels[$this->previewPanel] ?? ($panels[$fallbackPanelId] ?? null);
@@ -678,12 +849,38 @@ class UiStudio extends Page
 
     public function previewCssVariables(): array
     {
+        $breakpoint = $this->breakpointForPreviewMode($this->previewFrameSize);
+        $definitions = $this->responsiveTokenDefinitions();
+        $responsive = [];
+
+        foreach ($definitions as $token => $definition) {
+            $responsive[$token] = $this->responsiveTokens[$breakpoint][$token]
+                ?? $definition[$breakpoint]
+                ?? $definition['desktop']
+                ?? '0px';
+        }
+
+        if ($this->previewFrameSize === 'collapsed') {
+            $responsive['--sidebar-width'] = '64px';
+        }
+
         return [
             '--color-primary-500' => $this->safeColor($this->primaryColor),
             '--color-secondary-500' => $this->safeColor($this->secondaryColor),
             '--color-accent-500' => $this->safeColor($this->accentColor),
             '--color-surface-50' => $this->safeColor($this->surfaceColor),
             '--font-family' => $this->safeFont($this->fontFamily),
+            ...$responsive,
+        ];
+    }
+
+    public function responsivePreviewPayload(): array
+    {
+        return [
+            'mode' => $this->previewFrameSize,
+            'breakpoint' => $this->breakpointForPreviewMode($this->previewFrameSize),
+            'width' => $this->previewFrameWidth(),
+            'tableColumns' => $this->responsiveTableColumns,
         ];
     }
 
@@ -1171,6 +1368,14 @@ class UiStudio extends Page
                 'font_heading' => $validated['fontFamily'] ?: 'Figtree',
                 'font_body' => $validated['fontFamily'] ?: 'Figtree',
             ]);
+
+            app(ThemeTokenManager::class)->saveResponsiveOverrides(
+                $this->responsiveTokens,
+                $this->responsiveTokenDefinitions()
+            );
+
+
+            $this->saveResponsiveTableColumns();
         }
 
         // Persist shared theme settings for app shell preview behavior.
@@ -1538,6 +1743,8 @@ class UiStudio extends Page
             'backgroundType' => $this->backgroundType,
             'backgroundValue' => $this->backgroundValue,
             'customCss' => $this->customCss,
+            'responsiveTokens' => json_encode($this->responsiveTokens),
+            'responsiveTableColumns' => json_encode($this->responsiveTableColumns),
         ];
     }
 }

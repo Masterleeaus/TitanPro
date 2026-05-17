@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 const EditPayment = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditPayment.url(args, options),
@@ -11,13 +11,13 @@ const EditPayment = (args: { record: string | number } | [record: string | numbe
 
 EditPayment.definition = {
     methods: ["get","head"],
-    url: '/admin/payments/{record}/edit',
+    url: '/titanpro/payments/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 EditPayment.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditPayment.url = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 EditPayment.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditPayment.url(args, options),
@@ -54,7 +54,7 @@ EditPayment.get = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 EditPayment.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditPayment.url(args, options),
@@ -64,7 +64,7 @@ EditPayment.head = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 const EditPaymentForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditPayment.url(args, options),
@@ -74,7 +74,7 @@ const EditPaymentForm = (args: { record: string | number } | [record: string | n
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 EditPaymentForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditPayment.url(args, options),
@@ -84,7 +84,7 @@ EditPaymentForm.get = (args: { record: string | number } | [record: string | num
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\EditPayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/EditPayment.php:7
-* @route '/admin/payments/{record}/edit'
+* @route '/titanpro/payments/{record}/edit'
 */
 EditPaymentForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditPayment.url(args, {

@@ -1,0 +1,8 @@
+/* Safe placeholder for theme panel dashboard leak guard. */
+.fi-layout,
+.fi-main,
+.fi-page,
+.fi-page-content {
+    visibility: visible;
+    opacity: 1;
+}

@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\UiStudio;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
@@ -12,7 +11,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -21,10 +19,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-/**
- * TitanNexus — vertical pack management, lead generation,
- * niche training content, and marketing automation panel.
- */
 class TitanNexusPanelProvider extends PanelProvider
 {
     use RegistersFilamentPlugins;
@@ -44,17 +38,29 @@ class TitanNexusPanelProvider extends PanelProvider
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
                     'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+                    'AlizHarb\\ActivityLog\\ActivityLogPlugin',
                     'Relaticle\\Flowforge\\FilamentFlowforgePlugin',
                     'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+                    'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
+                    'Shreejan\\DashArrange\\DashArrangePlugin',
+                    'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
                 ]),
             ])
-            ->discoverResources(in: app_path('Filament/TitanNexus/Resources'), for: 'App\\Filament\\TitanNexus\\Resources')
-            ->discoverPages(in: app_path('Filament/TitanNexus/Pages'), for: 'App\\Filament\\TitanNexus\\Pages')
+
+            // Resource-only panel surface.
+            // Do not auto-discover custom Pages here. Old Page navigation was producing
+            // missing route names such as filament.titannexus.pages.booking-handoffs.
+            ->discoverResources(
+                in: app_path('Filament/TitanNexus/Resources'),
+                for: 'App\\Filament\\TitanNexus\\Resources'
+            )
             ->pages([
                 Pages\Dashboard::class,
-                UiStudio::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/TitanNexus/Widgets'), for: 'App\\Filament\\TitanNexus\\Widgets')
+            ->discoverWidgets(
+                in: app_path('Filament/TitanNexus/Widgets'),
+                for: 'App\\Filament\\TitanNexus\\Widgets'
+            )
             ->widgets([
                 Widgets\AccountWidget::class,
             ])
@@ -72,7 +78,7 @@ class TitanNexusPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiOverrideSsrHook())
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

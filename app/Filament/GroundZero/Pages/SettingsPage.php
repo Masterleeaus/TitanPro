@@ -7,7 +7,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -24,6 +24,11 @@ class SettingsPage extends Page implements HasForms
     protected static ?string $title = 'Panel Settings';
 
     protected static ?int $navigationSort = 90;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     protected string $view = 'filament.groundzero.pages.settings';
 
@@ -43,10 +48,10 @@ class SettingsPage extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Business Details')
                     ->description('Configure your organization profile visible on invoices and estimates.')
                     ->columns(['sm' => 1, 'lg' => 2])

@@ -95,33 +95,4 @@ UiInspectorController
 4. **Server-side override injection** — Pre-render saved overrides as `<style>` in
    the Blade layout (using `UiOverride::allForOrg`) so overrides are visible before
    Alpine.js boots, eliminating any flash.
-5. **Toasts and inline feedback** — Add success/error toasts for import/export actions.
-
----
-
-## Follow-up (Export / Import override set as JSON)
-
-### Files Changed
-
-| File | Change |
-|------|--------|
-| `app/Http/Controllers/UiInspectorController.php` | Added `export` and `import` actions, org-scoped JSON download filename, and import payload validation for allowed keys + safe CSS values |
-| `routes/web.php` | Added `GET /titan/ui-inspector/export` and `POST /titan/ui-inspector/import` routes |
-| `public/js/titan/ui-inspector.js` | Added export/download flow and JSON import flow in Alpine component |
-| `resources/views/filament/ui-inspector.blade.php` | Added floating panel buttons: **Export overrides** and **Import overrides** |
-| `tests/Feature/UiInspectorImportExportTest.php` | Added Pest round-trip test (export → wipe → import → restore) and invalid import validation tests |
-
-### Fixes Applied
-
-1. Implemented org-scoped override export as downloadable JSON with filename format:
-   `ui-overrides-{org-name-slug}-{YYYY-MM-DD}.json`.
-2. Implemented import endpoint that accepts exported JSON shape and upserts each component override for the current org.
-3. Added structure validation to reject unknown CSS property keys.
-4. Added CSS value safety validation to reject dangerous/invalid values (e.g. `url(...)`, `javascript:`, braces/semicolon payloads).
-5. Added inspector floating-panel import/export controls wired to the new backend endpoints.
-6. Added feature tests proving round-trip data integrity and invalid import rejection.
-
-### Next Steps
-
-1. Add UI notifications so users can see import/export success or validation errors without opening browser dev tools.
-2. Optionally support multipart file upload (`file`) in the UI path if large payload handling is needed later.
+5. **Export/import** — Allow exporting the full override set as a JSON theme file.

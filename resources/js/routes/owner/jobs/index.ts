@@ -83,7 +83,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -98,7 +98,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -107,7 +107,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -117,7 +117,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -127,7 +127,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -137,7 +137,7 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -147,7 +147,7 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::create
-* @see app/Http/Controllers/Owner/JobController.php:67
+* @see app/Http/Controllers/Owner/JobController.php:72
 * @route '/owner/jobs/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::store
-* @see app/Http/Controllers/Owner/JobController.php:88
+* @see app/Http/Controllers/Owner/JobController.php:93
 * @route '/owner/jobs'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -179,7 +179,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::store
-* @see app/Http/Controllers/Owner/JobController.php:88
+* @see app/Http/Controllers/Owner/JobController.php:93
 * @route '/owner/jobs'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -188,7 +188,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::store
-* @see app/Http/Controllers/Owner/JobController.php:88
+* @see app/Http/Controllers/Owner/JobController.php:93
 * @route '/owner/jobs'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -198,7 +198,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::store
-* @see app/Http/Controllers/Owner/JobController.php:88
+* @see app/Http/Controllers/Owner/JobController.php:93
 * @route '/owner/jobs'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -208,7 +208,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::store
-* @see app/Http/Controllers/Owner/JobController.php:88
+* @see app/Http/Controllers/Owner/JobController.php:93
 * @route '/owner/jobs'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -220,7 +220,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 export const show = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -235,7 +235,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 show.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -268,7 +268,7 @@ show.url = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 show.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -278,7 +278,7 @@ show.get = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 show.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -288,7 +288,7 @@ show.head = (args: { job: number | { id: number } } | [job: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 const showForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ const showForm = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 showForm.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -308,7 +308,7 @@ showForm.get = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::show
-* @see app/Http/Controllers/Owner/JobController.php:55
+* @see app/Http/Controllers/Owner/JobController.php:60
 * @route '/owner/jobs/{job}'
 */
 showForm.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -325,7 +325,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 export const edit = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -340,7 +340,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 edit.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -373,7 +373,7 @@ edit.url = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 edit.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -383,7 +383,7 @@ edit.get = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 edit.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -393,7 +393,7 @@ edit.head = (args: { job: number | { id: number } } | [job: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 const editForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -403,7 +403,7 @@ const editForm = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 editForm.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -413,7 +413,7 @@ editForm.get = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::edit
-* @see app/Http/Controllers/Owner/JobController.php:102
+* @see app/Http/Controllers/Owner/JobController.php:107
 * @route '/owner/jobs/{job}/edit'
 */
 editForm.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -430,7 +430,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 export const update = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -445,7 +445,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 update.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -478,7 +478,7 @@ update.url = (args: { job: number | { id: number } } | [job: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 update.put = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -488,7 +488,7 @@ update.put = (args: { job: number | { id: number } } | [job: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 update.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -498,7 +498,7 @@ update.patch = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 const updateForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -513,7 +513,7 @@ const updateForm = (args: { job: number | { id: number } } | [job: number | { id
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 updateForm.put = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -528,7 +528,7 @@ updateForm.put = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::update
-* @see app/Http/Controllers/Owner/JobController.php:125
+* @see app/Http/Controllers/Owner/JobController.php:130
 * @route '/owner/jobs/{job}'
 */
 updateForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -545,7 +545,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::destroy
-* @see app/Http/Controllers/Owner/JobController.php:135
+* @see app/Http/Controllers/Owner/JobController.php:140
 * @route '/owner/jobs/{job}'
 */
 export const destroy = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -560,7 +560,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::destroy
-* @see app/Http/Controllers/Owner/JobController.php:135
+* @see app/Http/Controllers/Owner/JobController.php:140
 * @route '/owner/jobs/{job}'
 */
 destroy.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -593,7 +593,7 @@ destroy.url = (args: { job: number | { id: number } } | [job: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::destroy
-* @see app/Http/Controllers/Owner/JobController.php:135
+* @see app/Http/Controllers/Owner/JobController.php:140
 * @route '/owner/jobs/{job}'
 */
 destroy.delete = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -603,7 +603,7 @@ destroy.delete = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::destroy
-* @see app/Http/Controllers/Owner/JobController.php:135
+* @see app/Http/Controllers/Owner/JobController.php:140
 * @route '/owner/jobs/{job}'
 */
 const destroyForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -618,7 +618,7 @@ const destroyForm = (args: { job: number | { id: number } } | [job: number | { i
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::destroy
-* @see app/Http/Controllers/Owner/JobController.php:135
+* @see app/Http/Controllers/Owner/JobController.php:140
 * @route '/owner/jobs/{job}'
 */
 destroyForm.delete = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -635,7 +635,7 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::status
-* @see app/Http/Controllers/Owner/JobController.php:145
+* @see app/Http/Controllers/Owner/JobController.php:150
 * @route '/owner/jobs/{job}/status'
 */
 export const status = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -650,7 +650,7 @@ status.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::status
-* @see app/Http/Controllers/Owner/JobController.php:145
+* @see app/Http/Controllers/Owner/JobController.php:150
 * @route '/owner/jobs/{job}/status'
 */
 status.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -683,7 +683,7 @@ status.url = (args: { job: number | { id: number } } | [job: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::status
-* @see app/Http/Controllers/Owner/JobController.php:145
+* @see app/Http/Controllers/Owner/JobController.php:150
 * @route '/owner/jobs/{job}/status'
 */
 status.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -693,7 +693,7 @@ status.patch = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::status
-* @see app/Http/Controllers/Owner/JobController.php:145
+* @see app/Http/Controllers/Owner/JobController.php:150
 * @route '/owner/jobs/{job}/status'
 */
 const statusForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -708,7 +708,7 @@ const statusForm = (args: { job: number | { id: number } } | [job: number | { id
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::status
-* @see app/Http/Controllers/Owner/JobController.php:145
+* @see app/Http/Controllers/Owner/JobController.php:150
 * @route '/owner/jobs/{job}/status'
 */
 statusForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -725,7 +725,7 @@ status.form = statusForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reschedule
-* @see app/Http/Controllers/Owner/JobController.php:168
+* @see app/Http/Controllers/Owner/JobController.php:173
 * @route '/owner/jobs/{job}/reschedule'
 */
 export const reschedule = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -740,7 +740,7 @@ reschedule.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reschedule
-* @see app/Http/Controllers/Owner/JobController.php:168
+* @see app/Http/Controllers/Owner/JobController.php:173
 * @route '/owner/jobs/{job}/reschedule'
 */
 reschedule.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -773,7 +773,7 @@ reschedule.url = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reschedule
-* @see app/Http/Controllers/Owner/JobController.php:168
+* @see app/Http/Controllers/Owner/JobController.php:173
 * @route '/owner/jobs/{job}/reschedule'
 */
 reschedule.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -783,7 +783,7 @@ reschedule.patch = (args: { job: number | { id: number } } | [job: number | { id
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reschedule
-* @see app/Http/Controllers/Owner/JobController.php:168
+* @see app/Http/Controllers/Owner/JobController.php:173
 * @route '/owner/jobs/{job}/reschedule'
 */
 const rescheduleForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -798,7 +798,7 @@ const rescheduleForm = (args: { job: number | { id: number } } | [job: number | 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reschedule
-* @see app/Http/Controllers/Owner/JobController.php:168
+* @see app/Http/Controllers/Owner/JobController.php:173
 * @route '/owner/jobs/{job}/reschedule'
 */
 rescheduleForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -815,7 +815,7 @@ reschedule.form = rescheduleForm
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reassign
-* @see app/Http/Controllers/Owner/JobController.php:181
+* @see app/Http/Controllers/Owner/JobController.php:186
 * @route '/owner/jobs/{job}/reassign'
 */
 export const reassign = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -830,7 +830,7 @@ reassign.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reassign
-* @see app/Http/Controllers/Owner/JobController.php:181
+* @see app/Http/Controllers/Owner/JobController.php:186
 * @route '/owner/jobs/{job}/reassign'
 */
 reassign.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -863,7 +863,7 @@ reassign.url = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reassign
-* @see app/Http/Controllers/Owner/JobController.php:181
+* @see app/Http/Controllers/Owner/JobController.php:186
 * @route '/owner/jobs/{job}/reassign'
 */
 reassign.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -873,7 +873,7 @@ reassign.patch = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reassign
-* @see app/Http/Controllers/Owner/JobController.php:181
+* @see app/Http/Controllers/Owner/JobController.php:186
 * @route '/owner/jobs/{job}/reassign'
 */
 const reassignForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -888,7 +888,7 @@ const reassignForm = (args: { job: number | { id: number } } | [job: number | { 
 
 /**
 * @see \App\Http\Controllers\Owner\JobController::reassign
-* @see app/Http/Controllers/Owner/JobController.php:181
+* @see app/Http/Controllers/Owner/JobController.php:186
 * @route '/owner/jobs/{job}/reassign'
 */
 reassignForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
