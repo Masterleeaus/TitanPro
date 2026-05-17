@@ -30,7 +30,7 @@ class TenantService
 
     public function suspendTenant(int $tenantId): Organization
     {
-        $this->assertCrossTenantAccess($tenantId);
+        $this->assertTenantExists($tenantId);
 
         $tenant = Organization::withoutGlobalScopes()->findOrFail($tenantId);
         $tenant->forceFill(['suspended_at' => now()])->save();
@@ -38,12 +38,12 @@ class TenantService
         return $tenant;
     }
 
-    public function assertCrossTenantAccess(int $tenantId): void
+    public function assertTenantExists(int $tenantId): void
     {
         $query = User::withoutGlobalScopes()->where('organization_id', $tenantId);
 
         if (! $query->exists()) {
-            throw new \RuntimeException("No cross-tenant identity context found for tenant [{$tenantId}].");
+            throw new \RuntimeException("Tenant [{$tenantId}] does not have a resolvable identity context.");
         }
     }
 }
