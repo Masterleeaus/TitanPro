@@ -82,6 +82,6 @@ class BrandKitController extends Controller
             return $companyId;
         }
 
-        abort(403, 'Tenant context is required.');
+        abort(403, 'Company tenant context is required but was not resolved from the authenticated request.');
     }
 }
