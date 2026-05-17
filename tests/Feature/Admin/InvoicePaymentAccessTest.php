@@ -13,7 +13,7 @@ use Database\Seeders\RolesAndPermissionsSeeder;
  * org-scoped finance panel for owner/admin/bookkeeper roles.
  *
  * These tests confirm that:
- *  - legacy /admin finance paths remain absent
+ *  - legacy /admin finance paths return 404
  *  - TitanPro invoice/payment routes remain super_admin-only
  *  - super_admin can review cross-tenant TitanPro finance routes
  *  - ZeroPay owner/admin/bookkeeper finance routes remain org-scoped
@@ -134,13 +134,13 @@ test('super admin can review cross-tenant invoices in titanpro', function () {
     $otherOrg = Organization::factory()->create();
     $otherCustomer = Customer::factory()->create(['organization_id' => $otherOrg->id]);
     $invoice = Invoice::factory()->forCustomer($otherCustomer)->create([
-        'invoice_number' => 'INV-CROSS-TENANT-197',
+        'invoice_number' => 'INV-OTHER-ORG-001',
     ]);
 
     $this->actingAs($user)
         ->get('/titanpro/invoices')
         ->assertOk()
-        ->assertSee('INV-CROSS-TENANT-197');
+        ->assertSee('INV-OTHER-ORG-001');
 
     $this->actingAs($user)
         ->get("/titanpro/invoices/{$invoice->id}/edit")
