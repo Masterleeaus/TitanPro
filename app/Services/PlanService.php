@@ -143,4 +143,15 @@ class PlanService
             default            => 0,
         };
     }
+
+    /**
+     * Display amount in dollars for a given plan + billing interval.
+     */
+    public function amountFor(string $plan, string $billingInterval): int
+    {
+        return match ($billingInterval) {
+            'annual' => $this->annualPrice($plan),
+            default => $this->monthlyPrice($plan),
+        };
+    }
 }
