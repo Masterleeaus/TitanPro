@@ -6,6 +6,7 @@ on:
     paths:
       - 'Modules/TitanNexus/UI/**'
       - 'tests/Browser/**'
+      - 'tests/DuskTestCase.php'
       - 'resources/views/ui-studio/**'
       - 'app/Http/Controllers/UiStudio/**'
       - '.github/workflows/motion-browser.yml'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'Modules/TitanNexus/UI/**'
       - 'tests/Browser/**'
+      - 'tests/DuskTestCase.php'
       - 'resources/views/ui-studio/**'
       - 'app/Http/Controllers/UiStudio/**'
       - '.github/workflows/motion-browser.yml'
