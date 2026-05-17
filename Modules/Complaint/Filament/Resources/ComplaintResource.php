@@ -5,6 +5,7 @@ namespace Modules\Complaint\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Infolist;
 use Modules\Complaint\Actions\EscalateComplaintAction;
 use Modules\Complaint\Actions\ResolveComplaintAction;
@@ -33,10 +34,28 @@ class ComplaintResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('escalate')
                     ->label('Escalate')
-                    ->action(fn (Complaint $record) => app(EscalateComplaintAction::class)->execute($record)),
+                    ->requiresConfirmation()
+                    ->form([
+                        Textarea::make('reason')
+                            ->label('Escalation reason')
+                            ->rows(3),
+                    ])
+                    ->action(fn (Complaint $record, array $data) => app(EscalateComplaintAction::class)->execute(
+                        $record,
+                        $data['reason'] ?? null
+                    )),
                 Tables\Actions\Action::make('resolve')
                     ->label('Resolve')
-                    ->action(fn (Complaint $record) => app(ResolveComplaintAction::class)->execute($record)),
+                    ->requiresConfirmation()
+                    ->form([
+                        Textarea::make('resolution_outcome')
+                            ->label('Resolution outcome')
+                            ->rows(3),
+                    ])
+                    ->action(fn (Complaint $record, array $data) => app(ResolveComplaintAction::class)->execute(
+                        $record,
+                        ['resolution_outcome' => $data['resolution_outcome'] ?? null]
+                    )),
             ]);
     }
 

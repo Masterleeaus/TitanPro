@@ -16,6 +16,8 @@ use Modules\Engineerings\Entities\WorkRequest;
 
 class CreateComplaintAction
 {
+    private const WORK_REQUEST_NUMBER_WIDTH = 4;
+
     public function __construct(private readonly ComplaintAnalysisService $analysisService)
     {
     }
@@ -105,7 +107,7 @@ class CreateComplaintAction
     private function createWorkRequest(Complaint $complaint): void
     {
         $number = WorkRequest::lastInvoiceNumber() + 1;
-        $zero = str_repeat('0', max(0, 4 - strlen((string) $number)));
+        $zero = str_repeat('0', max(0, self::WORK_REQUEST_NUMBER_WIDTH - strlen((string) $number)));
 
         $wr = new WorkRequest();
         $wr->complaint_id = $complaint->id;
