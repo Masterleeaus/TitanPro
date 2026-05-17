@@ -27,6 +27,7 @@ use App\Models\TitanUsageMeter;
 use App\Models\UiOverride;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Support\Facades\DB;
 
 // ── Helper ────────────────────────────────────────────────────────────────────
 
@@ -214,7 +215,7 @@ test('OrganizationSetting stripe_publishable_key is stored encrypted in the data
         'stripe_publishable_key' => 'pk_test_plain_value',
     ]);
 
-    $rawValue = \Illuminate\Support\Facades\DB::table('organization_settings')
+    $rawValue = DB::table('organization_settings')
         ->where('organization_id', $orgA->id)
         ->value('stripe_publishable_key');
 
@@ -232,7 +233,7 @@ test('OrganizationSetting twilio_account_sid is stored encrypted in the database
         'twilio_account_sid' => 'AC_plain_test_sid',
     ]);
 
-    $rawValue = \Illuminate\Support\Facades\DB::table('organization_settings')
+    $rawValue = DB::table('organization_settings')
         ->where('organization_id', $orgA->id)
         ->value('twilio_account_sid');
 
