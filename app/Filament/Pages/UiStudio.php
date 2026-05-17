@@ -10,6 +10,7 @@ use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
 use App\Models\SharedTheme;
+use App\Models\TitanThemeVersion;
 use App\Services\AiThemeGenerator;
 use App\Support\OrganizationBrandingResolver;
 use App\Support\ThemeTokenManager;
@@ -185,11 +186,28 @@ class UiStudio extends Page
      */
     public array $responsiveTableColumns = [];
 
+    /** @var array<int, array{version_number:int,label:string,created_at:string,created_by:string}> */
+    public array $themeVersions = [];
+
+    /** Label used when creating a named snapshot or the next publish version. */
+    public string $versionLabel = '';
+
+    /** Left-hand version number in the diff comparison view. */
+    public ?int $diffFromVersion = null;
+
+    /** Right-hand version number in the diff comparison view. */
+    public ?int $diffToVersion = null;
+
+    /** @var array<int, array{token:string,left:string,right:string,changed:bool}> */
+    public array $versionDiffRows = [];
+
     /** Keep controls scroll aligned with preview scroll. */
     public bool $syncPreviewScroll = false;
 
     /** @var array<string, string|null> */
     private array $savedThemeSnapshot = [];
+
+    private bool $suppressThemeVersionOnNextPublish = false;
 
     // ── AI Theme Generator modal state ────────────────────────────────────────
 
@@ -248,6 +266,7 @@ class UiStudio extends Page
         $this->componentPanel  = $currentPanel;
         $this->savedThemeSnapshot = $this->themeSnapshot();
         $this->activeTab       = 'branding';
+        $this->loadThemeVersions();
 
         // If redirected from a share link, auto-open the import tab.
         $importToken = request()->query('import_token');
@@ -370,6 +389,7 @@ class UiStudio extends Page
 
         $this->aiErrorMessage = '';
         $this->aiModalStep    = 'generating';
+        $this->createThemeVersion('Auto snapshot before AI generation');
 
         try {
             $this->aiGeneratedTheme = app(AiThemeGenerator::class)->generate($prompt);
@@ -1071,6 +1091,8 @@ class UiStudio extends Page
             return;
         }
 
+        $this->createThemeVersion('Auto snapshot before preset switch');
+
         $tokens = $themes[$key]['tokens'];
 
         $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
@@ -1124,6 +1146,8 @@ class UiStudio extends Page
 
             return;
         }
+
+        $this->createThemeVersion('Auto snapshot before preset switch');
 
         $tokens = $this->zipPreview['tokens'];
 
@@ -1273,6 +1297,8 @@ class UiStudio extends Page
             return;
         }
 
+        $this->createThemeVersion('Auto snapshot before preset switch');
+
         $tokens = $this->importPreview['tokens'];
 
         $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
@@ -1290,6 +1316,108 @@ class UiStudio extends Page
             ->title('Theme installed — click Publish to save.')
             ->success()
             ->send();
+    }
+
+    public function saveNamedSnapshot(): void
+    {
+        $label = trim($this->versionLabel);
+
+        if ($label === '') {
+            Notification::make()->title('Enter a snapshot label first.')->warning()->send();
+
+            return;
+        }
+
+        $version = $this->createThemeVersion($label);
+
+        if (! $version) {
+            Notification::make()->title('Theme version table not available.')->warning()->send();
+
+            return;
+        }
+
+        $this->versionLabel = '';
+        $this->loadThemeVersions();
+
+        Notification::make()
+            ->title("Snapshot saved as v{$version->version_number}")
+            ->success()
+            ->send();
+    }
+
+    public function rollbackThemeVersion(int $versionNumber): void
+    {
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId || ! Schema::hasTable('titan_theme_versions')) {
+            Notification::make()->title('Theme versions unavailable.')->warning()->send();
+
+            return;
+        }
+
+        $version = TitanThemeVersion::query()
+            ->where('org_id', $orgId)
+            ->where('panel', $this->resolveCurrentPanelId())
+            ->where('version_number', $versionNumber)
+            ->first();
+
+        if (! $version || ! is_array($version->token_snapshot)) {
+            Notification::make()->title('Requested version not found.')->warning()->send();
+
+            return;
+        }
+
+        $this->applyThemeVersionSnapshot($version->token_snapshot);
+        $this->versionLabel = "Rollback from v{$versionNumber}";
+        $this->suppressThemeVersionOnNextPublish = true;
+        $this->publish();
+        $this->createThemeVersion($this->versionLabel);
+        $this->versionLabel = '';
+    }
+
+    public function refreshVersionDiff(): void
+    {
+        $this->versionDiffRows = [];
+
+        if (! $this->diffFromVersion || ! $this->diffToVersion) {
+            return;
+        }
+
+        $orgId = auth()->user()?->organization_id;
+        if (! $orgId || ! Schema::hasTable('titan_theme_versions')) {
+            return;
+        }
+
+        $versions = TitanThemeVersion::query()
+            ->where('org_id', $orgId)
+            ->where('panel', $this->resolveCurrentPanelId())
+            ->whereIn('version_number', [$this->diffFromVersion, $this->diffToVersion])
+            ->get()
+            ->keyBy('version_number');
+
+        $fromVersion = $versions->get($this->diffFromVersion);
+        $toVersion = $versions->get($this->diffToVersion);
+
+        if (! $fromVersion || ! $toVersion) {
+            return;
+        }
+
+        $left = $this->flattenThemeSnapshot((array) $fromVersion->token_snapshot);
+        $right = $this->flattenThemeSnapshot((array) $toVersion->token_snapshot);
+
+        $keys = array_values(array_unique(array_merge(array_keys($left), array_keys($right))));
+        sort($keys);
+
+        foreach ($keys as $key) {
+            $leftValue = (string) ($left[$key] ?? '');
+            $rightValue = (string) ($right[$key] ?? '');
+            $this->versionDiffRows[] = [
+                'token' => $key,
+                'left' => $leftValue,
+                'right' => $rightValue,
+                'changed' => $leftValue !== $rightValue,
+            ];
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -1434,6 +1562,13 @@ class UiStudio extends Page
             }
         }
 
+        if (! $this->suppressThemeVersionOnNextPublish) {
+            $label = trim($this->versionLabel);
+            $this->createThemeVersion($label !== '' ? $label : 'Manual save');
+            $this->versionLabel = '';
+        }
+        $this->suppressThemeVersionOnNextPublish = false;
+
         Notification::make()
             ->title('UI Studio layout published')
             ->body('Branding, dashboard layout, menu, and role profile changes have been saved.')
@@ -1441,11 +1576,127 @@ class UiStudio extends Page
             ->send();
 
         $this->savedThemeSnapshot = $this->themeSnapshot();
+        $this->loadThemeVersions();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────────────────────────────────────
+
+    private function loadThemeVersions(): void
+    {
+        $this->themeVersions = [];
+        $this->diffFromVersion = null;
+        $this->diffToVersion = null;
+        $this->versionDiffRows = [];
+
+        $orgId = auth()->user()?->organization_id;
+        if (! $orgId || ! Schema::hasTable('titan_theme_versions')) {
+            return;
+        }
+
+        $rows = TitanThemeVersion::query()
+            ->with('author:id,name')
+            ->where('org_id', $orgId)
+            ->where('panel', $this->resolveCurrentPanelId())
+            ->orderByDesc('version_number')
+            ->get();
+
+        $this->themeVersions = $rows->map(static fn (TitanThemeVersion $version): array => [
+            'version_number' => (int) $version->version_number,
+            'label' => (string) ($version->label ?? "v{$version->version_number}"),
+            'created_at' => (string) ($version->created_at?->format('Y-m-d H:i') ?? ''),
+            'created_by' => (string) ($version->author?->name ?? 'System'),
+        ])->values()->all();
+
+        if (count($this->themeVersions) >= 2) {
+            $this->diffFromVersion = $this->themeVersions[1]['version_number'];
+            $this->diffToVersion = $this->themeVersions[0]['version_number'];
+        }
+    }
+
+    private function createThemeVersion(?string $label = null): ?TitanThemeVersion
+    {
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId || ! Schema::hasTable('titan_theme_versions')) {
+            return null;
+        }
+
+        $version = TitanThemeVersion::createSnapshot(
+            (int) $orgId,
+            $this->resolveCurrentPanelId(),
+            $this->themeVersionSnapshot(),
+            $label,
+            auth()->id()
+        );
+
+        $this->loadThemeVersions();
+
+        return $version;
+    }
+
+    private function themeVersionSnapshot(): array
+    {
+        return [
+            'panel_name' => $this->panelName,
+            'primary_color' => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color' => $this->accentColor,
+            'surface_color' => $this->surfaceColor,
+            'font_family' => $this->fontFamily,
+            'font_heading' => $this->fontHeading,
+            'font_body' => $this->fontBody,
+            'background_type' => $this->backgroundType,
+            'background_value' => $this->backgroundValue,
+            'menu_items' => $this->menuItems,
+            'dashboard_layout' => $this->canvasWidgets,
+            'responsive_tokens' => $this->responsiveTokens,
+            'responsive_table_columns' => $this->responsiveTableColumns,
+        ];
+    }
+
+    private function applyThemeVersionSnapshot(array $snapshot): void
+    {
+        $this->panelName = (string) ($snapshot['panel_name'] ?? $this->panelName);
+        $this->primaryColor = $this->safeColor((string) ($snapshot['primary_color'] ?? $this->primaryColor), $this->primaryColor);
+        $this->secondaryColor = $this->safeColor((string) ($snapshot['secondary_color'] ?? $this->secondaryColor), $this->secondaryColor);
+        $this->accentColor = $this->safeColor((string) ($snapshot['accent_color'] ?? $this->accentColor), $this->accentColor);
+        $this->surfaceColor = $this->safeColor((string) ($snapshot['surface_color'] ?? $this->surfaceColor), $this->surfaceColor);
+        $this->fontFamily = $this->safeFont((string) ($snapshot['font_family'] ?? $this->fontFamily), $this->fontFamily);
+        $this->fontHeading = $this->safeFont((string) ($snapshot['font_heading'] ?? $this->fontHeading), $this->fontHeading);
+        $this->fontBody = $this->safeFont((string) ($snapshot['font_body'] ?? $this->fontBody), $this->fontBody);
+        $this->backgroundType = (string) ($snapshot['background_type'] ?? $this->backgroundType);
+        $this->backgroundValue = isset($snapshot['background_value']) ? (string) $snapshot['background_value'] : $this->backgroundValue;
+        $this->menuItems = is_array($snapshot['menu_items'] ?? null) ? $snapshot['menu_items'] : $this->menuItems;
+        $this->canvasWidgets = is_array($snapshot['dashboard_layout'] ?? null) ? $snapshot['dashboard_layout'] : $this->canvasWidgets;
+        $this->responsiveTokens = is_array($snapshot['responsive_tokens'] ?? null) ? $snapshot['responsive_tokens'] : $this->responsiveTokens;
+        $this->responsiveTableColumns = is_array($snapshot['responsive_table_columns'] ?? null) ? $snapshot['responsive_table_columns'] : $this->responsiveTableColumns;
+    }
+
+    /**
+     * @return array<string, scalar>
+     */
+    private function flattenThemeSnapshot(array $snapshot, string $prefix = ''): array
+    {
+        $flattened = [];
+
+        foreach ($snapshot as $key => $value) {
+            $currentKey = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
+
+            if (is_array($value)) {
+                $flattened += $this->flattenThemeSnapshot($value, $currentKey);
+
+                continue;
+            }
+
+            if (is_scalar($value) || $value === null) {
+                $flattened[$currentKey] = $value ?? '';
+            }
+        }
+
+        return $flattened;
+    }
 
     /**
      * Sanitize a CSS hex color value to prevent CSS injection.
