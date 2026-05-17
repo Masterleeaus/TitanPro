@@ -1,0 +1,23 @@
+{
+    "name": "modules/payroll",
+    "description": "Payroll module scaffold for Worksuite/Titan modular architecture.",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Modules\\Payroll\\": ""
+        },
+        "files": [
+            "Bootstrap/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Payroll\\Providers\\PayrollServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
