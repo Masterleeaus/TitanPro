@@ -74,7 +74,7 @@ Route::middleware(['api', EnsureTitanChatbotEnabled::class])
                 Route::post('/portal/site-profiles', [PortalSiteProfileController::class, 'store'])->name('site-profiles.store');
                 Route::get('/portal/sites/{siteId}', [PortalSiteProfileController::class, 'show'])->name('sites.show');
                 Route::post('/portal/feedback', [PortalFeedbackController::class, 'store'])->name('feedback.store');
-                Route::post('/portal/documents', [PortalDocumentController::class, 'store'])->name('portal-documents.store');
-                Route::get('/portal/documents/{customerId}', [PortalDocumentController::class, 'index'])->name('portal-documents.index');
+                Route::post('/portal/documents', [PortalDocumentController::class, 'store'])->name('documents.store');
+                Route::get('/portal/documents/{customerId}', [PortalDocumentController::class, 'index'])->name('documents.index');
             });
     });

@@ -11,8 +11,8 @@ class PortalWorkDataController extends PortalBaseController
     public function visits(Request $request, Chatbot $chatbot): JsonResponse
     {
         $chatbot = $this->portalChatbot($request, $chatbot);
-        $visits = $this->scopedQuery($chatbot, 'service_jobs')?->paginate($request->integer('per_page', 10))
-            ?? $this->scopedQuery($chatbot, 'jobs')?->paginate($request->integer('per_page', 10));
+        $table = $this->firstExistingTable(['service_jobs', 'jobs']);
+        $visits = $table !== null ? $this->scopedQuery($chatbot, $table)?->paginate($request->integer('per_page', 10)) : null;
 
         return response()->json($visits ?? ['data' => []]);
     }

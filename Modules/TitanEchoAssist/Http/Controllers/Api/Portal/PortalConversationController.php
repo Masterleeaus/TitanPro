@@ -47,7 +47,7 @@ class PortalConversationController extends PortalBaseController
             'read_at' => now(),
         ]);
 
-        $replyText = 'Thanks — I have logged your request.';
+        $replyText = __('Thanks — I have logged your request.');
 
         $reply = ChatbotHistory::query()->create([
             'chatbot_id' => $chatbot->getKey(),
