@@ -12,7 +12,7 @@ class TitanGoActionBridge
     public function dispatch(string $actionKey, array $context): array
     {
         if (! $this->isEntitled($context)) {
-            throw new RuntimeException('TitanGo licence required.', 403);
+            throw new RuntimeException('TitanGo license required.', 403);
         }
 
         return match ($actionKey) {

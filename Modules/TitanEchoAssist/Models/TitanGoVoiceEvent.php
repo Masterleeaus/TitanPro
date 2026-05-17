@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TitanGoVoiceEvent extends Model
 {
     protected $table = 'titango_voice_events';
+    public $timestamps = false;
 
     protected $fillable = [
         'company_id',
