@@ -1,8 +1,14 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 const ViewJob = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewJob.url(args, options),
@@ -11,6 +17,7 @@ const ViewJob = (args: { record: string | number } | [record: string | number ] 
 
 ViewJob.definition = {
     methods: ["get","head"],
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
     url: '/groundzero/jobs/{record}',
 } satisfies RouteDefinition<["get","head"]>
 
@@ -18,6 +25,15 @@ ViewJob.definition = {
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+    url: '/titanpro/jobs/{record}',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 ViewJob.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -42,9 +58,15 @@ ViewJob.url = (args: { record: string | number } | [record: string | number ] | 
 }
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 ViewJob.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewJob.url(args, options),
@@ -52,9 +74,15 @@ ViewJob.get = (args: { record: string | number } | [record: string | number ] | 
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 ViewJob.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ViewJob.url(args, options),
@@ -62,9 +90,15 @@ ViewJob.head = (args: { record: string | number } | [record: string | number ] |
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 const ViewJobForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, options),
@@ -72,9 +106,15 @@ const ViewJobForm = (args: { record: string | number } | [record: string | numbe
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 ViewJobForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, options),
@@ -82,9 +122,15 @@ ViewJobForm.get = (args: { record: string | number } | [record: string | number 
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.ts
 * @see \App\Filament\GroundZero\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/GroundZero/Resources/JobResource/Pages/ViewJob.php:7
 * @route '/groundzero/jobs/{record}'
+========
+* @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
+* @route '/titanpro/jobs/{record}'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/ViewJob.ts
 */
 ViewJobForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, {
