@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Modules\TitanEchoAssist\Http\Controllers\Api\ConversationController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\ChatbotPortalController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\PortalHomeController;
+use Modules\TitanEchoAssist\Http\Controllers\Api\PortalWorkDataController;
 use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\ModuleAgentController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\TitanChatbotApiController;
@@ -23,5 +25,6 @@ Route::middleware(['api'])->prefix('api/chatbots')->name('api.chatbots.')->group
 
 Route::middleware(['api'])->prefix('api/v2/chatbot')->name('api.v2.chatbot.')->group(function () {
     Route::get('/{uuid}/session/{sessionId}/portal/menu', [ChatbotPortalController::class, 'menu'])->name('portal.menu');
-    Route::get('/{uuid}/session/{sessionId}/portal/home', [ChatbotPortalController::class, 'home'])->name('portal.home');
+    Route::get('/{uuid}/session/{sessionId}/portal/home', PortalHomeController::class)->name('portal.home');
+    Route::get('/{uuid}/session/{sessionId}/portal/work-data', PortalWorkDataController::class)->name('portal.work-data');
 });
