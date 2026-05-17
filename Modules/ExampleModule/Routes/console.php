@@ -1,0 +1,2 @@
+<?php
+// Console route definitions.

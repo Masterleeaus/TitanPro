@@ -1,0 +1,2106 @@
+{
+  "counts": {
+    "00_App_Core": 40,
+    "01_Merchant_Advanced": 48,
+    "02_Gateway_Checkout": 14,
+    "03_Notifications_Mail": 64,
+    "04_Developer_API": 79,
+    "05_Transactions_Charges": 33,
+    "06_Receive_Money": 1,
+    "07_Manual_Payments_Withdrawals": 10,
+    "08_Future_Expansion": 31,
+    "09_Routes_Config_Migrations": 112,
+    "10_Shared_Views_Assets": 90
+  },
+  "total": 522,
+  "files": [
+    {
+      "source": "composer.lock",
+      "dest": "00_App_Core/composer.lock"
+    },
+    {
+      "source": "phpunit.xml",
+      "dest": "00_App_Core/phpunit.xml"
+    },
+    {
+      "source": "vite.config.js",
+      "dest": "00_App_Core/vite.config.js"
+    },
+    {
+      "source": "artisan",
+      "dest": "00_App_Core/artisan"
+    },
+    {
+      "source": "package.json",
+      "dest": "00_App_Core/package.json"
+    },
+    {
+      "source": "README.md",
+      "dest": "00_App_Core/README.md"
+    },
+    {
+      "source": "composer.json",
+      "dest": "00_App_Core/composer.json"
+    },
+    {
+      "source": "config/sanctum.php",
+      "dest": "00_App_Core/config/sanctum.php"
+    },
+    {
+      "source": "config/hashing.php",
+      "dest": "00_App_Core/config/hashing.php"
+    },
+    {
+      "source": "config/auth.php",
+      "dest": "00_App_Core/config/auth.php"
+    },
+    {
+      "source": "config/app.php",
+      "dest": "00_App_Core/config/app.php"
+    },
+    {
+      "source": "config/mail.php",
+      "dest": "00_App_Core/config/mail.php"
+    },
+    {
+      "source": "config/geoip.php",
+      "dest": "00_App_Core/config/geoip.php"
+    },
+    {
+      "source": "config/pagadito.php",
+      "dest": "00_App_Core/config/pagadito.php"
+    },
+    {
+      "source": "config/services.php",
+      "dest": "00_App_Core/config/services.php"
+    },
+    {
+      "source": "config/database.php",
+      "dest": "00_App_Core/config/database.php"
+    },
+    {
+      "source": "config/cache.php",
+      "dest": "00_App_Core/config/cache.php"
+    },
+    {
+      "source": "config/session.php",
+      "dest": "00_App_Core/config/session.php"
+    },
+    {
+      "source": "config/queue.php",
+      "dest": "00_App_Core/config/queue.php"
+    },
+    {
+      "source": "config/app.backup.txt",
+      "dest": "00_App_Core/config/app.backup.txt"
+    },
+    {
+      "source": "config/flutterwave.php",
+      "dest": "00_App_Core/config/flutterwave.php"
+    },
+    {
+      "source": "config/excel.php",
+      "dest": "00_App_Core/config/excel.php"
+    },
+    {
+      "source": "config/broadcasting.php",
+      "dest": "00_App_Core/config/broadcasting.php"
+    },
+    {
+      "source": "config/laravel-webp.php",
+      "dest": "00_App_Core/config/laravel-webp.php"
+    },
+    {
+      "source": "config/view.php",
+      "dest": "00_App_Core/config/view.php"
+    },
+    {
+      "source": "config/paypal.php",
+      "dest": "00_App_Core/config/paypal.php"
+    },
+    {
+      "source": "config/cors.php",
+      "dest": "00_App_Core/config/cors.php"
+    },
+    {
+      "source": "config/logging.php",
+      "dest": "00_App_Core/config/logging.php"
+    },
+    {
+      "source": "config/image.php",
+      "dest": "00_App_Core/config/image.php"
+    },
+    {
+      "source": "config/starting-point.php",
+      "dest": "00_App_Core/config/starting-point.php"
+    },
+    {
+      "source": "config/filesystems.php",
+      "dest": "00_App_Core/config/filesystems.php"
+    },
+    {
+      "source": "routes/global.php",
+      "dest": "09_Routes_Config_Migrations/routes/global.php"
+    },
+    {
+      "source": "routes/auth.php",
+      "dest": "09_Routes_Config_Migrations/routes/auth.php"
+    },
+    {
+      "source": "routes/agent.php",
+      "dest": "08_Future_Expansion/routes/agent.php"
+    },
+    {
+      "source": "routes/user.php",
+      "dest": "09_Routes_Config_Migrations/routes/user.php"
+    },
+    {
+      "source": "routes/channels.php",
+      "dest": "09_Routes_Config_Migrations/routes/channels.php"
+    },
+    {
+      "source": "routes/merchant.php",
+      "dest": "09_Routes_Config_Migrations/routes/merchant.php"
+    },
+    {
+      "source": "routes/console.php",
+      "dest": "09_Routes_Config_Migrations/routes/console.php"
+    },
+    {
+      "source": "routes/web.php",
+      "dest": "09_Routes_Config_Migrations/routes/web.php"
+    },
+    {
+      "source": "routes/admin.php",
+      "dest": "09_Routes_Config_Migrations/routes/admin.php"
+    },
+    {
+      "source": "database/migrations/2014_10_12_100000_create_password_resets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2014_10_12_100000_create_password_resets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155439_add_merchant_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155439_add_merchant_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_102346_create_merchant_authorizations_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_102346_create_merchant_authorizations_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_strowallet_virtual_cards_table_column.php",
+      "dest": "08_Future_Expansion/database/migrations/2024_02_27_180149_update_strowallet_virtual_cards_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_02_23_134152_create_agent_login_logs_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_02_23_134152_create_agent_login_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_03_095454_create_extensions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_03_095454_create_extensions_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_admin_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_02_27_180149_update_admin_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_11_22_155834_update_virtual_card_for_default_system_table_column.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_11_22_155834_update_virtual_card_for_default_system_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_03_30_102050_create_virtual_card_apis_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_03_30_102050_create_virtual_card_apis_table.php"
+    },
+    {
+      "source": "database/migrations/2023_06_21_133800_create_script_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_06_21_133800_create_script_table.php"
+    },
+    {
+      "source": "database/migrations/2023_04_05_052245_create_receipients_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_04_05_052245_create_receipients_table.php"
+    },
+    {
+      "source": "database/migrations/2024_03_20_064600_create_gift_cards_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2024_03_20_064600_create_gift_cards_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_06_070418_create_user_mail_logs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_02_06_070418_create_user_mail_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_04_01_065330_create_virtual_cards_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_04_01_065330_create_virtual_cards_table.php"
+    },
+    {
+      "source": "database/migrations/2024_06_07_152309_create_country_restrictions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_06_07_152309_create_country_restrictions_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_25_105937_create_transaction_methods_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_02_25_105937_create_transaction_methods_table.php"
+    },
+    {
+      "source": "database/migrations/2023_04_04_102919_create_remitance_bank_deposits_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_04_04_102919_create_remitance_bank_deposits_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_blog_categories_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_02_27_180149_update_blog_categories_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_04_04_082235_create_receiver_counties_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_04_04_082235_create_receiver_counties_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_25_082623_create_payment_gateways_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_25_082623_create_payment_gateways_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_18_043653_create_admin_notifications_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_18_043653_create_admin_notifications_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_09_105630_create_payment_order_requests_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_09_105630_create_payment_order_requests_table.php"
+    },
+    {
+      "source": "database/migrations/2023_07_13_154542_create_module_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_07_13_154542_create_module_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2023_07_19_174909_create_sudo_virtual_cards_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_07_19_174909_create_sudo_virtual_cards_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_11_122240_create_user_login_logs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_11_122240_create_user_login_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155439_add_app_settings_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155439_add_app_settings_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2024_10_27_112504_create_frontend_header_section_pages_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_10_27_112504_create_frontend_header_section_pages_table.php"
+    },
+    {
+      "source": "database/migrations/2024_09_26_112729_create_system_maintenances_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_09_26_112729_create_system_maintenances_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_08_071056_create_sandbox_wallets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_08_071056_create_sandbox_wallets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_08_094030_create_merchant_configurations_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_08_094030_create_merchant_configurations_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_16_095331_create_temporary_datas_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_16_095331_create_temporary_datas_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155439_add_onboard_settings_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155439_add_onboard_settings_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_10_21_092817_create_gateway_a_pis_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_10_21_092817_create_gateway_a_pis_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_23_073232_create_transaction_devices_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_23_073232_create_transaction_devices_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_developer_api_credentials_table_column.php",
+      "dest": "04_Developer_API/database/migrations/2024_02_27_180149_update_developer_api_credentials_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_01_12_055705_create_user_wallets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_12_055705_create_user_wallets_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_24_071800_create_site_sections_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_24_071800_create_site_sections_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_update_agent_recipient_column.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_09_13_155834_update_agent_recipient_column.php"
+    },
+    {
+      "source": "database/migrations/2023_11_02_180143_create_crypto_transactions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_11_02_180143_create_crypto_transactions_table.php"
+    },
+    {
+      "source": "database/migrations/2023_07_29_144855_create_agent_recipients_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_07_29_144855_create_agent_recipients_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_update_transaction_column_for_agent.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_09_13_155834_update_transaction_column_for_agent.php"
+    },
+    {
+      "source": "database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2019_12_14_000001_create_personal_access_tokens_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_blogs_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_02_27_180149_update_blogs_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_update_user_support_ticket_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_13_155834_update_user_support_ticket_column.php"
+    },
+    {
+      "source": "database/migrations/2023_01_11_135434_update_admins_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_11_135434_update_admins_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155834_admin-notification_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155834_admin-notification_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_102841_create_merchant_wallets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_102841_create_merchant_wallets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_03_22_095325_create_user_qr_codes_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_22_095325_create_user_qr_codes_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_11_103837_create_agent_authorizations_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_05_11_103837_create_agent_authorizations_table.php"
+    },
+    {
+      "source": "database/migrations/2023_03_15_060724_create_blog_categories_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_15_060724_create_blog_categories_table.php"
+    },
+    {
+      "source": "database/migrations/2023_11_21_171439_create_strowallet_virtual_cards_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_11_21_171439_create_strowallet_virtual_cards_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_03_173051_add_column_on_languages_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_03_173051_add_column_on_languages_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155834_update_virtual_card_api_table_column.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_08_09_155834_update_virtual_card_api_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_103608_create_merchant_notifications_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_103608_create_merchant_notifications_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_18_093156_create_setup_seos_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_18_093156_create_setup_seos_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_04_061756_create_setup_kycs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_04_061756_create_setup_kycs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_add_payment_link_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_13_155834_add_payment_link_column.php"
+    },
+    {
+      "source": "database/migrations/2023_02_23_131154_create_agent_mail_logs_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_02_23_131154_create_agent_mail_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_10_30_163112_create_crypto_assets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_10_30_163112_create_crypto_assets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_12_123701_create_payment_links_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_12_123701_create_payment_links_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_102532_create_merchant_login_logs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_102532_create_merchant_login_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_13_060252_create_transaction_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_13_060252_create_transaction_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_28_101246_create_user_support_ticket_attachments_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_28_101246_create_user_support_ticket_attachments_table.php"
+    },
+    {
+      "source": "database/migrations/2024_09_24_132812_create_live_exchange_rate_api_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_09_24_132812_create_live_exchange_rate_api_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2024_11_6_180149_update_payment_gateway_currency_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_11_6_180149_update_payment_gateway_currency_table_column.php"
+    },
+    {
+      "source": "database/migrations/2023_01_10_115626_create_admin_login_logs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_10_115626_create_admin_login_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_26_060705_create_payment_gateway_currencies_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_26_060705_create_payment_gateway_currencies_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_19_072039_create_app_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_19_072039_create_app_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_26_222500_create_stripe_virtual_cards_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_08_26_222500_create_stripe_virtual_cards_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_14_093411_create_transactions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_14_093411_create_transactions_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_add_transaction_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_13_155834_add_transaction_column.php"
+    },
+    {
+      "source": "database/migrations/2023_03_25_072547_create_bill_pay_categories_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_25_072547_create_bill_pay_categories_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_08_180502_create_merchant_mail_logs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_08_180502_create_merchant_mail_logs_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_16_171913_create_jobs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_02_16_171913_create_jobs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_12_052750_create_admin_role_permissions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_12_052750_create_admin_role_permissions_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_15_051638_create_admin_has_roles_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_15_051638_create_admin_has_roles_table.php"
+    },
+    {
+      "source": "database/migrations/2024_10_27_161239_create_frontend_header_section_faqs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_10_27_161239_create_frontend_header_section_faqs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_28_081512_create_user_support_chats_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_28_081512_create_user_support_chats_table.php"
+    },
+    {
+      "source": "database/migrations/2023_04_04_113606_create_remitance_cash_pickups_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_04_04_113606_create_remitance_cash_pickups_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_02_101435_create_gateway_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_02_101435_create_gateway_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_103156_create_merchant_kyc_data_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_103156_create_merchant_kyc_data_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_14_154700_create_admin_role_has_permissions_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_14_154700_create_admin_role_has_permissions_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_28_075936_create_user_support_tickets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_28_075936_create_user_support_tickets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_update_transaction_settings_column_for_agent_profits.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_09_13_155834_update_transaction_settings_column_for_agent_profits.php"
+    },
+    {
+      "source": "database/migrations/2023_02_23_120421_create_agent_kyc_data_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_02_23_120421_create_agent_kyc_data_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_08_100205_create_agent_wallets_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_05_08_100205_create_agent_wallets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_03_27_080012_create_topup_categories_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_03_27_080012_create_topup_categories_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_07_154740_create_user_kyc_data_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_02_07_154740_create_user_kyc_data_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_09_083658_create_setup_pages_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_02_09_083658_create_setup_pages_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_102706_create_merchant_password_resets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_102706_create_merchant_password_resets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_07_053411_create_user_profiles_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_07_053411_create_user_profiles_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_06_143558_create_user_authorizations_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_02_06_143558_create_user_authorizations_table.php"
+    },
+    {
+      "source": "database/migrations/2024_11_11_175200_create_strowallet_webhook_data_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_11_11_175200_create_strowallet_webhook_data_table.php"
+    },
+    {
+      "source": "database/migrations/2023_03_20_090737_create_newsletters_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_20_090737_create_newsletters_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_14_103353_create_currencies_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_14_103353_create_currencies_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_11_121649_create_admin_roles_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_11_121649_create_admin_roles_table.php"
+    },
+    {
+      "source": "database/migrations/2024_03_16_013002_create_reloadly_apis_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_03_16_013002_create_reloadly_apis_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_11_061454_create_admins_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_11_061454_create_admins_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_102025_create_merchants_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_102025_create_merchants_table.php"
+    },
+    {
+      "source": "database/migrations/2022_12_17_104923_create_basic_settings_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_17_104923_create_basic_settings_table.php"
+    },
+    {
+      "source": "database/migrations/2024_10_07_094452_create_strowallet_customer_kycs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_10_07_094452_create_strowallet_customer_kycs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155834_add_payment_gateway_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155834_add_payment_gateway_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_01_12_055605_create_exchange_rates_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_12_055605_create_exchange_rates_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_23_072239_create_transaction_charges_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_23_072239_create_transaction_charges_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_08_133258_create_push_notification_records_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_08_133258_create_push_notification_records_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155439_add_basic_settings_table_update_column_for.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155439_add_basic_settings_table_update_column_for.php"
+    },
+    {
+      "source": "database/migrations/2023_05_11_104343_create_agent_password_resets_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_05_11_104343_create_agent_password_resets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_154956_add_user_table_update_column_for_strowallet.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_154956_add_user_table_update_column_for_strowallet.php"
+    },
+    {
+      "source": "database/migrations/2023_03_23_152217_create_contacts_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_23_152217_create_contacts_table.php"
+    },
+    {
+      "source": "database/migrations/2023_02_23_084905_create_agents_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_02_23_084905_create_agents_table.php"
+    },
+    {
+      "source": "database/migrations/2024_01_26_163445_create_agent_profits_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2024_01_26_163445_create_agent_profits_table.php"
+    },
+    {
+      "source": "database/migrations/2024_10_26_154644_create_frontend_header_sections_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_10_26_154644_create_frontend_header_sections_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_154956_add_user_table_update_column_for_stripe_card.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_154956_add_user_table_update_column_for_stripe_card.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_155439_add_basic_settings_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_155439_add_basic_settings_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_03_11_054132_create_user_notifications_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_11_054132_create_user_notifications_table.php"
+    },
+    {
+      "source": "database/migrations/2014_10_12_000000_create_users_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2014_10_12_000000_create_users_table.php"
+    },
+    {
+      "source": "database/migrations/2024_07_27_180149_update_strowallet_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_07_27_180149_update_strowallet_table_column.php"
+    },
+    {
+      "source": "database/migrations/2019_08_19_000000_create_failed_jobs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2019_08_19_000000_create_failed_jobs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_08_09_154956_add_user_table_update_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_08_09_154956_add_user_table_update_column.php"
+    },
+    {
+      "source": "database/migrations/2023_01_10_105235_create_user_password_resets_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_10_105235_create_user_password_resets_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_11_104543_create_agent_qr_codes_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_05_11_104543_create_agent_qr_codes_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_18_102653_create_languages_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_18_102653_create_languages_table.php"
+    },
+    {
+      "source": "database/migrations/2024_02_27_180149_update_pay_link_settings_table_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2024_02_27_180149_update_pay_link_settings_table_column.php"
+    },
+    {
+      "source": "database/migrations/2022_12_24_110923_create_app_onboard_screens_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2022_12_24_110923_create_app_onboard_screens_table.php"
+    },
+    {
+      "source": "database/migrations/2023_09_13_155834_update_recipient_column.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_09_13_155834_update_recipient_column.php"
+    },
+    {
+      "source": "database/migrations/2023_05_02_103328_create_merchant_qr_codes_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_05_02_103328_create_merchant_qr_codes_table.php"
+    },
+    {
+      "source": "database/migrations/2023_03_15_112130_create_blogs_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_03_15_112130_create_blogs_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_07_100937_create_developer_api_credentials_table.php",
+      "dest": "04_Developer_API/database/migrations/2023_05_07_100937_create_developer_api_credentials_table.php"
+    },
+    {
+      "source": "database/migrations/2023_01_19_060838_create_coinbase_webhook_calls_table.php",
+      "dest": "09_Routes_Config_Migrations/database/migrations/2023_01_19_060838_create_coinbase_webhook_calls_table.php"
+    },
+    {
+      "source": "database/migrations/2023_05_11_104054_create_agent_notifications_table.php",
+      "dest": "08_Future_Expansion/database/migrations/2023_05_11_104054_create_agent_notifications_table.php"
+    },
+    {
+      "source": "app/Models/AgentWallet.php",
+      "dest": "08_Future_Expansion/app/Models/AgentWallet.php"
+    },
+    {
+      "source": "app/Models/RemitanceBankDeposit.php",
+      "dest": "08_Future_Expansion/app/Models/RemitanceBankDeposit.php"
+    },
+    {
+      "source": "app/Models/StrowalletVirtualCard.php",
+      "dest": "08_Future_Expansion/app/Models/StrowalletVirtualCard.php"
+    },
+    {
+      "source": "app/Models/PaymentLink.php",
+      "dest": "05_Transactions_Charges/app/Models/PaymentLink.php"
+    },
+    {
+      "source": "app/Models/StrowalletWebhookData.php",
+      "dest": "05_Transactions_Charges/app/Models/StrowalletWebhookData.php"
+    },
+    {
+      "source": "app/Models/UserWallet.php",
+      "dest": "05_Transactions_Charges/app/Models/UserWallet.php"
+    },
+    {
+      "source": "app/Models/TransactionCharge.php",
+      "dest": "05_Transactions_Charges/app/Models/TransactionCharge.php"
+    },
+    {
+      "source": "app/Models/Transaction.php",
+      "dest": "05_Transactions_Charges/app/Models/Transaction.php"
+    },
+    {
+      "source": "app/Models/StrowalletCustomerKyc.php",
+      "dest": "05_Transactions_Charges/app/Models/StrowalletCustomerKyc.php"
+    },
+    {
+      "source": "app/Constants/PaymentGatewayConst.php",
+      "dest": "10_Shared_Views_Assets/app/Constants/PaymentGatewayConst.php"
+    },
+    {
+      "source": "app/Constants/NotificationConst.php",
+      "dest": "10_Shared_Views_Assets/app/Constants/NotificationConst.php"
+    },
+    {
+      "source": "app/Providers/CustomServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/CustomServiceProvider.php"
+    },
+    {
+      "source": "app/Providers/AppServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/AppServiceProvider.php"
+    },
+    {
+      "source": "app/Providers/EventServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/EventServiceProvider.php"
+    },
+    {
+      "source": "app/Providers/BroadcastServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/BroadcastServiceProvider.php"
+    },
+    {
+      "source": "app/Providers/AuthServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/AuthServiceProvider.php"
+    },
+    {
+      "source": "app/Providers/RouteServiceProvider.php",
+      "dest": "00_App_Core/app/Providers/RouteServiceProvider.php"
+    },
+    {
+      "source": "app/Traits/TransactionAgent.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/TransactionAgent.php"
+    },
+    {
+      "source": "app/Traits/Transaction.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/Transaction.php"
+    },
+    {
+      "source": "routes/api/agent_api.php",
+      "dest": "08_Future_Expansion/routes/api/agent_api.php"
+    },
+    {
+      "source": "routes/api/api.php",
+      "dest": "09_Routes_Config_Migrations/routes/api/api.php"
+    },
+    {
+      "source": "routes/api/merchant_api.php",
+      "dest": "09_Routes_Config_Migrations/routes/api/merchant_api.php"
+    },
+    {
+      "source": "database/seeders/Merchant/ApiCredentialsSeeder.php",
+      "dest": "04_Developer_API/database/seeders/Merchant/ApiCredentialsSeeder.php"
+    },
+    {
+      "source": "app/Notifications/PaymentGateway/PaymentVerification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentGateway/PaymentVerification.php"
+    },
+    {
+      "source": "app/Notifications/Agent/SendMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/SendMail.php"
+    },
+    {
+      "source": "app/Notifications/Admin/ActivityNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Admin/ActivityNotification.php"
+    },
+    {
+      "source": "app/Notifications/Admin/SendTestMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Admin/SendTestMail.php"
+    },
+    {
+      "source": "app/Notifications/Admin/SendEmailToAll.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Admin/SendEmailToAll.php"
+    },
+    {
+      "source": "app/Notifications/Admin/NewAdminCredential.php",
+      "dest": "04_Developer_API/app/Notifications/Admin/NewAdminCredential.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/UserNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/UserNotification.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/BuyerNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/BuyerNotification.php"
+    },
+    {
+      "source": "app/Notifications/User/SendMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/SendMail.php"
+    },
+    {
+      "source": "app/Notifications/Kyc/Approved.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Kyc/Approved.php"
+    },
+    {
+      "source": "app/Notifications/Kyc/Rejected.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Kyc/Rejected.php"
+    },
+    {
+      "source": "app/Notifications/Merchant/SendMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Merchant/SendMail.php"
+    },
+    {
+      "source": "app/Http/Controllers/DeveloperController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/DeveloperController.php"
+    },
+    {
+      "source": "app/Http/Helpers/PaymentGatewayApi.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/PaymentGatewayApi.php"
+    },
+    {
+      "source": "app/Http/Helpers/PaymentGateway.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/PaymentGateway.php"
+    },
+    {
+      "source": "app/Http/Helpers/PayLinkPaymentGateway.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/PayLinkPaymentGateway.php"
+    },
+    {
+      "source": "app/Http/Helpers/PushNotificationHelper.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/PushNotificationHelper.php"
+    },
+    {
+      "source": "app/Http/Helpers/NotificationHelper.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/NotificationHelper.php"
+    },
+    {
+      "source": "app/Http/Helpers/strowallet-card.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/strowallet-card.php"
+    },
+    {
+      "source": "app/Http/Helpers/TransactionLimit.php",
+      "dest": "10_Shared_Views_Assets/app/Http/Helpers/TransactionLimit.php"
+    },
+    {
+      "source": "app/Models/Admin/PaymentGatewayCurrency.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/PaymentGatewayCurrency.php"
+    },
+    {
+      "source": "app/Models/Admin/MerchantConfiguration.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/MerchantConfiguration.php"
+    },
+    {
+      "source": "app/Models/Admin/CryptoTransaction.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/CryptoTransaction.php"
+    },
+    {
+      "source": "app/Models/Admin/PaymentGateway.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/PaymentGateway.php"
+    },
+    {
+      "source": "app/Models/Admin/GatewayAPi.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/GatewayAPi.php"
+    },
+    {
+      "source": "app/Models/Admin/TransactionSetting.php",
+      "dest": "05_Transactions_Charges/app/Models/Admin/TransactionSetting.php"
+    },
+    {
+      "source": "app/Models/Merchants/DeveloperApiCredential.php",
+      "dest": "04_Developer_API/app/Models/Merchants/DeveloperApiCredential.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantNotification.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantNotification.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantKycData.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantKycData.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantAuthorization.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantAuthorization.php"
+    },
+    {
+      "source": "app/Models/Merchants/GatewaySetting.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/GatewaySetting.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantWallet.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantWallet.php"
+    },
+    {
+      "source": "app/Models/Merchants/SandboxWallet.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/SandboxWallet.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantPasswordReset.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantPasswordReset.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantLoginLog.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantLoginLog.php"
+    },
+    {
+      "source": "app/Models/Merchants/Merchant.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/Merchant.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantMailLog.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantMailLog.php"
+    },
+    {
+      "source": "app/Models/Merchants/MerchantQrCode.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/MerchantQrCode.php"
+    },
+    {
+      "source": "app/Models/Merchants/PaymentOrderRequest.php",
+      "dest": "05_Transactions_Charges/app/Models/Merchants/PaymentOrderRequest.php"
+    },
+    {
+      "source": "app/Providers/Admin/ExtensionProvider.php",
+      "dest": "00_App_Core/app/Providers/Admin/ExtensionProvider.php"
+    },
+    {
+      "source": "app/Providers/Admin/BasicSettingsProvider.php",
+      "dest": "00_App_Core/app/Providers/Admin/BasicSettingsProvider.php"
+    },
+    {
+      "source": "app/Providers/Admin/CurrencyProvider.php",
+      "dest": "00_App_Core/app/Providers/Admin/CurrencyProvider.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/StripeLinkPayment.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/StripeLinkPayment.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/Tatum.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/Tatum.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/CoinGate.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/CoinGate.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/PagaditoTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/PagaditoTrait.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/FlutterwaveTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/FlutterwaveTrait.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/Stripe.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/Stripe.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/SslcommerzTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/SslcommerzTrait.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/Paypal.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/Paypal.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/PaystackTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/PaystackTrait.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/PerfectMoney.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/PerfectMoney.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/Manual.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/Manual.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/Bkash.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/Bkash.php"
+    },
+    {
+      "source": "app/Traits/PaymentGateway/RazorTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PaymentGateway/RazorTrait.php"
+    },
+    {
+      "source": "app/Traits/AdminNotifications/AuthNotifications.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/AdminNotifications/AuthNotifications.php"
+    },
+    {
+      "source": "app/Traits/PayLink/WalletTransactionTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PayLink/WalletTransactionTrait.php"
+    },
+    {
+      "source": "app/Traits/PayLink/TransactionTrait.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/PayLink/TransactionTrait.php"
+    },
+    {
+      "source": "app/Traits/Merchant/UserPartials.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/Merchant/UserPartials.php"
+    },
+    {
+      "source": "app/Traits/Merchant/RegisteredUsers.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/Merchant/RegisteredUsers.php"
+    },
+    {
+      "source": "app/Traits/Merchant/LoggedInUsers.php",
+      "dest": "10_Shared_Views_Assets/app/Traits/Merchant/LoggedInUsers.php"
+    },
+    {
+      "source": "resources/views/frontend/merchant.blade.php",
+      "dest": "10_Shared_Views_Assets/resources/views/frontend/merchant.blade.php"
+    },
+    {
+      "source": "resources/views/payment-gateway/redirect-form.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/payment-gateway/redirect-form.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/dashboard.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/dashboard.blade.php"
+    },
+    {
+      "source": "app/Notifications/Agent/BillPay/BillPayMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/BillPay/BillPayMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Remittance/SenderEmail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Remittance/SenderEmail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Auth/PasswordResetEmail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Auth/PasswordResetEmail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Auth/SendVerifyCode.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Auth/SendVerifyCode.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Auth/SendAuthorizationCode.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Auth/SendAuthorizationCode.php"
+    },
+    {
+      "source": "app/Notifications/Agent/MoneyIn/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/MoneyIn/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/MoneyIn/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/MoneyIn/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/SendMoney/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/SendMoney/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/SendMoney/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/SendMoney/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Withdraw/ApprovedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Withdraw/ApprovedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Withdraw/WithdrawMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Withdraw/WithdrawMail.php"
+    },
+    {
+      "source": "app/Notifications/Agent/Withdraw/RejectedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Agent/Withdraw/RejectedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/Admin/Auth/ResetPassword.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Admin/Auth/ResetPassword.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/Wallet/UserNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/Wallet/UserNotification.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/Wallet/BuyerNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/Wallet/BuyerNotification.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/Gateway/UserNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/Gateway/UserNotification.php"
+    },
+    {
+      "source": "app/Notifications/PaymentLink/Gateway/BuyerNotification.php",
+      "dest": "03_Notifications_Mail/app/Notifications/PaymentLink/Gateway/BuyerNotification.php"
+    },
+    {
+      "source": "app/Notifications/User/VirtualCard/CreateMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/VirtualCard/CreateMail.php"
+    },
+    {
+      "source": "app/Notifications/User/VirtualCard/Fund.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/VirtualCard/Fund.php"
+    },
+    {
+      "source": "app/Notifications/User/MoneyOut/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MoneyOut/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MoneyOut/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MoneyOut/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MobileTopup/TopupAutomaticMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MobileTopup/TopupAutomaticMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MobileTopup/Approved.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MobileTopup/Approved.php"
+    },
+    {
+      "source": "app/Notifications/User/MobileTopup/TopupMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MobileTopup/TopupMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MobileTopup/Rejected.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MobileTopup/Rejected.php"
+    },
+    {
+      "source": "app/Notifications/User/RequestMoney/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/RequestMoney/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/User/RequestMoney/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/RequestMoney/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/BillPayMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/BillPayMail.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/Approved.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/Approved.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/BillPayFromReloadly.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/BillPayFromReloadly.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/BillPayMailAutomatic.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/BillPayMailAutomatic.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/Rejected.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/Rejected.php"
+    },
+    {
+      "source": "app/Notifications/User/BillPay/BillPayFromReloadlyRjected.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/BillPay/BillPayFromReloadlyRjected.php"
+    },
+    {
+      "source": "app/Notifications/User/Remittance/Approved.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Remittance/Approved.php"
+    },
+    {
+      "source": "app/Notifications/User/Remittance/Rejected.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Remittance/Rejected.php"
+    },
+    {
+      "source": "app/Notifications/User/Remittance/BankTransferMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Remittance/BankTransferMail.php"
+    },
+    {
+      "source": "app/Notifications/User/Auth/PasswordResetEmail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Auth/PasswordResetEmail.php"
+    },
+    {
+      "source": "app/Notifications/User/Auth/SendVerifyCode.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Auth/SendVerifyCode.php"
+    },
+    {
+      "source": "app/Notifications/User/Auth/SendAuthorizationCode.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Auth/SendAuthorizationCode.php"
+    },
+    {
+      "source": "app/Notifications/User/GiftCard/GiftCardMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/GiftCard/GiftCardMail.php"
+    },
+    {
+      "source": "app/Notifications/User/SendMoney/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/SendMoney/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/User/SendMoney/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/SendMoney/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/User/Withdraw/ApprovedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Withdraw/ApprovedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/User/Withdraw/WithdrawMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Withdraw/WithdrawMail.php"
+    },
+    {
+      "source": "app/Notifications/User/Withdraw/RejectedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/Withdraw/RejectedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MakePayment/ReceiverMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MakePayment/ReceiverMail.php"
+    },
+    {
+      "source": "app/Notifications/User/MakePayment/SenderMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/MakePayment/SenderMail.php"
+    },
+    {
+      "source": "app/Notifications/User/AddMoney/ApprovedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/AddMoney/ApprovedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/User/AddMoney/ManualMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/AddMoney/ManualMail.php"
+    },
+    {
+      "source": "app/Notifications/User/AddMoney/RejectedByAdminMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/AddMoney/RejectedByAdminMail.php"
+    },
+    {
+      "source": "app/Notifications/User/AddMoney/ApprovedMail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/User/AddMoney/ApprovedMail.php"
+    },
+    {
+      "source": "app/Notifications/Merchant/Auth/PasswordResetEmail.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Merchant/Auth/PasswordResetEmail.php"
+    },
+    {
+      "source": "app/Notifications/Merchant/Auth/SendAuthorizationCode.php",
+      "dest": "03_Notifications_Mail/app/Notifications/Merchant/Auth/SendAuthorizationCode.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/MerchantController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/MerchantController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/ReceiveMoneyController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/ReceiveMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/AuthorizationController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/AuthorizationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/DeveloperApiController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/DeveloperApiController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/SecurityController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/SecurityController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/ProfileController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/ProfileController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/SupportTicketController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/SupportTicketController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/GatewaySettingController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/GatewaySettingController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/DashboardController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/DashboardController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/MoneyOutController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/MoneyOutController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/PaymentLinkController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/PaymentLinkController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/TransactionController.php",
+      "dest": "05_Transactions_Charges/app/Http/Controllers/Merchant/TransactionController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/AppSettingsController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/AppSettingsController.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/response-code.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/response-code.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/check-status-payment.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/check-status-payment.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/index.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/index.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/authentication.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/authentication.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/support.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/support.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/faq.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/faq.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/error-handling.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/error-handling.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/base-url.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/base-url.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/best-practices.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/best-practices.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/access-token.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/access-token.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/prerequisites.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/prerequisites.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/initiate-payment.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/initiate-payment.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/examples.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/examples.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/paylink/transaction-success.blade.php",
+      "dest": "10_Shared_Views_Assets/resources/views/frontend/paylink/transaction-success.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/paylink/transaction-cancelled.blade.php",
+      "dest": "10_Shared_Views_Assets/resources/views/frontend/paylink/transaction-cancelled.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/paylink/share.blade.php",
+      "dest": "10_Shared_Views_Assets/resources/views/frontend/paylink/share.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/layouts/developer_master.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/layouts/developer_master.blade.php"
+    },
+    {
+      "source": "resources/views/payment-gateway/btn-pay/razorpay.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/payment-gateway/btn-pay/razorpay.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/layouts/master.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/layouts/master.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/pages/confirm.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/pages/confirm.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/pages/error.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/pages/error.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/pages/checkout.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/pages/checkout.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/pages/login.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/pages/login.blade.php"
+    },
+    {
+      "source": "resources/views/qrpay-gateway/pages/mail-verify.blade.php",
+      "dest": "02_Gateway_Checkout/resources/views/qrpay-gateway/pages/mail-verify.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/register.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/register.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/login.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/auth/login.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/register-kyc.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/register-kyc.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/breadcrumb.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/components/breadcrumb.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/generate-kyc-fields.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/components/generate-kyc-fields.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/register-kyc.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/components/register-kyc.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/transaction-log.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/components/transaction-log.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/layouts/master.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/layouts/master.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/layouts/user_auth.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/layouts/user_auth.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/header-assets.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/header-assets.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/preloader.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/preloader.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/side-nav.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/side-nav.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/footer-assets.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/footer-assets.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/push-notification.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/push-notification.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/partials/top-nav.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/partials/top-nav.blade.php"
+    },
+    {
+      "source": "public/frontend/images/developer/Draft.jpg",
+      "dest": "04_Developer_API/public/frontend/images/developer/Draft.jpg"
+    },
+    {
+      "source": "public/frontend/images/element/qr.png",
+      "dest": "10_Shared_Views_Assets/public/frontend/images/element/qr.png"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/5e451678-b6b9-4a7d-805d-59f6d715f144.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/5e451678-b6b9-4a7d-805d-59f6d715f144.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/818e7940-cde9-4488-88ee-cff16a341d81.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/818e7940-cde9-4488-88ee-cff16a341d81.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/daed1691-48e6-4bef-9fcf-81cb150e90cc.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/daed1691-48e6-4bef-9fcf-81cb150e90cc.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/5361131a-0cf1-4f54-b8e6-aeaad4856ab1.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/5361131a-0cf1-4f54-b8e6-aeaad4856ab1.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/7d867d1b-be1a-42cc-b213-14d6d8e6b04c.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/7d867d1b-be1a-42cc-b213-14d6d8e6b04c.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/1cfb884d-dece-4108-86e8-806c12641f29.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/1cfb884d-dece-4108-86e8-806c12641f29.webp"
+    },
+    {
+      "source": "public/backend/images/payment-link-image/84b1410d-9c5f-4b9d-84bb-7d952bf6ed64.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-link-image/84b1410d-9c5f-4b9d-84bb-7d952bf6ed64.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/cbf2db65-2d94-4e9a-a1b4-297fff653364.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/cbf2db65-2d94-4e9a-a1b4-297fff653364.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/b467c5b1-525c-46bd-94c6-e2c9bde56a81.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/b467c5b1-525c-46bd-94c6-e2c9bde56a81.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/051bf8be-230e-44f5-8c0e-eac5872be32e.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/051bf8be-230e-44f5-8c0e-eac5872be32e.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/605ce1fd-2c4e-443c-b4ea-91eb6f64aea4.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/605ce1fd-2c4e-443c-b4ea-91eb6f64aea4.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/ae7f6892-ff89-4880-b485-d34f2512df26.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/ae7f6892-ff89-4880-b485-d34f2512df26.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/137701d0-4e12-4a21-bc63-cda5454c2476.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/137701d0-4e12-4a21-bc63-cda5454c2476.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/923c6152-3346-443c-8984-2782384ad218.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/923c6152-3346-443c-8984-2782384ad218.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/07775b99-39e0-435a-b0aa-37da922a4898.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/07775b99-39e0-435a-b0aa-37da922a4898.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/b512c983-9d16-4086-9862-5d436a27b51e.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/b512c983-9d16-4086-9862-5d436a27b51e.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/405ab494-9024-4c15-a240-6f66c7f0385f.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/405ab494-9024-4c15-a240-6f66c7f0385f.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/ac2766c5-e32c-408e-afbe-62bbc067a090.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/ac2766c5-e32c-408e-afbe-62bbc067a090.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/50c50c78-020f-4367-89dd-a8600d701cad.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/50c50c78-020f-4367-89dd-a8600d701cad.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/5db95540-abd5-409b-9956-e23e92de9c5d.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/5db95540-abd5-409b-9956-e23e92de9c5d.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/285e8b55-7ab8-4856-9c12-2b3fa033a85b.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/285e8b55-7ab8-4856-9c12-2b3fa033a85b.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/09752150-7a9f-4488-b1c8-f1fe2738dc18.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/09752150-7a9f-4488-b1c8-f1fe2738dc18.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/c6e11b4e-0c49-479f-8b65-6283201fb5d1.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/c6e11b4e-0c49-479f-8b65-6283201fb5d1.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/8ae348ab-83c7-4405-94de-231ea1c8b1bc.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/8ae348ab-83c7-4405-94de-231ea1c8b1bc.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/455782e0-2c68-4a56-9889-2e0a8f47121f.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/455782e0-2c68-4a56-9889-2e0a8f47121f.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/857aeca5-e62c-45a1-b479-5e42eb7d746a.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/857aeca5-e62c-45a1-b479-5e42eb7d746a.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/f4fe90e9-9b25-48b8-b3f5-9847cfbc6da7.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/f4fe90e9-9b25-48b8-b3f5-9847cfbc6da7.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/1e3e7e01-8ffa-46ec-9bcd-bc63501192e7.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/1e3e7e01-8ffa-46ec-9bcd-bc63501192e7.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/7f46e145-774e-41bf-9170-243605a5d4d0.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/7f46e145-774e-41bf-9170-243605a5d4d0.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/b137736e-1d6a-4cfd-bc2c-ba3cf5d00154.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/b137736e-1d6a-4cfd-bc2c-ba3cf5d00154.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/8db52ec2-449d-4727-b251-7d40d89eaad1.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/8db52ec2-449d-4727-b251-7d40d89eaad1.webp"
+    },
+    {
+      "source": "routes/payment-gateway/qr_pay/v1/checkout.php",
+      "dest": "02_Gateway_Checkout/routes/payment-gateway/qr_pay/v1/checkout.php"
+    },
+    {
+      "source": "routes/payment-gateway/qr_pay/v1/routes.php",
+      "dest": "02_Gateway_Checkout/routes/payment-gateway/qr_pay/v1/routes.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/Auth/LoginController.php",
+      "dest": "05_Transactions_Charges/app/Http/Controllers/Merchant/Auth/LoginController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/Auth/RegisterController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/Auth/RegisterController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Merchant/Auth/ForgotPasswordController.php",
+      "dest": "01_Merchant_Advanced/app/Http/Controllers/Merchant/Auth/ForgotPasswordController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/RemittanceController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/RemittanceController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/SendMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/SendMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/ReceiveMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/ReceiveMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/MobileTopupController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/MobileTopupController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/MoneyInController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/MoneyInController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/WithdrawController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/WithdrawController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/RecipientController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/RecipientController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/AuthorizationController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/AuthorizationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/SecurityController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/SecurityController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/UserController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/UserController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/BillPayController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/BillPayController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/AddMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/AddMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/TransactionController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/TransactionController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/RemittanceController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/RemittanceController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/SendMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/SendMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/ReceiveMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/ReceiveMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/MobileTopupController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/MobileTopupController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/SudoVirtualCardController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/SudoVirtualCardController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/MakePaymentController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/MakePaymentController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/RecipientController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/RecipientController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/AuthorizationController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/AuthorizationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/SecurityController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/SecurityController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/GiftCardController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/GiftCardController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/UserController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/UserController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/BillPayController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/BillPayController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/AgentMoneyOutController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/AgentMoneyOutController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/StrowalletVirtualCardController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/StrowalletVirtualCardController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/VirtualCardController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/VirtualCardController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/AddMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/AddMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/RequestMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/RequestMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/MoneyOutController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/MoneyOutController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/PaymentLinkController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/PaymentLinkController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/StripeVirtualController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/StripeVirtualController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/TransactionController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/TransactionController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/ReceiveMoneyController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/ReceiveMoneyController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/AuthorizationController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/AuthorizationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/DeveloperApiController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/DeveloperApiController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/SecurityController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/SecurityController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/UserController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/UserController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/GatewaySettingController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/GatewaySettingController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/MoneyOutController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/MoneyOutController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/PaymentLinkController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/PaymentLinkController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/TransactionController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/TransactionController.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/partials/header.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/partials/header.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/partials/side-nav.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/partials/side-nav.blade.php"
+    },
+    {
+      "source": "resources/views/admin/sections/setup-sections/developer-faq-section.blade.php",
+      "dest": "04_Developer_API/resources/views/admin/sections/setup-sections/developer-faq-section.blade.php"
+    },
+    {
+      "source": "resources/views/admin/sections/setup-sections/developer-intro-section.blade.php",
+      "dest": "04_Developer_API/resources/views/admin/sections/setup-sections/developer-intro-section.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/transaction/index.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/sections/transaction/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/transaction/log.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/sections/transaction/log.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/receive-money/index.blade.php",
+      "dest": "06_Receive_Money/resources/views/merchant/sections/receive-money/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/security/google-2fa.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/security/google-2fa.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/profile/index.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/profile/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/payment-link/index.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/payment-link/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/payment-link/edit.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/payment-link/edit.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/payment-link/create.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/payment-link/create.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/payment-link/share.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/payment-link/share.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/api/index.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/api/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/index.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/preview.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/preview.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/gateway-settings/index.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/gateway-settings/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/support-ticket/index.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/support-ticket/index.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/support-ticket/create.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/support-ticket/create.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/support-ticket/conversation.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/sections/support-ticket/conversation.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/forgot-password/forgot.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/forgot-password/forgot.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/forgot-password/verify.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/forgot-password/verify.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/forgot-password/reset.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/forgot-password/reset.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-kyc.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-kyc.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-sms-auth.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-sms-auth.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-google-2fa.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-google-2fa.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-email.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-email.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-sms.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-sms.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/auth/authorize/verify-mail.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/auth/authorize/verify-mail.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/search/transaction-log.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/components/search/transaction-log.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/profile/kyc.blade.php",
+      "dest": "01_Merchant_Advanced/resources/views/merchant/components/profile/kyc.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/wallets/fiat.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/components/wallets/fiat.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/components/wallets/crypto.blade.php",
+      "dest": "05_Transactions_Charges/resources/views/merchant/components/wallets/crypto.blade.php"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/sslcommerz.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/sslcommerz.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/bkash.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/bkash.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/khalti.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/khalti.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/wise.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/wise.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/pagadito.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/pagadito.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/razorpay.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/razorpay.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/jazzcash.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/jazzcash.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/paypal.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/paypal.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/easypaisa.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/easypaisa.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/flutterwave.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/flutterwave.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/stripe.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/stripe.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/paystack.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/paystack.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/upi.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/upi.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/phonepe.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/phonepe.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/pmoney.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/pmoney.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/tatum.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/tatum.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/paytm.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/paytm.webp"
+    },
+    {
+      "source": "public/backend/images/payment-gateways/seeder/coingate.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/payment-gateways/seeder/coingate.webp"
+    },
+    {
+      "source": "app/Http/Controllers/PaymentGateway/QrPay/v1/AuthenticationController.php",
+      "dest": "02_Gateway_Checkout/app/Http/Controllers/PaymentGateway/QrPay/v1/AuthenticationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/PaymentGateway/QrPay/v1/DemoCheckoutController.php",
+      "dest": "02_Gateway_Checkout/app/Http/Controllers/PaymentGateway/QrPay/v1/DemoCheckoutController.php"
+    },
+    {
+      "source": "app/Http/Controllers/PaymentGateway/QrPay/v1/PaymentController.php",
+      "dest": "02_Gateway_Checkout/app/Http/Controllers/PaymentGateway/QrPay/v1/PaymentController.php"
+    },
+    {
+      "source": "app/Http/Controllers/PaymentGateway/QrPay/v1/UserAuthenticationController.php",
+      "dest": "02_Gateway_Checkout/app/Http/Controllers/PaymentGateway/QrPay/v1/UserAuthenticationController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/Auth/LoginController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/Auth/LoginController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Agent/Auth/ForgotPasswordController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Agent/Auth/ForgotPasswordController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/Auth/LoginController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/Auth/LoginController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/User/Auth/ForgotPasswordController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/User/Auth/ForgotPasswordController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/Auth/LoginController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/Auth/LoginController.php"
+    },
+    {
+      "source": "app/Http/Controllers/Api/Merchant/Auth/ForgotPasswordController.php",
+      "dest": "04_Developer_API/app/Http/Controllers/Api/Merchant/Auth/ForgotPasswordController.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/partials/assets/footer-asset.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/partials/assets/footer-asset.blade.php"
+    },
+    {
+      "source": "resources/views/frontend/developer/partials/assets/header-asset.blade.php",
+      "dest": "04_Developer_API/resources/views/frontend/developer/partials/assets/header-asset.blade.php"
+    },
+    {
+      "source": "resources/views/admin/components/modals/site-section/add-developer-faq-item.blade.php",
+      "dest": "04_Developer_API/resources/views/admin/components/modals/site-section/add-developer-faq-item.blade.php"
+    },
+    {
+      "source": "resources/views/admin/components/payment-gateway/automatic/credentials.blade.php",
+      "dest": "04_Developer_API/resources/views/admin/components/payment-gateway/automatic/credentials.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave.blade.php"
+    },
+    {
+      "source": "public/backend/images/app/seeder/merchant/splash_screen.webp",
+      "dest": "10_Shared_Views_Assets/public/backend/images/app/seeder/merchant/splash_screen.webp"
+    },
+    {
+      "source": "public/backend/images/app/seeder/merchant/onboard.png",
+      "dest": "10_Shared_Views_Assets/public/backend/images/app/seeder/merchant/onboard.png"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/zar-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/zar-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/ngn-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/ngn-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/usd-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/usd-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/tzs-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/tzs-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/kes-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/kes-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/african-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/african-accounts.blade.php"
+    },
+    {
+      "source": "resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/eur-gbp-accounts.blade.php",
+      "dest": "07_Manual_Payments_Withdrawals/resources/views/merchant/sections/withdraw/automatic/flutterwave-country-component/eur-gbp-accounts.blade.php"
+    },
+    {
+      "source": "public/backend/images/web-settings/image-assets/seeder/merchant/logo-dark.png",
+      "dest": "10_Shared_Views_Assets/public/backend/images/web-settings/image-assets/seeder/merchant/logo-dark.png"
+    },
+    {
+      "source": "public/backend/images/web-settings/image-assets/seeder/merchant/favicon-dark.png",
+      "dest": "10_Shared_Views_Assets/public/backend/images/web-settings/image-assets/seeder/merchant/favicon-dark.png"
+    },
+    {
+      "source": "public/backend/images/web-settings/image-assets/seeder/merchant/logo-white.png",
+      "dest": "10_Shared_Views_Assets/public/backend/images/web-settings/image-assets/seeder/merchant/logo-white.png"
+    },
+    {
+      "source": "public/backend/images/web-settings/image-assets/seeder/merchant/favicon-white.png",
+      "dest": "10_Shared_Views_Assets/public/backend/images/web-settings/image-assets/seeder/merchant/favicon-white.png"
+    }
+  ]
+}

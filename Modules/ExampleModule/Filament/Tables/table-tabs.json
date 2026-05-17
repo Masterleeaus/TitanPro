@@ -1,0 +1,38 @@
+{
+  "module": "example-module",
+  "card": "ModuleTablesCard",
+  "tabs": [
+    {
+      "key": "records",
+      "label": "Records",
+      "resource": "ExampleRecordResource",
+      "permission": "example.view",
+      "default": true
+    },
+    {
+      "key": "imports",
+      "label": "Imports",
+      "source": "imports",
+      "permission": "example.import"
+    },
+    {
+      "key": "agent_logs",
+      "label": "Agent Logs",
+      "source": "agent_control_logs",
+      "permission": "example.agent.use"
+    },
+    {
+      "key": "knowledge",
+      "label": "Knowledge",
+      "source": "knowledge_sources",
+      "permission": "example.knowledge.manage"
+    }
+  ],
+  "actions": [
+    "create",
+    "import",
+    "export",
+    "bulk_action",
+    "ask_agent_about_selection"
+  ]
+}

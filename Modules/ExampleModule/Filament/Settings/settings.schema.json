@@ -1,0 +1,35 @@
+{
+  "module": "example-module",
+  "settings": [
+    {
+      "key": "agent.enabled",
+      "label": "Enable module agent",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "agent.voice_enabled",
+      "label": "Enable voice control",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "agent.channel_control_enabled",
+      "label": "Enable channel control",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "agent.require_confirmation_for_writes",
+      "label": "Confirm write actions",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "knowledge.auto_index",
+      "label": "Auto-index module knowledge",
+      "type": "boolean",
+      "default": true
+    }
+  ]
+}

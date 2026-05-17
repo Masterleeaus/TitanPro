@@ -1,0 +1,8 @@
+{
+  "schema": "titan.guardrails.v1",
+  "tenant_scoped": true,
+  "require_permission_checks": true,
+  "require_confirmation_for_write_tools": true,
+  "block_unapproved_sources": true,
+  "log_agent_actions": true
+}

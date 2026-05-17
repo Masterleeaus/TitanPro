@@ -1,0 +1,8 @@
+{
+  "name": "example.create_record",
+  "type": "write",
+  "action": "Modules\\ExampleModule\\Actions\\CreateExampleRecordAction",
+  "requires_permission": "example.create",
+  "tenant_scoped": true,
+  "requires_confirmation": true
+}

@@ -1,0 +1,6 @@
+{
+  "base": "/api/example-module",
+  "resources": [
+    "records"
+  ]
+}
