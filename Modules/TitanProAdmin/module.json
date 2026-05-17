@@ -4,7 +4,10 @@
   "active": 1,
   "filament_panel": "titanpro",
   "providers": [
-    "Modules\\TitanProAdmin\\Providers\\TitanProAdminServiceProvider"
+    "Modules\\TitanProAdmin\\Providers\\TitanProAdminServiceProvider",
+    "Modules\\TitanProAdmin\\Providers\\RouteServiceProvider",
+    "Modules\\TitanProAdmin\\Providers\\EventServiceProvider",
+    "Modules\\TitanProAdmin\\Providers\\FilamentServiceProvider"
   ],
   "keywords": ["admin", "platform", "tenancy", "audit", "health", "configuration"]
 }

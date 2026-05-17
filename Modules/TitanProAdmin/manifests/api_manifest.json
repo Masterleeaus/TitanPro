@@ -1,0 +1,12 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "module": "TitanProAdmin",
+  "super_admin_endpoints": [
+    {"method": "GET", "path": "/api/titanpro-admin/health", "name": "titanproadmin.api.health"},
+    {"method": "GET", "path": "/api/titanpro-admin/tenants/{tenant}/config", "name": "titanproadmin.api.tenants.config.show"},
+    {"method": "PUT", "path": "/api/titanpro-admin/tenants/{tenant}/config", "name": "titanproadmin.api.tenants.config.update"},
+    {"method": "POST", "path": "/api/titanpro-admin/tenants/{tenant}/suspend", "name": "titanproadmin.api.tenants.suspend"},
+    {"method": "POST", "path": "/api/titanpro-admin/tenants/{tenant}/modules/{module}/enable", "name": "titanproadmin.api.modules.enable"},
+    {"method": "POST", "path": "/api/titanpro-admin/tenants/{tenant}/modules/{module}/disable", "name": "titanproadmin.api.modules.disable"}
+  ]
+}
