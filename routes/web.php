@@ -258,6 +258,10 @@ Route::get('/theme/import/{token}', \App\Http\Controllers\Platform\ThemeImportCo
     ->name('theme.import')
     ->middleware('auth');
 
+Route::get('/theme-assets/{slug}/{path}', \App\Http\Controllers\ThemeAssetController::class)
+    ->where('path', '.*')
+    ->name('theme.assets');
+
 require __DIR__.'/esoft.php';
 require __DIR__.'/auth.php';
 
