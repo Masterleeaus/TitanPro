@@ -1,0 +1,19 @@
+{
+  "schema": "titan.dataset_manifest.v1",
+  "module": "zeropay-module",
+  "status": "approved",
+  "approved_sources": [
+    {"path": "Knowledge/guides/payment-session-guide.md", "type": "guide", "approved": true},
+    {"path": "Knowledge/guides/gateway-selection-guide.md", "type": "guide", "approved": true},
+    {"path": "Knowledge/guides/bank-matching-guide.md", "type": "guide", "approved": true},
+    {"path": "Knowledge/faqs/module-faq.md", "type": "faq", "approved": true},
+    {"path": "Knowledge/policies/refund-policy.md", "type": "policy", "approved": true},
+    {"path": "Knowledge/policies/dispute-policy.md", "type": "policy", "approved": true},
+    {"path": "Knowledge/compliance/pci-notes.md", "type": "compliance", "approved": true},
+    {"path": "Knowledge/compliance/kyc-requirements.md", "type": "compliance", "approved": true},
+    {"path": "Knowledge/sops/operator-sop.md", "type": "sop", "approved": true}
+  ],
+  "excluded_sources": [
+    {"path": "Knowledge/review", "reason": "draft/unapproved"}
+  ]
+}

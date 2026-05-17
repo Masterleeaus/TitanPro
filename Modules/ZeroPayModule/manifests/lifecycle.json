@@ -1,0 +1,12 @@
+{
+  "install": [
+    "migrate",
+    "seed_permissions"
+  ],
+  "upgrade": [
+    "migrate"
+  ],
+  "uninstall": [
+    "disable_module"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "tool": "demo.create_record",
+  "scaffold": true,
+  "replace_required": true,
+  "action": "CreateExampleRecordAction",
+  "confirmation_required": true
+}

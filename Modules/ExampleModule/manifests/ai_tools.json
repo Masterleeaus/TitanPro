@@ -1,0 +1,8 @@
+{
+  "tools": [
+    {
+      "name": "example.search",
+      "permission": "example.view"
+    }
+  ]
+}

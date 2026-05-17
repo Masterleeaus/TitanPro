@@ -1,0 +1,8 @@
+{
+  "schema": "titan.ai_telemetry.v1",
+  "module": "zeropay-module",
+  "events": ["agent.invoked", "knowledge.retrieved", "tool.called", "guardrail.triggered", "citation.returned"],
+  "owner": "TitanCore.UsageTracker",
+  "dimensions": ["company_id", "gateway", "session_status"],
+  "track_per_company": true
+}
