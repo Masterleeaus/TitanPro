@@ -35,4 +35,3 @@ class GeneratorBridgeAnthropicRoutingTest extends TestCase
         $this->assertSame('https://api.anthropic.com/v1/messages', $request['url'] ?? null);
     }
 }
-

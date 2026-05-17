@@ -18,13 +18,6 @@ export interface NavItem {
     isActive?: boolean;
 }
 
-export interface RoleUiData {
-    role: string;
-    hidden_nav_items: string[];
-    widget_layout: string[];
-    theme: Record<string, string>;
-}
-
 export interface SubscriptionData {
     status: string;
     plan: string;
@@ -51,6 +44,13 @@ export interface PlatformData {
     footer_text: string | null;
 }
 
+export interface RoleUi {
+    role: string;
+    hidden_nav_items: string[];
+    widget_layout: string[];
+    theme: Record<string, string>;
+}
+
 export type AppPageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -61,7 +61,7 @@ export type AppPageProps<
     subscription: SubscriptionData | null;
     plan: PlanData | null;
     platform: PlatformData;
-    role_ui: RoleUiData | null;
+    role_ui?: RoleUi | null;
 };
 
 export interface User {

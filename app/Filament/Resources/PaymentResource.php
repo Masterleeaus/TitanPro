@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PaymentResource\Pages;
 use App\Models\Payment;
+use App\Models\Scopes\TenantScope;
 use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -20,9 +21,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * PaymentResource — TitanPro (super-admin) panel.
  *
- * Restricted to super_admin only. Finance operators should use the
- * dedicated ZeroPay panel (/zeropay) where bookkeeper/owner/admin
- * roles have access via App\Filament\ZeroPay\Resources\PaymentResource.
+ * Restricted to super_admin only and intentionally cross-tenant so
+ * platform operators can review payments across all organizations.
+ * Finance operators should use the dedicated ZeroPay panel (/zeropay)
+ * where bookkeeper/owner/admin roles have org-scoped access via
+ * App\Filament\ZeroPay\Resources\PaymentResource.
  */
 class PaymentResource extends Resource
 {
@@ -88,7 +91,8 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                                TextColumn::make('invoice_id')->label('Invoice')->searchable()->sortable(),
+                TextColumn::make('organization.name')->label('Organization')->searchable()->sortable(),
+                TextColumn::make('invoice_id')->label('Invoice')->searchable()->sortable(),
                 TextColumn::make('amount')->label('Amount')->money('usd')->sortable(),
                 TextColumn::make('method')->label('Method')->badge()->searchable()->sortable(),
                 TextColumn::make('paid_at')->label('Paid At')->dateTime()->sortable(),
@@ -115,13 +119,7 @@ class PaymentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $organizationId = auth()->user()?->organization_id;
-
-        if ($organizationId === null) {
-            return parent::getEloquentQuery()->whereRaw('1 = 0');
-        }
-
         return parent::getEloquentQuery()
-            ->where('organization_id', $organizationId);
+            ->withoutGlobalScope(TenantScope::class);
     }
 }

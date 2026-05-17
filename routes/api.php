@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use App\Http\Controllers\Technician\LocationController;
-use App\Http\Controllers\TitanZero\GenerateUiController;
 use App\Http\Controllers\TitanZero\SuggestionsController;
 use App\Http\Controllers\TitanZero\ThreadController;
 use Illuminate\Support\Facades\Route;
+use Modules\TitanZero\Http\Controllers\TitanZeroController;
 
 Route::middleware(['auth', 'role:technician'])
     ->prefix('technician')
@@ -51,12 +51,13 @@ Route::middleware(['auth', 'role:technician'])
  */
 Route::middleware(['auth:sanctum'])->prefix('titan')->group(function () {
     // Main generate-ui endpoint - accepts a message and returns an AgentUiResponse
-    Route::post('/zero/generate-ui', GenerateUiController::class)
+    Route::post('/zero/generate-ui', [TitanZeroController::class, 'generateUi'])
         ->name('titan.zero.generate-ui');
 
     // Thread history - returns messages + widgets for a persisted thread
     Route::get('/threads/{threadId}', [ThreadController::class, 'show'])
-        ->name('titan.threads.show');
+        ->name('titan.threads.show')
+        ->where('threadId', '[0-9]+');
 
     // Context-aware suggestion chips
     Route::get('/suggestions', SuggestionsController::class)
