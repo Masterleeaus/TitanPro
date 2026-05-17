@@ -1,7 +1,7 @@
 {
   "name": "InstantAds",
   "alias": "instantads",
-  "description": "Fast AI ad creative generator — describe it, generate it, use it. DALL-E, Stable Diffusion, Flux, Replicate support with batch variants and real-time streaming.",
+  "description": "Fast AI ad creative generator \u2014 describe it, generate it, use it. DALL-E, Stable Diffusion, Flux, Replicate support with batch variants and real-time streaming.",
   "keywords": [
     "ai",
     "ads",
@@ -18,7 +18,9 @@
   "requires": [],
   "providers": [
     "Modules\\InstantAds\\Providers\\InstantAdsServiceProvider",
-    "Modules\\InstantAds\\Providers\\RouteServiceProvider"
+    "Modules\\InstantAds\\Providers\\RouteServiceProvider",
+    "Modules\\InstantAds\\Providers\\EventServiceProvider",
+    "Modules\\InstantAds\\Providers\\FilamentServiceProvider"
   ],
   "files": [],
   "permissions": [
@@ -43,5 +45,8 @@
     }
   ],
   "sidebar_menu": true,
-  "filament_panel": "titanstudio"
+  "filament_panel": "titanstudio",
+  "filament": {
+    "plugin": "Modules\\InstantAds\\Filament\\Plugin\\InstantAdsPlugin"
+  }
 }
