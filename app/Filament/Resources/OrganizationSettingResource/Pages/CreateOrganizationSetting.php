@@ -10,6 +10,10 @@ class CreateOrganizationSetting extends CreateRecord
 {
     protected static string $resource = OrganizationSettingResource::class;
 
+    /**
+     * Keep the existing Filament create route as an idempotent initializer so
+     * older links still land on the singleton settings record for this org.
+     */
     public function mount(): void
     {
         $organizationId = auth()->user()?->organization_id;
