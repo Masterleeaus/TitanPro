@@ -2,13 +2,22 @@
 
 namespace App\Models\TitanNexus;
 
+use App\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
 class NexusBookingHandoff extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'nexus_booking_handoffs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'company_id',
+        'lead_id',
+        'status',
+        'scheduled_at',
+        'payload',
+    ];
 
     protected $casts = [
         'payload' => 'array',

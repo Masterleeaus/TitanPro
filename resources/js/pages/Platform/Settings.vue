@@ -29,26 +29,27 @@ type PlatformSettings = {
 };
 
 const props = defineProps<{
-    settings: PlatformSettings;
+    platform: PlatformSettings;
 }>();
+const settings = props.platform;
 
 const page = usePage();
 const flashSuccess = computed(() => (page.props.flash as { success?: string } | undefined)?.success);
 
-const logoPreview = ref<string | null>(props.settings.logo_url);
-const faviconPreview = ref<string | null>(props.settings.favicon_url);
+const logoPreview = ref<string | null>(settings.logo_url);
+const faviconPreview = ref<string | null>(settings.favicon_url);
 
 const form = useForm({
-    app_name: props.settings.app_name ?? 'FieldOps Hub',
-    primary_color: props.settings.primary_color ?? '#2563eb',
-    secondary_color: props.settings.secondary_color ?? '#0f172a',
-    accent_color: props.settings.accent_color ?? '#14b8a6',
-    surface_color: props.settings.surface_color ?? '#f8fafc',
-    font_heading: props.settings.font_heading ?? 'Figtree',
-    font_body: props.settings.font_body ?? 'Figtree',
-    support_email: props.settings.support_email ?? '',
-    footer_text: props.settings.footer_text ?? '',
-    custom_css: props.settings.custom_css ?? '',
+    app_name: settings.app_name ?? 'FieldOps Hub',
+    primary_color: settings.primary_color ?? '#2563eb',
+    secondary_color: settings.secondary_color ?? '#0f172a',
+    accent_color: settings.accent_color ?? '#14b8a6',
+    surface_color: settings.surface_color ?? '#f8fafc',
+    font_heading: settings.font_heading ?? 'Figtree',
+    font_body: settings.font_body ?? 'Figtree',
+    support_email: settings.support_email ?? '',
+    footer_text: settings.footer_text ?? '',
+    custom_css: settings.custom_css ?? '',
     logo: null as File | null,
     favicon: null as File | null,
     remove_logo: false,
@@ -58,7 +59,7 @@ const form = useForm({
 const previewGrid = ref<HTMLElement | null>(null);
 const showGridOverlay = ref(true);
 const snapSize = ref<4 | 8>(8);
-const layoutTokens = ref<LayoutTokens>(extractLayoutTokens(props.settings.custom_css));
+const layoutTokens = ref<LayoutTokens>(extractLayoutTokens(settings.custom_css));
 const history = ref<LayoutTokens[]>([cloneLayoutTokens(layoutTokens.value)]);
 const historyIndex = ref(0);
 const isDragging = ref(false);
@@ -94,13 +95,13 @@ function previewFile(event: Event, target: 'logo' | 'favicon'): void {
     if (target === 'logo') {
         form.logo = file;
         form.remove_logo = false;
-        logoPreview.value = file ? URL.createObjectURL(file) : props.settings.logo_url;
+        logoPreview.value = file ? URL.createObjectURL(file) : settings.logo_url;
         return;
     }
 
     form.favicon = file;
     form.remove_favicon = false;
-    faviconPreview.value = file ? URL.createObjectURL(file) : props.settings.favicon_url;
+    faviconPreview.value = file ? URL.createObjectURL(file) : settings.favicon_url;
 }
 
 function removeLogo(): void {

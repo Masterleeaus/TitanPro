@@ -105,7 +105,7 @@ describe('Settings.vue – grid editor', () => {
     function mountSettings(customCss: string | null = null) {
         return mount(Settings, {
             props: {
-                settings: { ...defaultSettings, custom_css: customCss },
+                platform: { ...defaultSettings, custom_css: customCss },
             },
             global: {
                 stubs: {
@@ -115,6 +115,14 @@ describe('Settings.vue – grid editor', () => {
             },
         });
     }
+
+    it('mounts without missing-prop warnings for platform settings', () => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        mountSettings();
+        const combinedErrors = errorSpy.mock.calls.flat().join(' ');
+        expect(combinedErrors).not.toContain('Missing required prop');
+        errorSpy.mockRestore();
+    });
 
     // -----------------------------------------------------------------------
     // Sidebar width drag

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Console\Commands\TitanTokensExportCommand;
+use App\Console\Commands\TitanThemeExportCommand;
 use App\Events\JobCreated;
 use App\Events\JobStatusChanged;
 use App\Listeners\AlertOnFailedMailJob;
@@ -47,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TitanTokensExportCommand::class,
+                TitanThemeExportCommand::class,
             ]);
         }
 
