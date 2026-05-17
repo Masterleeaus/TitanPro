@@ -1,0 +1,18 @@
+{
+  "module": "Security",
+  "version": "0.3.0",
+  "checks": [
+    "required database tables",
+    "api route registration",
+    "feature config registration",
+    "permissions config registration",
+    "workflow config registration"
+  ],
+  "commands": [
+    "security:health",
+    "security:repair --dry-run"
+  ],
+  "api": [
+    "GET /api/security/diagnostics"
+  ]
+}

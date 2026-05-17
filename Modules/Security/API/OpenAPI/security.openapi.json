@@ -1,0 +1,12 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Security Module API", "version": "0.3.0"},
+  "paths": {
+    "/api/security/dashboard": {"get": {"summary": "Security dashboard", "tags": ["Security"]}},
+    "/api/security/health": {"get": {"summary": "Security health", "tags": ["Security"]}},
+    "/api/security/status": {"get": {"summary": "Security status", "tags": ["Security"]}},
+    "/api/security/features": {"get": {"summary": "Security features", "tags": ["Security"]}},
+    "/api/security/permissions": {"get": {"summary": "Security permissions", "tags": ["Security"]}},
+    "/api/security/diagnostics": {"get": {"summary": "Security diagnostics", "tags": ["Security"]}}
+  }
+}

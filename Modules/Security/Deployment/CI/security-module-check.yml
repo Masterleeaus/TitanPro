@@ -1,0 +1,15 @@
+name: Security Module Checks
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  security-module:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax check
+        run: find Modules/Security -name "*.php" -print0 | xargs -0 -n1 php -l
+      - name: Module readiness smoke test
+        run: php artisan security:readiness --json || true

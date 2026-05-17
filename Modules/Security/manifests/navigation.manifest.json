@@ -1,0 +1,25 @@
+{
+  "module": "security",
+  "items": [
+    {
+      "label": "Security Transfer",
+      "route": "security-transfer.index",
+      "permission": "view_security"
+    },
+    {
+      "label": "Goods In/Out Permits",
+      "route": "trinoutpermit.index",
+      "permission": "view_trinoutpermit"
+    },
+    {
+      "label": "Work Permits",
+      "route": "work-permits.index",
+      "permission": "view_work_permits"
+    },
+    {
+      "label": "Access Cards",
+      "route": "card-access.index",
+      "permission": "view_access_card"
+    }
+  ]
+}

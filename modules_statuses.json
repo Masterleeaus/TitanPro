@@ -4,6 +4,7 @@
     "TitanNexus": true,
     "TitanZero": true,
     "TitanCore": true,
+    "Security": true,
     "CleaningJobs": true,
     "BookingModule": true,
     "Biometric": true,

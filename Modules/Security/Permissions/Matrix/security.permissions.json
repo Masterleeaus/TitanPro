@@ -1,0 +1,42 @@
+{
+  "module": "Security",
+  "version": "real-pass-c",
+  "domains": [
+    "core-security",
+    "goods-in-out-permits",
+    "work-permits",
+    "access-cards"
+  ],
+  "permissions": [
+    "security.view",
+    "security.create",
+    "security.update",
+    "security.delete",
+    "security.approve",
+    "security.export",
+    "security.diagnostics"
+  ],
+  "roles": {
+    "security.viewer": [
+      "security.view"
+    ],
+    "security.operator": [
+      "security.view",
+      "security.create",
+      "security.update"
+    ],
+    "security.approver": [
+      "security.view",
+      "security.approve"
+    ],
+    "security.admin": [
+      "security.view",
+      "security.create",
+      "security.update",
+      "security.delete",
+      "security.approve",
+      "security.export",
+      "security.diagnostics"
+    ]
+  }
+}

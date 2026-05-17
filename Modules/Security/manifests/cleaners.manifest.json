@@ -1,0 +1,53 @@
+{
+  "module": "Security",
+  "product_focus": "cleaners_first",
+  "features": [
+    "access_card",
+    "basic_reports",
+    "check_in_out",
+    "cleaner_decisions",
+    "cleaner_registration",
+    "cleaner_sites",
+    "daily_attendance_reports",
+    "exception_reports",
+    "force_checkout",
+    "goods_in_out",
+    "site_check_in_out",
+    "site_linked_cards_permits_goods_logs",
+    "site_linked_check_in_out",
+    "site_summary_reports",
+    "supervisor_approval",
+    "work_permits"
+  ],
+  "routes": [
+    "api.security.cleaners.*",
+    "security.cleaners.*"
+  ],
+  "tables": [
+    "security_cleaners",
+    "security_cleaner_site_logs"
+  ],
+  "legacy_tables_extended": [
+    "tr_access_card.cleaner_id",
+    "tr_workpermits.cleaner_id",
+    "tr_in_out_permit.cleaner_id"
+  ],
+  "domain_model": [
+    "Cleaner",
+    "CleanerSite",
+    "CleanerSiteLog",
+    "TrAccessCard",
+    "WorkPermits",
+    "TrInOutPermit"
+  ],
+  "pass": "REAL-F3",
+  "api": {
+    "cleaners_decision": "POST /api/security/cleaners/{cleaner}/decision",
+    "check_in": "POST /api/security/cleaners/{cleaner}/check-in",
+    "check_out": "POST /api/security/cleaners/{cleaner}/check-out",
+    "force_check_out": "POST /api/security/cleaners/{cleaner}/force-check-out",
+    "daily_report": "GET /api/security/cleaner-reports/daily",
+    "site_report": "GET /api/security/cleaner-reports/sites",
+    "exceptions_report": "GET /api/security/cleaner-reports/exceptions"
+  }
+}

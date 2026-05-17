@@ -1,0 +1,17 @@
+type SecurityModuleStatus {
+  module: String!
+  status: String!
+  features: [String!]!
+  permissions: [String!]!
+}
+
+type SecurityModuleHealth {
+  module: String!
+  status: String!
+  checks: [String!]!
+}
+
+type Query {
+  securityStatus: SecurityModuleStatus!
+  securityHealth: SecurityModuleHealth!
+}
