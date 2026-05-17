@@ -27,3 +27,21 @@ test('ui studio source keeps reordered widgets on publish', function () {
         ->toContain("'type' => \$w['type'],")
         ->toContain("'title' => \$w['label']");
 });
+
+test('ui studio typography system source is wired for presets, scale, and runtime tokens', function () {
+    $pageClass = file_get_contents(__DIR__.'/../../app/Filament/Pages/UiStudio.php');
+    $bladeView = file_get_contents(__DIR__.'/../../resources/views/filament/pages/ui-studio.blade.php');
+
+    expect($pageClass)
+        ->toContain('public function typographyPresets(): array')
+        ->toContain('public function applyTypographyPreset(string $preset): void')
+        ->toContain('public function applyGoogleFont(string $font): void')
+        ->toContain('public function uploadCustomFont(): void')
+        ->toContain('private function saveTypographyTokens(): void')
+        ->toContain("'scope' => 'typography'")
+        ->and($bladeView)->toContain("'typography' => 'Typography'")
+        ->and($bladeView)->toContain("data-font-source-url")
+        ->and($bladeView)->toContain("data-custom-font-path")
+        ->and($bladeView)->toContain('Generated Type Scale')
+        ->and($bladeView)->toContain('applyGoogleFont');
+});
