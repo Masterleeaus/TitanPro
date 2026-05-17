@@ -9,19 +9,79 @@ use Illuminate\Support\Facades\Schema;
 
 class ThemeRuntime
 {
+    public const CACHE_KEY = 'theme-manager.active-theme';
+    protected const ENGINE_FORMAT_VERSION = 1;
+    protected const DEFAULT_THEME_STYLESHEET = 'css/theme.css';
+
+    protected const PRESET_CACHE_KEY = 'theme-manager.active-preset';
+
+    protected const ACTIVE_FILE = 'theme-manager/active-preset.json';
+
     public static function activeThemeSlug(): ?string
     {
-        return self::activePreset();
+        $installed = self::installedThemes();
+        $cached = Cache::get(self::CACHE_KEY);
+
+        if (is_string($cached) && in_array($cached, $installed, true)) {
+            return $cached;
+        }
+
+        $state = self::readActiveState();
+        $slug = self::extractThemeSlug($state, $installed);
+
+        if ($slug !== null) {
+            Cache::put(self::CACHE_KEY, $slug, now()->addDay());
+
+            return $slug;
+        }
+
+        if (self::hasPersistedThemeSelection($state)) {
+            self::repairInvalidActiveTheme($state);
+        }
+
+        return null;
+    }
+
+    public static function setActiveThemeSlug(string $slug): bool
+    {
+        $slug = trim($slug);
+
+        if ($slug === '' || ! in_array($slug, self::installedThemes(), true)) {
+            return false;
+        }
+
+        $state = self::readActiveState();
+        $state['active_theme'] = $slug;
+        unset($state['theme_slug']);
+
+        self::writeActiveState($state);
+        Cache::put(self::CACHE_KEY, $slug, now()->addDay());
+
+        return true;
+    }
+
+    public static function clearActiveTheme(): void
+    {
+        $state = self::readActiveState();
+        unset($state['active_theme'], $state['theme_slug']);
+
+        if ($state === []) {
+            self::deleteActiveStateFile();
+        } else {
+            self::writeActiveState($state);
+        }
+
+        Cache::forget(self::CACHE_KEY);
     }
 
     public static function activeThemeManifest(): array
     {
         $theme = self::activeTheme() ?? [];
-        $slug = self::activePreset();
+        $slug = self::activeThemeSlug();
 
         return [
             'slug' => $slug,
-            'preset' => $slug,
+            'preset' => self::activePreset(),
             'theme' => $theme,
             'tokens' => self::tokens(),
             'asset_urls' => self::assetUrls(),
@@ -31,10 +91,84 @@ class ThemeRuntime
         ];
     }
 
+    public static function installedThemes(): array
+    {
+        $basePath = self::themesBasePath();
+
+        if (! File::isDirectory($basePath)) {
+            return [];
+        }
+
+        $themes = [];
+
+        foreach (File::directories($basePath) as $directory) {
+            $slug = basename($directory);
+
+            if (self::isValidThemeDirectory($directory, $slug)) {
+                $themes[] = $slug;
+            }
+        }
+
+        sort($themes);
+
+        return array_values(array_unique($themes));
+    }
+
+    public static function themePath(string $slug): string
+    {
+        return self::themesBasePath() . DIRECTORY_SEPARATOR . trim($slug, '/');
+    }
+
+    public static function themeManifest(string $slug): ?array
+    {
+        $themeJson = self::themePath($slug) . DIRECTORY_SEPARATOR . 'theme.json';
+
+        if (! File::exists($themeJson)) {
+            return null;
+        }
+
+        $decoded = json_decode((string) File::get($themeJson), true);
+
+        if (! is_array($decoded)) {
+            return null;
+        }
+
+        return self::normalizeThemeManifest($decoded, $slug);
+    }
+
+    public static function viewOverridePaths(?string $slug = null): array
+    {
+        $slug ??= self::activeThemeSlug();
+
+        if (! $slug) {
+            return [];
+        }
+
+        $themePath = self::themePath($slug);
+        $viewsPath = $themePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views';
+
+        return [
+            'theme' => $themePath,
+            'views' => $viewsPath,
+            'vendor' => $viewsPath . DIRECTORY_SEPARATOR . 'vendor',
+        ];
+    }
+
     public static function assetUrls(): array
     {
-        $theme = self::activeTheme() ?? [];
         $assets = [];
+        $activeTheme = self::activeThemeSlug();
+
+        if ($activeTheme) {
+            $cssPath = self::themePath($activeTheme) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css';
+
+            if (File::exists($cssPath)) {
+                $version = self::fileVersion($cssPath);
+                $assets['theme_css'] = url('/theme-assets/' . rawurlencode($activeTheme) . '/css/theme.css') . ($version ? '?v=' . $version : '');
+            }
+        }
+
+        $theme = self::activeTheme() ?? [];
 
         foreach ([
             'logo' => $theme['logo'] ?? null,
@@ -81,50 +215,80 @@ class ThemeRuntime
         return asset('storage/' . $path);
     }
 
-    public static function diagnostics(): array
+    public static function diagnostics(?string $slug = null): array
     {
+        $installed = self::installedThemes();
+        $active = $slug ?: self::activeThemeSlug();
+        $themesPath = self::themesBasePath();
+        $activeFile = storage_path('app/' . self::ACTIVE_FILE);
+        $issues = [];
+        $assets = [];
+
+        if (! File::isDirectory($themesPath)) {
+            $issues[] = 'Theme base path is missing: ' . $themesPath;
+        }
+
+        if ($active !== null && ! in_array($active, $installed, true)) {
+            $issues[] = "Active theme [{$active}] is not installed. Falling back to Filament default.";
+        }
+
+        if ($active !== null) {
+            $cssPath = self::themePath($active) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css';
+            $manifest = self::themeManifest($active);
+
+            if (! File::exists($cssPath)) {
+                $issues[] = "Active theme CSS is missing for [{$active}] at {$cssPath}. Falling back to Filament default.";
+            } else {
+                $assets[] = $cssPath;
+            }
+
+            if (is_array($manifest) && ($manifest['compatible'] ?? true) === false) {
+                $issues[] = "Active theme [{$active}] uses unsupported format version [{$manifest['format_version']}].";
+            }
+        }
+
+        if (! File::exists($activeFile) && is_string(Cache::get(self::CACHE_KEY))) {
+            $issues[] = 'Active theme marker file is missing; state currently survives only in cache.';
+        }
+
         $preset = self::activePreset();
         $theme = self::activeTheme();
         $tokenTable = self::hasTokenTable();
-        $activeFile = storage_path('app/theme-manager/active-preset.json');
 
         return [
-            'ok' => true,
+            'ok' => $issues === [],
+            'active' => $active,
             'active_preset' => $preset,
+            'installed' => $installed,
+            'themes_path' => $themesPath,
+            'assets' => $assets,
+            'issues' => $issues,
             'theme_loaded' => is_array($theme),
             'theme_label' => is_array($theme) ? ($theme['label'] ?? null) : null,
             'token_table_exists' => $tokenTable,
             'token_count' => $tokenTable ? self::safeTokenCount() : 0,
             'active_file_exists' => File::exists($activeFile),
             'active_file' => $activeFile,
-            'cache_key' => 'theme-manager.active-preset',
+            'cache_key' => self::PRESET_CACHE_KEY,
             'asset_urls_count' => count(self::assetUrls()),
         ];
     }
 
     public static function activePreset(): ?string
     {
-        $cached = Cache::get('theme-manager.active-preset');
+        $cached = Cache::get(self::PRESET_CACHE_KEY);
 
         if (is_string($cached) && class_exists(ThemePalette::class) && ThemePalette::preset($cached)) {
             return $cached;
         }
 
-        $file = storage_path('app/theme-manager/active-preset.json');
+        $state = self::readActiveState();
+        $preset = self::extractPresetSlug($state);
 
-        if (File::exists($file)) {
-            $json = json_decode((string) File::get($file), true);
-            $preset = is_array($json) ? ($json['preset'] ?? null) : null;
+        if ($preset !== null) {
+            Cache::put(self::PRESET_CACHE_KEY, $preset, now()->addDay());
 
-            if (is_string($preset) && class_exists(ThemePalette::class) && ThemePalette::preset($preset)) {
-                Cache::put('theme-manager.active-preset', $preset, now()->addDay());
-
-                return $preset;
-            }
-        }
-
-        if (class_exists(ThemePalette::class) && method_exists(ThemePalette::class, 'defaultPresetSlug')) {
-            return ThemePalette::defaultPresetSlug();
+            return $preset;
         }
 
         return null;
@@ -238,6 +402,23 @@ class ThemeRuntime
 
     public static function css(): string
     {
+        $activeTheme = self::activeThemeSlug();
+
+        if ($activeTheme !== null) {
+            $cssPath = self::themePath($activeTheme) . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css';
+
+            if (File::exists($cssPath)) {
+                $version = self::fileVersion($cssPath);
+                $href = url('/theme-assets/' . rawurlencode($activeTheme) . '/css/theme.css') . ($version ? '?v=' . $version : '');
+
+                return '<link rel="stylesheet" id="theme-manager-runtime" href="' . e($href) . '">';
+            }
+
+            self::clearActiveTheme();
+
+            return '';
+        }
+
         $theme = self::activeTheme();
 
         if (! $theme) {
@@ -292,6 +473,154 @@ CSS;
         };
     }
 
+    protected static function themesBasePath(): string
+    {
+        return (string) config('theme.base_path', base_path('themes'));
+    }
+
+    protected static function normalizeThemeManifest(array $manifest, string $fallbackSlug): array
+    {
+        $formatVersion = (int) ($manifest['format_version'] ?? $manifest['theme_format_version'] ?? 1);
+        $stylesheet = $manifest['stylesheet'] ?? $manifest['css'] ?? self::DEFAULT_THEME_STYLESHEET;
+
+        return [
+            'slug' => (string) ($manifest['slug'] ?? $fallbackSlug),
+            'name' => (string) ($manifest['name'] ?? $manifest['title'] ?? $fallbackSlug),
+            'version' => (string) ($manifest['version'] ?? '1.0.0'),
+            'format_version' => $formatVersion,
+            'engine_format_version' => self::ENGINE_FORMAT_VERSION,
+            'compatible' => $formatVersion <= self::ENGINE_FORMAT_VERSION,
+            'stylesheet' => is_string($stylesheet) ? $stylesheet : self::DEFAULT_THEME_STYLESHEET,
+        ];
+    }
+
+    protected static function readActiveState(): array
+    {
+        $file = storage_path('app/' . self::ACTIVE_FILE);
+
+        if (! File::exists($file)) {
+            return [];
+        }
+
+        $raw = trim((string) File::get($file));
+
+        if ($raw === '') {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        return ['active_theme' => $raw];
+    }
+
+    protected static function writeActiveState(array $state): void
+    {
+        $dir = storage_path('app/theme-manager');
+
+        if (! File::isDirectory($dir)) {
+            File::makeDirectory($dir, 0755, true);
+        }
+
+        $state['updated_at'] = now()->toIso8601String();
+
+        File::put(storage_path('app/' . self::ACTIVE_FILE), json_encode($state, JSON_PRETTY_PRINT));
+    }
+
+    protected static function deleteActiveStateFile(): void
+    {
+        $file = storage_path('app/' . self::ACTIVE_FILE);
+
+        if (File::exists($file)) {
+            File::delete($file);
+        }
+    }
+
+    protected static function extractThemeSlug(array $state, array $installed): ?string
+    {
+        $themeField = $state['theme'] ?? null;
+        $themeCandidate = null;
+
+        if (is_array($themeField)) {
+            $themeCandidate = $themeField['slug'] ?? null;
+        } elseif (is_string($themeField)) {
+            $themeCandidate = $themeField;
+        }
+
+        $candidates = [
+            $state['active_theme'] ?? null,
+            $state['theme_slug'] ?? null,
+            $themeCandidate,
+            $state['slug'] ?? null,
+            config('theme.active'),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && in_array($candidate, $installed, true)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    protected static function extractPresetSlug(array $state): ?string
+    {
+        if (! class_exists(ThemePalette::class)) {
+            return null;
+        }
+
+        $candidates = [
+            $state['preset'] ?? null,
+            $state['slug'] ?? null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && ThemePalette::preset($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    protected static function hasPersistedThemeSelection(array $state): bool
+    {
+        return isset($state['active_theme'])
+            || isset($state['theme_slug'])
+            || (is_string($state['theme'] ?? null))
+            || (is_array($state['theme'] ?? null) && isset($state['theme']['slug']))
+            || isset($state['slug']);
+    }
+
+    protected static function repairInvalidActiveTheme(array $state): void
+    {
+        unset($state['active_theme'], $state['theme_slug']);
+
+        $theme = $state['theme'] ?? null;
+
+        if (is_string($theme)) {
+            unset($state['theme']);
+        }
+
+        $slug = $state['slug'] ?? null;
+
+        if (is_string($slug) && (! class_exists(ThemePalette::class) || ! ThemePalette::preset($slug))) {
+            unset($state['slug']);
+        }
+
+        if ($state === []) {
+            self::deleteActiveStateFile();
+        } else {
+            self::writeActiveState($state);
+        }
+
+        Cache::forget(self::CACHE_KEY);
+    }
+
     protected static function hasTokenTable(): bool
     {
         try {
@@ -308,5 +637,24 @@ CSS;
         } catch (\Throwable) {
             return 0;
         }
+    }
+
+    protected static function isValidThemeDirectory(string $directory, string $slug): bool
+    {
+        return self::themeManifest($slug) !== null
+            || File::exists($directory . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'theme.css');
+    }
+
+    protected static function fileVersion(string $path): string
+    {
+        $mtime = filemtime($path);
+
+        if ($mtime === false) {
+            logger()->warning('Unable to resolve theme asset file modification time. Check that the file exists and is readable.', ['path' => $path]);
+
+            return '';
+        }
+
+        return (string) $mtime;
     }
 }
