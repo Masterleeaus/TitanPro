@@ -1241,6 +1241,62 @@ class UiStudio extends Page
             ->send();
     }
 
+    public function installedMarketplaceThemes(): array
+    {
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId || ! Schema::hasTable('organization_brandings')) {
+            return [];
+        }
+
+        $branding = OrganizationBranding::withoutGlobalScopes()
+            ->where('organization_id', $orgId)
+            ->first();
+
+        if (! $branding) {
+            return [];
+        }
+
+        return array_map(static function (array $theme): array {
+            return [
+                'slug' => (string) ($theme['slug'] ?? ''),
+                'name' => (string) ($theme['name'] ?? 'Installed Theme'),
+                'author' => (string) ($theme['author'] ?? 'Unknown'),
+                'version' => (string) ($theme['version'] ?? '1.0.0'),
+                'tags' => is_array($theme['tags'] ?? null) ? $theme['tags'] : [],
+                'tokens' => is_array($theme['tokens'] ?? null) ? $theme['tokens'] : [],
+            ];
+        }, $branding->installedThemePacks());
+    }
+
+    public function applyInstalledTheme(string $slug): void
+    {
+        $theme = collect($this->installedMarketplaceThemes())
+            ->first(static fn (array $installedTheme): bool => ($installedTheme['slug'] ?? '') === Str::slug($slug));
+
+        if (! is_array($theme) || ! is_array($theme['tokens'] ?? null) || $theme['tokens'] === []) {
+            Notification::make()->title('Installed theme not found')->warning()->send();
+
+            return;
+        }
+
+        $tokens = $theme['tokens'];
+
+        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
+        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
+        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
+        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
+        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
+        $this->fontHeading    = $this->fontFamily;
+        $this->fontBody       = $this->fontFamily;
+
+        Notification::make()
+            ->title("Theme \"{$theme['name']}\" applied")
+            ->body('Click Publish to save the changes.')
+            ->success()
+            ->send();
+    }
+
     /**
      * Validate an uploaded ZIP and store the preview info.
      * Called when a file is selected in the Install tab.
@@ -1287,6 +1343,10 @@ class UiStudio extends Page
         $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
         $this->fontHeading    = $this->fontFamily;
         $this->fontBody       = $this->fontFamily;
+        $this->installThemePackForOrganization(
+            is_array($this->zipPreview['meta'] ?? null) ? $this->zipPreview['meta'] : [],
+            $tokens
+        );
 
         $this->themeZipUpload = null;
         $this->zipPreview     = [];
@@ -1332,6 +1392,32 @@ class UiStudio extends Page
         return response()->download($export['path'], $export['fileName'], [
             'Content-Type' => $export['contentType'],
         ])->deleteFileAfterSend();
+    }
+
+    /** @param  array<string, mixed>  $meta  @param  array<string, mixed>  $tokens */
+    private function installThemePackForOrganization(array $meta, array $tokens): void
+    {
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId || ! Schema::hasTable('organization_brandings')) {
+            return;
+        }
+
+        $name = trim((string) ($meta['name'] ?? ''));
+        $author = trim((string) ($meta['author'] ?? ''));
+        $version = trim((string) ($meta['version'] ?? ''));
+        $slug = Str::slug((string) ($meta['slug'] ?? $name));
+        $tags = $meta['tags'] ?? [];
+
+        $branding = OrganizationBranding::withoutGlobalScopes()->firstOrCreate(['organization_id' => $orgId]);
+        $branding->installThemePack([
+            'slug' => $slug !== '' ? $slug : 'installed-theme',
+            'name' => $name !== '' ? $name : 'Installed Theme',
+            'author' => $author !== '' ? $author : 'Unknown',
+            'version' => $version !== '' ? $version : '1.0.0',
+            'tags' => is_array($tags) ? array_values(array_filter($tags, static fn (mixed $tag): bool => is_string($tag))) : [],
+            'tokens' => $tokens,
+        ]);
     }
 
     /**
@@ -1439,6 +1525,10 @@ class UiStudio extends Page
         $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
         $this->fontHeading    = $this->fontFamily;
         $this->fontBody       = $this->fontFamily;
+        $this->installThemePackForOrganization(
+            is_array($this->importPreview['meta'] ?? null) ? $this->importPreview['meta'] : [],
+            $tokens
+        );
 
         $this->importUrl     = '';
         $this->importPreview = [];

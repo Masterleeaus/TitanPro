@@ -1021,6 +1021,47 @@
                     {{-- ── Browse --}}
                     @if ($marketplaceTab === 'browse')
                         <section>
+                            @php($installedThemes = $this->installedMarketplaceThemes())
+
+                            @if ($installedThemes !== [])
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Your Installed Theme Packs</h4>
+                                <div class="space-y-2 mb-4">
+                                    @foreach ($installedThemes as $theme)
+                                        <div class="rounded-lg border border-primary-200 dark:border-primary-900/40 bg-primary-50 dark:bg-primary-900/10 p-3">
+                                            <div class="flex gap-1 mb-2">
+                                                @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $colorKey)
+                                                    <div
+                                                        class="h-5 flex-1 rounded"
+                                                        style="background: {{ e($theme['tokens'][$colorKey] ?? '#eee') }}"
+                                                        title="{{ $colorKey }}"
+                                                    ></div>
+                                                @endforeach
+                                            </div>
+                                            <div class="flex items-start justify-between gap-2">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">{{ $theme['name'] }}</p>
+                                                    <p class="text-[10px] text-gray-400">{{ $theme['author'] }} · v{{ $theme['version'] }}</p>
+                                                    <div class="flex flex-wrap gap-1 mt-1">
+                                                        <span class="inline-block rounded-full bg-primary-100 dark:bg-primary-900/40 px-1.5 py-0.5 text-[9px] text-primary-700 dark:text-primary-300">Installed</span>
+                                                        @foreach ($theme['tags'] as $tag)
+                                                            <span class="inline-block rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[9px] text-gray-500 dark:text-gray-400">{{ $tag }}</span>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    wire:click="applyInstalledTheme('{{ $theme['slug'] }}')"
+                                                    class="flex-shrink-0 flex items-center gap-1 rounded-md bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1.5 text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:bg-primary-100 transition-colors"
+                                                >
+                                                    <x-heroicon-o-paint-brush class="h-3 w-3" />
+                                                    Apply
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+
                             <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Curated Theme Packs</h4>
                             <div class="space-y-2">
                                 @foreach (\App\Support\ThemePackManager::builtinThemes() as $key => $theme)
