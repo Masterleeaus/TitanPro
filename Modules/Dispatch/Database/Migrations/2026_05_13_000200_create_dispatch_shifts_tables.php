@@ -30,7 +30,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('range')->default(0)->comment('0 = no, 1 = yes');
                 $table->string('range_from')->nullable();
                 $table->string('range_to')->nullable();
-                $table->integer('unhealty_shift')->default(0)->comment('0 = no, 1 = yes');
+                $table->integer('unhealthy_shift')->default(0)->comment('0 = no, 1 = yes');
                 $table->string('weekdays')->nullable();
                 $table->integer('indefinite')->default(1)->comment('0 = no, 1 = yes');
                 $table->string('shift_end_on')->nullable();
