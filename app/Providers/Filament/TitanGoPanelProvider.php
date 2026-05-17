@@ -34,6 +34,13 @@ class TitanGoPanelProvider extends PanelProvider
             ->colors(fn (): array => [
                 'primary' => app(OrganizationBrandingResolver::class)->primaryColor('#f97316'),
             ])
+            ->plugins([
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'Modules\TitanGoField\Filament\Plugin\TitanGoFieldPlugin',
+                ]),
+            ])
             ->discoverPages(in: app_path('Filament/TitanGo/Pages'), for: 'App\\Filament\\TitanGo\\Pages')
             ->discoverPages(in: base_path('Modules/TitanGoField/Filament/Pages'), for: 'Modules\\TitanGoField\\Filament\\Pages')
             ->pages([

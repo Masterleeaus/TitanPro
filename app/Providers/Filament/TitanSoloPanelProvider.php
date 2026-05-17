@@ -48,6 +48,7 @@ class TitanSoloPanelProvider extends PanelProvider
                     'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
                     'Shreejan\DashArrange\DashArrangePlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\TitanSoloDash\Filament\Plugin\TitanSoloDashPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')

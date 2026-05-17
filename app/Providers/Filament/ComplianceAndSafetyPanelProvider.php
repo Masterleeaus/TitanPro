@@ -44,6 +44,7 @@ class ComplianceAndSafetyPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                     'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'Modules\Biometric\Filament\Plugin\BiometricPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/ComplianceAndSafety/Resources'), for: 'App\Filament\ComplianceAndSafety\Resources')

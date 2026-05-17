@@ -44,6 +44,7 @@ class LeadScorerPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                     'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'Modules\TitanLeads\Filament\Plugin\TitanLeadsPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/LeadScorer/Resources'), for: 'App\Filament\LeadScorer\Resources')

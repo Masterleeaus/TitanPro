@@ -44,6 +44,7 @@ class TitanSuppliersAndInventoryPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                     'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'Modules\SupplyChain\Filament\Plugin\SupplyChainPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanSuppliersAndInventory/Resources'), for: 'App\Filament\TitanSuppliersAndInventory\Resources')
