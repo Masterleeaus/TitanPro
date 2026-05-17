@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
-function cleanupThemeExportDirectory(string $directory): void
+function recursivelyDeleteDirectory(string $directory): void
 {
     if (! file_exists($directory)) {
         return;
@@ -27,7 +27,7 @@ function cleanupThemeExportDirectory(string $directory): void
             continue;
         }
 
-        cleanupThemeExportDirectory($path);
+        recursivelyDeleteDirectory($path);
     }
 
     rmdir($directory);
@@ -66,7 +66,7 @@ it('exports all supported UI theme formats from titan export command', function 
         }
     }
 
-    cleanupThemeExportDirectory($directory);
+    recursivelyDeleteDirectory($directory);
 });
 
 it('includes required files in exported package zip formats', function () {
@@ -122,5 +122,5 @@ it('includes required files in exported package zip formats', function () {
     expect($tenantPreset->locateName('tenant-preset.json'))->not->toBeFalse();
     $tenantPreset->close();
 
-    cleanupThemeExportDirectory($directory);
+    recursivelyDeleteDirectory($directory);
 });

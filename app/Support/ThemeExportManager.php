@@ -55,8 +55,9 @@ final class ThemeExportManager
     /** @return array{path:string,fileName:string,contentType:string} */
     private function exportThemeZip(string $name): array
     {
-        $tokens = app(ThemeTokenManager::class)->exportPayload(PlatformSetting::current())['resolved'] ?? [];
-        $path = app(ThemePackManager::class)->buildExportZip($name, is_array($tokens) ? $tokens : []);
+        $payload = app(ThemeTokenManager::class)->exportPayload(PlatformSetting::current());
+        $tokens = is_array($payload['resolved'] ?? null) ? $payload['resolved'] : [];
+        $path = app(ThemePackManager::class)->buildExportZip($name, $tokens);
 
         return [
             'path' => $path,
@@ -287,11 +288,21 @@ final class ThemeExportManager
             return;
         }
 
+        if (str_contains($path, '..')) {
+            throw new \RuntimeException('Invalid branding asset path: '.$path);
+        }
+
         $absolutePath = $disk->path($path);
+        $realPath = realpath($absolutePath);
+        $realRoot = realpath($disk->path(''));
+        if (! is_string($realPath) || ! is_string($realRoot) || ! str_starts_with($realPath, rtrim($realRoot, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)) {
+            throw new \RuntimeException('Invalid branding asset location: '.$path);
+        }
+
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         $filename = $prefix.($extension !== '' ? '.'.$extension : '');
-        if (! $zip->addFile($absolutePath, $filename)) {
-            throw new \RuntimeException('Unable to add branding asset ('.$prefix.') from '.$absolutePath.' to export archive.');
+        if (! $zip->addFile($realPath, $filename)) {
+            throw new \RuntimeException('Unable to add branding asset ('.$prefix.') from '.$realPath.' to export archive.');
         }
     }
 

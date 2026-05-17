@@ -59,7 +59,7 @@ class TitanThemeExportCommand extends Command
                     $this->warn('Temporary export file could not be deleted: '.$export['path']);
                 }
 
-                $this->error('Unable to copy export artifact to destination path.');
+                $this->error('Unable to copy export artifact from '.$export['path'].' to '.$targetPath.'.');
 
                 return self::FAILURE;
             }
