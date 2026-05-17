@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Subscription extends Model
+class Subscription extends Model implements TenantAware
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     const STATUS_TRIALING = 'trialing';
     const STATUS_ACTIVE   = 'active';
     const STATUS_PAST_DUE = 'past_due';

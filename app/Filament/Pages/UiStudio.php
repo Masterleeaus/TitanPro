@@ -14,6 +14,7 @@ use App\Services\AiThemeGenerator;
 use App\Support\OrganizationBrandingResolver;
 use App\Support\ThemeTokenManager;
 use App\Support\ThemePackManager;
+use App\Support\ThemeExportManager;
 use App\Models\TitanUiComponentOverride;
 use App\Platform\Ui\ComponentRegistry;
 use Filament\Facades\Filament;
@@ -110,7 +111,7 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'branding'; // branding | typography | layout | menu | roles | components | marketplace
+    public string $activeTab = 'branding'; // branding | typography | layout | menu | roles | components | marketplace | export
 
     // ── Role Profiles state ───────────────────────────────────────────────────
 
@@ -142,6 +143,9 @@ class UiStudio extends Page
 
     /** Theme preview resolved from an import URL. */
     public array $importPreview = [];
+
+    /** Selected export output format for the Export tab. */
+    public string $exportFormat = ThemeExportManager::FORMAT_THEME_ZIP;
 
     // ── Available widget catalogue ────────────────────────────────────────────
 
@@ -1298,31 +1302,35 @@ class UiStudio extends Page
      */
     public function exportTheme(): mixed
     {
-        $settings = PlatformSetting::current();
-        $name     = $settings->brandName();
+        return $this->downloadExport(ThemeExportManager::FORMAT_THEME_ZIP);
+    }
 
-        $tokens = array_filter([
-            'primary_color'   => $this->primaryColor,
-            'secondary_color' => $this->secondaryColor,
-            'accent_color'    => $this->accentColor,
-            'surface_color'   => $this->surfaceColor,
-            'font_heading'    => $this->fontHeading ?: $this->fontFamily,
-            'font_body'       => $this->fontBody ?: $this->fontFamily,
-        ]);
+    /** @return array<string, string> */
+    public function exportFormatOptions(): array
+    {
+        return app(ThemeExportManager::class)->formats();
+    }
+
+    public function exportSelection(): mixed
+    {
+        return $this->downloadExport($this->exportFormat);
+    }
+
+    private function downloadExport(string $format): mixed
+    {
+        $name = PlatformSetting::current()->brandName();
+        $organizationId = auth()->user()?->organization_id;
 
         try {
-            $manager = new ThemePackManager();
-            $tmpPath = $manager->buildExportZip($name, $tokens);
-        } catch (\RuntimeException $e) {
-            Notification::make()->title($e->getMessage())->danger()->send();
+            $export = app(ThemeExportManager::class)->export($name, $format, $organizationId);
+        } catch (\Throwable $exception) {
+            Notification::make()->title($exception->getMessage())->danger()->send();
 
             return null;
         }
 
-        $fileName = Str::slug($name) . '-theme.zip';
-
-        return response()->download($tmpPath, $fileName, [
-            'Content-Type' => 'application/zip',
+        return response()->download($export['path'], $export['fileName'], [
+            'Content-Type' => $export['contentType'],
         ])->deleteFileAfterSend();
     }
 

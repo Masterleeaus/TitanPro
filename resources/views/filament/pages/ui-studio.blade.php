@@ -216,7 +216,7 @@
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10 overflow-x-auto">
-                @foreach (['branding' => 'Branding', 'typography' => 'Typography', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components', 'marketplace' => 'Marketplace'] as $tab => $tabLabel)
+                @foreach (['branding' => 'Branding', 'typography' => 'Typography', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components', 'marketplace' => 'Marketplace', 'export' => 'Export'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
@@ -1244,6 +1244,36 @@
                         </section>
                     @endif
 
+                @endif
+
+                @if ($activeTab === 'export')
+                    <section class="space-y-4">
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Export Configuration</h4>
+                        <p class="text-[10px] text-gray-400 leading-relaxed">
+                            Export the active UI configuration as installable packs, tenant presets, CSS, or Style Dictionary JSON.
+                        </p>
+
+                        <div>
+                            <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Export format</label>
+                            <select
+                                wire:model.live="exportFormat"
+                                class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                            >
+                                @foreach ($this->exportFormatOptions() as $format => $label)
+                                    <option value="{{ $format }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button
+                            type="button"
+                            wire:click="exportSelection"
+                            class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                        >
+                            <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                            Download Export
+                        </button>
+                    </section>
                 @endif
 
             </div>

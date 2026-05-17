@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\TitanZero;
 
 use App\Http\Controllers\Controller;
-use App\Models\TitanZeroThread;
+use App\Http\Controllers\TitanZero\Concerns\ResolvesTitanZeroThreads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,11 +15,11 @@ use Illuminate\Http\Request;
  */
 class ThreadController extends Controller
 {
+    use ResolvesTitanZeroThreads;
+
     public function show(Request $request, string $threadId): JsonResponse
     {
-        $thread = TitanZeroThread::query()
-            ->where('id', $threadId)
-            ->firstOrFail();
+        $thread = $this->findThreadOrFail($request, $threadId);
 
         return response()->json([
             'messages' => $thread->messages ?? [],

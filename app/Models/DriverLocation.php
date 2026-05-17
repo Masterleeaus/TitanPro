@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DriverLocation extends Model
+class DriverLocation extends Model implements TenantAware
 {
+    use BelongsToTenant;
     protected $fillable = [
         'organization_id',
         'user_id',

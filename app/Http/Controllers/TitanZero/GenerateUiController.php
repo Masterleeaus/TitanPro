@@ -39,6 +39,13 @@ class GenerateUiController extends Controller
         $appKey  = $context['appKey'] ?? 'default';
         $page    = $context['page']   ?? '';
 
+        if ($request->hasSession()) {
+            $request->session()->put('titan_zero.context', [
+                'app_key' => $appKey,
+                'page' => $page,
+            ]);
+        }
+
         // ── Find or create thread ────────────────────────────────────────────
         $thread = null;
         if (! empty($validated['threadId'])) {
@@ -188,7 +195,6 @@ PROMPT;
             return [];
         }
     }
-
     /**
      * Attempt AI generation via GeneratorBridge (if available) or OpenAI directly.
      * Falls back to a safe canned response so the endpoint always returns a valid shape.

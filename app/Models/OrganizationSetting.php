@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OrganizationSetting extends Model
+class OrganizationSetting extends Model implements TenantAware
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $table = 'organization_settings';
 
@@ -48,12 +50,14 @@ class OrganizationSetting extends Model
     protected function casts(): array
     {
         return [
-            'default_tax_rate'     => 'decimal:4',
-            'stripe_secret_key'    => 'encrypted',
-            'stripe_webhook_secret' => 'encrypted',
-            'twilio_auth_token'    => 'encrypted',
-            'sendgrid_api_key'     => 'encrypted',
-            'google_maps_api_key'  => 'encrypted',
+            'default_tax_rate'       => 'decimal:4',
+            'stripe_secret_key'      => 'encrypted',
+            'stripe_publishable_key' => 'encrypted',
+            'stripe_webhook_secret'  => 'encrypted',
+            'twilio_auth_token'      => 'encrypted',
+            'twilio_account_sid'     => 'encrypted',
+            'sendgrid_api_key'       => 'encrypted',
+            'google_maps_api_key'    => 'encrypted',
         ];
     }
 
