@@ -54,6 +54,9 @@ class ComplaintServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
         );
+        $this->mergeConfigIfExists('features');
+        $this->mergeConfigIfExists('permissions');
+        $this->mergeConfigIfExists('ai');
     }
 
     /**
@@ -140,5 +143,14 @@ class ComplaintServiceProvider extends ServiceProvider
             }
         }
         return $paths;
+    }
+
+    private function mergeConfigIfExists(string $name): void
+    {
+        $path = module_path($this->moduleName, 'Config/' . $name . '.php');
+
+        if (is_file($path)) {
+            $this->mergeConfigFrom($path, $this->moduleNameLower . '.' . $name);
+        }
     }
 }

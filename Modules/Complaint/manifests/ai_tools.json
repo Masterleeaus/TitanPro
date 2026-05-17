@@ -1,0 +1,31 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "Complaint",
+  "tools": [
+    {
+      "id": "analyse_complaint",
+      "name": "AnalyseComplaintTool",
+      "class": "Modules\\Complaint\\AI\\Tools\\AnalyseComplaintTool",
+      "description": "Analyse complaint severity, category, and suggested resolution path.",
+      "input_schema": {
+        "subject": {"type": "string", "required": true},
+        "description": {"type": "string", "required": false}
+      },
+      "risk_class": "low",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "draft_resolution_response",
+      "name": "DraftResolutionResponseTool",
+      "class": "Modules\\Complaint\\AI\\Tools\\DraftResolutionResponseTool",
+      "description": "Draft a customer-facing resolution response message.",
+      "input_schema": {
+        "subject": {"type": "string", "required": false},
+        "resolution_suggestion": {"type": "string", "required": false},
+        "tone": {"type": "string", "required": false}
+      },
+      "risk_class": "low",
+      "approval_mode": "auto"
+    }
+  ]
+}

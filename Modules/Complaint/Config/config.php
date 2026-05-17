@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'name' => 'Complaint'
+    'name' => 'Complaint',
+    'filament_panel' => 'zerofuss',
 ];

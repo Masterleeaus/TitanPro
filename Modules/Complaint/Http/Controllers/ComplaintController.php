@@ -10,6 +10,8 @@ use App\Models\Country;
 use Illuminate\Http\Request;
 use Modules\Units\Entities\Unit;
 use Illuminate\Support\Facades\DB;
+use Modules\Complaint\Actions\CreateComplaintAction;
+use Modules\Complaint\Actions\ResolveComplaintAction;
 use Modules\Complaint\Entities\Complaint;
 use Modules\Complaint\Entities\ComplaintTag;
 use Modules\Engineerings\Entities\WorkOrder;
@@ -136,58 +138,27 @@ class ComplaintController extends AccountBaseController
             return Reply::error(__('messages.addItem'));
         }
 
-        $complaint             = new Complaint();
-        $complaint->subject    = $request->subject;
-        $complaint->status     = 'open';
-        $complaint->priority   = 'medium';
-        $complaint->no_hp      = $request->no_hp;
-        $complaint->house_id    = $request->house_id;
-        $complaint->user_id    = ($request->requester_type == 'employee') ? $request->user_id : $request->client_id;
-        $complaint->agent_id   = $request->agent_id;
-        $complaint->type_id    = $request->type_id;
-        $complaint->channel_id = $request->channel_id;
-        $complaint->save();
-
-        if ($request->type == 'send') {
-            $this->number = WorkRequest::lastInvoiceNumber() + 1;
-            $this->zero   = '';
-            if (strlen($this->number) < 4) {
-                for ($i = 0; $i < 4 - strlen($this->number); $i++) {
-                    $this->zero = '0' . $this->zero;
-                }
-            }
-            $this->nomor    = 'WR-' . Carbon::now()->format('ym') . '-' . $this->zero . $this->number;
-            $wr             = new WorkRequest();
-            $wr->complaint_id  = $complaint->id;
-            $wr->wr_no      = $this->nomor;
-            $wr->check_time = date('Y-m-d H:i:s');
-            $wr->problem    = $complaint->subject;
-            $wr->house_id    = $complaint->house_id;
-            $wr->assign_to  = $complaint->agent_id;
-            $wr->created_by = user()->id;
-            $wr->save();
-        }
-
-        // Save first message
-        $reply               = new ComplaintReply();
-        $reply->message      = trim_editor($request->description);
-        $reply->complaint_id = $complaint->id;
-        $reply->user_id      = $this->user->id;                     // Current logged in user
-        $reply->save();
+        $complaint = app(CreateComplaintAction::class)->execute([
+            'company_id' => $this->company->id ?? null,
+            'subject' => $request->subject,
+            'status' => 'open',
+            'no_hp' => $request->no_hp,
+            'house_id' => $request->house_id,
+            'user_id' => ($request->requester_type == 'employee') ? $request->user_id : $request->client_id,
+            'agent_id' => $request->agent_id,
+            'type_id' => $request->type_id,
+            'channel_id' => $request->channel_id,
+            'description' => (string) $request->description,
+            'reply_user_id' => $this->user->id,
+            'added_by' => $this->user->id,
+            'last_update_by' => $this->user->id,
+            'tags' => $request->tags,
+            'create_work_request' => $request->type == 'send',
+        ]);
 
         // To add custom fields data
         if ($request->custom_fields_data) {
             $complaint->updateCustomFieldData($request->custom_fields_data);
-        }
-
-        // Save tags
-        $tags = collect(json_decode($request->tags))->pluck('value');
-
-        foreach ($tags as $tag) {
-            $tag = ComplaintTagList::firstOrCreate([
-                'tag_name' => $tag,
-            ]);
-            $complaint->complaintTags()->attach($tag);
         }
 
         // Log search
@@ -199,7 +170,10 @@ class ComplaintController extends AccountBaseController
             $redirectUrl = route('complaint.index');
         }
 
-        return Reply::successWithData(__('messages.recordSaved'), ['replyID' => $reply->id, 'redirectUrl' => $redirectUrl]);
+        return Reply::successWithData(__('messages.recordSaved'), [
+            'replyID' => $complaint->reply()->latest('id')->value('id'),
+            'redirectUrl' => $redirectUrl,
+        ]);
     }
 
     public function show($complaintNumber)
@@ -468,12 +442,9 @@ class ComplaintController extends AccountBaseController
             'create_followup' => 'nullable|boolean',
         ]);
 
-        $complaint->status = 'resolved';
-        $complaint->resolved_at = now();
-        if (!empty($request->resolution_outcome)) {
-            $complaint->resolution_outcome = $request->resolution_outcome;
-        }
-        $complaint->save();
+        app(ResolveComplaintAction::class)->execute($complaint, [
+            'resolution_outcome' => $request->resolution_outcome,
+        ]);
 
         if ($request->boolean('create_followup')) {
             try {
