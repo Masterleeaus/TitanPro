@@ -46,6 +46,22 @@ test('annualPrice returns correct prices', function () {
     expect($service->annualPrice('pro'))->toBe(199);
 });
 
+test('amountFor returns the monthly amount when interval is monthly', function () {
+    $service = new PlanService;
+
+    expect($service->amountFor('starter', 'monthly'))->toBe(79);
+    expect($service->amountFor('growth', 'monthly'))->toBe(149);
+    expect($service->amountFor('pro', 'monthly'))->toBe(249);
+});
+
+test('amountFor returns the annual amount when interval is annual', function () {
+    $service = new PlanService;
+
+    expect($service->amountFor('starter', 'annual'))->toBe(63);
+    expect($service->amountFor('growth', 'annual'))->toBe(119);
+    expect($service->amountFor('pro', 'annual'))->toBe(199);
+});
+
 test('isValidPlan accepts known plans', function () {
     $service = new PlanService;
 

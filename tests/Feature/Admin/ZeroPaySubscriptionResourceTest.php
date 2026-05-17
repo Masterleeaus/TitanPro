@@ -3,6 +3,7 @@
 use App\Models\Organization;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\PlanService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 function zeroPayBookkeeper(): array
@@ -19,12 +20,19 @@ function zeroPayBookkeeper(): array
     return [$user, $org, $subscription];
 }
 
-test('bookkeeper can list zeropay subscriptions', function () {
-    [$user] = zeroPayBookkeeper();
+test('bookkeeper can list zeropay subscriptions with formatted amount', function () {
+    [$user, , $subscription] = zeroPayBookkeeper();
+
+    $subscription->update([
+        'plan' => PlanService::PLAN_GROWTH,
+        'billing_interval' => 'monthly',
+    ]);
 
     $this->actingAs($user)
         ->get('/zeropay/subscriptions')
-        ->assertOk();
+        ->assertOk()
+        ->assertSeeText('Amount')
+        ->assertSeeText('$149.00');
 });
 
 test('bookkeeper can view their org subscription', function () {
