@@ -634,25 +634,26 @@ test('org A invoice index never includes org B invoices', function () {
 // estimate listing is covered by the Eloquent scope test in Part 2 above.
 
 // ═════════════════════════════════════════════════════════════════════════════
-// PART 4 — FILAMENT ADMIN PANEL: edit page 404s for other-org record
-// Uses the /titanpro panel path; super_admin role required.
+// PART 4 — FILAMENT ADMIN PANEL
+// Invoice and payment resources are intentional cross-tenant super_admin views.
+// The remaining TitanPro resources stay org-scoped and 404 for foreign records.
 // ═════════════════════════════════════════════════════════════════════════════
 
-test('invoices admin edit page 404s for other-org record', function () {
+test('invoices admin edit page allows super admin cross-tenant review', function () {
     [$user, , $other] = scopedAdmin();
     $customerB = Customer::factory()->create(['organization_id' => $other->id]);
     $record    = Invoice::factory()->create(['organization_id' => $other->id, 'customer_id' => $customerB->id]);
 
-    $this->actingAs($user)->get("/titanpro/invoices/{$record->id}/edit")->assertNotFound();
+    $this->actingAs($user)->get("/titanpro/invoices/{$record->id}/edit")->assertOk();
 });
 
-test('payments admin edit page 404s for other-org record', function () {
+test('payments admin edit page allows super admin cross-tenant review', function () {
     [$user, , $other] = scopedAdmin();
     $customerB = Customer::factory()->create(['organization_id' => $other->id]);
     $invoiceB  = Invoice::factory()->create(['organization_id' => $other->id, 'customer_id' => $customerB->id]);
     $record    = Payment::factory()->forInvoice($invoiceB)->create();
 
-    $this->actingAs($user)->get("/titanpro/payments/{$record->id}/edit")->assertNotFound();
+    $this->actingAs($user)->get("/titanpro/payments/{$record->id}/edit")->assertOk();
 });
 
 test('estimates admin edit page 404s for other-org record', function () {

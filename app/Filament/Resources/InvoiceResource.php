@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Models\Invoice;
+use App\Models\Scopes\TenantScope;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -20,9 +21,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * InvoiceResource — TitanPro (super-admin) panel.
  *
- * Restricted to super_admin only. Finance operators should use the
- * dedicated ZeroPay panel (/zeropay) where bookkeeper/owner/admin
- * roles have access via App\Filament\ZeroPay\Resources\InvoiceResource.
+ * Restricted to super_admin only and intentionally cross-tenant so
+ * platform operators can review invoices across all organisations.
+ * Finance operators should use the dedicated ZeroPay panel (/zeropay)
+ * where bookkeeper/owner/admin roles have org-scoped access via
+ * App\Filament\ZeroPay\Resources\InvoiceResource.
  */
 class InvoiceResource extends Resource
 {
@@ -88,7 +91,8 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                                TextColumn::make('invoice_number')->label('Invoice #')->searchable()->sortable(),
+                TextColumn::make('organization.name')->label('Organization')->searchable()->sortable(),
+                TextColumn::make('invoice_number')->label('Invoice #')->searchable()->sortable(),
                 TextColumn::make('status')->label('Status')->badge()->searchable()->sortable(),
                 TextColumn::make('total')->label('Total')->money('usd')->sortable(),
                 TextColumn::make('balance_due')->label('Balance Due')->money('usd')->sortable(),
@@ -116,13 +120,7 @@ class InvoiceResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $organizationId = auth()->user()?->organization_id;
-
-        if ($organizationId === null) {
-            return parent::getEloquentQuery()->whereRaw('1 = 0');
-        }
-
         return parent::getEloquentQuery()
-            ->where('organization_id', $organizationId);
+            ->withoutGlobalScope(TenantScope::class);
     }
 }
