@@ -45,7 +45,10 @@ test('generate-ui returns valid AgentUiResponse shape', function () {
         ->assertJsonStructure([
             'is_task_complete',
             'message',
+            'reply',
             'parts',
+            'widgets',
+            'thread',
             'errors',
             'meta' => ['threadId', 'suggestions'],
         ])
@@ -65,6 +68,7 @@ test('generate-ui creates a thread persisted to the database', function () {
 
     $threadId = $response->json('meta.threadId');
     expect($threadId)->not->toBeNull();
+    expect($response->json('thread'))->toBe($threadId);
 
     $thread = TitanZeroThread::find($threadId);
     expect($thread)->not->toBeNull();
@@ -106,6 +110,29 @@ test('generate-ui continues an existing thread when threadId is supplied', funct
     expect(count($thread->messages ?? []))->toBe(4);
 });
 
+test('generate-ui accepts thread_id when continuing an existing thread', function () {
+    [$user] = tzSetup();
+
+    $first = $this->actingAs($user)
+        ->postJson('/api/titan/zero/generate-ui', [
+            'message' => 'Hello',
+            'context' => ['appKey' => 'owner'],
+        ])
+        ->assertOk();
+
+    $threadId = $first->json('meta.threadId');
+
+    $this->actingAs($user)
+        ->postJson('/api/titan/zero/generate-ui', [
+            'message' => 'Continue this thread',
+            'thread_id' => (int) $threadId,
+            'context' => ['appKey' => 'owner'],
+        ])
+        ->assertOk()
+        ->assertJsonPath('thread', $threadId)
+        ->assertJsonPath('meta.threadId', $threadId);
+});
+
 test('generate-ui parts array contains at least one widget', function () {
     [$user] = tzSetup();
 
@@ -122,6 +149,24 @@ test('generate-ui parts array contains at least one widget', function () {
     $first = $parts[0];
     expect($first)->toHaveKey('id');
     expect($first)->toHaveKey('kind');
+});
+
+test('web generate-ui route uses the same persisted thread pipeline', function () {
+    [$user] = tzSetup();
+
+    $this->actingAs($user)
+        ->postJson('/titan/zero/generate-ui', [
+            'message' => 'Show jobs today',
+            'context' => ['appKey' => 'owner'],
+        ])
+        ->assertOk()
+        ->assertJsonStructure([
+            'message',
+            'parts',
+            'widgets',
+            'thread',
+            'meta' => ['threadId', 'suggestions'],
+        ]);
 });
 
 // ── GET /api/titan/threads/{threadId} ────────────────────────────────────────
