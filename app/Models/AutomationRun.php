@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,9 +24,24 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AutomationRun extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'titan_automation_runs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'company_id',
+        'automation_id',
+        'trigger',
+        'handler',
+        'status',
+        'attempts',
+        'max_attempts',
+        'payload',
+        'output',
+        'exception',
+        'started_at',
+        'completed_at',
+    ];
 
     protected $casts = [
         'payload'      => 'array',
