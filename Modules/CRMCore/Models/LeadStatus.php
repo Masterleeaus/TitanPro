@@ -4,10 +4,11 @@ namespace Modules\CRMCore\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class LeadStatus extends Model
 {
-    use HasFactory;
+    use HasFactory, UsesScopedByCompany;
 
     /**
      * The table associated with the model.

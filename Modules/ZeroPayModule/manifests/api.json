@@ -1,0 +1,6 @@
+{
+  "base": "/api/zeropay-module",
+  "resources": [
+    "records"
+  ]
+}

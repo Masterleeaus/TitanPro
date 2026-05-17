@@ -1,0 +1,31 @@
+{
+  "name": "zeropay.create_session",
+  "description": "Create a new ZeroPay payment session for the current company",
+  "type": "write",
+  "action": "Modules\\ZeroPayModule\\Actions\\CreateZeroPaySessionAction",
+  "requires_permission": "zeropay.create",
+  "tenant_scoped": true,
+  "requires_confirmation": true,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "amount": {
+        "type": "number",
+        "description": "Payment amount in the specified currency"
+      },
+      "currency": {
+        "type": "string",
+        "description": "ISO 4217 currency code (e.g. AUD, USD)"
+      },
+      "gateway": {
+        "type": "string",
+        "description": "Payment gateway to use (e.g. stripe, bank_transfer, paypal, crypto, payid, cash)"
+      },
+      "user_id": {
+        "type": "integer",
+        "description": "ID of the user initiating the session"
+      }
+    },
+    "required": ["amount", "currency", "gateway"]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "example.lookup_record",
+  "type": "query",
+  "action": "Modules\\ExampleModule\\Actions\\LookupExampleRecordAction",
+  "requires_permission": "example.view",
+  "tenant_scoped": true
+}

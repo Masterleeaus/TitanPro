@@ -1,0 +1,15 @@
+{
+  "schema": "titan.lifecycle.manifest.v1",
+  "module": "GroundZeroOps",
+  "entities": [
+    {
+      "entity": "Dispatch",
+      "stages": [
+        {"key": "queued", "label": "Queued", "position": 1, "is_entry": true, "is_exit": false},
+        {"key": "assigned", "label": "Assigned", "position": 2, "is_entry": false, "is_exit": false},
+        {"key": "in_progress", "label": "In Progress", "position": 3, "is_entry": false, "is_exit": false},
+        {"key": "completed", "label": "Completed", "position": 4, "is_entry": false, "is_exit": true}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+    "module": "Budgeting",
+    "version": "2.2",
+    "status": "active",
+    "domains": ["expenses", "actuals", "variances", "reimbursements", "forecasting"],
+    "providers": [
+        "Modules\\Budgeting\\Providers\\BudgetingServiceProvider",
+        "Modules\\Budgeting\\Providers\\RouteServiceProvider",
+        "Modules\\Budgeting\\Providers\\EventServiceProvider",
+        "Modules\\Budgeting\\Providers\\FilamentServiceProvider"
+    ]
+}

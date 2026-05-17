@@ -1,6 +1,13 @@
 {
-  "schema": "titan.workflows.manifest.v1",
+  "schema_version": "1.0.0",
+  "module": "CRMCore",
   "workflows": [
-    "DealToProjectWorkflow"
+    "Modules\\CRMCore\\Workflows\\Definitions\\DealToProjectWorkflow"
+  ],
+  "triggers": [
+    "crmcore.deal.won"
+  ],
+  "actions": [
+    "crmcore.deal.create_project"
   ]
 }

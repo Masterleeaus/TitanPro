@@ -6,11 +6,13 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\CRMCore\Events\ContactCreated;
 use Modules\CRMCore\Traits\HasCRMCode;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class Contact extends Model
 {
-    use HasCRMCode, HasFactory, SoftDeletes;
+    use HasCRMCode, HasFactory, SoftDeletes, UsesScopedByCompany;
 
     protected $table = 'contacts';
 
@@ -145,6 +147,13 @@ class Contact extends Model
     protected static function newFactory()
     {
         return \Modules\CRMCore\database\factories\ContactFactory::new();
+    }
+
+    protected static function booted(): void
+    {
+        static::created(static function (self $contact): void {
+            ContactCreated::dispatch($contact);
+        });
     }
 
     /**

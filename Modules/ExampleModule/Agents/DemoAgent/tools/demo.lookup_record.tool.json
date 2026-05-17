@@ -1,0 +1,6 @@
+{
+  "tool": "demo.lookup_record",
+  "scaffold": true,
+  "replace_required": true,
+  "action": "LookupExampleRecordAction"
+}

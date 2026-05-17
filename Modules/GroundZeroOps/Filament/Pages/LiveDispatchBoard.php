@@ -3,6 +3,7 @@
 namespace Modules\GroundZeroOps\Filament\Pages;
 
 use Filament\Pages\Page;
+use Modules\GroundZeroOps\Actions\AssignJobAction;
 
 class LiveDispatchBoard extends Page
 {
@@ -15,5 +16,15 @@ class LiveDispatchBoard extends Page
     public function getTitle(): string
     {
         return 'Live Dispatch Board';
+    }
+
+    public function assignJob(int $jobId, int $technicianId): void
+    {
+        app(AssignJobAction::class)->execute(
+            jobId: $jobId,
+            technicianId: $technicianId,
+            actorId: (int) (auth()->id() ?? 0),
+            companyId: (int) (auth()->user()?->company_id ?? 0),
+        );
     }
 }

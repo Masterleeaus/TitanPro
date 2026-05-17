@@ -1,0 +1,12 @@
+{
+  "schema": "titan.dataset_manifest.v1",
+  "status": "starter",
+  "approved_sources": [
+    {"path": "Knowledge/guides/cleaning-estimating-guide.md", "type": "guide", "approved": true},
+    {"path": "Knowledge/policies/source-approval-policy.md", "type": "policy", "approved": true},
+    {"path": "Knowledge/faqs/module-faq.example.md", "type": "faq", "approved": true}
+  ],
+  "excluded_sources": [
+    {"path": "Knowledge/review", "reason": "draft/unapproved"}
+  ]
+}

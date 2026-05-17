@@ -83,7 +83,7 @@ dashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 dashboard.form = dashboardForm
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 export const publicMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ publicMethod.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 publicMethod.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ publicMethod.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 publicMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -114,7 +114,7 @@ publicMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 publicMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -123,7 +123,7 @@ publicMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 const publicMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ const publicMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 })
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 publicMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ publicMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 })
 
 /**
-* @see routes/web.php:218
+* @see routes/web.php:216
 * @route '/platform'
 */
 publicMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ publicMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 publicMethod.form = publicMethodForm
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 export const overview = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -171,7 +171,7 @@ overview.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 overview.url = (options?: RouteQueryOptions) => {
@@ -179,7 +179,7 @@ overview.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 overview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -188,7 +188,7 @@ overview.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 overview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -197,7 +197,7 @@ overview.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 const overviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -206,7 +206,7 @@ const overviewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 })
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 overviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -215,7 +215,7 @@ overviewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 })
 
 /**
-* @see routes/web.php:219
+* @see routes/web.php:217
 * @route '/platform-overview'
 */
 overviewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 export const product = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ product.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 product.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ product.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 product.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ product.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 product.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ product.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 const productForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ const productForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 })
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 productForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ productForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 })
 
 /**
-* @see routes/web.php:228
+* @see routes/web.php:226
 * @route '/zeropay-product'
 */
 productForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

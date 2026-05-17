@@ -324,8 +324,8 @@ menuManagerPageForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'g
 menuManagerPage.form = menuManagerPageForm
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 export const siteSettings = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -339,8 +339,8 @@ siteSettings.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 siteSettings.url = (options?: RouteQueryOptions) => {
@@ -348,8 +348,8 @@ siteSettings.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 siteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -358,8 +358,8 @@ siteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 siteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -368,8 +368,8 @@ siteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 const siteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -378,8 +378,8 @@ const siteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 siteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -388,8 +388,8 @@ siteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 siteSettingsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -567,76 +567,76 @@ settingsHubForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 settingsHub.form = settingsHubForm
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-export const platformHealthDashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: platformHealthDashboard.url(options),
+export const operationsReports = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: operationsReports.url(options),
     method: 'get',
 })
 
-platformHealthDashboard.definition = {
+operationsReports.definition = {
     methods: ["get","head"],
-    url: '/titanpro/platform-health-dashboard',
+    url: '/titanpro/operations-reports',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-platformHealthDashboard.url = (options?: RouteQueryOptions) => {
-    return platformHealthDashboard.definition.url + queryParams(options)
+operationsReports.url = (options?: RouteQueryOptions) => {
+    return operationsReports.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-platformHealthDashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: platformHealthDashboard.url(options),
+operationsReports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: operationsReports.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-platformHealthDashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: platformHealthDashboard.url(options),
+operationsReports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: operationsReports.url(options),
     method: 'head',
 })
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-const platformHealthDashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: platformHealthDashboard.url(options),
+const operationsReportsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: operationsReports.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-platformHealthDashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: platformHealthDashboard.url(options),
+operationsReportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: operationsReports.url(options),
     method: 'get',
 })
 
 /**
-* @see \App\Filament\TitanPro\Pages\PlatformHealthDashboard::__invoke
-* @see app/Filament/TitanPro/Pages/PlatformHealthDashboard.php:7
-* @route '/titanpro/platform-health-dashboard'
+* @see \App\Filament\Pages\OperationsReports::__invoke
+* @see app/Filament/Pages/OperationsReports.php:7
+* @route '/titanpro/operations-reports'
 */
-platformHealthDashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: platformHealthDashboard.url({
+operationsReportsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: operationsReports.url({
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -645,7 +645,250 @@ platformHealthDashboardForm.head = (options?: RouteQueryOptions): RouteFormDefin
     method: 'get',
 })
 
-platformHealthDashboard.form = platformHealthDashboardForm
+operationsReports.form = operationsReportsForm
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+export const reports = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reports.url(options),
+    method: 'get',
+})
+
+reports.definition = {
+    methods: ["get","head"],
+    url: '/titanpro/reports',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+reports.url = (options?: RouteQueryOptions) => {
+    return reports.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+reports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: reports.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+reports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: reports.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+const reportsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: reports.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+reportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: reports.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\Reports::__invoke
+* @see app/Filament/Pages/Reports.php:7
+* @route '/titanpro/reports'
+*/
+reportsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: reports.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+reports.form = reportsForm
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+export const themeManager = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: themeManager.url(options),
+    method: 'get',
+})
+
+themeManager.definition = {
+    methods: ["get","head"],
+    url: '/titanpro/theme-manager',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+themeManager.url = (options?: RouteQueryOptions) => {
+    return themeManager.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+themeManager.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: themeManager.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+themeManager.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: themeManager.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+const themeManagerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: themeManager.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+themeManagerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: themeManager.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\ThemeManager::__invoke
+* @see app/Filament/Pages/ThemeManager.php:7
+* @route '/titanpro/theme-manager'
+*/
+themeManagerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: themeManager.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+themeManager.form = themeManagerForm
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+export const uiStudio = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: uiStudio.url(options),
+    method: 'get',
+})
+
+uiStudio.definition = {
+    methods: ["get","head"],
+    url: '/titanpro/ui-studio',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+uiStudio.url = (options?: RouteQueryOptions) => {
+    return uiStudio.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+uiStudio.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: uiStudio.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+uiStudio.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: uiStudio.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+const uiStudioForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: uiStudio.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+uiStudioForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: uiStudio.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+uiStudioForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: uiStudio.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+uiStudio.form = uiStudioForm
 
 const pages = {
     dashboard: Object.assign(dashboard, dashboard),
@@ -655,7 +898,10 @@ const pages = {
     siteSettings: Object.assign(siteSettings, siteSettings),
     socialMenuSettings: Object.assign(socialMenuSettings, socialMenuSettings),
     settingsHub: Object.assign(settingsHub, settingsHub),
-    platformHealthDashboard: Object.assign(platformHealthDashboard, platformHealthDashboard),
+    operationsReports: Object.assign(operationsReports, operationsReports),
+    reports: Object.assign(reports, reports),
+    themeManager: Object.assign(themeManager, themeManager),
+    uiStudio: Object.assign(uiStudio, uiStudio),
 }
 
 export default pages

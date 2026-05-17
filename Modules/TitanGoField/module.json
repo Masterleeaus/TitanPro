@@ -1,18 +1,29 @@
 {
   "name": "TitanGoField",
-  "description": "Field technician kit for the TitanGo panel. Provides offline-capable job cards, GPS check-in/out, digital signature capture, before/after photo logging, parts usage logging, and push notification management — field-side features not covered by CleaningJobs, CleanQuality, or Biometric.",
+  "alias": "titango_field",
+  "description": "Field technician FSM engine for the TitanGo panel. Provides work-order management, GPS check-in/out, digital signature capture, before/after photo logging, parts usage, checklists, inspections, permits, SLA tracking, recurring jobs, client portal, and AI tool hooks — all multi-tenant via company_id.",
   "active": 1,
   "filament_panel": "titango",
   "providers": [
-    "Modules\\\\TitanGoField\\\\Providers\\\\TitanGoFieldServiceProvider"
+    "Modules\\TitanGoField\\Providers\\TitanGoFieldServiceProvider",
+    "Modules\\TitanGoField\\Providers\\RouteServiceProvider",
+    "Modules\\TitanGoField\\Providers\\EventServiceProvider",
+    "Modules\\TitanGoField\\Providers\\FilamentServiceProvider"
   ],
   "keywords": [
     "field",
+    "fsm",
+    "work-orders",
     "offline",
     "gps",
     "signature",
     "photos",
     "parts",
+    "checklists",
+    "sla",
+    "permits",
+    "recurrence",
+    "client-portal",
     "push"
   ]
 }

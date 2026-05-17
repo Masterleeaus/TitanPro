@@ -46,13 +46,18 @@ class CleaningBooking extends Task
      * 'reclean' is a re-opened completed booking (zero charge).
      */
     public const VALID_TRANSITIONS = [
-        'pending'     => ['confirmed', 'cancelled'],
-        'confirmed'   => ['en_route', 'cancelled'],
-        'en_route'    => ['in_progress', 'cancelled'],
-        'in_progress' => ['completed', 'cancelled'],
-        'completed'   => ['reclean'],
-        'cancelled'   => [],
-        'reclean'     => ['in_progress', 'cancelled'],
+        'pending'          => ['confirmed', 'cancelled'],
+        'draft'            => ['pending_approval', 'confirmed', 'cancelled', 'no_show'],
+        'pending_approval' => ['confirmed', 'cancelled'],
+        'confirmed'        => ['dispatched', 'cancelled', 'rescheduled', 'no_show'],
+        'rescheduled'      => ['confirmed', 'cancelled'],
+        'dispatched'       => ['in_progress', 'cancelled', 'rescheduled', 'no_show'],
+        'in_progress'      => ['completed', 'cancelled', 'no_show'],
+        'completed'        => ['invoiced', 'cancelled'],
+        'invoiced'         => ['paid', 'cancelled'],
+        'paid'             => [],
+        'cancelled'        => [],
+        'no_show'          => ['rescheduled', 'cancelled'],
     ];
 
     public const SERVICE_TYPES = [
@@ -111,6 +116,16 @@ class CleaningBooking extends Task
         'cleaner_departed_at',
         'invoice_generated',
         'generated_invoice_id',
+        'booking_value',
+        'pending_approval_at',
+        'approval_due_at',
+        'approval_decision_at',
+        'approval_decision_reason',
+        'job_card_completed_at',
+        'rescheduled_at',
+        'no_show_at',
+        'dispatched_at',
+        'paid_at',
         // Inherit standard Task fillables as well.
         'heading',
         'description',
@@ -146,6 +161,15 @@ class CleaningBooking extends Task
         'bathrooms'                => 'integer',
         'service_lat'              => 'float',
         'service_lng'              => 'float',
+        'booking_value'            => 'float',
+        'pending_approval_at'      => 'datetime',
+        'approval_due_at'          => 'datetime',
+        'approval_decision_at'     => 'datetime',
+        'job_card_completed_at'    => 'datetime',
+        'rescheduled_at'           => 'datetime',
+        'no_show_at'               => 'datetime',
+        'dispatched_at'            => 'datetime',
+        'paid_at'                  => 'datetime',
     ];
 
     // ─── Relationships ────────────────────────────────────────────────────────
@@ -195,12 +219,17 @@ class CleaningBooking extends Task
     {
         return match ($status) {
             'pending'     => 'secondary',
+            'draft'       => 'secondary',
+            'pending_approval' => 'warning',
             'confirmed'   => 'info',
-            'en_route'    => 'primary',
+            'dispatched'  => 'primary',
             'in_progress' => 'warning',
             'completed'   => 'success',
+            'invoiced'    => 'info',
+            'paid'        => 'success',
             'cancelled'   => 'danger',
-            'reclean'     => 'dark',
+            'rescheduled' => 'primary',
+            'no_show'     => 'dark',
             default       => 'light',
         };
     }

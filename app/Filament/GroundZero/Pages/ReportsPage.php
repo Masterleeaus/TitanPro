@@ -21,6 +21,11 @@ class ReportsPage extends Page
 
     protected static ?int $navigationSort = 80;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected string $view = 'filament.groundzero.pages.reports';
 
     public function getReportData(): array

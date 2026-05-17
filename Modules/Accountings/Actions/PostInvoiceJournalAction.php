@@ -2,18 +2,22 @@
 
 namespace Modules\Accountings\Actions;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accountings\Entities\Journal;
+use Modules\Accountings\Events\InvoiceJournalPosted;
 
 class PostInvoiceJournalAction
 {
     public function execute(array $invoicePayload): Journal
     {
+        $companyId = $this->resolveCompanyId(isset($invoicePayload['company_id']) ? (int) $invoicePayload['company_id'] : null);
         $invoiceId = $invoicePayload['invoice_id'] ?? null;
         $reference = $invoicePayload['reference'] ?? ($invoiceId ? 'INV-'.$invoiceId : 'EINVOICE');
 
         $data = [
-            'company_id' => $invoicePayload['company_id'] ?? null,
+            'company_id' => $companyId,
             'no_journal' => $invoicePayload['journal_number'] ?? ('EINV-'.now()->format('YmdHis')),
             'journal_date' => $invoicePayload['date'] ?? now()->toDateString(),
             'reff_journal' => $reference,
@@ -40,6 +44,34 @@ class PostInvoiceJournalAction
             $journal->save();
         }
 
+        Event::dispatch(new InvoiceJournalPosted([
+            'company_id' => $companyId,
+            'actor_id' => auth()->id(),
+            'occurred_at' => now()->toIso8601String(),
+            'journal_id' => $journal->id,
+            'invoice_id' => $invoiceId,
+            'reference' => $reference,
+        ]));
+
         return $journal;
+    }
+
+    private function resolveCompanyId(?int $requestedCompanyId = null): int
+    {
+        $authCompanyId = auth()->user()->company_id ?? null;
+
+        if ($authCompanyId !== null) {
+            if ($requestedCompanyId !== null && $requestedCompanyId !== (int) $authCompanyId) {
+                throw new AuthorizationException("Cross-tenant journal posting is not allowed. Requested: {$requestedCompanyId}, Authenticated: {$authCompanyId}.");
+            }
+
+            return (int) $authCompanyId;
+        }
+
+        if ($requestedCompanyId !== null) {
+            return $requestedCompanyId;
+        }
+
+        throw new AuthorizationException('Company context is required.');
     }
 }

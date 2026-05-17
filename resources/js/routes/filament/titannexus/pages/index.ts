@@ -162,6 +162,330 @@ myProfileForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 myProfile.form = myProfileForm
 
 /**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+export const leadPipeline = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: leadPipeline.url(options),
+    method: 'get',
+})
+
+leadPipeline.definition = {
+    methods: ["get","head"],
+    url: '/titannexus/lead-pipeline',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+leadPipeline.url = (options?: RouteQueryOptions) => {
+    return leadPipeline.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+leadPipeline.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: leadPipeline.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+leadPipeline.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: leadPipeline.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+const leadPipelineForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: leadPipeline.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+leadPipelineForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: leadPipeline.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\LeadPipeline::__invoke
+* @see app/Filament/TitanNexus/Pages/LeadPipeline.php:7
+* @route '/titannexus/lead-pipeline'
+*/
+leadPipelineForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: leadPipeline.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+leadPipeline.form = leadPipelineForm
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+export const marketingCampaigns = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: marketingCampaigns.url(options),
+    method: 'get',
+})
+
+marketingCampaigns.definition = {
+    methods: ["get","head"],
+    url: '/titannexus/marketing-campaigns',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+marketingCampaigns.url = (options?: RouteQueryOptions) => {
+    return marketingCampaigns.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+marketingCampaigns.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: marketingCampaigns.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+marketingCampaigns.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: marketingCampaigns.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+const marketingCampaignsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: marketingCampaigns.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+marketingCampaignsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: marketingCampaigns.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\MarketingCampaigns::__invoke
+* @see app/Filament/TitanNexus/Pages/MarketingCampaigns.php:7
+* @route '/titannexus/marketing-campaigns'
+*/
+marketingCampaignsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: marketingCampaigns.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+marketingCampaigns.form = marketingCampaignsForm
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+export const trainingContent = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: trainingContent.url(options),
+    method: 'get',
+})
+
+trainingContent.definition = {
+    methods: ["get","head"],
+    url: '/titannexus/training-content',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+trainingContent.url = (options?: RouteQueryOptions) => {
+    return trainingContent.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+trainingContent.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: trainingContent.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+trainingContent.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: trainingContent.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+const trainingContentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: trainingContent.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+trainingContentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: trainingContent.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\TrainingContent::__invoke
+* @see app/Filament/TitanNexus/Pages/TrainingContent.php:7
+* @route '/titannexus/training-content'
+*/
+trainingContentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: trainingContent.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+trainingContent.form = trainingContentForm
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+export const verticals = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: verticals.url(options),
+    method: 'get',
+})
+
+verticals.definition = {
+    methods: ["get","head"],
+    url: '/titannexus/verticals',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+verticals.url = (options?: RouteQueryOptions) => {
+    return verticals.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+verticals.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: verticals.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+verticals.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: verticals.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+const verticalsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verticals.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+verticalsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verticals.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\TitanNexus\Pages\Verticals::__invoke
+* @see app/Filament/TitanNexus/Pages/Verticals.php:7
+* @route '/titannexus/verticals'
+*/
+verticalsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: verticals.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+verticals.form = verticalsForm
+
+/**
 * @see \App\Filament\Pages\UiStudio::__invoke
 * @see app/Filament/Pages/UiStudio.php:7
 * @route '/titannexus/ui-studio'
@@ -245,6 +569,10 @@ uiStudio.form = uiStudioForm
 const pages = {
     dashboard: Object.assign(dashboard, dashboard),
     myProfile: Object.assign(myProfile, myProfile),
+    leadPipeline: Object.assign(leadPipeline, leadPipeline),
+    marketingCampaigns: Object.assign(marketingCampaigns, marketingCampaigns),
+    trainingContent: Object.assign(trainingContent, trainingContent),
+    verticals: Object.assign(verticals, verticals),
     uiStudio: Object.assign(uiStudio, uiStudio),
 }
 

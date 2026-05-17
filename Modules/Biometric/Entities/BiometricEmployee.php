@@ -2,16 +2,16 @@
 
 namespace Modules\Biometric\Entities;
 
+use App\Models\Attendance;
 use App\Models\BaseModel;
+use App\Models\EmployeeDetails;
 use App\Models\User;
 use App\Traits\HasCompany;
-use Illuminate\Support\Facades\Log;
-
-use App\Models\EmployeeDetails;
-use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Support\Facades\Log;
+use Modules\Biometric\Events\AttendanceRecorded;
+use Modules\Biometric\Events\BiometricClockIn;
 
 class BiometricEmployee extends BaseModel
 {
@@ -27,10 +27,11 @@ class BiometricEmployee extends BaseModel
     public static function recordFingerprint($rows, $device)
     {
         foreach ($rows as $row) {
-            if (empty($row)) continue;
+            if (empty($row)) {
+                continue;
+            }
 
             $parts = explode("\t", $row);
-            Log::info('Parts: ' . json_encode($parts));
 
             if (count($parts) > 0) {
                 self::processRow($parts, $device);
@@ -68,7 +69,6 @@ class BiometricEmployee extends BaseModel
             'employee_id' => $employeeId,
             'has_fingerprint' => true,
             'fingerprint_id' => $fingerprintId,
-            'fingerprint_template' => $template
         ]);
 
         if ($employeeId && $fingerprintId) {
@@ -78,7 +78,7 @@ class BiometricEmployee extends BaseModel
                 [
                     'has_fingerprint' => true,
                     'fingerprint_id' => $fingerprintId,
-                    'fingerprint_template' => $template
+                    'fingerprint_template' => $template,
                 ]
             );
         }
@@ -97,7 +97,7 @@ class BiometricEmployee extends BaseModel
 
         Log::info('User data received', [
             'employee_id' => $employeeId,
-            'card_number' => $cardNumber
+            'card_number' => $cardNumber,
         ]);
 
         if ($employeeId && $cardNumber) {
@@ -122,7 +122,7 @@ class BiometricEmployee extends BaseModel
 
         Log::info('Photo data received', [
             'employee_id' => $employeeId,
-            'photo' => $photo
+            'has_photo' => ! empty($photo),
         ]);
 
         if ($employeeId && $photo) {
@@ -131,7 +131,7 @@ class BiometricEmployee extends BaseModel
                 $device->company_id,
                 [
                     'has_photo' => true,
-                    'photo' => $photo
+                    'photo' => $photo,
                 ]
             );
         }
@@ -142,7 +142,7 @@ class BiometricEmployee extends BaseModel
         return self::updateOrCreate(
             [
                 'biometric_employee_id' => $employeeId,
-                'company_id' => $companyId
+                'company_id' => $companyId,
             ],
             $data
         );
@@ -154,26 +154,22 @@ class BiometricEmployee extends BaseModel
 
             $parts = explode("\t", $line);
 
-            Log::info('Parts: ' . json_encode($parts));
-
             if (count($parts) >= 2) {
                 $deviceEmployeeId = $parts[0];
                 $timestamp = $parts[1];
                 $status = $parts[2] ?? 0;
 
-
                 // Skip if timestamp is 0 or not in a valid date time format
-                if ($timestamp == 0 || !strtotime($timestamp)) {
+                if ($timestamp == 0 || ! strtotime($timestamp)) {
                     continue;
                 }
 
-                $timestamp = Carbon::parse((string)$timestamp, $device->company->timezone)
+                $timestamp = Carbon::parse((string) $timestamp, $device->company->timezone)
                     ->setTimezone('UTC')
                     ->format('Y-m-d H:i:s');
 
-                Log::info('Timestamp: ' . $timestamp);
-                Log::info('Status: ' . $status);
-
+                Log::info('Timestamp: '.$timestamp);
+                Log::info('Status: '.$status);
 
                 // Check if the record already exists
                 $existingRecord = \DB::table('biometric_device_attendances')
@@ -186,7 +182,6 @@ class BiometricEmployee extends BaseModel
                 if ($existingRecord) {
                     continue;
                 }
-
 
                 $biometricEmployee = BiometricEmployee::where('biometric_employee_id', $deviceEmployeeId)->where('company_id', $device->company_id)->first();
 
@@ -211,10 +206,9 @@ class BiometricEmployee extends BaseModel
                     $status = 1; // Clock out
                 }
                 // If last record exists and is a clock out (1), then this should be a clock in (0)
-                else if ($lastRecord && $lastRecord->status1 == 1) {
+                elseif ($lastRecord && $lastRecord->status1 == 1) {
                     $status = 0; // Clock in
                 }
-
 
                 $attendances = [
                     'device_name' => $device->device_name,
@@ -234,32 +228,43 @@ class BiometricEmployee extends BaseModel
                     'updated_at' => now(),
                 ];
 
-
                 \DB::table('biometric_device_attendances')->insert($attendances);
 
-                if (!$biometricEmployee) {
+                event(new AttendanceRecorded(
+                    companyId: (int) $device->company_id,
+                    employeeId: (string) $deviceEmployeeId,
+                    userId: $biometricEmployee?->user_id ? (int) $biometricEmployee->user_id : null,
+                    occurredAt: Carbon::parse($timestamp),
+                    clockIn: $status === 0,
+                    workedHours: 0.0,
+                    deviceSerial: (string) $device->serial_number,
+                ));
+
+                if (! $biometricEmployee) {
                     $employeeDetails = EmployeeDetails::where('employee_id', $deviceEmployeeId)->where('company_id', $device->company_id)->first();
 
                     if ($employeeDetails) {
                         $biometricEmployee = BiometricEmployee::create([
                             'biometric_employee_id' => $deviceEmployeeId,
                             'company_id' => $device->company_id,
-                            'user_id' => $employeeDetails->user_id
+                            'user_id' => $employeeDetails->user_id,
                         ]);
                     }
                 }
 
-                self::markAttendance($biometricEmployee->user, $timestamp);
+                if ($biometricEmployee?->user) {
+                    self::markAttendance($biometricEmployee->user, $timestamp);
+                }
             }
         }
     }
-
 
     private static function markAttendance($user, $timestamp)
     {
         $clockIn = Carbon::createFromFormat('Y-m-d H:i:s', $timestamp, $user->company->timezone);
         $appTimezone = $clockIn->copy();
         $carbonDate = $clockIn->copy()->startOfDay();
+        $attendance = null;
 
         // Get the last attendance record for this user on this day
         $lastAttendance = Attendance::where('user_id', $user->id)
@@ -268,23 +273,37 @@ class BiometricEmployee extends BaseModel
             ->first();
 
         // If no record exists or last record has clock_out_time, create a new clock in
-        if (!$lastAttendance || $lastAttendance->clock_out_time !== null) {
+        if (! $lastAttendance || $lastAttendance->clock_out_time !== null) {
             // Clock In
-            $user->attendance()->create([
+            $attendance = $user->attendance()->create([
                 'clock_in_time' => $appTimezone,
                 'half_day' => 'no',
                 'clock_in_type' => 'biometric',
                 'work_from_type' => 'office',
-                'clock_in_ip' => request()->ip()
+                'clock_in_ip' => request()->ip(),
             ]);
         } else {
             // Clock Out - if last record exists and has no clock_out_time
+            $attendance = $lastAttendance;
             $lastAttendance->update([
                 'clock_out_time' => $appTimezone,
                 'clock_out_type' => 'biometric',
                 'work_from_type' => 'office',
-                'clock_out_ip' => request()->ip()
+                'clock_out_ip' => request()->ip(),
             ]);
+        }
+
+        if ($attendance !== null) {
+            event(new BiometricClockIn(
+                attendance: $attendance,
+                user: $user,
+                method: 'biometric',
+                geofencePassed: true,
+                lat: null,
+                lng: null,
+                bookingId: null,
+                deviceId: null,
+            ));
         }
     }
 

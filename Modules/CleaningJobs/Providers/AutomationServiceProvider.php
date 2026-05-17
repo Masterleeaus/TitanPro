@@ -2,24 +2,35 @@
 
 namespace Modules\CleaningJobs\Providers;
 
+use App\Platform\Automation\AutomationRegistry;
 use Illuminate\Support\ServiceProvider;
+use Modules\CleaningJobs\Automation\Handlers\SendAppointmentReminderHandler;
+use Modules\CleaningJobs\Automation\Pipelines\JobAutomationPipeline;
+use Modules\CleaningJobs\Automation\Schedulers\DailyJobReminderScheduler;
 
-/**
- * AutomationServiceProvider registers automation triggers and schedulers for TitanWork.
- *
- * Use this provider to register scheduled tasks, queues and triggers that run
- * automatically based on events such as overdue jobs, missed cleans or supply
- * thresholds. This class currently acts as a placeholder.
- */
 class AutomationServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        // Register automations here
-    }
-
     public function boot(): void
     {
-        // Boot any automation listeners or scheduled tasks
+        /** @var AutomationRegistry $registry */
+        $registry = $this->app->make(AutomationRegistry::class);
+
+        $registry->register([
+            'id' => 'cleaningjobs.job_scheduled_reminder',
+            'trigger' => 'cleaningjobs.job.scheduled',
+            'handler' => SendAppointmentReminderHandler::class,
+            'pipeline' => JobAutomationPipeline::class,
+            'retries' => 3,
+            'retry_after' => 60,
+        ]);
+
+        $registry->register([
+            'id' => 'cleaningjobs.daily_job_reminders',
+            'trigger' => 'cleaningjobs.job.reminders.daily',
+            'handler' => DailyJobReminderScheduler::class,
+            'schedule' => 'daily',
+            'retries' => 1,
+            'retry_after' => 300,
+        ]);
     }
 }

@@ -1,7 +1,7 @@
-import Resources from './Resources'
+import Pages from './Pages'
 
 const TitanNexus = {
-    Resources: Object.assign(Resources, Resources),
+    Pages: Object.assign(Pages, Pages),
 }
 
 export default TitanNexus

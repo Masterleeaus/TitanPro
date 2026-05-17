@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 const SiteSettings = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -15,8 +15,8 @@ SiteSettings.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 SiteSettings.url = (options?: RouteQueryOptions) => {
@@ -24,8 +24,8 @@ SiteSettings.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 SiteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,8 +34,8 @@ SiteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 SiteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,8 +44,8 @@ SiteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 const SiteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,8 +54,8 @@ const SiteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 SiteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -64,8 +64,8 @@ SiteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 })
 
 /**
-* @see \TomatoPHP\FilamentSettingsHub\Pages\SiteSettings::__invoke
-* @see vendor/tomatophp/filament-settings-hub/src/Pages/SiteSettings.php:7
+* @see \App\Filament\Pages\SiteSettings::__invoke
+* @see app/Filament/Pages/SiteSettings.php:7
 * @route '/titanpro/site-settings'
 */
 SiteSettingsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -2,6 +2,86 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Pages\UiStudio::__invoke
 * @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+const UiStudio2c2fedef266b2535be39b867ac01729d = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: UiStudio2c2fedef266b2535be39b867ac01729d.url(options),
+    method: 'get',
+})
+
+UiStudio2c2fedef266b2535be39b867ac01729d.definition = {
+    methods: ["get","head"],
+    url: '/titanpro/ui-studio',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+UiStudio2c2fedef266b2535be39b867ac01729d.url = (options?: RouteQueryOptions) => {
+    return UiStudio2c2fedef266b2535be39b867ac01729d.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+UiStudio2c2fedef266b2535be39b867ac01729d.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: UiStudio2c2fedef266b2535be39b867ac01729d.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+UiStudio2c2fedef266b2535be39b867ac01729d.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: UiStudio2c2fedef266b2535be39b867ac01729d.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+const UiStudio2c2fedef266b2535be39b867ac01729dForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: UiStudio2c2fedef266b2535be39b867ac01729d.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+UiStudio2c2fedef266b2535be39b867ac01729dForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: UiStudio2c2fedef266b2535be39b867ac01729d.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
+* @route '/titanpro/ui-studio'
+*/
+UiStudio2c2fedef266b2535be39b867ac01729dForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: UiStudio2c2fedef266b2535be39b867ac01729d.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+UiStudio2c2fedef266b2535be39b867ac01729d.form = UiStudio2c2fedef266b2535be39b867ac01729dForm
+/**
+* @see \App\Filament\Pages\UiStudio::__invoke
+* @see app/Filament/Pages/UiStudio.php:7
 * @route '/groundzero/ui-studio'
 */
 const UiStudioa8589b07ad9cebec165d22e3a70a6951 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -321,6 +401,7 @@ UiStudio05a00afdb1e6674b9b79a55ffbbbc11fForm.head = (options?: RouteQueryOptions
 UiStudio05a00afdb1e6674b9b79a55ffbbbc11f.form = UiStudio05a00afdb1e6674b9b79a55ffbbbc11fForm
 
 const UiStudio = {
+    '/titanpro/ui-studio': UiStudio2c2fedef266b2535be39b867ac01729d,
     '/groundzero/ui-studio': UiStudioa8589b07ad9cebec165d22e3a70a6951,
     '/titanquotes/ui-studio': UiStudiof31d3d69bdf4b47f73f1a87a7fddf37c,
     '/zeropay/ui-studio': UiStudio08c00772e90be738822b799f55dcfa5e,

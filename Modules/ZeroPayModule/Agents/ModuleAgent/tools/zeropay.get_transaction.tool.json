@@ -1,0 +1,18 @@
+{
+  "name": "zeropay.get_transaction",
+  "description": "Retrieve a ZeroPay transaction record by ID, scoped to the current company",
+  "type": "query",
+  "action": "Modules\\ZeroPayModule\\Actions\\LookupZeroPaySessionAction",
+  "requires_permission": "zeropay.view",
+  "tenant_scoped": true,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "transaction_id": {
+        "type": "integer",
+        "description": "Numeric ID of the transaction record"
+      }
+    },
+    "required": ["transaction_id"]
+  }
+}

@@ -2,21 +2,119 @@
 
 namespace App\Providers\Filament;
 
-use Illuminate\Support\ServiceProvider;
+
+use Filament\View\PanelsRenderHook;
+use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Filament\Pages\ThemeManager;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Widgets;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Modules\CRMCore\Filament\Plugin\CRMCorePlugin;
 
 /**
- * @deprecated Migrated to TitanProPanelProvider (issue-126).
+ * Super Admin panel.
  *
- * The generic /admin panel has been renamed to the dedicated /titanpro
- * super-admin panel. This class is kept as a no-op stub to avoid breaking
- * references in older deployment scripts or IDE caches. It is no longer
- * registered in bootstrap/providers.php.
- *
- * @see TitanProPanelProvider
+ * Canonical URL: /admin
+ * This panel owns platform-level module/settings/CMS controls that used to be
+ * mixed into the old Platform/TitanPro panel.
  */
-class AdminPanelProvider extends ServiceProvider
+class AdminPanelProvider extends PanelProvider
 {
-    public function register(): void {}
+    use RegistersFilamentPlugins;
 
-    public function boot(): void {}
+    public function panel(Panel $panel): Panel
+    {
+        $crmCoreAutoloaderPath = base_path('Modules/CRMCore/Support/CRMCoreAutoloader.php');
+
+        if (file_exists($crmCoreAutoloaderPath)) {
+            require_once $crmCoreAutoloaderPath;
+            \Modules\CRMCore\Support\CRMCoreAutoloader::register();
+        }
+
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->brandName('Super Admin')
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): string => view('filament.theme-manager-runtime')->render())
+            ->colors([
+                'primary' => Color::Blue,
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->login()
+            ->plugins([
+                FilamentShieldPlugin::make(),
+                CRMCorePlugin::make(),
+                ...$this->breezyPlugin(),
+                ...$this->availablePlugins([
+
+                    'Awcodes\Curator\CuratorPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'Shreejan\DashArrange\DashArrangePlugin',
+                    'Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Andreia\FilamentUiSwitcher\FilamentUiSwitcherPlugin',
+                    'Biostate\FilamentMenuBuilder\FilamentMenuBuilderPlugin',
+                    'NoteBrainsLab\FilamentMenuManager\FilamentMenuManagerPlugin',
+                    'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'JeffersonGoncalves\FilamentTopbar\FilamentTopbarPlugin',
+                    'OsamaAtef\FilamentDrilldownSidebar\FilamentDrilldownSidebarPlugin',
+                    'Savannabits\FilamentModules\FilamentModulesPlugin',
+                    'TomatoPHP\FilamentCms\FilamentCMSPlugin',
+                    'TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin',
+                    'TomatoPHP\FilamentIcons\FilamentIconsPlugin',
+                    'TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentPlugin',
+                    'Devonab\FilamentEasyFooter\EasyFooterPlugin',
+                ]),
+            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->pages([
+                Pages\Dashboard::class,
+                \App\Filament\Admin\Pages\PanelLinks::class,
+                \App\Filament\Pages\SuperAdminReadiness::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->widgets([
+                Widgets\AccountWidget::class,
+                \App\Filament\Widgets\TitanOverviewWidget::class,
+                \App\Filament\Widgets\CleaningOperationsOverview::class,
+                \App\Filament\Widgets\RevenueReportingSnapshot::class,
+            ])
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ])
+            
+            
+            ->renderHook(PanelsRenderHook::HEAD_START, fn (): string => view('vendor.filament.page-ui-inspector-optin')->render())
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): string => view('vendor.filament.theme-panel-dashboard-leak-guard')->render())
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
+    }
 }

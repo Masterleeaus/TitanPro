@@ -8,6 +8,8 @@ use Modules\CRMCore\Filament\Pages\CRMCoreOverview;
 use Modules\CRMCore\Filament\Resources\ClientPipelineResource;
 use Modules\CRMCore\Filament\Resources\CRMCoreActivityLogResource;
 use Modules\CRMCore\Filament\Resources\DealProjectResource;
+use Modules\CRMCore\Filament\Resources\DealResource;
+use Modules\CRMCore\Filament\Resources\LeadResource;
 use Modules\CRMCore\Filament\Resources\LeadScoringResource;
 use Modules\CRMCore\Filament\Widgets\PipelineOverviewWidget;
 
@@ -22,9 +24,11 @@ class CRMCorePlugin implements Plugin
     {
         $panel
             ->resources([
-                ClientPipelineResource::class,
+                LeadResource::class,
                 LeadScoringResource::class,
+                DealResource::class,
                 DealProjectResource::class,
+                ClientPipelineResource::class,
                 CRMCoreActivityLogResource::class,
             ])
             ->pages([
@@ -45,3 +49,4 @@ class CRMCorePlugin implements Plugin
         return app(static::class);
     }
 }
+

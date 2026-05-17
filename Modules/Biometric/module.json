@@ -1,14 +1,25 @@
 {
   "name": "Biometric",
   "alias": "biometric",
-  "description": "",
-  "keywords": [],
+  "description": "Biometric device and attendance integration for TitanGo, including secure device command exchange, attendance sync, and employee biometric mapping.",
+  "keywords": [
+    "biometric",
+    "attendance",
+    "titango",
+    "devices",
+    "privacy",
+    "tenant"
+  ],
   "priority": 0,
   "providers": [
     "Modules\\Biometric\\Providers\\BiometricServiceProvider",
-    "Modules\\Biometric\\Providers\\EventServiceProvider"
+    "Modules\\Biometric\\Providers\\EventServiceProvider",
+    "Modules\\Biometric\\Providers\\FilamentServiceProvider"
   ],
   "files": [],
   "filament_panel": "titango",
+  "filament": {
+    "plugin": "Modules\\Biometric\\Filament\\Plugin\\BiometricPlugin"
+  },
   "active": 1
 }

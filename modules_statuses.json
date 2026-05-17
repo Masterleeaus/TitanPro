@@ -1,0 +1,11 @@
+{
+    "CRMCore": true,
+    "TitanGoField": true,
+    "TitanNexus": true,
+    "TitanZero": true,
+    "TitanCore": true,
+    "CleaningJobs": true,
+    "BookingModule": true,
+    "Biometric": true,
+    "Budgeting": true
+}

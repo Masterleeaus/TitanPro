@@ -1,0 +1,30 @@
+{
+  "name": "ZeroPayModule UI Kit",
+  "version": "1.0.0",
+  "type": "module-ui-kit",
+  "layout": "one-page-control-panel",
+  "sections": [
+    "header",
+    "metrics",
+    "quick_actions",
+    "workspace",
+    "timeline",
+    "media",
+    "agent",
+    "bottom_tabs",
+    "settings"
+  ],
+  "optional_plugins": [
+    "shield",
+    "breezy",
+    "spotlight",
+    "curator",
+    "activity_log",
+    "advanced_widgets",
+    "dash_arrange",
+    "apex_charts",
+    "uppy",
+    "badgeable_column",
+    "progress_bar_column"
+  ]
+}

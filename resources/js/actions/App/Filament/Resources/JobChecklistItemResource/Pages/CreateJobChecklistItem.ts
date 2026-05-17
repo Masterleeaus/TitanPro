@@ -2,14 +2,94 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
-* @route '/titanstudio/job-checklist-items/create'
+* @route '/titanpro/job-checklist-items/create'
 */
-const CreateJobChecklistItem = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: CreateJobChecklistItem.url(options),
+const CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url(options),
     method: 'get',
 })
 
-CreateJobChecklistItem.definition = {
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.definition = {
+    methods: ["get","head"],
+    url: '/titanpro/job-checklist-items/create',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url = (options?: RouteQueryOptions) => {
+    return CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+const CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanpro/job-checklist-items/create'
+*/
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8.form = CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8Form
+/**
+* @see \App\Filament\Resources\JobChecklistItemResource\Pages\CreateJobChecklistItem::__invoke
+* @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
+* @route '/titanstudio/job-checklist-items/create'
+*/
+const CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url(options),
+    method: 'get',
+})
+
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.definition = {
     methods: ["get","head"],
     url: '/titanstudio/job-checklist-items/create',
 } satisfies RouteDefinition<["get","head"]>
@@ -19,8 +99,8 @@ CreateJobChecklistItem.definition = {
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-CreateJobChecklistItem.url = (options?: RouteQueryOptions) => {
-    return CreateJobChecklistItem.definition.url + queryParams(options)
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url = (options?: RouteQueryOptions) => {
+    return CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.definition.url + queryParams(options)
 }
 
 /**
@@ -28,8 +108,8 @@ CreateJobChecklistItem.url = (options?: RouteQueryOptions) => {
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-CreateJobChecklistItem.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: CreateJobChecklistItem.url(options),
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url(options),
     method: 'get',
 })
 
@@ -38,8 +118,8 @@ CreateJobChecklistItem.get = (options?: RouteQueryOptions): RouteDefinition<'get
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-CreateJobChecklistItem.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: CreateJobChecklistItem.url(options),
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url(options),
     method: 'head',
 })
 
@@ -48,8 +128,8 @@ CreateJobChecklistItem.head = (options?: RouteQueryOptions): RouteDefinition<'he
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-const CreateJobChecklistItemForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: CreateJobChecklistItem.url(options),
+const CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bcForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url(options),
     method: 'get',
 })
 
@@ -58,8 +138,8 @@ const CreateJobChecklistItemForm = (options?: RouteQueryOptions): RouteFormDefin
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-CreateJobChecklistItemForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: CreateJobChecklistItem.url(options),
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bcForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url(options),
     method: 'get',
 })
 
@@ -68,8 +148,8 @@ CreateJobChecklistItemForm.get = (options?: RouteQueryOptions): RouteFormDefinit
 * @see app/Filament/Resources/JobChecklistItemResource/Pages/CreateJobChecklistItem.php:7
 * @route '/titanstudio/job-checklist-items/create'
 */
-CreateJobChecklistItemForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: CreateJobChecklistItem.url({
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bcForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.url({
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -78,6 +158,11 @@ CreateJobChecklistItemForm.head = (options?: RouteQueryOptions): RouteFormDefini
     method: 'get',
 })
 
-CreateJobChecklistItem.form = CreateJobChecklistItemForm
+CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc.form = CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bcForm
+
+const CreateJobChecklistItem = {
+    '/titanpro/job-checklist-items/create': CreateJobChecklistItembfbe50420e0a3971635293de0389c4f8,
+    '/titanstudio/job-checklist-items/create': CreateJobChecklistItemb4cd491438eb505c61e4d63839fb95bc,
+}
 
 export default CreateJobChecklistItem

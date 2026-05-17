@@ -1,0 +1,55 @@
+{
+  "module": "example-module",
+  "agent": "example.module.agent",
+  "control_modes": [
+    "read",
+    "suggest",
+    "draft",
+    "execute_with_confirmation",
+    "execute_auto_safe_actions"
+  ],
+  "entrypoints": {
+    "filament_chat": "Filament page module chat",
+    "pwa": "PWA/AppShell",
+    "voice": "Voice/ModuleVoiceGateway",
+    "channels": "AI/Channels/channel.manifest.json"
+  },
+  "commands": [
+    {
+      "intent": "example.lookup_record",
+      "action": "Modules\\ExampleModule\\Actions\\LookupExampleRecordAction",
+      "mode": "read",
+      "confirmation": "none"
+    },
+    {
+      "intent": "example.create_record",
+      "action": "Modules\\ExampleModule\\Actions\\CreateExampleRecordAction",
+      "mode": "write",
+      "confirmation": "required"
+    },
+    {
+      "intent": "example.update_record",
+      "action": "Modules\\ExampleModule\\Actions\\UpdateExampleRecordAction",
+      "mode": "write",
+      "confirmation": "required"
+    },
+    {
+      "intent": "example.delete_record",
+      "action": "Modules\\ExampleModule\\Actions\\DeleteExampleRecordAction",
+      "mode": "destructive",
+      "confirmation": "required_plus_policy"
+    }
+  ],
+  "security": {
+    "tenant_scoped": true,
+    "policy_checked": true,
+    "audit_all_actions": true,
+    "human_confirmation_for_writes": true,
+    "idempotency_required": true
+  },
+  "answering": {
+    "knowledge_scope": "AI/Indexing/indexing.manifest.json",
+    "citations_required": true,
+    "fallback_to_zero_for_system_questions": true
+  }
+}

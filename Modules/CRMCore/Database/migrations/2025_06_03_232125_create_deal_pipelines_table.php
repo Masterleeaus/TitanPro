@@ -14,6 +14,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('is_default')->default(false)->comment('The default pipeline for new deals');
             $table->unsignedInteger('position')->default(0)->comment('Order of pipelines if multiple are displayed');
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
 
             // Standard columns
             $table->string('tenant_id', 191)->nullable()->index();

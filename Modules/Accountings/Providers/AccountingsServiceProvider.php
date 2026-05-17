@@ -2,27 +2,28 @@
 
 namespace Modules\Accountings\Providers;
 
+use App\Models\Invoice;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
+use Modules\Accountings\Observers\InvoiceAccountingObserver;
+use Modules\Accountings\Services\FinancialYearService;
+use Modules\TitanZero\Services\CapabilityRegistry;
 
 class AccountingsServiceProvider extends ServiceProvider
 {
     /**
-     * @var string $moduleName
+     * @var string
      */
     protected $moduleName = 'Accountings';
 
     /**
-     * @var string $moduleNameLower
+     * @var string
      */
     protected $moduleNameLower = 'accountings';
 
     /**
      * Boot the application events.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -32,8 +33,8 @@ class AccountingsServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         // Titan Zero + Titan Go integration (capabilities registry)
-        if (class_exists(\Modules\TitanZero\Services\CapabilityRegistry::class)) {
-            \Modules\TitanZero\Services\CapabilityRegistry::registerModuleFromConfig('Accountings');
+        if (class_exists(CapabilityRegistry::class)) {
+            CapabilityRegistry::registerModuleFromConfig('Accountings');
         }
     }
 
@@ -42,24 +43,21 @@ class AccountingsServiceProvider extends ServiceProvider
      */
     protected function registerObservers(): void
     {
-        if (class_exists(\App\Models\Invoice::class)) {
-            \App\Models\Invoice::observe(
-                \Modules\Accountings\Observers\InvoiceAccountingObserver::class
+        if (class_exists(Invoice::class)) {
+            Invoice::observe(
+                InvoiceAccountingObserver::class
             );
         }
     }
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
         $this->app->singleton(
-            \Modules\Accountings\Services\FinancialYearService::class,
-            \Modules\Accountings\Services\FinancialYearService::class
+            FinancialYearService::class,
+            FinancialYearService::class
         );
     }
 
@@ -71,7 +69,7 @@ class AccountingsServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
+            module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower.'.php'),
         ], 'config');
 
         $this->mergeConfigFrom(module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower);
@@ -81,21 +79,19 @@ class AccountingsServiceProvider extends ServiceProvider
     }
 
     /**
-
-
      * Register views.
      *
      * @return void
      */
     public function registerViews()
     {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
+        $viewPath = resource_path('views/modules/'.$this->moduleNameLower);
 
         $sourcePath = module_path($this->moduleName, 'Resources/views');
 
         $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-module-views']);
+            $sourcePath => $viewPath,
+        ], ['views', $this->moduleNameLower.'-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
     }
@@ -107,7 +103,7 @@ class AccountingsServiceProvider extends ServiceProvider
      */
     public function registerTranslations()
     {
-        $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
+        $langPath = resource_path('lang/modules/'.$this->moduleNameLower);
 
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
@@ -132,10 +128,11 @@ class AccountingsServiceProvider extends ServiceProvider
     {
         $paths = [];
         foreach (\Config::get('view.paths') as $path) {
-            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
-                $paths[] = $path . '/modules/' . $this->moduleNameLower;
+            if (is_dir($path.'/modules/'.$this->moduleNameLower)) {
+                $paths[] = $path.'/modules/'.$this->moduleNameLower;
             }
         }
+
         return $paths;
     }
 }

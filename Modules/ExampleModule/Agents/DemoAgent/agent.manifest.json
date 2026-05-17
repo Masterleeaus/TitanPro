@@ -1,0 +1,20 @@
+{
+  "agent": "demo.agent",
+  "display_name": "Zero Demo Agent",
+  "user_facing_name": "Zero",
+  "context_label": "Demo Module Specialist",
+  "role": "example_scaffold",
+  "description": "Demo-only scaffold showing how a module-specific internal agent binds to Zero. Replace or remove for production modules.",
+  "scaffold": true,
+  "replace_required": true,
+  "production_blocker": true,
+  "visible_to_users": false,
+  "zero_routes_to_agent": true,
+  "supports_chat": true,
+  "supports_voice": true,
+  "supports_pwa": true,
+  "supports_channel_fallbacks": true,
+  "knowledge_scope": ["Knowledge/guides", "Knowledge/policies", "Knowledge/faqs", "Knowledge/checklists", "Knowledge/sops", "Knowledge/pricing", "Knowledge/compliance"],
+  "tools": ["demo.lookup_record", "demo.create_record"],
+  "answer_mode": "grounded_with_citations"
+}

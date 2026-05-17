@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\PlatformSetting;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -10,106 +9,57 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasTable('platform_settings')) {
-            Schema::create('platform_settings', function (Blueprint $table) {
-                $table->id();
-                $table->string('app_name')->default('TITAN ZERO');
-                $table->string('tagline')->nullable();
-                $table->string('logo')->nullable();
-                $table->string('logo_path')->nullable();
-                $table->string('favicon')->nullable();
-                $table->string('favicon_path')->nullable();
-                $table->string('primary_color')->nullable();
-                $table->string('secondary_color')->nullable();
-                $table->string('accent_color')->nullable();
-                $table->string('background_color')->nullable();
-                $table->string('support_email')->nullable();
-                $table->string('sales_email')->nullable();
-                $table->string('from_email')->nullable();
-                $table->string('from_name')->nullable();
-                $table->text('footer_text')->nullable();
-                $table->string('copyright_text')->nullable();
-                $table->string('meta_title')->nullable();
-                $table->text('meta_description')->nullable();
-                $table->string('marketing_headline')->nullable();
-                $table->text('marketing_subheadline')->nullable();
-                $table->string('login_headline')->nullable();
-                $table->text('login_subheadline')->nullable();
-                $table->string('default_plan')->nullable();
-                $table->unsignedInteger('trial_days')->default(14);
-                $table->boolean('enable_registration')->default(true);
-                $table->boolean('stripe_enabled')->default(false);
-                $table->text('maintenance_banner')->nullable();
-                $table->text('custom_head_html')->nullable();
-                $table->timestamps();
-            });
-        } else {
-            Schema::table('platform_settings', function (Blueprint $table) {
-                foreach ([
-                    'tagline' => fn () => $table->string('tagline')->nullable(),
-                    'logo' => fn () => $table->string('logo')->nullable(),
-                    'logo_path' => fn () => $table->string('logo_path')->nullable(),
-                    'favicon' => fn () => $table->string('favicon')->nullable(),
-                    'favicon_path' => fn () => $table->string('favicon_path')->nullable(),
-                    'primary_color' => fn () => $table->string('primary_color')->nullable(),
-                    'secondary_color' => fn () => $table->string('secondary_color')->nullable(),
-                    'accent_color' => fn () => $table->string('accent_color')->nullable(),
-                    'background_color' => fn () => $table->string('background_color')->nullable(),
-                    'support_email' => fn () => $table->string('support_email')->nullable(),
-                    'sales_email' => fn () => $table->string('sales_email')->nullable(),
-                    'from_email' => fn () => $table->string('from_email')->nullable(),
-                    'from_name' => fn () => $table->string('from_name')->nullable(),
-                    'footer_text' => fn () => $table->text('footer_text')->nullable(),
-                    'copyright_text' => fn () => $table->string('copyright_text')->nullable(),
-                    'meta_title' => fn () => $table->string('meta_title')->nullable(),
-                    'meta_description' => fn () => $table->text('meta_description')->nullable(),
-                    'marketing_headline' => fn () => $table->string('marketing_headline')->nullable(),
-                    'marketing_subheadline' => fn () => $table->text('marketing_subheadline')->nullable(),
-                    'login_headline' => fn () => $table->string('login_headline')->nullable(),
-                    'login_subheadline' => fn () => $table->text('login_subheadline')->nullable(),
-                    'default_plan' => fn () => $table->string('default_plan')->nullable(),
-                    'trial_days' => fn () => $table->unsignedInteger('trial_days')->default(14),
-                    'enable_registration' => fn () => $table->boolean('enable_registration')->default(true),
-                    'stripe_enabled' => fn () => $table->boolean('stripe_enabled')->default(false),
-                    'maintenance_banner' => fn () => $table->text('maintenance_banner')->nullable(),
-                    'custom_head_html' => fn () => $table->text('custom_head_html')->nullable(),
-                ] as $column => $callback) {
-                    if (! Schema::hasColumn('platform_settings', $column)) {
-                        $callback();
-                    }
-                }
-            });
-        }
+        Schema::create('platform_settings', function (Blueprint $table) {
+            $table->id();
 
-        if (Schema::hasTable('platform_settings') && DB::table('platform_settings')->count() === 0) {
-            $defaults = PlatformSetting::defaults();
-            $row = array_filter(
-                array_merge($defaults, ['created_at' => now(), 'updated_at' => now()]),
-                fn ($col) => Schema::hasColumn('platform_settings', $col),
-                ARRAY_FILTER_USE_KEY,
-            );
-            DB::table('platform_settings')->insert($row);
-        }
+            $table->string('app_name')->nullable();
+            $table->string('logo_path')->nullable();
+            $table->string('logo')->nullable();
 
-        if (Schema::hasTable('platform_settings')) {
-            $settings = DB::table('platform_settings')->first();
+            $table->string('primary_color')->nullable();
+            $table->string('secondary_color')->nullable();
+            $table->string('accent_color')->nullable();
 
-            if ($settings) {
-                $defaults = PlatformSetting::defaults();
-                $updates = [];
+            // Missing column fix
+            $table->string('surface_color')->nullable();
 
-                foreach ($defaults as $key => $value) {
-                    if (Schema::hasColumn('platform_settings', $key) && blank($settings->{$key} ?? null)) {
-                        $updates[$key] = $value;
-                    }
-                }
+            $table->string('font_heading')->nullable();
+            $table->string('font_body')->nullable();
 
-                if (! empty($updates)) {
-                    $updates['updated_at'] = now();
-                    DB::table('platform_settings')->where('id', $settings->id)->update($updates);
-                }
-            }
-        }
+            $table->string('support_email')->nullable();
+            $table->text('footer_text')->nullable();
+
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+
+            $table->string('marketing_headline')->nullable();
+            $table->string('marketing_subheadline')->nullable();
+
+            $table->boolean('enable_registration')->default(true);
+
+            $table->timestamps();
+        });
+
+        DB::table('platform_settings')->insert([
+            'app_name' => 'TITAN ZERO',
+            'logo_path' => 'platform/titan-zero-logo.png',
+            'logo' => 'platform/titan-zero-logo.png',
+            'primary_color' => '#2563eb',
+            'secondary_color' => '#0f172a',
+            'accent_color' => '#14b8a6',
+            'surface_color' => '#f8fafc',
+            'font_heading' => 'Figtree',
+            'font_body' => 'Figtree',
+            'support_email' => 'support@titanzero.pro',
+            'footer_text' => 'Powered by Titan Zero.',
+            'meta_title' => 'TITAN ZERO',
+            'meta_description' => 'Titan Zero field operations platform.',
+            'marketing_headline' => 'Field operations, controlled from one hub.',
+            'marketing_subheadline' => 'Manage jobs, teams, invoices, dispatch, and SaaS tenants from Titan Zero.',
+            'enable_registration' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     public function down(): void

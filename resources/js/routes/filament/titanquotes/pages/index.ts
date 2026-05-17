@@ -164,74 +164,74 @@ myProfile.form = myProfileForm
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-export const quotePipeline = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: quotePipeline.url(options),
+export const quotePipelineDashboard = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: quotePipelineDashboard.url(options),
     method: 'get',
 })
 
-quotePipeline.definition = {
+quotePipelineDashboard.definition = {
     methods: ["get","head"],
-    url: '/titanquotes/quote-pipeline',
+    url: '/titanquotes/quote-pipeline-dashboard',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-quotePipeline.url = (options?: RouteQueryOptions) => {
-    return quotePipeline.definition.url + queryParams(options)
+quotePipelineDashboard.url = (options?: RouteQueryOptions) => {
+    return quotePipelineDashboard.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-quotePipeline.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: quotePipeline.url(options),
+quotePipelineDashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: quotePipelineDashboard.url(options),
     method: 'get',
 })
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-quotePipeline.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: quotePipeline.url(options),
+quotePipelineDashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: quotePipelineDashboard.url(options),
     method: 'head',
 })
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-const quotePipelineForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: quotePipeline.url(options),
+const quotePipelineDashboardForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: quotePipelineDashboard.url(options),
     method: 'get',
 })
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-quotePipelineForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: quotePipeline.url(options),
+quotePipelineDashboardForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: quotePipelineDashboard.url(options),
     method: 'get',
 })
 
 /**
 * @see \App\Filament\TitanQuotes\Pages\QuotePipelineDashboard::__invoke
 * @see app/Filament/TitanQuotes/Pages/QuotePipelineDashboard.php:7
-* @route '/titanquotes/quote-pipeline'
+* @route '/titanquotes/quote-pipeline-dashboard'
 */
-quotePipelineForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: quotePipeline.url({
+quotePipelineDashboardForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: quotePipelineDashboard.url({
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
             ...(options?.query ?? options?.mergeQuery ?? {}),
@@ -240,7 +240,7 @@ quotePipelineForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get
     method: 'get',
 })
 
-quotePipeline.form = quotePipelineForm
+quotePipelineDashboard.form = quotePipelineDashboardForm
 
 /**
 * @see \App\Filament\Pages\UiStudio::__invoke
@@ -326,7 +326,7 @@ uiStudio.form = uiStudioForm
 const pages = {
     dashboard: Object.assign(dashboard, dashboard),
     myProfile: Object.assign(myProfile, myProfile),
-    quotePipeline: Object.assign(quotePipeline, quotePipeline),
+    quotePipelineDashboard: Object.assign(quotePipelineDashboard, quotePipelineDashboard),
     uiStudio: Object.assign(uiStudio, uiStudio),
 }
 

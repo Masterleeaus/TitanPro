@@ -1,0 +1,7 @@
+{
+  "runtime": "Zero Generative UI",
+  "rich_channels": ["filament", "pwa", "webchat"],
+  "fallback_channels": ["whatsapp", "sms", "email", "voice"],
+  "vendor_slots": ["UI/Vendor/A2UI", "UI/Vendor/Tambo"],
+  "renderers": ["cards", "tables", "forms", "timelines", "citations", "actions", "streaming_status"]
+}

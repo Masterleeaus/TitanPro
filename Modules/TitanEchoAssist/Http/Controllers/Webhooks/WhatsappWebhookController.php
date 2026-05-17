@@ -14,6 +14,15 @@ class WhatsappWebhookController extends Controller
 {
     public function handle(Request $request, int $channelId): Response
     {
+        // Blueprint 22: verify Twilio HMAC-SHA1 signature before processing
+        if (! $this->verifySignature($request)) {
+            Log::warning('WhatsappWebhook: invalid signature', [
+                'channel_id' => $channelId,
+                'ip'         => $request->ip(),
+            ]);
+            return response('Forbidden', 403);
+        }
+
         try {
             $sessionId = (string) $request->input('WaId', $request->input('From', 'unknown'));
             $incoming = (string) $request->input('Body', '');
@@ -43,6 +52,43 @@ class WhatsappWebhookController extends Controller
 
         // Twilio expects a 200 response (optionally with TwiML body)
         return response('', 200);
+    }
+
+    /**
+     * Verify the Twilio HMAC-SHA1 webhook signature.
+     *
+     * Twilio signs each request using the auth token and the full URL including
+     * sorted POST parameters. The resulting base64-encoded SHA-1 HMAC is sent in
+     * the X-Twilio-Signature header.
+     */
+    private function verifySignature(Request $request): bool
+    {
+        $authToken = config('titan-chatbot.channels.whatsapp.auth_token', '');
+
+        // If no token is configured we skip verification (dev/test environments)
+        if ($authToken === '') {
+            return true;
+        }
+
+        $twilioSignature = $request->header('X-Twilio-Signature', '');
+
+        if ($twilioSignature === '') {
+            return false;
+        }
+
+        // Build the string to sign: URL + sorted POST params concatenated
+        $url        = $request->fullUrl();
+        $postParams = $request->post() ?? [];
+        ksort($postParams);
+
+        $signingString = $url;
+        foreach ($postParams as $key => $value) {
+            $signingString .= $key . $value;
+        }
+
+        $expected = base64_encode(hash_hmac('sha1', $signingString, $authToken, true));
+
+        return hash_equals($expected, $twilioSignature);
     }
 
     private function resolveChatbotId(int $channelId): int
