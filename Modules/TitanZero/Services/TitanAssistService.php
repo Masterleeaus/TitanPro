@@ -178,10 +178,7 @@ class TitanZeroService
                 $bridge = app(GeneratorBridge::class);
                 $bridge->setChatbot(['instructions' => $systemPrompt]);
 
-                $contextMessages = array_map(fn ($item) => [
-                    'role' => $item['role'] ?? 'user',
-                    'content' => $item['content'] ?? '',
-                ], array_slice($history, -self::UI_CONTEXT_MESSAGE_LIMIT));
+                $contextMessages = $this->mapHistoryMessages($history);
 
                 return $this->parseGeneratedResponse(
                     $bridge->generate($message, $contextMessages),
@@ -199,11 +196,8 @@ class TitanZeroService
             try {
                 $messages = [['role' => 'system', 'content' => $systemPrompt]];
 
-                foreach (array_slice($history, -self::UI_CONTEXT_MESSAGE_LIMIT) as $item) {
-                    $messages[] = [
-                        'role' => $item['role'] ?? 'user',
-                        'content' => $item['content'] ?? '',
-                    ];
+                foreach ($this->mapHistoryMessages($history) as $item) {
+                    $messages[] = $item;
                 }
 
                 $messages[] = ['role' => 'user', 'content' => $message];
@@ -338,9 +332,15 @@ PROMPT;
             $snapshotJson = json_encode($snapshot);
 
             if (is_string($snapshotJson) && strlen($snapshotJson) > self::MAX_PORTAL_SNAPSHOT_BYTES) {
-                $snapshot['upcoming'] = array_slice($snapshot['upcoming'], 0, 3);
-                $snapshot['invoices'] = array_slice($snapshot['invoices'], 0, 3);
-                $snapshot['quotes'] = array_slice($snapshot['quotes'], 0, 3);
+                $snapshot['upcoming'] = is_array($snapshot['upcoming'] ?? null)
+                    ? array_slice($snapshot['upcoming'], 0, 3)
+                    : [];
+                $snapshot['invoices'] = is_array($snapshot['invoices'] ?? null)
+                    ? array_slice($snapshot['invoices'], 0, 3)
+                    : [];
+                $snapshot['quotes'] = is_array($snapshot['quotes'] ?? null)
+                    ? array_slice($snapshot['quotes'], 0, 3)
+                    : [];
 
                 Log::info('TitanZeroService: portal snapshot trimmed due to size', [
                     'customer_id' => $customerId,
@@ -355,5 +355,17 @@ PROMPT;
 
             return [];
         }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $history
+     * @return array<int, array{role: string, content: string}>
+     */
+    private function mapHistoryMessages(array $history): array
+    {
+        return array_map(fn ($item) => [
+            'role' => (string) ($item['role'] ?? 'user'),
+            'content' => (string) ($item['content'] ?? ''),
+        ], array_slice($history, -self::UI_CONTEXT_MESSAGE_LIMIT));
     }
 }

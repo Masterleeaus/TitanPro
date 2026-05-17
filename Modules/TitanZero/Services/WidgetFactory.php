@@ -220,7 +220,7 @@ class WidgetFactory
             return 'Titan Zero';
         }
 
-        return Str::limit(Str::headline($trimmed), 60, '');
+        return Str::limit(Str::headline($trimmed), 60);
     }
 
     private function widgetId(string $prefix): string
