@@ -15,10 +15,14 @@ import { dashboard } from '@/routes';
 import { type AppPageProps, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, CreditCard, Folder, LayoutGrid, MapPinned, Paintbrush, Smartphone, TrendingUp, UserRound } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage<AppPageProps>();
 const roles = page.props.auth?.roles ?? [];
+const hiddenNavItems = computed(
+    () => new Set(page.props.role_ui?.hidden_nav_items ?? []),
+);
 const canAccessTitanGo = roles.some((role) => ['owner', 'admin', 'super_admin'].includes(role));
 const canAccessGroundZero = roles.some((role) => ['owner', 'admin', 'dispatcher', 'bookkeeper'].includes(role));
 const canAccessZeroPay = roles.some((role) => ['owner', 'admin', 'bookkeeper'].includes(role));
@@ -29,6 +33,7 @@ const canAccessTitanSolo = roles.includes('owner') && ['starter', 'solo', 'singl
 
 const mainNavItems: NavItem[] = [
     {
+        key: 'Dashboard',
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
@@ -36,6 +41,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessTitanGo
         ? [
               {
+                  key: 'TitanGo Panel',
                   title: 'TitanGo Panel',
                   href: '/titango',
                   icon: Smartphone,
@@ -45,6 +51,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessGroundZero
         ? [
               {
+                  key: 'GroundZero Panel',
                   title: 'GroundZero Panel',
                   href: '/groundzero',
                   icon: MapPinned,
@@ -54,6 +61,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessZeroPay
         ? [
               {
+                  key: 'ZeroPay Panel',
                   title: 'ZeroPay Panel',
                   href: '/zeropay',
                   icon: CreditCard,
@@ -63,6 +71,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessTitanStudio
         ? [
               {
+                  key: 'TitanStudio Panel',
                   title: 'TitanStudio Panel',
                   href: '/titanstudio',
                   icon: Paintbrush,
@@ -72,6 +81,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessZeroFuss
         ? [
               {
+                  key: 'ZeroFuss Portal',
                   title: 'ZeroFuss Portal',
                   href: '/zerofuss',
                   icon: Smartphone,
@@ -81,6 +91,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessTitanNexus
         ? [
               {
+                  key: 'TitanNexus Panel',
                   title: 'TitanNexus Panel',
                   href: '/titannexus',
                   icon: TrendingUp,
@@ -90,6 +101,7 @@ const mainNavItems: NavItem[] = [
     ...(canAccessTitanSolo
         ? [
               {
+                  key: 'TitanSolo Panel',
                   title: 'TitanSolo Panel',
                   href: '/titansolo',
                   icon: UserRound,
@@ -100,16 +112,24 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
+        key: 'Github Repo',
         title: 'Github Repo',
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: Folder,
     },
     {
+        key: 'Documentation',
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
 ];
+
+const filterNavItems = (items: NavItem[]) =>
+    items.filter((item) => !hiddenNavItems.value.has(item.key ?? item.title));
+
+const visibleMainNavItems = computed(() => filterNavItems(mainNavItems));
+const visibleFooterNavItems = computed(() => filterNavItems(footerNavItems));
 </script>
 
 <template>
@@ -127,11 +147,11 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :items="visibleMainNavItems" />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
+            <NavFooter :items="visibleFooterNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

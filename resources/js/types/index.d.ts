@@ -12,10 +12,18 @@ export interface BreadcrumbItem {
 }
 
 export interface NavItem {
+    key?: string;
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+}
+
+export interface RoleUiData {
+    role: string;
+    hidden_nav_items: string[];
+    widget_layout: string[];
+    theme: Record<string, string>;
 }
 
 export interface SubscriptionData {
@@ -54,6 +62,7 @@ export type AppPageProps<
     subscription: SubscriptionData | null;
     plan: PlanData | null;
     platform: PlatformData;
+    role_ui: RoleUiData | null;
 };
 
 export interface User {
