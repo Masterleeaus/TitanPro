@@ -45,6 +45,7 @@ class ZeroFussPanelProvider extends PanelProvider
                     'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
                     'Shreejan\DashArrange\DashArrangePlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\ZeroFussPortal\Filament\Plugin\ZeroFussPortalPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroFuss/Resources'), for: 'App\\Filament\\ZeroFuss\\Resources')

@@ -44,6 +44,7 @@ class TitanNexusPanelProvider extends PanelProvider
                     'Leandrocfe\\FilamentApexCharts\\FilamentApexChartsPlugin',
                     'Shreejan\\DashArrange\\DashArrangePlugin',
                     'Pxlrbt\\FilamentSpotlight\\SpotlightPlugin',
+                    'Modules\\NexusGrowth\\Filament\\Plugin\\NexusGrowthPlugin',
                 ]),
             ])
 

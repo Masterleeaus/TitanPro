@@ -43,6 +43,8 @@ class TitanPixelPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'AlizHarb\ActivityLog\ActivityLogPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\InstantAds\Filament\Plugin\InstantAdsPlugin',
+                    'Modules\ProShots\Filament\Plugin\ProShotsPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanPixel/Resources'), for: 'App\Filament\TitanPixel\Resources')

@@ -53,6 +53,7 @@ class TitanStudioPanelProvider extends PanelProvider
                     'TomatoPHP\FilamentIcons\FilamentIconsPlugin',
                     'TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentPlugin',
                     'Devonab\FilamentEasyFooter\EasyFooterPlugin',
+                    'Modules\TitanStudioHub\Filament\Plugin\TitanStudioHubPlugin',
                 ]),
             ])
             ->resources([

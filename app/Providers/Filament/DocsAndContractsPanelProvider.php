@@ -44,6 +44,7 @@ class DocsAndContractsPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                     'BezhanSalleh\PanelSwitch\PanelSwitchPlugin',
+                    'Modules\TitanDocs\Filament\Plugin\TitanDocsPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/DocsAndContracts/Resources'), for: 'App\Filament\DocsAndContracts\Resources')

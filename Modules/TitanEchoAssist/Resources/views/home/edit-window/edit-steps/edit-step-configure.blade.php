@@ -68,7 +68,7 @@
                 x-model="activeChatbot.bubble_design"
                 @change="externalChatbot && externalChatbot.toggleWindowState('close'); $nextTick(() => externalChatbot && externalChatbot.fillDemoBubbleData && externalChatbot.fillDemoBubbleData())"
             >
-                @foreach (\App\Extensions\Chatbot\System\Enums\BubbleDesign::cases() as $design)
+                @foreach (\Modules\TitanEchoAssist\Enums\BubbleDesign::cases() as $design)
                     <option value="{{ $design->value }}">
                         {{ __(ucwords(str_replace('_', ' ', $design->value))) }}
                     </option>

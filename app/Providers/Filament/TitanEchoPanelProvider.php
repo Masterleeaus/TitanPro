@@ -43,6 +43,9 @@ class TitanEchoPanelProvider extends PanelProvider
                     'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
                     'AlizHarb\ActivityLog\ActivityLogPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\TitanEchoAssist\Filament\Plugin\TitanEchoAssistPlugin',
+                    'Modules\CallingAgent\Filament\Plugin\CallingAgentPlugin',
+                    'Modules\TitanHello\Filament\Plugin\TitanHelloPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanEcho/Resources'), for: 'App\Filament\TitanEcho\Resources')

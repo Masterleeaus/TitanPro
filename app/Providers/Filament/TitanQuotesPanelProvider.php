@@ -44,6 +44,7 @@ class TitanQuotesPanelProvider extends PanelProvider
                     'AlizHarb\ActivityLog\ActivityLogPlugin',
                     'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
                     'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Modules\QuoteEngine\Filament\Plugin\QuoteEnginePlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanQuotes/Resources'), for: 'App\\Filament\\TitanQuotes\\Resources')
