@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,8 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string      $value
  * @property string|null $preset_name
  */
-class TitanUiComponentOverride extends Model
+class TitanUiComponentOverride extends Model implements TenantAware
 {
+    use BelongsToTenant;
     protected $table = 'titan_ui_component_overrides';
 
     protected $fillable = [
@@ -87,12 +90,14 @@ class TitanUiComponentOverride extends Model
      */
     public static function saveTokens(string $component, ?string $panel, array $tokens): void
     {
+        $organizationId = auth()->user()?->organization_id;
+
         foreach ($tokens as $tokenKey => $value) {
             static::updateOrCreate(
                 [
                     'component'       => $component,
                     'panel'           => $panel,
-                    'organization_id' => null,
+                    'organization_id' => $organizationId,
                     'token_key'       => $tokenKey,
                     'preset_name'     => null,
                 ],
@@ -107,6 +112,8 @@ class TitanUiComponentOverride extends Model
      */
     public static function savePreset(string $component, ?string $panel, string $presetName, array $tokens): void
     {
+        $organizationId = auth()->user()?->organization_id;
+
         // Clear any existing rows for this preset + component + panel.
         static::query()
             ->preset($presetName)
@@ -118,7 +125,7 @@ class TitanUiComponentOverride extends Model
             static::create([
                 'component'       => $component,
                 'panel'           => $panel,
-                'organization_id' => null,
+                'organization_id' => $organizationId,
                 'token_key'       => $tokenKey,
                 'preset_name'     => $presetName,
                 'value'           => $value,
