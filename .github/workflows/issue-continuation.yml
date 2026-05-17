@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
       - name: Check for issue-docs files
@@ -121,3 +121,25 @@ jobs:
           PROMPT_EOF
 
           claude --dangerously-skip-permissions -p "$(cat /tmp/claude_prompt.txt)"
+
+      - name: Delete processed issue-docs files
+        if: steps.check.outputs.count != '0'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          DELETED=0
+          for f in issue-docs/issue-*.md; do
+            [ -f "$f" ] || continue
+            git rm "$f"
+            echo "  Deleted $f"
+            DELETED=$((DELETED + 1))
+          done
+
+          if [ "$DELETED" -gt 0 ]; then
+            git commit -m "chore: remove $DELETED processed issue-doc(s) [skip ci]"
+            git push origin main
+            echo "✓ Deleted and pushed $DELETED issue-doc(s)."
+          else
+            echo "No issue-docs to delete."
+          fi

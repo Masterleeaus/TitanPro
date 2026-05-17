@@ -1,0 +1,16 @@
+{
+  "name": "QuoteEngine",
+  "description": "Quote and estimating engine for the TitanQuotes panel. Provides quote builder with rate cards, service templates, terms & conditions management, quote approval workflows, acceptance tracking, and quote-to-job conversion — the estimating backbone not covered by domain modules.",
+  "active": 1,
+  "filament_panel": "titanquotes",
+  "providers": [
+    "Modules\\\\QuoteEngine\\\\Providers\\\\QuoteEngineServiceProvider"
+  ],
+  "keywords": [
+    "quotes",
+    "estimating",
+    "rate-cards",
+    "approval",
+    "conversion"
+  ]
+}

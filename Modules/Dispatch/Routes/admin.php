@@ -1,0 +1,3 @@
+<?php
+
+// Dispatch module routes.

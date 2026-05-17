@@ -1,0 +1,28 @@
+{
+  "schema": "titan.agent_action_map.v1",
+  "module": "zeropay-module",
+  "tools": [
+    {
+      "tool": "zeropay.lookup_session",
+      "action": "Modules\\ZeroPayModule\\Actions\\LookupZeroPaySessionAction",
+      "type": "query",
+      "requires_permission": "zeropay.view",
+      "tenant_scoped": true
+    },
+    {
+      "tool": "zeropay.create_session",
+      "action": "Modules\\ZeroPayModule\\Actions\\CreateZeroPaySessionAction",
+      "type": "write",
+      "requires_permission": "zeropay.create",
+      "tenant_scoped": true,
+      "requires_confirmation": true
+    },
+    {
+      "tool": "zeropay.get_transaction",
+      "action": "Modules\\ZeroPayModule\\Actions\\LookupZeroPaySessionAction",
+      "type": "query",
+      "requires_permission": "zeropay.view",
+      "tenant_scoped": true
+    }
+  ]
+}

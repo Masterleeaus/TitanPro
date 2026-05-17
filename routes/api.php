@@ -3,6 +3,7 @@
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use App\Http\Controllers\Technician\LocationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::middleware(['auth', 'role:technician'])
     ->prefix('technician')
@@ -36,3 +37,24 @@ Route::middleware(['auth', 'role:technician'])
             ->middleware('throttle:60,1')
             ->name('location.store');
     });
+
+/**
+ * --------------------------------------------------------------------------
+ * Titan Zero UI fallback
+ * --------------------------------------------------------------------------
+ *
+ * Provide a safe API endpoint for the Business OS chat.  When the real
+ * TitanZero module is not installed this route returns a simple JSON
+ * response so the assistant does not error on submission.  Adjust the
+ * middleware to match your API authentication requirements.  When the
+ * TitanZero package is installed this stub can be replaced by the
+ * module’s own route definitions.
+ */
+Route::post('/titan/zero/generate-ui', function (Request $request) {
+    return response()->json([
+        'message' => 'Titan Zero UI endpoint is online.',
+        'reply' => 'Titan Zero is connected to the Business OS shell.',
+        'widgets' => [],
+        'thread' => null,
+    ]);
+})->middleware(['auth']);

@@ -1,0 +1,96 @@
+name: 📄 Require Issue Docs on Copilot PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  statuses:      write
+
+concurrency:
+  group: require-issue-docs-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Verify issue-docs/ file present
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check PR author and issue-docs file
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          PR_NUM:   ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Only enforce on Copilot-authored PRs
+          if [ "$PR_AUTHOR" != "Copilot" ]; then
+            echo "PR author is $PR_AUTHOR (not Copilot) — skipping check."
+            gh api "repos/${REPO}/statuses/${HEAD_SHA}" \
+              --method POST \
+              -f state="success" \
+              -f context="require-issue-docs" \
+              -f description="Not a Copilot PR — check skipped" \
+              2>/dev/null || true
+            exit 0
+          fi
+
+          echo "Copilot PR #$PR_NUM — checking for issue-docs/ file..."
+
+          # Get list of changed files in the PR
+          CHANGED=$(gh pr view "$PR_NUM" --repo "$REPO" \
+            --json files --jq '[.files[].path]')
+
+          echo "Changed files: $CHANGED"
+
+          # Check if any issue-docs/issue-*.md file is present
+          HAS_DOC=$(echo "$CHANGED" | python3 -c "
+import json, sys, re
+files = json.loads(sys.stdin.read())
+pattern = re.compile(r'^issue-docs/issue-\d+\.md$')
+found = [f for f in files if pattern.match(f)]
+print('yes' if found else 'no')
+print('\n'.join(found))
+")
+
+          RESULT_LINE=$(echo "$HAS_DOC" | head -1)
+
+          if [ "$RESULT_LINE" = "yes" ]; then
+            DOC_FILES=$(echo "$HAS_DOC" | tail -n +2)
+            echo "✓ Issue doc found: $DOC_FILES"
+
+            gh api "repos/${REPO}/statuses/${HEAD_SHA}" \
+              --method POST \
+              -f state="success" \
+              -f context="require-issue-docs" \
+              -f description="Issue doc present: $(echo $DOC_FILES | head -c 80)" \
+              2>/dev/null || true
+          else
+            echo "✗ No issue-docs/issue-*.md file found in PR."
+
+            # Post a review comment
+            gh pr comment "$PR_NUM" --repo "$REPO" \
+              --body "⚠️ **Missing issue doc.** This Copilot PR does not include an \`issue-docs/issue-<N>.md\` documentation file.
+
+Please add a file at \`issue-docs/issue-<ISSUE_NUMBER>.md\` describing:
+- What was implemented
+- Key design decisions
+- Files changed and why
+
+This is required before the PR can be merged." \
+              2>/dev/null || true
+
+            gh api "repos/${REPO}/statuses/${HEAD_SHA}" \
+              --method POST \
+              -f state="failure" \
+              -f context="require-issue-docs" \
+              -f description="Missing issue-docs/issue-*.md — add documentation before merging" \
+              2>/dev/null || true
+
+            # Do NOT exit 1 — we set the status check, that's enough
+            # (the status check can be made required in branch protection settings)
+          fi

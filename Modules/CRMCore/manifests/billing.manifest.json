@@ -1,4 +1,8 @@
 {
-  "schema": "titan.billing.manifest.v1",
-  "meters": []
+  "schema_version": "1.0.0",
+  "module": "CRMCore",
+  "meters": [
+    "crmcore.lead_scoring",
+    "crmcore.deal_to_project_conversion"
+  ]
 }

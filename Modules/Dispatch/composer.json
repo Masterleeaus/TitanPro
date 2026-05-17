@@ -1,0 +1,20 @@
+{
+  "name": "modules/dispatch",
+  "description": "Field service dispatch and shift scheduling module for Filament panels.",
+  "type": "laravel-module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Dispatch\\": "./"
+    },
+    "files": [
+      "Bootstrap/helpers.php"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Dispatch\\Providers\\ModuleServiceProvider"
+      ]
+    }
+  }
+}

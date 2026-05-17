@@ -2,293 +2,279 @@
 
 namespace Modules\Asset\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Carbon\Carbon;
 use App\Http\Controllers\AccountBaseController;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Modules\Asset\Entities\Asset;
+use Modules\Asset\Entities\AssetHistory;
+use Modules\Asset\Entities\AssetMaintenance;
 use Modules\Asset\Entities\AssetSetting;
+use Modules\Asset\Entities\AssetTransaction;
 
 class AssetScanController extends AccountBaseController
 {
-
     public function __construct()
     {
         parent::__construct();
 
         $this->middleware(function ($request, $next) {
-            abort_403(!in_array(AssetSetting::MODULE_NAME, $this->user->modules));
+            abort_403(! in_array(AssetSetting::MODULE_NAME, $this->user->modules));
             $this->pageTitle = __('asset::app.menu.asset');
 
             return $next($request);
         });
     }
 
-    /**
-     * Mobile-first scan landing page.
-     * QR codes should point here.
-     */
-    public function show($asset)
+    public function show(Asset $asset)
     {
-        $viewPermission = user()->permission('view_asset');
-        abort_403($viewPermission == 'none');
+        $asset = $this->resolveTenantAsset($asset, 'view');
 
-        $this->asset = Asset::with(['assetType', 'latestHistory'])->findOrFail($asset);
+        $this->asset = Asset::with(['assetType', 'latestHistory'])->findOrFail($asset->id);
 
         return view('asset::asset.scan', $this->data);
     }
 
-
-/**
- * Issue asset (quick action from scan page).
- * Expects optional: issued_to_user_id, issued_to_job_id, note
- */
-public function issue(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'issued_to_user_id' => ['nullable', 'integer'],
-        'issued_to_job_id'  => ['nullable', 'integer'],
-        'note'              => ['nullable', 'string', 'max:1000'],
-    ]);
-
-    // Update asset status (don't assume enum; keep string)
-    if (Schema::hasColumn('assets', 'status')) {
-        $asset->status = 'in_use';
-    }
-    if (Schema::hasColumn('assets', 'location') && !empty($data['issued_to_job_id'])) {
-        // Leave location update for job integration pass
-    }
-    $asset->save();
-
-    // Write history if available
-    if (class_exists(AssetHistory::class)) {
-        AssetHistory::create([
-            'asset_id' => $asset->id,
-            'type' => 'issue',
-            'details' => json_encode([
-                'issued_to_user_id' => $data['issued_to_user_id'] ?? null,
-                'issued_to_job_id'  => $data['issued_to_job_id'] ?? null,
-                'note'              => $data['note'] ?? null,
-            ]),
-            'created_by' => auth()->id(),
-            'company_id' => (Schema::hasColumn('asset_histories', 'company_id') ? (auth()->user()->company_id ?? null) : null),
+    public function issue(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'issued_to_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'note' => ['nullable', 'string', 'max:1000'],
         ]);
-    }
 
-    return back()->with('success', 'Equipment issued.');
-}
-
-/**
- * Return asset (quick action from scan page).
- * Expects optional: location, note
- */
-public function returnAsset(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'location' => ['nullable', 'string', 'max:191'],
-        'note'     => ['nullable', 'string', 'max:1000'],
-    ]);
-
-    if (Schema::hasColumn('assets', 'status')) {
-        $asset->status = 'available';
-    }
-    if (Schema::hasColumn('assets', 'location') && !empty($data['location'])) {
-        $asset->location = $data['location'];
-    }
-    $asset->save();
-
-    if (class_exists(AssetHistory::class)) {
-        AssetHistory::create([
-            'asset_id' => $asset->id,
-            'type' => 'return',
-            'details' => json_encode([
-                'location' => $data['location'] ?? null,
-                'note'     => $data['note'] ?? null,
-            ]),
-            'created_by' => auth()->id(),
-            'company_id' => (Schema::hasColumn('asset_histories', 'company_id') ? (auth()->user()->company_id ?? null) : null),
-        ]);
-    }
-
-    return back()->with('success', 'Equipment returned.');
-}
-
-/**
- * Report damage/missing (quick action).
- * Expects: status (damaged|lost|non_functional), note
- */
-public function report(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'status' => ['required', 'string', 'max:50'],
-        'note'   => ['nullable', 'string', 'max:2000'],
-    ]);
-
-    if (Schema::hasColumn('assets', 'status')) {
-        $asset->status = $data['status'];
+        $asset->status = 'lent';
         $asset->save();
-    }
 
-    if (class_exists(AssetHistory::class)) {
-        AssetHistory::create([
-            'asset_id' => $asset->id,
-            'type' => 'report',
-            'details' => json_encode([
-                'status' => $data['status'],
-                'note'   => $data['note'] ?? null,
-            ]),
-            'created_by' => auth()->id(),
-            'company_id' => (Schema::hasColumn('asset_histories', 'company_id') ? (auth()->user()->company_id ?? null) : null),
-        ]);
-    }
-
-    return back()->with('success', 'Report saved.');
-}
-
-/**
- * Create a maintenance record and mark asset under maintenance.
- */
-public function sendToMaintenance(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'reason' => ['nullable', 'string', 'max:1000'],
-        'due_at' => ['nullable', 'date'],
-    ]);
-
-    if (class_exists(AssetMaintenance::class)) {
         $payload = [
             'asset_id' => $asset->id,
-            'status'   => 'open',
-            'reason'   => $data['reason'] ?? 'Sent to maintenance from scan.',
-            'due_at'   => !empty($data['due_at']) ? Carbon::parse($data['due_at']) : null,
+            'user_id' => $data['issued_to_user_id'] ?? auth()->id(),
+            'date_given' => Carbon::now(),
+            'notes' => $data['note'] ?? null,
         ];
-        if (Schema::hasColumn('asset_maintenances', 'company_id')) {
-            $payload['company_id'] = auth()->user()->company_id ?? null;
+
+        $companyId = $this->currentCompanyId();
+        if (Schema::hasColumn('asset_lending_history', 'company_id') && $companyId !== null) {
+            $payload['company_id'] = $companyId;
         }
-        if (Schema::hasColumn('asset_maintenances', 'created_by')) {
-            $payload['created_by'] = auth()->id();
-        }
-        AssetMaintenance::create($payload);
+
+        AssetHistory::create($payload);
+
+        return back()->with('success', 'Equipment issued.');
     }
 
-    if (Schema::hasColumn('assets', 'status')) {
-        $asset->status = 'under_maintenance';
+    public function returnAsset(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'location' => ['nullable', 'string', 'max:191'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        if (! empty($data['location']) && Schema::hasColumn('assets', 'location')) {
+            $asset->location = $data['location'];
+        }
+        $asset->status = 'available';
         $asset->save();
+
+        $query = AssetHistory::where('asset_id', $asset->id)->whereNull('date_of_return')->orderByDesc('id');
+        $companyId = $this->currentCompanyId();
+        if (Schema::hasColumn('asset_lending_history', 'company_id') && $companyId !== null) {
+            $query->where('company_id', $companyId);
+        }
+
+        $history = $query->first();
+        if ($history) {
+            $history->date_of_return = Carbon::now();
+            $history->notes = trim(($history->notes ?? '').PHP_EOL.($data['note'] ?? ''));
+            $history->save();
+        }
+
+        return back()->with('success', 'Equipment returned.');
     }
 
-    return back()->with('success', 'Sent to maintenance.');
-}
+    public function report(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'status' => ['required', 'in:damaged,lost,non_functional,non-functional'],
+            'note' => ['nullable', 'string', 'max:2000'],
+        ]);
 
-/**
- * Complete latest open maintenance record and mark asset available.
- */
-public function completeMaintenance(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'note' => ['nullable', 'string', 'max:2000'],
-    ]);
+        $asset->status = $data['status'] === 'non_functional' ? 'non-functional' : $data['status'];
+        $asset->save();
 
-    if (class_exists(AssetMaintenance::class)) {
-        $q = AssetMaintenance::where('asset_id', $asset->id)
+        if (! empty($data['note'])) {
+            $payload = [
+                'asset_id' => $asset->id,
+                'user_id' => auth()->id(),
+                'date_given' => Carbon::now(),
+                'date_of_return' => Carbon::now(),
+                'notes' => '['.$asset->status.'] '.$data['note'],
+            ];
+
+            $companyId = $this->currentCompanyId();
+            if (Schema::hasColumn('asset_lending_history', 'company_id') && $companyId !== null) {
+                $payload['company_id'] = $companyId;
+            }
+
+            AssetHistory::create($payload);
+        }
+
+        return back()->with('success', 'Report saved.');
+    }
+
+    public function sendToMaintenance(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $payload = [
+            'asset_id' => $asset->id,
+            'status' => 'open',
+            'priority' => 'medium',
+            'details' => $data['reason'] ?? 'Sent to maintenance from scan.',
+            'created_by' => auth()->id(),
+        ];
+
+        $companyId = $this->currentCompanyId();
+        if (Schema::hasColumn('asset_maintenances', 'company_id') && $companyId !== null) {
+            $payload['company_id'] = $companyId;
+        }
+
+        AssetMaintenance::create($payload);
+
+        $asset->status = 'under-maintenance';
+        $asset->save();
+
+        return back()->with('success', 'Sent to maintenance.');
+    }
+
+    public function completeMaintenance(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'note' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $query = AssetMaintenance::where('asset_id', $asset->id)
             ->where('status', 'open')
             ->orderByDesc('id');
 
-        if (Schema::hasColumn('asset_maintenances', 'company_id') && auth()->check() && isset(auth()->user()->company_id)) {
-            $q->where(function($qq){
-                // best-effort tenant scope
-            });
+        $companyId = $this->currentCompanyId();
+        if (Schema::hasColumn('asset_maintenances', 'company_id') && $companyId !== null) {
+            $query->where('company_id', $companyId);
         }
 
-        $maint = $q->first();
-        if ($maint) {
-            $maint->status = 'completed';
-            if (Schema::hasColumn('asset_maintenances', 'completed_at')) {
-                $maint->completed_at = Carbon::now();
+        $maintenance = $query->first();
+        if ($maintenance) {
+            $maintenance->status = 'completed';
+            if (! empty($data['note'])) {
+                $maintenance->details = trim(($maintenance->details ?? '').PHP_EOL.$data['note']);
             }
-            if (Schema::hasColumn('asset_maintenances', 'notes')) {
-                $maint->notes = trim(($maint->notes ?? '')."\n".$data['note']);
-            }
-            $maint->save();
+            $maintenance->save();
         }
-    }
 
-    if (Schema::hasColumn('assets', 'status')) {
         $asset->status = 'available';
         $asset->save();
+
+        return back()->with('success', 'Maintenance completed.');
     }
 
-    return back()->with('success', 'Maintenance completed.');
-}
+    public function allocate(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'allocated_to_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
 
-/**
- * Allocate asset (creates a transaction record).
- */
-public function allocate(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'allocated_to_user_id' => ['nullable', 'integer'],
-        'note'                 => ['nullable', 'string', 'max:1000'],
-    ]);
+        $companyId = $this->currentCompanyId() ?? 0;
 
-    if (class_exists(AssetTransaction::class)) {
-        $payload = [
+        AssetTransaction::create([
+            'company_id' => $companyId,
             'asset_id' => $asset->id,
-            'type'     => 'allocate',
-            'details'  => json_encode([
-                'allocated_to_user_id' => $data['allocated_to_user_id'] ?? null,
-                'note' => $data['note'] ?? null,
-            ]),
-        ];
-        if (Schema::hasColumn('asset_transactions', 'company_id')) {
-            $payload['company_id'] = auth()->user()->company_id ?? null;
-        }
-        if (Schema::hasColumn('asset_transactions', 'created_by')) {
-            $payload['created_by'] = auth()->id();
-        }
-        AssetTransaction::create($payload);
-    }
+            'transaction_type' => 'allocate',
+            'ref_no' => $this->buildTransactionRef('ALLOC', $asset->id),
+            'receiver' => $data['allocated_to_user_id'] ?? auth()->id(),
+            'quantity' => 1,
+            'transaction_datetime' => Carbon::now(),
+            'allocated_upto' => null,
+            'reason' => $data['note'] ?? null,
+            'parent_id' => null,
+            'created_by' => auth()->id(),
+        ]);
 
-    if (Schema::hasColumn('assets', 'status')) {
-        $asset->status = 'allocated';
+        $asset->status = 'lent';
         $asset->save();
+
+        return back()->with('success', 'Equipment allocated.');
     }
 
-    return back()->with('success', 'Equipment allocated.');
-}
+    public function revokeAllocation(Request $request, Asset $asset)
+    {
+        $asset = $this->resolveTenantAsset($asset, 'update');
+        $data = $request->validate([
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
 
-/**
- * Revoke allocation (writes a transaction + sets available).
- */
-public function revokeAllocation(Request $request, Asset $asset)
-{
-    $data = $request->validate([
-        'note' => ['nullable', 'string', 'max:1000'],
-    ]);
+        $companyId = $this->currentCompanyId() ?? 0;
 
-    if (class_exists(AssetTransaction::class)) {
-        $payload = [
+        $parent = AssetTransaction::where('asset_id', $asset->id)
+            ->where('transaction_type', 'allocate')
+            ->where('company_id', $companyId)
+            ->latest('id')
+            ->first();
+
+        AssetTransaction::create([
+            'company_id' => $companyId,
             'asset_id' => $asset->id,
-            'type'     => 'revoke_allocation',
-            'details'  => json_encode([
-                'note' => $data['note'] ?? null,
-            ]),
-        ];
-        if (Schema::hasColumn('asset_transactions', 'company_id')) {
-            $payload['company_id'] = auth()->user()->company_id ?? null;
-        }
-        if (Schema::hasColumn('asset_transactions', 'created_by')) {
-            $payload['created_by'] = auth()->id();
-        }
-        AssetTransaction::create($payload);
-    }
+            'transaction_type' => 'revoke_allocation',
+            'ref_no' => $this->buildTransactionRef('REVOKE', $asset->id),
+            'receiver' => null,
+            'quantity' => 1,
+            'transaction_datetime' => Carbon::now(),
+            'allocated_upto' => null,
+            'reason' => $data['note'] ?? null,
+            'parent_id' => $parent?->id,
+            'created_by' => auth()->id(),
+        ]);
 
-    if (Schema::hasColumn('assets', 'status')) {
         $asset->status = 'available';
         $asset->save();
+
+        return back()->with('success', 'Allocation revoked.');
     }
 
-    return back()->with('success', 'Allocation revoked.');
-}
+    private function resolveTenantAsset(Asset $asset, string $ability): Asset
+    {
+        $companyId = $this->currentCompanyId();
+        if ($companyId !== null && (int) $asset->company_id !== $companyId) {
+            abort(404);
+        }
 
+        $this->authorize($ability, $asset);
+
+        return $asset;
+    }
+
+    private function currentCompanyId(): ?int
+    {
+        if (auth()->check() && isset(auth()->user()->company_id)) {
+            return (int) auth()->user()->company_id;
+        }
+
+        if (auth()->check() && isset(auth()->user()->organization_id)) {
+            return (int) auth()->user()->organization_id;
+        }
+
+        return null;
+    }
+
+    private function buildTransactionRef(string $prefix, int $assetId): string
+    {
+        return sprintf('ASSET-%s-%d-%s', $prefix, $assetId, Carbon::now()->format('YmdHis'));
+    }
 }

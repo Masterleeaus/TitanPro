@@ -1,0 +1,21 @@
+{
+  "name": "ZeroFussPortal",
+  "description": "Customer self-service portal shell for the ZeroFuss panel with tenancy-safe loyalty, feedback, and referrals.",
+  "active": 1,
+  "filament_panel": "zerofuss",
+  "providers": [
+    "Modules\\ZeroFussPortal\\Providers\\ZeroFussPortalServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\RouteServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\EventServiceProvider",
+    "Modules\\ZeroFussPortal\\Providers\\FilamentServiceProvider"
+  ],
+  "keywords": [
+    "portal",
+    "self-service",
+    "customer",
+    "booking-history",
+    "loyalty",
+    "feedback",
+    "referral"
+  ]
+}

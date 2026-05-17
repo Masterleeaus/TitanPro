@@ -1,6 +1,15 @@
 {
   "schema": "titan.signals.v1",
   "module": "accountings",
+  "signals": [
+    {"event":"Modules\\Accountings\\Events\\InvoiceJournalPosted","alias":"accounting.journal.posted"},
+    {"event":"Modules\\Accountings\\Events\\GstPosted","alias":"accounting.gst.posted"},
+    {"event":"Modules\\Accountings\\Events\\ReceivablesAged","alias":"accounting.receivables.aged"},
+    {"event":"Modules\\Accountings\\Events\\StatementGenerated","alias":"accounting.statement.generated"},
+    {"event":"Modules\\Accountings\\Events\\WriteOffPosted","alias":"accounting.writeoff.posted"},
+    {"event":"Modules\\Accountings\\Events\\LedgerAdjustmentSuggested","alias":"accounting.ledger_adjustment.suggested"},
+    {"event":"Modules\\Accountings\\Events\\ZeroPayPaymentConfirmed","alias":"accounting.zeropay.payment_confirmed"}
+  ],
   "consumes": [
     "einvoice.issued",
     "einvoice.paid",
@@ -9,7 +18,11 @@
   ],
   "emits": [
     "accounting.journal.posted",
-    "accounting.reconciliation.completed",
-    "accounting.gst.updated"
+    "accounting.gst.posted",
+    "accounting.receivables.aged",
+    "accounting.statement.generated",
+    "accounting.writeoff.posted",
+    "accounting.ledger_adjustment.suggested",
+    "accounting.zeropay.payment_confirmed"
   ]
 }

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 const OperationsReports = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: OperationsReports.url(options),
@@ -11,13 +11,13 @@ const OperationsReports = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 
 OperationsReports.definition = {
     methods: ["get","head"],
-    url: '/admin/operations-reports',
+    url: '/titanpro/operations-reports',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 OperationsReports.url = (options?: RouteQueryOptions) => {
     return OperationsReports.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ OperationsReports.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 OperationsReports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: OperationsReports.url(options),
@@ -36,7 +36,7 @@ OperationsReports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 OperationsReports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: OperationsReports.url(options),
@@ -46,7 +46,7 @@ OperationsReports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> 
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 const OperationsReportsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: OperationsReports.url(options),
@@ -56,7 +56,7 @@ const OperationsReportsForm = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 OperationsReportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: OperationsReports.url(options),
@@ -66,7 +66,7 @@ OperationsReportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \App\Filament\Pages\OperationsReports::__invoke
 * @see app/Filament/Pages/OperationsReports.php:7
-* @route '/admin/operations-reports'
+* @route '/titanpro/operations-reports'
 */
 OperationsReportsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: OperationsReports.url({

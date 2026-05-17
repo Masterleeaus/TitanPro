@@ -9,6 +9,7 @@ use Modules\TitanEchoAssist\Automation\Handlers\SendWelcomeBannerHandler;
 use Modules\TitanEchoAssist\Events\ConversationEscalated;
 use Modules\TitanEchoAssist\Events\ConversationStarted;
 use Modules\TitanEchoAssist\Events\IntentDetected;
+use Modules\TitanEchoAssist\Events\MessageBilled;
 use Modules\TitanEchoAssist\Events\MessageReceived;
 use Modules\TitanEchoAssist\Events\VoiceSessionDurationRecorded;
 use Modules\TitanEchoAssist\Events\VoiceSessionStarted;
@@ -30,5 +31,6 @@ class EventServiceProvider extends ServiceProvider
             RecordVoiceSessionBillingListener::class,
         ],
         MessageReceived::class => [],
+        MessageBilled::class   => [],
     ];
 }

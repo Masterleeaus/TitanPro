@@ -1,0 +1,11 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "module": "Biometric",
+  "prefix": "/api/biometric",
+  "endpoints": [
+    "POST /iclock/cdata",
+    "GET /iclock/getrequest",
+    "POST /iclock/devicecmd",
+    "GET /iclock/ping"
+  ]
+}

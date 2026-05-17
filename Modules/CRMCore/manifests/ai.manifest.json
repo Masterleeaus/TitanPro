@@ -1,5 +1,6 @@
 {
-  "schema": "titan.ai.manifest.v1",
+  "schema_version": "1.0.0",
+  "module": "CRMCore",
   "tools": [
     "client_pipeline_context",
     "deal_project_advisor",

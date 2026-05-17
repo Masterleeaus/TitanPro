@@ -3,13 +3,23 @@
 namespace Modules\CallingAgent\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\CallingAgent\Contracts\RealtimeVoiceProvider;
+use Modules\CallingAgent\Contracts\STTProvider;
+use Modules\CallingAgent\Contracts\TTSProvider;
+use Modules\CallingAgent\Contracts\TelephonyProvider;
+use Modules\CallingAgent\Services\Calendar\CalendarProviderManager;
 use Modules\CallingAgent\Services\TwilioChannelService;
 use Modules\CallingAgent\Services\ReceptionistOrchestrator;
 use Modules\CallingAgent\AI\Agents\ReceptionistAgent;
-
 use Modules\CallingAgent\Services\Realtime\RealtimeSessionTokenService;
 use Modules\CallingAgent\Services\Contracts\TitanEchoVoiceServiceContract;
+use Modules\CallingAgent\Services\Providers\ElevenLabs\ElevenLabsRealtimeVoiceProvider;
+use Modules\CallingAgent\Services\Providers\OpenAI\OpenAIRealtimeProvider;
+use Modules\CallingAgent\Services\Providers\ProviderFailoverManager;
+use Modules\CallingAgent\Services\Providers\Twilio\UnifiedTwilioProvider;
+use Modules\CallingAgent\Services\Providers\VoiceProviderManager;
 use Modules\CallingAgent\Services\TitanEchoVoiceService;
+use Modules\CallingAgent\Services\TransferRoutingService;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -40,6 +50,29 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(ReceptionistAgent::class);
         $this->app->singleton(ReceptionistOrchestrator::class);
         $this->app->singleton(RealtimeSessionTokenService::class);
+        $this->app->singleton(UnifiedTwilioProvider::class, fn ($app) => new UnifiedTwilioProvider(
+            $app->make(TwilioChannelService::class),
+        ));
+        $this->app->singleton(ElevenLabsRealtimeVoiceProvider::class);
+        $this->app->singleton(OpenAIRealtimeProvider::class);
+        $this->app->singleton(ProviderFailoverManager::class);
+        $this->app->singleton(CalendarProviderManager::class);
+        $this->app->singleton(TransferRoutingService::class);
+        $this->app->singleton(VoiceProviderManager::class, function ($app) {
+            return (new VoiceProviderManager())
+                ->register('twilio', $app->make(UnifiedTwilioProvider::class))
+                ->register('elevenlabs', $app->make(ElevenLabsRealtimeVoiceProvider::class))
+                ->register('openai', $app->make(OpenAIRealtimeProvider::class));
+        });
+        $this->app->bind(TelephonyProvider::class, UnifiedTwilioProvider::class);
+        $this->app->bind(TTSProvider::class, fn ($app) => $app->make(ElevenLabsRealtimeVoiceProvider::class));
+        $this->app->bind(STTProvider::class, fn ($app) => $app->make(OpenAIRealtimeProvider::class));
+        $this->app->bind(RealtimeVoiceProvider::class, function ($app) {
+            return match (config('calling-agent.providers.realtime', 'elevenlabs')) {
+                'openai' => $app->make(OpenAIRealtimeProvider::class),
+                default => $app->make(ElevenLabsRealtimeVoiceProvider::class),
+            };
+        });
 
         // Bind the TitanEchoVoice service contract to its implementation
         $this->app->bind(TitanEchoVoiceServiceContract::class, TitanEchoVoiceService::class);
@@ -54,7 +87,7 @@ class ModuleServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../Routes/admin.php');
         $this->loadRoutesFrom(__DIR__.'/../Routes/channels.php');
         $this->loadRoutesFrom(__DIR__.'/../Routes/console.php');
-        $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'calling-agent');
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'calling-agent');
     }

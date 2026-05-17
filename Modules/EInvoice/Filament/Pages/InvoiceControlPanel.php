@@ -8,13 +8,13 @@ use Modules\EInvoice\UI\Tabs\ControlPanelTabs;
 
 class InvoiceControlPanel extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = 'Finance';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
     protected static ?string $navigationLabel = 'Money Manager';
     protected static ?string $title = 'Titan Money Panel';
     protected static ?string $slug = 'zeropay-panel';
     protected static ?int $navigationSort = 210;
-    protected static string $view = 'einvoice::filament.pages.control-panel';
+    protected string $view = 'einvoice::filament.pages.control-panel';
 
     public static function canAccess(): bool
     {

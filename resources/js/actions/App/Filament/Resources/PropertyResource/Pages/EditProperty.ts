@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 const EditProperty = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditProperty.url(args, options),
@@ -11,13 +11,13 @@ const EditProperty = (args: { record: string | number } | [record: string | numb
 
 EditProperty.definition = {
     methods: ["get","head"],
-    url: '/admin/properties/{record}/edit',
+    url: '/titanpro/properties/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 EditProperty.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditProperty.url = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 EditProperty.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditProperty.url(args, options),
@@ -54,7 +54,7 @@ EditProperty.get = (args: { record: string | number } | [record: string | number
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 EditProperty.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditProperty.url(args, options),
@@ -64,7 +64,7 @@ EditProperty.head = (args: { record: string | number } | [record: string | numbe
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 const EditPropertyForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditProperty.url(args, options),
@@ -74,7 +74,7 @@ const EditPropertyForm = (args: { record: string | number } | [record: string | 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 EditPropertyForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditProperty.url(args, options),
@@ -84,7 +84,7 @@ EditPropertyForm.get = (args: { record: string | number } | [record: string | nu
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\EditProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/EditProperty.php:7
-* @route '/admin/properties/{record}/edit'
+* @route '/titanpro/properties/{record}/edit'
 */
 EditPropertyForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditProperty.url(args, {

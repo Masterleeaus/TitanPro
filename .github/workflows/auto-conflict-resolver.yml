@@ -1,0 +1,136 @@
+name: 🔧 Auto-Resolve Merge Conflicts
+
+on:
+  schedule:
+    - cron: '*/20 * * * *'   # every 20 minutes
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-conflict-resolver
+  cancel-in-progress: false
+
+jobs:
+  resolve-conflicts:
+    name: Find and resolve conflicted Copilot PRs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Find conflicted Copilot PRs
+        id: prs
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --limit 50 \
+            --json number,author,mergeStateStatus,headRefName \
+            --jq '[.[] | select(.author.login == "Copilot" and .mergeStateStatus == "DIRTY")] | .[].number' \
+            > /tmp/conflicted.txt || true
+
+          COUNT=$(grep -c . /tmp/conflicted.txt 2>/dev/null || echo 0)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Found $COUNT conflicted Copilot PR(s):"
+          cat /tmp/conflicted.txt
+
+      - name: Skip if none
+        if: steps.prs.outputs.count == '0'
+        run: echo "No conflicted Copilot PRs."
+
+      - name: Install Claude Code CLI
+        if: steps.prs.outputs.count != '0'
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Resolve each conflicted PR
+        if: steps.prs.outputs.count != '0'
+        env:
+          GH_TOKEN:          ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REPO:              ${{ github.repository }}
+        run: |
+          while IFS= read -r PR_NUM; do
+            [ -z "$PR_NUM" ] && continue
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  Resolving conflicts for PR #$PR_NUM"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            BRANCH=$(gh pr view "$PR_NUM" --repo "$REPO" --json headRefName --jq '.headRefName')
+            echo "  Branch: $BRANCH"
+
+            WORKDIR="/tmp/resolve-${PR_NUM}"
+            git clone \
+              "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" \
+              "$WORKDIR" --depth 100 2>&1
+
+            cd "$WORKDIR"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git config user.name  "github-actions[bot]"
+            git fetch origin main 2>&1
+            git checkout "$BRANCH" 2>&1
+
+            # Attempt the merge
+            git merge origin/main --no-commit --no-ff 2>/dev/null || true
+            CONFLICTS=$(git diff --diff-filter=U --name-only 2>/dev/null || true)
+
+            if [ -z "$CONFLICTS" ]; then
+              echo "  No text conflicts detected — aborting speculative merge."
+              git merge --abort 2>/dev/null || true
+              cd /
+              rm -rf "$WORKDIR"
+              continue
+            fi
+
+            echo "  Conflicts in:"
+            echo "$CONFLICTS" | sed 's/^/    /'
+
+            # Write the resolution prompt to a file (avoids shell-injection in variable expansion)
+            cat > /tmp/resolve_prompt.txt << PROMPT_EOF
+You are resolving git merge conflicts in this repository.
+
+Conflicted files:
+$(echo "$CONFLICTS")
+
+Resolution rules (apply in order):
+1. PHP use/import blocks — keep ALL unique imports from both HEAD and incoming; remove duplicates.
+2. PHP class properties / state — keep ALL properties from both sides.
+3. PHP methods — keep ALL unique methods from both sides; do not drop any method.
+4. Blade @foreach tab/array literals — merge both lists into one sorted, deduplicated array.
+5. issue-docs/*.md files — keep the HEAD (branch) version; discard the incoming version.
+6. Notification body strings — prefer the more complete/descriptive sentence.
+7. Default values (e.g. activeTab) — prefer the incoming (main) value as the baseline.
+8. When in doubt — keep code from BOTH sides rather than dropping either.
+
+After resolving ALL conflicts (zero <<<<<<< markers must remain):
+  git add -A
+  git commit -m "resolve: auto-merge conflicts with main [skip ci]"
+  git push origin ${BRANCH}
+
+Do NOT modify any file that has no conflict markers.
+Do NOT add new features or refactor unrelated code.
+PROMPT_EOF
+
+            claude --dangerously-skip-permissions -p "$(cat /tmp/resolve_prompt.txt)"
+            EXIT=$?
+
+            if [ $EXIT -eq 0 ]; then
+              echo "  ✓ PR #$PR_NUM conflicts resolved and pushed."
+              gh pr comment "$PR_NUM" --repo "$REPO" \
+                --body "🔧 **Auto-conflict resolver** merged the latest \`main\` into this branch and resolved all conflicts. Please review the resolution and re-run any failing checks." \
+                2>/dev/null || true
+            else
+              echo "  ✗ Claude exited with code $EXIT — conflicts may remain."
+              gh pr comment "$PR_NUM" --repo "$REPO" \
+                --body "⚠️ **Auto-conflict resolver** attempted to resolve merge conflicts but exited with code \`$EXIT\`. Manual resolution may be needed." \
+                2>/dev/null || true
+            fi
+
+            cd /
+            rm -rf "$WORKDIR"
+            sleep 5
+          done < /tmp/conflicted.txt

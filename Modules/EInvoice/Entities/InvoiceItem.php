@@ -2,15 +2,18 @@
 
 namespace Modules\EInvoice\Entities;
 
+use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InvoiceItem extends Model
 {
+    use HasCompany;
+
     protected $table = 'einvoice_invoice_items';
 
     protected $fillable = [
-        'invoice_id', 'description', 'qty', 'unit_price', 'line_total',
+        'company_id', 'invoice_id', 'description', 'qty', 'unit_price', 'line_total',
     ];
 
     protected $casts = [

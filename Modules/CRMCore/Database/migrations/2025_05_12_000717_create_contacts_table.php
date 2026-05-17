@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('phone_mobile')->nullable();
             $table->string('phone_office')->nullable(); // Office direct line if different from company
 
-            $table->foreignId('company_id')->nullable()->constrained('companies')->onDelete('set null');
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->string('job_title')->nullable();
             $table->string('department')->nullable();
 

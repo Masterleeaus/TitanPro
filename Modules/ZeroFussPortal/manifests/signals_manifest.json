@@ -1,0 +1,41 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "ZeroFussPortal",
+  "schema_version": "1.0",
+  "emits": [
+    {
+      "signal": "zerofussportal.feedback.submitted",
+      "event_class": "Modules\\ZeroFussPortal\\Events\\FeedbackSubmitted",
+      "description": "Customer submits portal feedback.",
+      "payload_schema": {
+        "feedback_id": "integer",
+        "company_id": "integer",
+        "customer_id": "integer",
+        "rating": "integer|null"
+      }
+    },
+    {
+      "signal": "zerofussportal.referral.created",
+      "event_class": "Modules\\ZeroFussPortal\\Events\\ReferralCreated",
+      "description": "Customer creates a referral from the portal.",
+      "payload_schema": {
+        "referral_id": "integer",
+        "company_id": "integer",
+        "customer_id": "integer",
+        "referred_email": "string"
+      }
+    }
+  ],
+  "consumes": [
+    {
+      "signal": "EInvoice.InvoicePaid",
+      "handler": "Modules\\ZeroFussPortal\\Listeners\\AwardPointsOnPaymentListener",
+      "description": "Awards loyalty points when invoice payment is confirmed."
+    },
+    {
+      "signal": "BookingModule.BookingCompleted",
+      "handler": "Modules\\ZeroFussPortal\\Listeners\\AwardPointsOnPaymentListener",
+      "description": "Reserved signal contract for loyalty processing from completed bookings."
+    }
+  ]
+}

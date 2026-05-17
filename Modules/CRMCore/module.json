@@ -5,7 +5,10 @@
   "description": "Full preserved CRMCore module rebuilt to Titan canonical tree for Filament v4 upgraded site.",
   "priority": 30,
   "providers": [
-    "Modules\\CRMCore\\Providers\\ModuleServiceProvider"
+    "Modules\\CRMCore\\Providers\\CRMCoreServiceProvider",
+    "Modules\\CRMCore\\Providers\\EventServiceProvider",
+    "Modules\\CRMCore\\Providers\\RouteServiceProvider",
+    "Modules\\CRMCore\\Providers\\FilamentServiceProvider"
   ],
   "requires": [
     "Core"

@@ -1,0 +1,18 @@
+{
+    "name": "TitanRewind",
+    "active": 1,
+    "alias": "titanrewind",
+    "description": "Audit trail and AI-assisted corrective rewind workflows.",
+    "keywords": ["audit", "rewind", "compliance", "ai"],
+    "priority": 0,
+    "providers": [
+        "Modules\\TitanRewind\\Providers\\TitanRewindServiceProvider",
+        "Modules\\TitanRewind\\Providers\\RouteServiceProvider",
+        "Modules\\TitanRewind\\Providers\\EventServiceProvider",
+        "Modules\\TitanRewind\\Providers\\FilamentServiceProvider"
+    ],
+    "filament_panel": "titanpro",
+    "filament": {
+        "plugin": "Modules\\TitanRewind\\Filament\\Plugin\\TitanRewindPlugin"
+    }
+}

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 const SiteSettings = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: SiteSettings.url(options),
@@ -11,13 +11,13 @@ const SiteSettings = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 SiteSettings.definition = {
     methods: ["get","head"],
-    url: '/admin/site-settings',
+    url: '/titanpro/site-settings',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 SiteSettings.url = (options?: RouteQueryOptions) => {
     return SiteSettings.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ SiteSettings.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 SiteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: SiteSettings.url(options),
@@ -36,7 +36,7 @@ SiteSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 SiteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: SiteSettings.url(options),
@@ -46,7 +46,7 @@ SiteSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 const SiteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: SiteSettings.url(options),
@@ -56,7 +56,7 @@ const SiteSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 SiteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: SiteSettings.url(options),
@@ -66,7 +66,7 @@ SiteSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Pages\SiteSettings::__invoke
 * @see app/Filament/Pages/SiteSettings.php:7
-* @route '/admin/site-settings'
+* @route '/titanpro/site-settings'
 */
 SiteSettingsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: SiteSettings.url({

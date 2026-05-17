@@ -1,0 +1,20 @@
+{
+  "schema": "titan.signals.v1",
+  "module": "accountings",
+  "signals": [
+    {"event":"Modules\\Accountings\\Events\\InvoiceJournalPosted","alias":"accounting.journal.posted"},
+    {"event":"Modules\\Accountings\\Events\\GstPosted","alias":"accounting.gst.posted"},
+    {"event":"Modules\\Accountings\\Events\\ReceivablesAged","alias":"accounting.receivables.aged"},
+    {"event":"Modules\\Accountings\\Events\\StatementGenerated","alias":"accounting.statement.generated"},
+    {"event":"Modules\\Accountings\\Events\\WriteOffPosted","alias":"accounting.writeoff.posted"},
+    {"event":"Modules\\Accountings\\Events\\LedgerAdjustmentSuggested","alias":"accounting.ledger_adjustment.suggested"},
+    {"event":"Modules\\Accountings\\Events\\ZeroPayPaymentConfirmed","alias":"accounting.zeropay.payment_confirmed"}
+  ],
+  "consumes": [
+    "Modules\\EInvoice\\Events\\InvoiceSent",
+    "einvoice.issued",
+    "einvoice.paid",
+    "zeropay.payment.completed",
+    "zeropay.bank_deposit.matched"
+  ]
+}

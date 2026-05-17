@@ -8,19 +8,26 @@ use Illuminate\Routing\Controller;
 use Modules\CallingAgent\Models\CallingAgentCall;
 use Modules\CallingAgent\Services\ReceptionistOrchestrator;
 use Modules\CallingAgent\Services\TwilioChannelService;
+use Modules\CallingAgent\Support\TenantContext;
 
 class CallingAgentApiController extends Controller
 {
     public function showCall(CallingAgentCall $call): CallingAgentCall
     {
+        $tenantId = TenantContext::id();
+
+        if ($tenantId !== null && $call->tenant_id !== null && $call->tenant_id !== $tenantId) {
+            abort(404);
+        }
+
         return $call->load([]);
     }
 
     public function sendSms(Request $request, TwilioChannelService $twilio): array
     {
         return $twilio->sendSms(
-            $request->string('to'),
-            $request->string('body'),
+            (string) $request->string('to'),
+            (string) $request->string('body'),
             $request->input('from')
         );
     }
@@ -28,8 +35,8 @@ class CallingAgentApiController extends Controller
     public function sendWhatsapp(Request $request, TwilioChannelService $twilio): array
     {
         return $twilio->sendWhatsapp(
-            $request->string('to'),
-            $request->string('body'),
+            (string) $request->string('to'),
+            (string) $request->string('body'),
             $request->input('from')
         );
     }
@@ -55,14 +62,15 @@ class CallingAgentApiController extends Controller
 
         // Persist the outbound call log
         $call = CallingAgentCall::create([
-            'provider'   => 'twilio',
-            'call_sid'   => $result['sid'],
-            'direction'  => 'outbound',
-            'from'       => $result['from'],
-            'to'         => $result['to'],
-            'status'     => $result['status'] ?? 'queued',
+            'tenant_id' => TenantContext::id($validated),
+            'provider' => 'twilio',
+            'call_sid' => $result['sid'],
+            'direction' => 'outbound',
+            'from' => $result['from'],
+            'to' => $result['to'],
+            'status' => $result['status'] ?? 'queued',
             'started_at' => now(),
-            'metadata'   => $result,
+            'metadata' => $result,
         ]);
 
         return response()->json(['call_id' => $call->id, 'call_sid' => $call->call_sid, 'status' => $call->status]);
@@ -85,6 +93,7 @@ class CallingAgentApiController extends Controller
             ]);
             // Still persist the attempt
             $this->persistTransferAttempt($callSid, $validated['target'], 'sdk-unavailable');
+            $this->mirrorEscalationToTitanHello($callSid, $validated['target'], 'sdk-unavailable');
             return response()->json([
                 'success' => false,
                 'error'   => 'Twilio SDK or credentials not available',
@@ -106,6 +115,7 @@ class CallingAgentApiController extends Controller
 
         // Persist transfer attempt
         $this->persistTransferAttempt($callSid, $validated['target'], 'initiated');
+        $this->mirrorEscalationToTitanHello($callSid, $validated['target'], 'initiated');
 
         return response()->json(['success' => true, 'call_sid' => $callSid, 'target' => $validated['target']]);
     }
@@ -142,7 +152,11 @@ class CallingAgentApiController extends Controller
     private function persistTransferAttempt(string $callSid, string $target, string $status): void
     {
         try {
+            $call = CallingAgentCall::query()->withoutGlobalScopes()->where('call_sid', $callSid)->first();
+
             \DB::table('calling_agent_transfer_attempts')->insert([
+                'tenant_id' => $call?->tenant_id ?? TenantContext::id(),
+                'calling_agent_call_id' => $call?->id,
                 'call_sid'      => $callSid,
                 'target_number' => $target,
                 'status'        => $status,
@@ -150,6 +164,48 @@ class CallingAgentApiController extends Controller
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ]);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+    }
+
+    private function mirrorEscalationToTitanHello(string $callSid, string $target, string $status): void
+    {
+        if (! class_exists(\Modules\TitanHello\Models\Call::class)) {
+            return;
+        }
+
+        try {
+            /** @var CallingAgentCall|null $callingAgentCall */
+            $callingAgentCall = CallingAgentCall::query()->where('call_sid', $callSid)->first();
+
+            /** @var \Modules\TitanHello\Models\Call $titanHelloCall */
+            $titanHelloCall = \Modules\TitanHello\Models\Call::query()->firstOrNew([
+                'provider' => 'twilio',
+                'provider_call_sid' => $callSid,
+            ]);
+
+            $existingMeta = is_array($titanHelloCall->meta) ? $titanHelloCall->meta : [];
+
+            $titanHelloCall->fill([
+                'company_id' => $callingAgentCall?->tenant_id ?? auth()->user()?->organization_id,
+                'direction' => $callingAgentCall?->direction ?? 'inbound',
+                'from_number' => $callingAgentCall?->from,
+                'to_number' => $callingAgentCall?->to ?? $target,
+                'status' => 'escalated',
+                'call_outcome' => 'human_escalation',
+                'meta' => array_merge($existingMeta, [
+                    'escalation_target' => $target,
+                    'calling_agent_transfer_status' => $status,
+                    'source' => 'calling-agent-transfer',
+                ]),
+            ]);
+
+            $titanHelloCall->save();
+
+            if (class_exists(\Modules\TitanHello\Events\CallStatusUpdated::class)) {
+                event(new \Modules\TitanHello\Events\CallStatusUpdated($titanHelloCall));
+            }
         } catch (\Throwable $e) {
             report($e);
         }

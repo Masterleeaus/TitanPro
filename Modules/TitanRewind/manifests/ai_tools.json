@@ -1,0 +1,37 @@
+{
+  "module": "TitanRewind",
+  "schema_version": "1.0.0",
+  "tools": [
+    {
+      "id": "analyse_audit_drift",
+      "description": "Analyse tenant audit snapshots to detect drift clusters and anomalies.",
+      "class": "Modules\\TitanRewind\\AI\\Tools\\AnalyseAuditDriftTool",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id"],
+        "properties": {
+          "company_id": { "type": "integer" },
+          "case_id": { "type": "integer" }
+        }
+      },
+      "risk_class": "high",
+      "approval_mode": "required"
+    },
+    {
+      "id": "suggest_correction",
+      "description": "Suggest a corrective rewind action payload for detected audit drift.",
+      "class": "Modules\\TitanRewind\\AI\\Tools\\SuggestCorrectionTool",
+      "input_schema": {
+        "type": "object",
+        "required": ["company_id", "case_id"],
+        "properties": {
+          "company_id": { "type": "integer" },
+          "case_id": { "type": "integer" },
+          "anomaly": { "type": "string" }
+        }
+      },
+      "risk_class": "high",
+      "approval_mode": "required"
+    }
+  ]
+}

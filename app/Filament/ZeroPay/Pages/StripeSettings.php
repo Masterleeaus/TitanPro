@@ -7,7 +7,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -21,11 +21,11 @@ class StripeSettings extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Stripe Integration';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 90;
 
-    protected static string $view = 'filament.zeropay.pages.stripe-settings';
+    protected string $view = 'filament.zeropay.pages.stripe-settings';
 
     public ?array $data = [];
 
@@ -41,10 +41,10 @@ class StripeSettings extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Stripe Integration')
                     ->description('Configure your Stripe account to accept card payments, issue checkout sessions, and process refunds.')
                     ->schema([

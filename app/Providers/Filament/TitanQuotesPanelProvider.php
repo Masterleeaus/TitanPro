@@ -39,7 +39,11 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanQuotes/Resources'), for: 'App\\Filament\\TitanQuotes\\Resources')
@@ -67,7 +71,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiOverrideSsrHook())
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

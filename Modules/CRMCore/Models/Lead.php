@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CRMCore\Traits\HasCRMCode;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class Lead extends Model
 {
-    use HasCRMCode, HasFactory, SoftDeletes;
+    use HasCRMCode, HasFactory, SoftDeletes, UsesScopedByCompany;
 
     /**
      * The table associated with the model.
@@ -33,6 +34,7 @@ class Lead extends Model
         'contact_email',
         'contact_phone',
         'company_name',
+        'company_id',
         'value',
         'lead_source_id',
         'lead_status_id',
@@ -54,6 +56,7 @@ class Lead extends Model
      */
     protected $casts = [
         'value' => 'decimal:2',
+        'company_id' => 'integer',
         'converted_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

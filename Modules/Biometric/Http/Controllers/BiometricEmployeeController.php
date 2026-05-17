@@ -4,25 +4,22 @@ namespace Modules\Biometric\Http\Controllers;
 
 use App\Helper\Reply;
 use App\Http\Controllers\AccountBaseController;
-
-use Modules\Biometric\Entities\BiometricEmployee;
-use Modules\Biometric\Entities\BiometricCommands;
-
-use Modules\Biometric\Entities\BiometricAttendance;
-use Illuminate\Http\Request;
-use Modules\Biometric\Entities\BiometricDevice;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Modules\Biometric\Entities\BiometricAttendance;
+use Modules\Biometric\Entities\BiometricCommands;
+use Modules\Biometric\Entities\BiometricDevice;
+use Modules\Biometric\Entities\BiometricEmployee;
 
 class BiometricEmployeeController extends AccountBaseController
 {
-
     public function __construct()
     {
         parent::__construct();
         $this->pageTitle = 'biometric::app.menu.deviceEmployees';
 
         $this->middleware(function ($request, $next) {
-            if (!in_array('biometric', $this->user->modules) && user()->permission('manage_biometric_settings') != 'none') {
+            if (! in_array('biometric', $this->user->modules) || user()->permission('manage_biometric_settings') === 'none') {
                 abort(403, __('messages.permissionDenied'));
             }
 
@@ -30,12 +27,11 @@ class BiometricEmployeeController extends AccountBaseController
         });
     }
 
-
     public function index()
     {
         $viewPermission = user()->permission('view_employees');
 
-        abort_403(!in_array($viewPermission, ['all', 'added', 'owned', 'both']));
+        abort_403(! in_array($viewPermission, ['all', 'added', 'owned', 'both']));
 
         $this->employees = User::withRole('employee')
             ->join('employee_details', 'employee_details.user_id', '=', 'users.id')
@@ -43,7 +39,6 @@ class BiometricEmployeeController extends AccountBaseController
             ->leftJoin('designations', 'employee_details.designation_id', '=', 'designations.id')
             ->select(
                 'users.id',
-                'users.company_id',
                 'users.name',
                 'users.email',
                 'users.created_at',
@@ -54,17 +49,15 @@ class BiometricEmployeeController extends AccountBaseController
                 'biometric_employees.biometric_employee_id',
                 'biometric_employees.has_fingerprint',
                 'biometric_employees.force_biometric_clockin'
-            )->get();
-
+            )
+            ->where('employee_details.company_id', company()->id)
+            ->get();
 
         // Pass devices to the view to check if any exist
-        $this->devices = \Modules\Biometric\Entities\BiometricDevice::where('company_id', company()->id)->get();
+        $this->devices = BiometricDevice::where('company_id', company()->id)->get();
 
         return view('biometric::employee.edit', $this->data);
     }
-
-
-
 
     /**
      * Store a newly created resource in storage.
@@ -76,14 +69,13 @@ class BiometricEmployeeController extends AccountBaseController
 
         foreach ($biometricEmployeeIds as $userId => $biometricEmployeeId) {
 
-            if (!empty($biometricEmployeeId)) {
-                \Log::info('$request->force_biometric_clockin[$userId]' . $userId . ' :' . $request->force_biometric_clockin[$userId]);
+            if (! empty($biometricEmployeeId)) {
                 BiometricEmployee::updateOrCreate(
                     ['user_id' => $userId],
                     [
                         'company_id' => $this->user->company_id,
                         'biometric_employee_id' => $biometricEmployeeId,
-                        'force_biometric_clockin' => boolval($request->force_biometric_clockin[$userId])
+                        'force_biometric_clockin' => boolval($request->force_biometric_clockin[$userId]),
                     ]
                 );
 
@@ -112,7 +104,9 @@ class BiometricEmployeeController extends AccountBaseController
                 'users.image',
                 'employee_details.employee_id',
                 'biometric_employees.biometric_employee_id'
-            )->get();
+            )
+            ->where('employee_details.company_id', company()->id)
+            ->get();
 
         $data = $employees->map(function ($employee) {
             return [
@@ -122,7 +116,7 @@ class BiometricEmployeeController extends AccountBaseController
                 'image_url' => $employee->image_url,
                 'employee_id' => $employee->employee_id ?? '--',
                 'biometric_id' => $employee->biometric_employee_id ?? '--',
-                'is_configured' => !empty($employee->biometric_employee_id)
+                'is_configured' => ! empty($employee->biometric_employee_id),
             ];
         });
 
@@ -138,7 +132,7 @@ class BiometricEmployeeController extends AccountBaseController
             ->where('company_id', $this->user->company_id)
             ->first();
 
-        $devices = BiometricDevice::all();
+        $devices = BiometricDevice::where('company_id', $this->user->company_id)->get();
 
         foreach ($devices as $device) {
             if ($biometricEmployee) {
@@ -148,17 +142,17 @@ class BiometricEmployeeController extends AccountBaseController
                 $biometricCommand = BiometricCommands::create([
                     'company_id' => company()->id,
                     'type' => 'DELETEUSER',
-                    'command_id' => 'TEMP-' . time(),
+                    'command_id' => 'TEMP-'.time(),
                     'user_id' => $id,
                     'employee_id' => $biometricEmployee->biometric_employee_id,
                     'device_serial_number' => $device->serial_number,
-                    'command' => 'TEMPCOMMAND-' . time(),
-                    'status' => 'pending'
+                    'command' => 'TEMPCOMMAND-'.time(),
+                    'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
                 $biometricCommand->update([
-                    'command_id' => 'DELETEUSER-' . $biometricCommand->id,
+                    'command_id' => 'DELETEUSER-'.$biometricCommand->id,
                     'command' => BiometricCommands::deleteUserCommand($biometricCommand->id, $biometricEmployee->biometric_employee_id),
                 ]);
             }
@@ -167,36 +161,36 @@ class BiometricEmployeeController extends AccountBaseController
         return Reply::success(__('biometric::app.employeeRemovedFromDevice'));
     }
 
-
     public function getEmployeeInfo($id = null)
     {
 
         if ($id) {
-            $biometricEmployees = BiometricEmployee::where('user_id', $id)->get();
+            $biometricEmployees = BiometricEmployee::where('company_id', $this->user->company_id)
+                ->where('user_id', $id)
+                ->get();
         } else {
-            $biometricEmployees = BiometricEmployee::all();
+            $biometricEmployees = BiometricEmployee::where('company_id', $this->user->company_id)->get();
         }
-
 
         $command = [];
 
-        $devices = BiometricDevice::all();
+        $devices = BiometricDevice::where('company_id', $this->user->company_id)->get();
 
         foreach ($devices as $device) {
             foreach ($biometricEmployees as $employee) {
                 $biometricCommand = BiometricCommands::create([
                     'company_id' => company()->id,
                     'type' => 'QUERYUSER',
-                    'command_id' => 'TEMP-' . time(),
+                    'command_id' => 'TEMP-'.time(),
                     'device_serial_number' => $device->serial_number,
                     'user_id' => $employee->user_id,
                     'employee_id' => $employee->biometric_employee_id,
-                    'status' => 'pending'
+                    'status' => 'pending',
                 ]);
 
                 // Update the command_id with the actual database ID
                 $biometricCommand->update([
-                    'command_id' => 'QUERYUSER-' . $biometricCommand->id,
+                    'command_id' => 'QUERYUSER-'.$biometricCommand->id,
                     'command' => BiometricCommands::queryUserCommand($biometricCommand->id, $employee->biometric_employee_id),
                 ]);
 
@@ -205,5 +199,10 @@ class BiometricEmployeeController extends AccountBaseController
         }
 
         return Reply::successWithData(__('biometric::app.fetchAllBiometricDataSuccess'), ['data' => $command]);
+    }
+
+    public function fetchAll()
+    {
+        return $this->getEmployeeInfo();
     }
 }

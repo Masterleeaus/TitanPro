@@ -1,0 +1,7 @@
+{
+  "schema": "titan.agent_action_map.v1",
+  "tools": [
+    {"tool": "example.lookup_record", "action": "Modules\\ExampleModule\\Actions\\LookupExampleRecordAction"},
+    {"tool": "example.create_record", "action": "Modules\\ExampleModule\\Actions\\CreateExampleRecordAction"}
+  ]
+}

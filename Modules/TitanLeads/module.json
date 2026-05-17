@@ -1,0 +1,13 @@
+{
+  "name": "TitanLeads",
+  "active": 1,
+  "alias": "titan-leads",
+  "display_name": "Titan Leads",
+  "version": "1.0.0",
+  "namespace": "Modules\\TitanLeads",
+  "description": "Omnichannel leads inbox and outreach campaigns (WhatsApp, SMS, Telegram, Messenger, Voice).",
+  "filament_panel": "titannexus",
+  "providers": [
+    "Modules\\TitanLeads\\Providers\\TitanLeadsServiceProvider"
+  ]
+}

@@ -5,6 +5,8 @@ namespace Modules\BookingModule\Providers;
 use App\Events\NewCompanyCreatedEvent;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\BookingModule\Events\AppointmentStatus;
+use Modules\BookingModule\Events\BookingApprovalDecided;
+use Modules\BookingModule\Events\BookingApprovalRequested;
 use Modules\BookingModule\Events\BookingCancelled;
 use Modules\BookingModule\Events\BookingCompleted;
 use Modules\BookingModule\Events\BookingRequested;
@@ -14,6 +16,8 @@ use Modules\BookingModule\Events\ScheduleRescheduled;
 use Modules\BookingModule\Listeners\AppointmentStatusListener;
 use Modules\BookingModule\Listeners\BookingCompletedListener;
 use Modules\BookingModule\Listeners\CompanyCreatedListener;
+use Modules\BookingModule\Listeners\CreateBookingFromQuoteAcceptedSignal;
+use Modules\BookingModule\Listeners\EmitBookingLifecycleSignals;
 use Modules\BookingModule\Listeners\EmitBookingRequestedSignalToTitanZero;
 use Modules\BookingModule\Listeners\RecordBookingLifecycleLog;
 use Modules\BookingModule\Listeners\SendBookingLifecycleMail;
@@ -33,6 +37,7 @@ class EventServiceProvider extends ServiceProvider
             BookingCompletedListener::class,
             RecordBookingLifecycleLog::class,
             SendBookingLifecycleMail::class,
+            EmitBookingLifecycleSignals::class,
         ],
         AppointmentStatus::class => [
             AppointmentStatusListener::class,
@@ -43,6 +48,15 @@ class EventServiceProvider extends ServiceProvider
         BookingCancelled::class => [
             RecordBookingLifecycleLog::class,
             SendBookingLifecycleMail::class,
+            EmitBookingLifecycleSignals::class,
+        ],
+        BookingApprovalRequested::class => [
+            RecordBookingLifecycleLog::class,
+            EmitBookingLifecycleSignals::class,
+        ],
+        BookingApprovalDecided::class => [
+            RecordBookingLifecycleLog::class,
+            EmitBookingLifecycleSignals::class,
         ],
         ScheduleAssigned::class => [
             RecordBookingLifecycleLog::class,
@@ -51,6 +65,9 @@ class EventServiceProvider extends ServiceProvider
         ScheduleRescheduled::class => [
             RecordBookingLifecycleLog::class,
             SendBookingLifecycleMail::class,
+        ],
+        'QuoteEngine.QuoteAccepted' => [
+            CreateBookingFromQuoteAcceptedSignal::class,
         ],
     ];
 

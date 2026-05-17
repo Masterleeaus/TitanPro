@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 const ListAttachments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListAttachments.url(options),
@@ -11,13 +11,13 @@ const ListAttachments = (options?: RouteQueryOptions): RouteDefinition<'get'> =>
 
 ListAttachments.definition = {
     methods: ["get","head"],
-    url: '/admin/attachments',
+    url: '/titanpro/attachments',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 ListAttachments.url = (options?: RouteQueryOptions) => {
     return ListAttachments.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListAttachments.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 ListAttachments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListAttachments.url(options),
@@ -36,7 +36,7 @@ ListAttachments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 ListAttachments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListAttachments.url(options),
@@ -46,7 +46,7 @@ ListAttachments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =>
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 const ListAttachmentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListAttachments.url(options),
@@ -56,7 +56,7 @@ const ListAttachmentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 ListAttachmentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListAttachments.url(options),
@@ -66,7 +66,7 @@ ListAttachmentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\ListAttachments::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/ListAttachments.php:7
-* @route '/admin/attachments'
+* @route '/titanpro/attachments'
 */
 ListAttachmentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListAttachments.url({

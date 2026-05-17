@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\TitanEchoAssist\DTOs\MessagePayload;
 use Modules\TitanEchoAssist\Services\ConversationRouter;
+use Modules\TitanTalk\Services\ConversationThreadService;
 
 class MessengerWebhookController extends Controller
 {
@@ -33,6 +34,15 @@ class MessengerWebhookController extends Controller
 
     public function handle(Request $request, int $channelId): Response
     {
+        // Blueprint 22: verify HMAC-SHA256 signature before processing any payload
+        if (! $this->verifySignature($request)) {
+            Log::warning('MessengerWebhook: invalid signature', [
+                'channel_id' => $channelId,
+                'ip'         => $request->ip(),
+            ]);
+            return response('Forbidden', 403);
+        }
+
         try {
             $body = $request->all();
 
@@ -55,6 +65,32 @@ class MessengerWebhookController extends Controller
         return response('EVENT_RECEIVED', 200);
     }
 
+    /**
+     * Verify the X-Hub-Signature-256 header using HMAC-SHA256.
+     *
+     * Facebook signs the raw request body with the app secret and sends the
+     * digest in the X-Hub-Signature-256 header as "sha256=<hex>".
+     */
+    private function verifySignature(Request $request): bool
+    {
+        $appSecret = config('titan-chatbot.channels.messenger.app_secret', '');
+
+        // If no secret is configured we skip verification (dev/test environments)
+        if ($appSecret === '') {
+            return true;
+        }
+
+        $header = $request->header('X-Hub-Signature-256', '');
+
+        if ($header === '') {
+            return false;
+        }
+
+        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), $appSecret);
+
+        return hash_equals($expected, $header);
+    }
+
     private function processEvent(array $event, int $channelId): void
     {
         $senderId = $event['sender']['id'] ?? 'unknown';
@@ -72,7 +108,14 @@ class MessengerWebhookController extends Controller
             'metadata'   => $event,
         ]);
 
-        app(ConversationRouter::class)->route($payload);
+        if (class_exists(ConversationThreadService::class)) {
+            $thread = app(ConversationThreadService::class);
+            $conversation = $thread->recordInbound('messenger', (string) $senderId, $text, $event);
+            $reply = (string) app(ConversationRouter::class)->route($payload);
+            $thread->recordOutbound($conversation, $reply, ['channel_id' => $channelId, 'source' => 'TitanEchoAssist']);
+        } else {
+            app(ConversationRouter::class)->route($payload);
+        }
     }
 
     private function resolveChatbotId(int $channelId): int

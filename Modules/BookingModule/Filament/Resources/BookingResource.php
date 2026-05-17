@@ -13,14 +13,26 @@ use Modules\BookingModule\Filament\Resources\BookingResource\Pages;
 class BookingResource extends Resource
 {
     protected static ?string $model = CleaningBooking::class;
-    protected static ?string $navigationGroup = 'Booking & Dispatch';
-    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+    protected static string|\UnitEnum|null $navigationGroup = 'Booking & Dispatch';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\TextInput::make('heading')->maxLength(255),
-            Forms\Components\Select::make('booking_status')->options(['pending'=>'Pending','confirmed'=>'Confirmed','en_route'=>'En Route','in_progress'=>'In Progress','completed'=>'Completed','cancelled'=>'Cancelled','reclean'=>'Reclean']),
+            Forms\Components\Select::make('booking_status')->options([
+                'draft' => 'Draft',
+                'pending_approval' => 'Pending Approval',
+                'confirmed' => 'Confirmed',
+                'dispatched' => 'Dispatched',
+                'in_progress' => 'In Progress',
+                'completed' => 'Completed',
+                'invoiced' => 'Invoiced',
+                'paid' => 'Paid',
+                'rescheduled' => 'Rescheduled',
+                'no_show' => 'No Show',
+                'cancelled' => 'Cancelled',
+            ]),
             Forms\Components\TextInput::make('service_type')->maxLength(80),
             Forms\Components\Textarea::make('service_address')->rows(3),
         ]);

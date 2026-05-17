@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: Dispatch Module API
+  version: 0.5.0
+paths:
+  /api/dispatch/v1/work-orders:
+    get:
+      summary: List dispatch work orders
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: technician_id
+          schema: { type: integer }
+      responses:
+        '200': { description: Work order collection }
+    post:
+      summary: Create a dispatch-owned work order
+      responses:
+        '201': { description: Work order created }
+  /api/dispatch/v1/calendar:
+    get:
+      summary: Return appointments as calendar events
+      responses:
+        '200': { description: Calendar event collection }
+  /api/dispatch/v1/schedule:
+    post:
+      summary: Schedule a work order to a technician, appointment, and shift assignment
+      responses:
+        '200': { description: Scheduling payload }
+  /api/dispatch/v1/assignments/{assignment}/status:
+    patch:
+      summary: Move a dispatch assignment through the guarded lifecycle
+      parameters:
+        - in: path
+          name: assignment
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Updated assignment }
+        '422': { description: Invalid transition }

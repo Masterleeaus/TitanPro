@@ -13,8 +13,8 @@ use Modules\BookingModule\Filament\Resources\AppointmentResource\Pages;
 class AppointmentResource extends Resource
 {
     protected static ?string $model = Appointment::class;
-    protected static ?string $navigationGroup = 'Booking & Dispatch';
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static string|\UnitEnum|null $navigationGroup = 'Booking & Dispatch';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
     public static function form(Form $form): Form
     {
         return $form->schema([

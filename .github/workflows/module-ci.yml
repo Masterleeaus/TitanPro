@@ -1,0 +1,64 @@
+name: ZeroPayModule CI
+
+on:
+  push:
+    paths:
+      - 'Modules/ZeroPayModule/**'
+      - '.github/workflows/module-ci.yml'
+  pull_request:
+    paths:
+      - 'Modules/ZeroPayModule/**'
+      - '.github/workflows/module-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-validate:
+    name: PHP Lint & Module Structure
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Modules/ZeroPayModule
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: Modules/ZeroPayModule/vendor
+          key: composer-${{ hashFiles('Modules/ZeroPayModule/composer.json', 'Modules/ZeroPayModule/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Check code style with Laravel Pint
+        run: ./vendor/bin/pint --test
+
+      - name: Validate module.json structure
+        run: |
+          echo "Checking module.json exists..."
+          test -f module.json || (echo "module.json not found" && exit 1)
+
+          echo "Validating required fields in module.json..."
+          jq -e '.name' module.json > /dev/null || (echo "Missing: .name" && exit 1)
+          jq -e '.alias' module.json > /dev/null || (echo "Missing: .alias" && exit 1)
+          jq -e '.providers | length > 0' module.json > /dev/null || (echo "Missing or empty: .providers" && exit 1)
+          jq -e '.permissions | length > 0' module.json > /dev/null || (echo "Missing or empty: .permissions" && exit 1)
+          jq -e '.manifest' module.json > /dev/null || (echo "Missing: .manifest" && exit 1)
+          echo "module.json structure is valid."
+
+      - name: Run PHPUnit tests
+        run: ./vendor/bin/phpunit --testdox Tests/
+

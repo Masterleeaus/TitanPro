@@ -5,6 +5,7 @@ namespace Modules\BookingModule\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Modules\BookingModule\Entities\Schedule;
 use Modules\BookingModule\Http\Requests\Dispatch\DispatchUpdateScheduleRequest;
 use Modules\BookingModule\Services\Dispatch\DispatchScheduleUpdateService;
@@ -22,6 +23,7 @@ class DispatchScheduleController extends Controller
         }
 
         $schedule = Schedule::findOrFail($id);
+        Gate::authorize('update', $schedule);
 
         return view('bookingmodule::dispatch.partials._edit_modal', [
             'schedule' => $schedule,
@@ -36,9 +38,12 @@ class DispatchScheduleController extends Controller
             abort(404);
         }
 
+        $schedule = Schedule::findOrFail($id);
+        Gate::authorize('update', $schedule);
+
         $result = $this->service->update($id, $request->validated());
 
-        return response()->json($result, $result['ok'] ? 200 : 422);
+        return response()->json($result, $result['status'] ?? ($result['ok'] ? 200 : 422));
     }
 
     protected function authorizeDispatch(): void

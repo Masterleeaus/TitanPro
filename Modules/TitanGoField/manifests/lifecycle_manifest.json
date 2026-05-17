@@ -1,0 +1,49 @@
+{
+  "module": "TitanGoField",
+  "schema_version": "1.0.0",
+  "entity": "FieldJob",
+  "lifecycle_stages": [
+    {
+      "stage": "pending",
+      "label": "Pending",
+      "entry_triggers": ["created"],
+      "exit_triggers": ["approve", "cancel"]
+    },
+    {
+      "stage": "approved",
+      "label": "Approved",
+      "entry_triggers": ["approve"],
+      "exit_triggers": ["schedule", "cancel"]
+    },
+    {
+      "stage": "scheduled",
+      "label": "Scheduled",
+      "entry_triggers": ["schedule", "recurrence_spawn"],
+      "exit_triggers": ["start", "cancel", "hold"]
+    },
+    {
+      "stage": "in_progress",
+      "label": "In Progress",
+      "entry_triggers": ["check_in", "start"],
+      "exit_triggers": ["complete", "hold", "cancel"]
+    },
+    {
+      "stage": "on_hold",
+      "label": "On Hold",
+      "entry_triggers": ["hold"],
+      "exit_triggers": ["resume", "cancel"]
+    },
+    {
+      "stage": "completed",
+      "label": "Completed",
+      "entry_triggers": ["complete"],
+      "exit_triggers": []
+    },
+    {
+      "stage": "cancelled",
+      "label": "Cancelled",
+      "entry_triggers": ["cancel"],
+      "exit_triggers": []
+    }
+  ]
+}

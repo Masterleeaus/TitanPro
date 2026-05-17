@@ -20,9 +20,15 @@ class DealSeeder extends Seeder
     {
         // --- 1. Seed Deal Pipelines and Stages (Create if they don't exist) ---
         $this->command->info('Seeding Deal Pipelines and Stages...');
+        $defaultCompanyId = Company::query()->value('id');
+        if (! $defaultCompanyId) {
+            $this->command->warn('No companies found. Skipping DealSeeder.');
 
-        $standardPipeline = DealPipeline::firstOrCreate(
-            ['name' => 'Standard Sales Pipeline'],
+            return;
+        }
+
+        $companyStandardPipeline = DealPipeline::firstOrCreate(
+            ['company_id' => $defaultCompanyId, 'name' => 'Standard Sales Pipeline'],
             [
                 'description' => 'Default sales pipeline for most deals.',
                 'is_default' => true,
@@ -41,8 +47,8 @@ class DealSeeder extends Seeder
 
         foreach ($stagesData as $stageData) {
             DealStage::firstOrCreate(
-                ['pipeline_id' => $standardPipeline->id, 'name' => $stageData['name']],
-                array_merge($stageData, ['pipeline_id' => $standardPipeline->id])
+                ['pipeline_id' => $companyStandardPipeline->id, 'name' => $stageData['name']],
+                array_merge($stageData, ['pipeline_id' => $companyStandardPipeline->id])
             );
         }
 

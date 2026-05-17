@@ -1,18 +1,15 @@
 {
-  "enables": [
-    "single-module cleaning job operations",
-    "tenant-safe feature discovery",
-    "integrated job lifecycle capabilities"
-  ],
-  "integrations": [
-    "cleaning_jobs.timesheets",
-    "cleaning_jobs.resource_planning",
-    "cleaning_jobs.financial_tracking",
-    "cleaning_jobs.kanban",
-    "cleaning_jobs.milestones",
-    "cleaning_jobs.subtasks",
-    "cleaning_jobs.comments",
-    "cleaning_jobs.files",
-    "cleaning_jobs.activity_logs"
+  "enabled": true,
+  "workflows": [
+    {
+      "key": "cleaningjobs.work_order",
+      "class": "Modules\\CleaningJobs\\Workflows\\Definitions\\CleaningJobWorkflow",
+      "primary_model": "Modules\\CleaningJobs\\Models\\WorkOrder",
+      "terminal_statuses": [
+        "completed",
+        "cancelled",
+        "done"
+      ]
+    }
   ]
 }

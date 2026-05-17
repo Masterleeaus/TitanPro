@@ -18,14 +18,10 @@ class Organization extends Model
         'plan',
         'trial_ends_at',
         'stripe_customer_id',
-        'enabled_modules',
-        'suspended_at',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
-        'enabled_modules' => 'array',
-        'suspended_at' => 'datetime',
     ];
 
     public function users(): HasMany

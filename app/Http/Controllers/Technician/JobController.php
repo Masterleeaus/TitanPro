@@ -158,7 +158,7 @@ class JobController extends Controller
 
         $request->validate([
             'photo' => ['required', 'file', 'image', 'min:1', 'max:10240'], // 1 byte min, 10 MB max (client compresses first)
-            'tag'   => ['nullable', Rule::in(['before', 'after'])],
+            'tag'   => ['nullable', Rule::in(['before', 'after', 'issue', 'completion'])],
         ]);
 
         $disk = config('filesystems.attachment_disk', 'public');

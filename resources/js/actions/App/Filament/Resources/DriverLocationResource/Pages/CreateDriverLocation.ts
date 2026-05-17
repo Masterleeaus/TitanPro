@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 const CreateDriverLocation = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateDriverLocation.url(options),
@@ -11,13 +11,13 @@ const CreateDriverLocation = (options?: RouteQueryOptions): RouteDefinition<'get
 
 CreateDriverLocation.definition = {
     methods: ["get","head"],
-    url: '/admin/driver-locations/create',
+    url: '/titanpro/driver-locations/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 CreateDriverLocation.url = (options?: RouteQueryOptions) => {
     return CreateDriverLocation.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateDriverLocation.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 CreateDriverLocation.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateDriverLocation.url(options),
@@ -36,7 +36,7 @@ CreateDriverLocation.get = (options?: RouteQueryOptions): RouteDefinition<'get'>
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 CreateDriverLocation.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateDriverLocation.url(options),
@@ -46,7 +46,7 @@ CreateDriverLocation.head = (options?: RouteQueryOptions): RouteDefinition<'head
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 const CreateDriverLocationForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDriverLocation.url(options),
@@ -56,7 +56,7 @@ const CreateDriverLocationForm = (options?: RouteQueryOptions): RouteFormDefinit
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 CreateDriverLocationForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDriverLocation.url(options),
@@ -66,7 +66,7 @@ CreateDriverLocationForm.get = (options?: RouteQueryOptions): RouteFormDefinitio
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\CreateDriverLocation::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/CreateDriverLocation.php:7
-* @route '/admin/driver-locations/create'
+* @route '/titanpro/driver-locations/create'
 */
 CreateDriverLocationForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateDriverLocation.url({

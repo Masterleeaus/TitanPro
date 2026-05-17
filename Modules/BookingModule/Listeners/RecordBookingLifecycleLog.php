@@ -3,6 +3,8 @@
 namespace Modules\BookingModule\Listeners;
 
 use Illuminate\Database\Eloquent\Model;
+use Modules\BookingModule\Events\BookingApprovalDecided;
+use Modules\BookingModule\Events\BookingApprovalRequested;
 use Modules\BookingModule\Events\BookingCancelled;
 use Modules\BookingModule\Events\BookingCompleted;
 use Modules\BookingModule\Events\BookingStatusChanged;
@@ -45,6 +47,30 @@ class RecordBookingLifecycleLog
                 null,
                 'cancelled',
                 $event->payload + ['reason' => $event->reason],
+                $event->actorId,
+            );
+            return;
+        }
+
+        if ($event instanceof BookingApprovalRequested) {
+            $this->dispatchForModel(
+                $event->booking,
+                'booking.approval_requested',
+                null,
+                'pending_approval',
+                $event->payload + ['reason' => $event->reason],
+                $event->actorId,
+            );
+            return;
+        }
+
+        if ($event instanceof BookingApprovalDecided) {
+            $this->dispatchForModel(
+                $event->booking,
+                'booking.approval_decided',
+                'pending_approval',
+                $event->approved ? 'confirmed' : 'cancelled',
+                $event->payload + ['approved' => $event->approved, 'reason' => $event->reason],
                 $event->actorId,
             );
             return;
