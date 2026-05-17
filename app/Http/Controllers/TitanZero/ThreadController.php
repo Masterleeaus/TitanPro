@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\TitanZero;
 
 use App\Http\Controllers\Controller;
-use App\Models\TitanZeroThread;
+use App\Http\Controllers\TitanZero\Concerns\ResolvesTitanZeroThreads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * GET /api/titan/threads/{threadId}
@@ -16,16 +15,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class ThreadController extends Controller
 {
+    use ResolvesTitanZeroThreads;
+
     public function show(Request $request, string $threadId): JsonResponse
     {
-        $thread = TitanZeroThread::query()
-            ->withoutGlobalScopes()
-            ->whereKey($threadId)
-            ->firstOrFail();
-
-        if ((int) $thread->organization_id !== (int) $request->user()?->organization_id) {
-            throw new AccessDeniedHttpException('You do not have access to this thread.');
-        }
+        $thread = $this->findThreadOrFail($request, $threadId);
 
         return response()->json([
             'messages' => $thread->messages ?? [],

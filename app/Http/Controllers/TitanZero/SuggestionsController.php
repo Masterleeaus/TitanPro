@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\TitanZero;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TitanZero\Concerns\ResolvesTitanZeroThreads;
 use App\Models\TitanZeroThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * GET /api/titan/suggestions
@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class SuggestionsController extends Controller
 {
+    use ResolvesTitanZeroThreads;
+
     /**
      * Static suggestion mapping per appKey.
      *
@@ -96,16 +98,7 @@ class SuggestionsController extends Controller
             return null;
         }
 
-        $thread = TitanZeroThread::query()
-            ->withoutGlobalScopes()
-            ->whereKey($threadId)
-            ->firstOrFail();
-
-        if ((int) $thread->organization_id !== (int) $request->user()?->organization_id) {
-            throw new AccessDeniedHttpException('You do not have access to this thread.');
-        }
-
-        return $thread;
+        return $this->findThreadOrFail($request, $threadId);
     }
 
     private function resolveAppKey(Request $request, ?TitanZeroThread $thread): string
@@ -117,7 +110,7 @@ class SuggestionsController extends Controller
         }
 
         $headerContext = $this->headerContext($request);
-        $appKey = trim((string) ($headerContext['app_key'] ?? $headerContext['appKey'] ?? ''));
+        $appKey = trim((string) ($headerContext['app_key'] ?? ''));
 
         if ($appKey !== '') {
             return $appKey;
@@ -129,7 +122,11 @@ class SuggestionsController extends Controller
             return $appKey;
         }
 
-        return trim((string) data_get($request->session()->get('titan_zero.context', []), 'app_key', 'default')) ?: 'default';
+        return trim((string) data_get(
+            $request->hasSession() ? $request->session()->get('titan_zero.context', []) : [],
+            'app_key',
+            'default'
+        ));
     }
 
     /**
@@ -137,22 +134,30 @@ class SuggestionsController extends Controller
      */
     private function headerContext(Request $request): array
     {
-        $header = $request->header('context', $request->header('X-Titan-Context', ''));
+        $contextHeader = $request->header('context', $request->header('X-Titan-Context', ''));
 
-        if (is_array($header)) {
+        if (is_array($contextHeader)) {
             return [];
         }
 
-        $header = trim((string) $header);
+        $contextHeader = trim((string) $contextHeader);
 
-        if ($header === '') {
+        if ($contextHeader === '') {
             $appKey = trim((string) $request->header('X-Titan-App-Key', ''));
 
             return $appKey === '' ? [] : ['app_key' => $appKey];
         }
 
-        $decoded = json_decode($header, true);
+        $decoded = json_decode($contextHeader, true);
 
-        return is_array($decoded) ? $decoded : ['app_key' => $header];
+        if (! is_array($decoded)) {
+            return ['app_key' => $contextHeader];
+        }
+
+        if (array_key_exists('appKey', $decoded) && ! array_key_exists('app_key', $decoded)) {
+            $decoded['app_key'] = $decoded['appKey'];
+        }
+
+        return $decoded;
     }
 }

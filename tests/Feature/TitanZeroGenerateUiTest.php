@@ -190,6 +190,14 @@ test('suggestions returns 401 for unauthenticated requests', function () {
         ->assertUnauthorized();
 });
 
+test('suggestions returns 404 for non-existent thread context', function () {
+    [$user] = tzSetup();
+
+    $this->actingAs($user)
+        ->getJson('/api/titan/suggestions?threadId=99999999')
+        ->assertNotFound();
+});
+
 test('suggestions returns an array of strings', function () {
     [$user] = tzSetup();
 
