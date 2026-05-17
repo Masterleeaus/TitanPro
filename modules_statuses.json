@@ -6,5 +6,6 @@
     "TitanCore": true,
     "CleaningJobs": true,
     "BookingModule": true,
-    "Biometric": true
+    "Biometric": true,
+    "Budgeting": true
 }
