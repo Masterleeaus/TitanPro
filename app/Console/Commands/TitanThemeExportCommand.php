@@ -55,22 +55,25 @@ class TitanThemeExportCommand extends Command
         if (! rename($export['path'], $targetPath)) {
             // Cross-filesystem moves can fail with rename(), so fallback to copy+delete.
             if (! copy($export['path'], $targetPath)) {
-                if (file_exists($export['path']) && ! unlink($export['path'])) {
-                    $this->warn('Temporary export file could not be deleted: '.$export['path']);
-                }
+                $this->cleanupTemporaryFile($export['path']);
 
                 $this->error('Unable to copy export artifact from '.$export['path'].' to '.$targetPath.'.');
 
                 return self::FAILURE;
             }
 
-            if (file_exists($export['path']) && ! unlink($export['path'])) {
-                $this->warn('Temporary export file could not be deleted: '.$export['path']);
-            }
+            $this->cleanupTemporaryFile($export['path']);
         }
 
         $this->info('Theme export generated: '.$targetPath);
 
         return self::SUCCESS;
+    }
+
+    private function cleanupTemporaryFile(string $path): void
+    {
+        if (file_exists($path) && ! unlink($path)) {
+            $this->warn('Temporary export file could not be deleted: '.$path);
+        }
     }
 }

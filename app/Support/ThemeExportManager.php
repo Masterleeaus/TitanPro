@@ -9,6 +9,7 @@ use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
 use App\Models\TitanUiComponentOverride;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -73,15 +74,15 @@ final class ThemeExportManager
         $payload = app(ThemeTokenManager::class)->exportPayload(PlatformSetting::current());
         $branding = $this->branding($organizationId);
 
-        $zip['archive']->addFromString('theme.json', json_encode($payload['resolved'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        $zip['archive']->addFromString('component-overrides.json', json_encode($this->componentOverrides($organizationId), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        $zip['archive']->addFromString('dashboard-layout.json', json_encode($this->dashboardLayout($branding), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        $zip['archive']->addFromString('meta.json', json_encode([
+        $zip['archive']->addFromString('theme.json', $this->encodeJson($payload['resolved'], 'theme.json'));
+        $zip['archive']->addFromString('component-overrides.json', $this->encodeJson($this->componentOverrides($organizationId), 'component-overrides.json'));
+        $zip['archive']->addFromString('dashboard-layout.json', $this->encodeJson($this->dashboardLayout($branding), 'dashboard-layout.json'));
+        $zip['archive']->addFromString('meta.json', $this->encodeJson([
             'name' => $name,
             'format' => self::FORMAT_UI_PACK,
             'organization_id' => $organizationId,
             'exported_at' => now()->toIso8601String(),
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], 'meta.json'));
         $this->addPreviewImage($zip['archive']);
         $zip['archive']->close();
 
@@ -100,24 +101,24 @@ final class ThemeExportManager
         $settings = PlatformSetting::current();
         $semantic = app(ThemeTokenManager::class)->semanticEditorState($settings);
 
-        $zip['archive']->addFromString('branding.json', json_encode([
-            'panel_name' => $branding?->panel_name ?: $settings->brandName(),
+        $zip['archive']->addFromString('branding.json', $this->encodeJson([
+            'panel_name' => $branding?->panel_name ?? $settings->brandName(),
             'background_type' => $branding?->background_type ?: 'none',
             'background_value' => $branding?->background_value,
             'exported_at' => now()->toIso8601String(),
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], 'branding.json'));
 
-        $zip['archive']->addFromString('brand-colors.json', json_encode([
+        $zip['archive']->addFromString('brand-colors.json', $this->encodeJson([
             'primary_color' => $semantic['primary_color'],
             'secondary_color' => $semantic['secondary_color'],
             'accent_color' => $semantic['accent_color'],
             'surface_color' => $semantic['surface_color'],
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], 'brand-colors.json'));
 
-        $zip['archive']->addFromString('fonts.json', json_encode([
+        $zip['archive']->addFromString('fonts.json', $this->encodeJson([
             'font_heading' => $semantic['font_heading'],
             'font_body' => $semantic['font_body'],
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], 'fonts.json'));
 
         $this->addBrandingAsset($zip['archive'], $branding?->logo_path, 'logo');
         $this->addBrandingAsset($zip['archive'], $branding?->favicon_path, 'favicon');
@@ -136,7 +137,7 @@ final class ThemeExportManager
         $zip = $this->createZipPath($name, 'tenant-preset');
         $branding = $this->branding($organizationId);
 
-        $zip['archive']->addFromString('tenant-preset.json', json_encode([
+        $zip['archive']->addFromString('tenant-preset.json', $this->encodeJson([
             'name' => $name,
             'organization_id' => $organizationId,
             'theme' => app(ThemeTokenManager::class)->exportPayload(PlatformSetting::current())['resolved'] ?? [],
@@ -145,7 +146,7 @@ final class ThemeExportManager
             'dashboard_layouts' => $this->dashboardLayout($branding),
             'component_overrides' => $this->componentOverrides($organizationId),
             'exported_at' => now()->toIso8601String(),
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        ], 'tenant-preset.json'));
         $zip['archive']->close();
 
         return [
@@ -172,9 +173,9 @@ final class ThemeExportManager
     private function exportStyleDictionary(string $name): array
     {
         $path = $this->tmpPath($name, 'style-dictionary', 'json');
-        file_put_contents($path, json_encode(
+        file_put_contents($path, $this->encodeJson(
             app(ThemeTokenManager::class)->styleDictionary(PlatformSetting::current()),
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+            'style-dictionary.json'
         ).PHP_EOL);
 
         return [
@@ -325,5 +326,14 @@ final class ThemeExportManager
     private function tmpPath(string $name, string $suffix, string $extension): string
     {
         return sys_get_temp_dir().'/titan-'.Str::slug($name).'-'.$suffix.'-'.Str::ulid().'.'.$extension;
+    }
+
+    private function encodeJson(mixed $value, string $fileName): string
+    {
+        try {
+            return json_encode($value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (JsonException $exception) {
+            throw new \RuntimeException('Failed to encode '.$fileName.': '.$exception->getMessage(), previous: $exception);
+        }
     }
 }
