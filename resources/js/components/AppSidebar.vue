@@ -18,6 +18,10 @@ import { BookOpen, CreditCard, Folder, LayoutGrid, MapPinned, Paintbrush, Smartp
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
+type SidebarNavItem = NavItem & {
+    key: string;
+};
+
 const page = usePage<AppPageProps>();
 const roles = page.props.auth?.roles ?? [];
 const hiddenNavItems = computed(
@@ -31,7 +35,7 @@ const canAccessZeroFuss = roles.includes('customer');
 const canAccessTitanNexus = roles.some((role) => ['owner', 'admin'].includes(role));
 const canAccessTitanSolo = roles.includes('owner') && ['starter', 'solo', 'single_operator'].includes(page.props.plan?.current ?? '');
 
-const mainNavItems: NavItem[] = [
+const mainNavItems: SidebarNavItem[] = [
     {
         key: 'Dashboard',
         title: 'Dashboard',
@@ -110,7 +114,7 @@ const mainNavItems: NavItem[] = [
         : []),
 ];
 
-const footerNavItems: NavItem[] = [
+const footerNavItems: SidebarNavItem[] = [
     {
         key: 'Github Repo',
         title: 'Github Repo',
@@ -125,8 +129,8 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
-const filterNavItems = (items: NavItem[]) =>
-    items.filter((item) => !hiddenNavItems.value.has(item.key ?? item.title));
+const filterNavItems = (items: SidebarNavItem[]) =>
+    items.filter((item) => !hiddenNavItems.value.has(item.key));
 
 const visibleMainNavItems = computed(() => filterNavItems(mainNavItems));
 const visibleFooterNavItems = computed(() => filterNavItems(footerNavItems));

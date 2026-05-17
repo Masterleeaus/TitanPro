@@ -99,4 +99,22 @@ describe('AppSidebar', () => {
         expect(wrapper.text()).toContain('Github Repo');
         expect(wrapper.text()).toContain('Documentation');
     });
+
+    it('keeps the platform group visible when only some items are hidden', () => {
+        pageState.props.role_ui = {
+            hidden_nav_items: ['TitanGo Panel'],
+        };
+
+        const wrapper = mount(AppSidebar, {
+            global: {
+                stubs: globalStubs,
+            },
+        });
+
+        expect(wrapper.text()).toContain('Platform');
+        expect(wrapper.text()).toContain('Dashboard');
+        expect(wrapper.text()).not.toContain('TitanGo Panel');
+        expect(wrapper.text()).toContain('GroundZero Panel');
+        expect(wrapper.text()).toContain('Documentation');
+    });
 });
