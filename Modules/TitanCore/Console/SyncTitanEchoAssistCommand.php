@@ -6,10 +6,10 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class SyncTitanAgentsCommand extends Command
+class SyncTitanEchoAssistCommand extends Command
 {
     protected $signature = 'titan:sync-agents {--tenant_id=}';
-    protected $description = 'Sync default TitanAgents + KB collections from TitanCore config into the database.';
+    protected $description = 'Sync default TitanEchoAssist agents + KB collections from TitanCore config into the database.';
 
     public function handle(): int
     {

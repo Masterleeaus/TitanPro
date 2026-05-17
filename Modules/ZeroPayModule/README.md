@@ -11,7 +11,7 @@ This module follows the Titan AI-native module pattern:
 - top half: quick cards, widgets, module AI chatbot, shortcuts, settings
 - bottom half: one tabbed table card for all module tables
 - PWA/channel/voice control through the same agent and action map
-- TitanZero supervises system AI; TitanAgents runs the trained module agent; TitanCore provides AI infrastructure
+- TitanZero supervises system AI; TitanEchoAssist runs the trained module agent; TitanCore provides AI infrastructure
 
 See:
 

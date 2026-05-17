@@ -12,7 +12,7 @@
   ],
   "routing": {
     "system_ai": "TitanZero",
-    "module_ai": "TitanAgents",
+    "module_ai": "TitanEchoAssist",
     "handoff_rules": [
       "system_intents_to_zero",
       "module_intents_to_agent",

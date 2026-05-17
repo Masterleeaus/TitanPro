@@ -6,7 +6,7 @@
   "name": "ZeroPay Payment Agent",
   "description": "Handles payment session queries, gateway status, and transaction lookups",
   "module": "zeropay-module",
-  "owner": "TitanAgents",
+  "owner": "TitanEchoAssist",
   "runtime": "TitanCore.ProviderRouter",
   "system_supervisor": "TitanZero",
   "answer_mode": "grounded_with_citations",

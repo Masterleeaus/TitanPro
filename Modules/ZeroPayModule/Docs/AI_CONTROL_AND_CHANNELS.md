@@ -20,4 +20,4 @@ Read actions can execute after policy checks. Draft actions do not save until co
 
 ## Routing model
 
-TitanZero handles system configuration, cross-module orchestration, diagnostics, and governance. TitanAgents handles the module-trained AI and module tools. TitanCore handles providers, embeddings, vector search, memory, usage, policy, audit, and prompt registry.
+TitanZero handles system configuration, cross-module orchestration, diagnostics, and governance. TitanEchoAssist handles the module-trained AI and module tools. TitanCore handles providers, embeddings, vector search, memory, usage, policy, audit, and prompt registry.

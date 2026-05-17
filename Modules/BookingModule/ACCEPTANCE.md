@@ -7,4 +7,4 @@
 - All writes flow through Actions or existing Services.
 - Scheduled reminders are company-scoped and deduplicated.
 - Booking lifecycle events are logged and can send queued mail.
-- AI manifests and ModuleAgent policy are present for TitanCore/TitanAgents discovery.
+- AI manifests and ModuleAgent policy are present for TitanCore/TitanEchoAssist discovery.
