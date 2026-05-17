@@ -3,6 +3,8 @@
 namespace Modules\TitanProAdmin\Filament\Pages;
 
 use Filament\Pages\Page;
+use Modules\TitanProAdmin\Policies\SuperAdminPolicy;
+use Modules\TitanProAdmin\Services\PlatformHealthService;
 
 class PlatformHealthPage extends Page
 {
@@ -15,5 +17,17 @@ class PlatformHealthPage extends Page
     public function getTitle(): string
     {
         return 'Platform Health';
+    }
+
+    public static function canAccess(): bool
+    {
+        $user = auth('super_admin')->user() ?? auth()->user();
+
+        return app(SuperAdminPolicy::class)->access($user);
+    }
+
+    public function health(): array
+    {
+        return app(PlatformHealthService::class)->status();
     }
 }
