@@ -1,0 +1,17 @@
+{
+  "name": "Dispatch",
+  "alias": "dispatch",
+  "description": "Standalone field-service dispatch module for work orders, appointments, technician shifts, route stops, status logs, and workforce allocation.",
+  "active": 1,
+  "filament_panel": "groundzero",
+  "keywords": ["dispatch", "field-service", "shifts", "routing", "workforce"],
+  "priority": 0,
+  "providers": [
+    "Modules\\Dispatch\\Providers\\ModuleServiceProvider",
+    "Modules\\Dispatch\\Providers\\RouteServiceProvider",
+    "Modules\\Dispatch\\Providers\\EventServiceProvider",
+    "Modules\\Dispatch\\Providers\\FilamentServiceProvider"
+  ],
+  "files": ["Bootstrap/helpers.php"],
+  "requires": []
+}
