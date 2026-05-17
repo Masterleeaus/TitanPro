@@ -3,7 +3,12 @@
 namespace Modules\TitanZero\Http\Controllers;
 
 use App\Http\Controllers\AccountBaseController;
+use App\Http\Controllers\TitanZero\SuggestionsController as TitanZeroSuggestionsController;
+use App\Models\TitanZeroThread;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Modules\TitanZero\Services\TitanZeroService;
 
 class TitanZeroController extends AccountBaseController
 {
@@ -70,5 +75,89 @@ class TitanZeroController extends AccountBaseController
     public function ping()
     {
         return response()->json(['status' => 'ok', 'module' => 'titanzero', 'pass' => 3]);
+    }
+
+    public function generateUi(Request $request, TitanZeroService $service): JsonResponse
+    {
+        $validated = $request->validate([
+            'message' => ['required', 'string', 'max:4000'],
+            'threadId' => ['nullable', 'integer', 'min:1'],
+            'thread_id' => ['nullable', 'integer', 'min:1'],
+            'context' => ['nullable', 'array'],
+            'context.appKey' => ['nullable', 'string', 'max:80'],
+            'context.app_key' => ['nullable', 'string', 'max:80'],
+            'context.page' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $user = $request->user();
+        $message = trim((string) $validated['message']);
+        $context = $validated['context'] ?? [];
+        $threadId = $validated['thread_id'] ?? $validated['threadId'] ?? null;
+        $appKey = (string) ($context['appKey'] ?? $context['app_key'] ?? 'default');
+        $organizationId = $user?->organization_id ?? $user?->company_id;
+
+        $thread = null;
+
+        if ($threadId !== null) {
+            $thread = TitanZeroThread::query()
+                ->whereKey($threadId)
+                ->where('user_id', $user?->id)
+                ->first();
+        }
+
+        if (! $thread) {
+            $thread = new TitanZeroThread([
+                'organization_id' => $organizationId,
+                'user_id' => $user?->id,
+                'app_key' => $appKey,
+                'messages' => [],
+                'widgets' => [],
+            ]);
+        }
+
+        if (! $thread->title) {
+            $thread->title = Str::limit($message, 60);
+        }
+
+        $history = $thread->messages ?? [];
+
+        $thread->appendMessage([
+            'id' => (string) Str::uuid(),
+            'role' => 'user',
+            'content' => $message,
+            'createdAt' => now()->toISOString(),
+        ]);
+
+        $response = $service->respond($message, $history, array_merge($context, [
+            'organization_id' => $organizationId,
+        ]));
+
+        $thread->appendMessage([
+            'id' => (string) Str::uuid(),
+            'role' => 'assistant',
+            'content' => $response['message'],
+            'createdAt' => now()->toISOString(),
+            'widgets' => $response['parts'],
+        ]);
+
+        $thread->widgets = $response['parts'];
+        $thread->save();
+
+        $threadKey = (string) $thread->getKey();
+        $suggestions = TitanZeroSuggestionsController::suggestionsForAppKey($appKey);
+
+        return response()->json([
+            'is_task_complete' => true,
+            'message' => $response['message'],
+            'reply' => $response['reply'],
+            'parts' => $response['parts'],
+            'widgets' => $response['widgets'],
+            'errors' => [],
+            'thread' => $threadKey,
+            'meta' => [
+                'threadId' => $threadKey,
+                'suggestions' => $suggestions,
+            ],
+        ]);
     }
 }

@@ -164,6 +164,11 @@ async function submit() {
     state.messages.push(assistantMessage);
     state.widgets = mergeWidgets(state.widgets, response.parts ?? []);
 
+    const threadId = response.meta?.['threadId'];
+    if (typeof threadId === 'string' && threadId.length > 0) {
+      state.activeThreadId = threadId;
+    }
+
     if (Array.isArray(response.meta?.['suggestions'])) {
       state.suggestions = response.meta['suggestions'] as string[];
     }
