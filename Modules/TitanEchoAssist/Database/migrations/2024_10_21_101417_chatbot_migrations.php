@@ -1,10 +1,10 @@
 <?php
 
-use App\Extensions\Chatbot\System\Enums\ColorModeEnum;
-use App\Extensions\Chatbot\System\Enums\PositionEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\TitanEchoAssist\Enums\ColorModeEnum;
+use Modules\TitanEchoAssist\Enums\PositionEnum;
 
 return new class extends Migration
 {
