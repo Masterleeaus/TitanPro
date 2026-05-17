@@ -58,7 +58,7 @@ Route::middleware(['api', EnsureTitanChatbotEnabled::class])
 
                 Route::get('/portal/visits', [PortalWorkDataController::class, 'visits'])->name('visits.index');
                 Route::get('/portal/invoices', [PortalWorkDataController::class, 'invoices'])->name('invoices.index');
-                Route::get('/portal/documents', [PortalWorkDataController::class, 'documents'])->name('documents.index');
+                Route::get('/portal/documents', [PortalWorkDataController::class, 'documents'])->name('work-data.documents.index');
                 Route::get('/portal/issues', [PortalWorkDataController::class, 'issues'])->name('issues.index');
                 Route::get('/portal/service-jobs/{id}/checklists', [PortalWorkDataController::class, 'checklists'])->name('service-jobs.checklists');
                 Route::get('/portal/service-jobs/{id}/timeline', [PortalWorkDataController::class, 'timeline'])->name('service-jobs.timeline');

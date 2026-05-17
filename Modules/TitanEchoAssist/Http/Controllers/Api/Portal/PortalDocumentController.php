@@ -4,6 +4,7 @@ namespace Modules\TitanEchoAssist\Http\Controllers\Api\Portal;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Modules\TitanEchoAssist\Models\Chatbot;
 
 class PortalDocumentController extends PortalBaseController
@@ -21,7 +22,7 @@ class PortalDocumentController extends PortalBaseController
         return response()->json([
             'ok' => true,
             'chatbot_id' => $chatbot->getKey(),
-            'path' => '/uploads/' . $path,
+            'path' => Storage::url($path),
             'title' => $validated['title'] ?? $validated['document']->getClientOriginalName(),
         ], 201);
     }

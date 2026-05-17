@@ -38,9 +38,9 @@ class ValidatePortalSessionToken
         }
 
         if (
-            $chatbot->company_id !== null
-            && $conversation->company_id !== null
-            && (int) $chatbot->company_id !== (int) $conversation->company_id
+            $chatbot->company_id === null
+            || $conversation->company_id === null
+            || (int) $chatbot->company_id !== (int) $conversation->company_id
         ) {
             return $this->unauthorizedResponse();
         }

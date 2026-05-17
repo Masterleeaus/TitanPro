@@ -4,6 +4,7 @@ namespace Modules\TitanEchoAssist\Http\Controllers\Api\Portal;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Modules\TitanEchoAssist\Models\Chatbot;
 use Modules\TitanEchoAssist\Models\ChatbotHistory;
 use Modules\TitanEchoAssist\Models\Conversation;
@@ -96,7 +97,7 @@ class PortalConversationController extends PortalBaseController
             'role' => 'user',
             'model' => $chatbot->ai_model,
             'message' => $validated['message'] ?? '',
-            'media_url' => '/uploads/' . $path,
+            'media_url' => Storage::url($path),
             'media_name' => $validated['media']->getClientOriginalName(),
             'read_at' => now(),
         ]);
