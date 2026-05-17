@@ -1,0 +1,12 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "module": "Complaint",
+  "prefix": "/api/complaint",
+  "endpoints": [
+    "GET /complaints",
+    "POST /complaints",
+    "PATCH /complaints/{complaint}",
+    "POST /complaints/{complaint}/resolve",
+    "POST /complaints/{complaint}/escalate"
+  ]
+}
