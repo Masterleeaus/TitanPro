@@ -20,6 +20,12 @@ on:
       - 'app/Http/Controllers/UiStudio/**'
       - '.github/workflows/motion-browser.yml'
   workflow_dispatch:
+    inputs:
+      regenerate_baselines:
+        description: 'Regenerate snapshot baselines (overwrites stored PNGs)'
+        required: false
+        default: 'false'
+        type: boolean
 
 permissions:
   contents: read
@@ -32,7 +38,7 @@ jobs:
   motion-browser:
     name: UI Studio Motion — Browser Validation
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout code
@@ -73,12 +79,24 @@ jobs:
           APP_ENV: testing
           APP_URL: http://127.0.0.1:8000
 
-      - name: Run Dusk browser tests (Motion)
+      - name: Run Dusk browser tests (Motion DOM / CSS)
         run: php artisan dusk tests/Browser/MotionBrowserTest.php
         env:
           APP_ENV: testing
           APP_URL: http://127.0.0.1:8000
           DUSK_DRIVER_URL: http://localhost:9515
+
+      - name: Run Dusk snapshot tests (Motion visual regression)
+        run: php artisan dusk tests/Browser/MotionPresetSnapshotTest.php
+        env:
+          APP_ENV: testing
+          APP_URL: http://127.0.0.1:8000
+          DUSK_DRIVER_URL: http://localhost:9515
+          # Configurable pixel-diff threshold (default 1 %).
+          # Set to a higher value (e.g. 0.03) to allow minor rendering differences.
+          MOTION_SNAPSHOT_THRESHOLD: '0.01'
+          # Set to 'true' via workflow_dispatch to regenerate all baseline PNGs.
+          MOTION_REGENERATE_BASELINES: ${{ inputs.regenerate_baselines || 'false' }}
 
       - name: Upload Dusk failure screenshots
         if: failure()
@@ -87,3 +105,24 @@ jobs:
           name: dusk-motion-failures
           path: tests/Browser/screenshots
           retention-days: 7
+
+      - name: Collect snapshot diff artifacts
+        if: failure()
+        # Bundle the captured screenshots alongside the stored baselines so
+        # reviewers can visually inspect what changed.
+        run: |
+          mkdir -p /tmp/motion-snapshot-diffs
+          # Copy current baseline PNGs
+          cp tests/Browser/Snapshots/motion-presets/*.png /tmp/motion-snapshot-diffs/ 2>/dev/null || true
+          # Copy the screenshots just captured (named motion-snapshot-<preset>.png)
+          for f in tests/Browser/screenshots/motion-snapshot-*.png; do
+            [ -f "$f" ] && cp "$f" /tmp/motion-snapshot-diffs/ || true
+          done
+
+      - name: Upload snapshot diff artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dusk-motion-snapshot-diffs
+          path: /tmp/motion-snapshot-diffs
+          retention-days: 14
