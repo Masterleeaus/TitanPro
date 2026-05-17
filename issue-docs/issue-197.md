@@ -1,64 +1,52 @@
-# Issue 197 — [FOLLOW-UP] UI Studio: WidgetPropertyRegistry and per-widget property forms
+# Issue 197 — [FOLLOW-UP] Remove duplicate InvoiceResource / PaymentResource from app/Filament/Resources
 
-**Follows from:** issue-docs/issue-135.md
+## Decision
 
-## Summary
+Repurpose the TitanPro `InvoiceResource` and `PaymentResource` as **cross-tenant super-admin
+views** instead of deleting them.
 
-The UI Studio (#135) previously exposed only the column-width slider in the Layout panel
-when a canvas card was selected.  This follow-up adds a `WidgetPropertyRegistry` that maps
-each widget type to a flat field schema, wires it into the `UiStudio` Livewire page, and
-renders an inline property editor in the right panel so studio users can configure widgets
-without touching code.
+### Why this direction
 
----
+- The TitanPro panel already links to these finance resources, so keeping them avoids breaking
+  existing super-admin navigation.
+- The resources were already super-admin-only; making them cross-tenant turns the fallback into
+  a purposeful platform-ops view instead of a duplicate org-scoped finance surface.
+- ZeroPay remains the authoritative finance panel for `bookkeeper`, `owner`, and `admin`.
 
-## Files Changed
+## Files changed
 
 | File | Action | Purpose |
 |------|--------|---------|
-| `app/Filament/Pages/UiStudio/WidgetPropertyRegistry.php` | **Created** | Maps all 10 catalogue widget types to their property field schemas; provides `schema()`, `all()`, and `defaults()` static helpers. |
-| `app/Filament/Pages/UiStudio.php` | **Modified** | Added `$widgetPropertyValues` state, `updateWidgetProperty()` action, updated `selectWidget()` to load registry defaults, updated `addWidget()` to initialise with defaults, updated `loadCanvasWidgets()` to hydrate saved properties, updated `publish()` to persist `properties` in the layouts table widget JSON. |
-| `resources/views/filament/pages/ui-studio.blade.php` | **Modified** | Layout tab now renders a per-widget "Properties" section below the column-width slider using the field definitions from `WidgetPropertyRegistry::schema()`. Supports `text`, `textarea`, `select`, `toggle`, and `number` field types. |
-| `tests/Feature/WidgetPropertyRegistryTest.php` | **Created** | Pest feature tests verifying registry completeness, `updateWidgetProperty()` write-through, `publish()` persistence, and round-trip hydration from the layouts table. |
+| `app/Filament/Resources/InvoiceResource.php` | Modified | Removed tenant scoping from the TitanPro super-admin query and added an organization column so invoices are clearly cross-tenant. |
+| `app/Filament/Resources/PaymentResource.php` | Modified | Removed tenant scoping from the TitanPro super-admin query and added an organization column so payments are clearly cross-tenant. |
+| `tests/Feature/Admin/InvoicePaymentAccessTest.php` | Modified | Updated coverage for the repurposed TitanPro routes and added ZeroPay org-scoping checks for owner/admin/bookkeeper invoice access. |
+| `tests/Feature/CrossOrgAccessTest.php` | Modified | Updated invoice/payment TitanPro edit-page expectations to reflect intentional cross-tenant super-admin access. |
 
----
+## Fixes applied
 
-## Design decisions
+1. **TitanPro InvoiceResource**
+   - Removed the extra org filter and bypassed the model `TenantScope` in `getEloquentQuery()`.
+   - Added an `organization.name` table column so super-admins can tell which tenant owns each invoice.
 
-* **Flat field array (not Filament `Form`)** — the studio right panel is a custom Livewire
-  component, not a standard Filament resource edit form.  Using a lightweight array-of-field-
-  definitions (same pattern as `ComponentRegistry` tokens) avoids the Filament form lifecycle
-  overhead while keeping the field type vocabulary small and readable.
+2. **TitanPro PaymentResource**
+   - Removed the extra org filter and bypassed the model `TenantScope` in `getEloquentQuery()`.
+   - Added an `organization.name` table column so super-admins can tell which tenant owns each payment.
 
-* **Write-through on `updateWidgetProperty()`** — property changes are written to both the
-  in-memory `$widgetPropertyValues` editor state *and* the matching `canvasWidgets` entry.
-  This ensures `publish()` always operates on the latest state without requiring a separate
-  "save" step.
+3. **Access tests**
+   - Kept non-super-admin TitanPro finance access forbidden.
+   - Added cross-tenant TitanPro super-admin coverage for invoice/payment list + edit access.
+   - Added ZeroPay invoice list assertions confirming owner/admin/bookkeeper still only see their own org’s invoices.
 
-* **`properties` key in canvas widget data** — extends the canvas widget shape to
-  `{id, type, label, columns, order, properties}`.  Existing widgets that load without a
-  `properties` key receive registry defaults on hydration.
+## Validation notes
 
-* **Layouts table persistence** — the `data` object written to the `layouts.widgets` JSON
-  column is now `{title, ...properties}` so legacy layout consumers (Zeus Dynamic Dashboard)
-  continue to see the `title` key they already expect.
-
----
-
-## Acceptance criteria status
-
-- [x] `app/Filament/Pages/UiStudio/WidgetPropertyRegistry.php` created
-- [x] Registered for all 10 currently-discoverable dashboard widget types
-- [x] Layout tab renders the matching schema for the selected card
-- [x] Property values persist in the layouts table widget JSON
-- [x] Pest feature test that updating a widget's property is reflected after publish
-
----
+- Attempted `composer install --no-interaction --prefer-dist --no-progress`, but the lock file
+  requires PHP 8.4 packages while this runner has PHP 8.3.6, so Laravel/Pest validation could not
+  be executed locally in this environment.
 
 ## Next steps
 
-* Expose a `refresh_interval` property in the UiStudio canvas preview so widgets auto-refresh
-  on configurable intervals.
-* Add server-side validation for each property key (e.g. reject non-numeric `max_items`).
-* Consider a `WidgetPropertyRegistry::extend()` hook so module widgets can register their own
-  schemas without modifying the core registry class.
+- Re-run the updated Pest targets in a PHP 8.4 environment:
+  - `./vendor/bin/pest tests/Feature/Admin/InvoicePaymentAccessTest.php`
+  - `./vendor/bin/pest tests/Feature/CrossOrgAccessTest.php`
+- If route/action codegen is regenerated in CI, confirm the generated TitanPro finance helpers
+  still match the intended cross-tenant super-admin behavior.
