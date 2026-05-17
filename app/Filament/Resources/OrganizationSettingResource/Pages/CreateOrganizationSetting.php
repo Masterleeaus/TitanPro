@@ -11,19 +11,19 @@ class CreateOrganizationSetting extends CreateRecord
     protected static string $resource = OrganizationSettingResource::class;
 
     /**
-     * Redirect to the edit page when the authenticated user's organization
-     * already has a settings row, preventing duplicate records.
+     * Keep the create route guarded so direct visits still land on the
+     * canonical row when one already exists for the current organization.
      */
     public function mount(): void
     {
-        $orgId = auth()->user()?->organization_id;
+        $organizationId = auth()->user()?->organization_id;
 
-        if ($orgId) {
-            $existing = OrganizationSetting::where('organization_id', $orgId)->first();
+        if ($organizationId !== null) {
+            $setting = OrganizationSetting::where('organization_id', $organizationId)->first();
 
-            if ($existing) {
+            if ($setting !== null) {
                 $this->redirect(
-                    OrganizationSettingResource::getUrl('edit', ['record' => $existing])
+                    OrganizationSettingResource::getUrl('edit', ['record' => $setting])
                 );
 
                 return;
