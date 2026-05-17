@@ -189,10 +189,13 @@ class UiStudio extends Page
     /** @var array<int, array{version_number:int,label:string,created_at:string,created_by:string}> */
     public array $themeVersions = [];
 
+    /** Label used when creating a named snapshot or the next publish version. */
     public string $versionLabel = '';
 
+    /** Left-hand version number in the diff comparison view. */
     public ?int $diffFromVersion = null;
 
+    /** Right-hand version number in the diff comparison view. */
     public ?int $diffToVersion = null;
 
     /** @var array<int, array{token:string,left:string,right:string,changed:bool}> */
@@ -1598,7 +1601,7 @@ class UiStudio extends Page
         $this->themeVersions = $rows->map(static fn (TitanThemeVersion $version): array => [
             'version_number' => (int) $version->version_number,
             'label' => (string) ($version->label ?? "v{$version->version_number}"),
-            'created_at' => (string) optional($version->created_at)?->format('Y-m-d H:i'),
+            'created_at' => (string) ($version->created_at?->format('Y-m-d H:i') ?? ''),
             'created_by' => (string) ($version->author?->name ?? 'System'),
         ])->values()->all();
 

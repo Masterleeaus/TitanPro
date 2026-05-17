@@ -19,7 +19,10 @@ test('ui studio theme versioning hooks are present', function () {
 });
 
 test('theme version persistence and rollback command are defined', function () {
-    $migration = file_get_contents(__DIR__.'/../../database/migrations/2026_05_17_161600_create_titan_theme_versions_table.php');
+    $matches = glob(__DIR__.'/../../database/migrations/*_create_titan_theme_versions_table.php');
+    expect($matches)->not->toBeEmpty();
+
+    $migration = file_get_contents($matches[0]);
     $model = file_get_contents(__DIR__.'/../../app/Models/TitanThemeVersion.php');
     $command = file_get_contents(__DIR__.'/../../app/Console/Commands/TitanThemeRollbackCommand.php');
 
