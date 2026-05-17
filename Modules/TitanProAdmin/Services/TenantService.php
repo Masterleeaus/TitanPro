@@ -49,6 +49,8 @@ class TenantService
             $query->where('organization_id', $tenantId);
         }
 
-        $query->exists();
+        if (! $query->exists()) {
+            throw new \RuntimeException("No cross-tenant identity context found for tenant [{$tenantId}].");
+        }
     }
 }
