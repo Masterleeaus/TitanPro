@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TitanUsageMeter extends Model
+class TitanUsageMeter extends Model implements TenantAware
 {
+    use BelongsToTenant;
     protected $fillable = [
         'organization_id',
         'meter_key',

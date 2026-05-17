@@ -2,6 +2,7 @@
 
 use App\Models\Organization;
 use App\Models\OrganizationSetting;
+use App\Models\Scopes\TenantScope;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Http\UploadedFile;
@@ -276,9 +277,9 @@ test('integration settings are scoped to the user organization', function () {
         'stripe_publishable_key' => 'pk_theirs',
     ]);
 
-    expect(OrganizationSetting::where('organization_id', $org->id)->value('stripe_publishable_key'))
+    expect(OrganizationSetting::withoutGlobalScope(TenantScope::class)->where('organization_id', $org->id)->first()?->stripe_publishable_key)
         ->toBe('pk_mine');
-    expect(OrganizationSetting::where('organization_id', $otherOrg->id)->value('stripe_publishable_key'))
+    expect(OrganizationSetting::withoutGlobalScope(TenantScope::class)->where('organization_id', $otherOrg->id)->first()?->stripe_publishable_key)
         ->toBe('pk_theirs');
 });
 

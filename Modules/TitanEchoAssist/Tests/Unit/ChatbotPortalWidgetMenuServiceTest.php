@@ -7,6 +7,15 @@ use PHPUnit\Framework\TestCase;
 
 class ChatbotPortalWidgetMenuServiceTest extends TestCase
 {
+    public function test_menu_returns_widget_structure(): void
+    {
+        $menu = (new ChatbotPortalWidgetMenuService())->menu();
+
+        $this->assertArrayHasKey('hero', $menu);
+        $this->assertArrayHasKey('sections', $menu);
+        $this->assertIsArray($menu['sections']);
+        $this->assertNotEmpty($menu['sections']);
+    }
     public function test_builds_expected_menu_shape_with_customer_fixture(): void
     {
         $service = new ChatbotPortalWidgetMenuService();

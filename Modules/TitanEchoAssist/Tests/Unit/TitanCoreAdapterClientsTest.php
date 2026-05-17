@@ -73,4 +73,3 @@ class TitanCoreAdapterClientsTest extends TestCase
         $this->assertCount(1, $request['body']['messages'] ?? []);
     }
 }
-
