@@ -183,13 +183,12 @@ class MotionBrowserTest extends DuskTestCase
     }
 
     /**
-     * When prefers-reduced-motion: reduce is emulated via injected CSS,
+     * When prefers-reduced-motion: reduce is emulated via CDP Emulation.setEmulatedMedia,
      * the motion-target element no longer carries an animation.
      *
-     * Because CDP-level media emulation is not available through the standard
-     * Dusk WebDriver bridge, this test injects an override stylesheet that
-     * mirrors what the OS media preference would produce, then asserts the
-     * computed animation-name is 'none'.
+     * Uses the Chrome DevTools Protocol to genuinely activate the media feature so that
+     * the browser evaluates the real @media (prefers-reduced-motion: reduce) rule path,
+     * rather than relying on an injected CSS override stylesheet.
      */
     public function test_reduced_motion_override_disables_animation_effects(): void
     {
@@ -199,20 +198,18 @@ class MotionBrowserTest extends DuskTestCase
             // Activate fade-in so the motion-target would normally have an animation
             $browser->select('#preset-select', 'fade-in');
 
-            // Inject a stylesheet simulating prefers-reduced-motion: reduce
-            $browser->script(
-                "var s = document.createElement('style');" .
-                "s.id = 'test-reduced-motion';" .
-                "s.textContent = '.motion-target,.motion-sidebar,.motion-card,.motion-overlay,.motion-skeleton,.motion-press { animation: none !important; transition: none !important; }';" .
-                "document.head.appendChild(s);"
-            );
+            // Emulate prefers-reduced-motion: reduce at the CDP level
+            $this->withReducedMotion($browser);
 
-            // Verify animation-name is 'none' on the motion-target
+            // The @media (prefers-reduced-motion: reduce) rule suppresses all animations
             $animationName = $browser->script(
                 "return getComputedStyle(document.getElementById('preview-target')).animationName"
             );
 
             $this->assertSame('none', $animationName[0]);
+
+            // Reset emulation so subsequent tests are not affected
+            $this->resetMotionEmulation($browser);
         });
     }
 
