@@ -4,16 +4,95 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
     open-pull-requests-limit: 10
+    groups:
+      laravel-and-filament:
+        patterns:
+          - "laravel/*"
+          - "filament/*"
+          - "*filament*"
+      php-tooling-and-test:
+        patterns:
+          - "pestphp/*"
+          - "laravel/pint"
+          - "laravel/dusk"
+          - "nunomaduro/collision"
+          - "fakerphp/faker"
+          - "mockery/mockery"
+      php-other-runtime:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "laravel/*"
+          - "filament/*"
+          - "*filament*"
+          - "pestphp/*"
+          - "laravel/pint"
+          - "laravel/dusk"
+          - "nunomaduro/collision"
+          - "fakerphp/faker"
+          - "mockery/mockery"
 
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "UTC"
     open-pull-requests-limit: 10
+    groups:
+      frontend-runtime:
+        patterns:
+          - "@inertiajs/*"
+          - "vue"
+          - "@vue/*"
+          - "vite"
+          - "@vitejs/*"
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "reka-ui"
+          - "lucide-vue-next"
+      frontend-tooling-and-test:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript*"
+          - "@types/*"
+          - "vitest"
+          - "@vitest/*"
+          - "prettier*"
+          - "happy-dom"
+      frontend-other-runtime:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@inertiajs/*"
+          - "vue"
+          - "@vue/*"
+          - "vite"
+          - "@vitejs/*"
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "reka-ui"
+          - "lucide-vue-next"
+          - "eslint*"
+          - "@eslint/*"
+          - "typescript*"
+          - "@types/*"
+          - "vitest"
+          - "@vitest/*"
+          - "prettier*"
+          - "happy-dom"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+      time: "07:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5

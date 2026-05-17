@@ -1,0 +1,14 @@
+{
+  "name": "TitanOperator",
+  "active": 1,
+  "alias": "titan-operator",
+  "description": "Operator management and chatbot builder layer for TitanEchoAssist.",
+  "priority": 11,
+  "providers": [
+    "Modules\\TitanOperator\\Providers\\TitanOperatorServiceProvider"
+  ],
+  "filament_panel": "titanpro",
+  "filament": {
+    "plugin": "Modules\\TitanOperator\\Filament\\Plugin\\TitanOperatorPlugin"
+  }
+}
