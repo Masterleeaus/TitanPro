@@ -16,7 +16,10 @@ use Modules\TitanEchoAssist\Services\ChatbotAnalyticsService;
 use Modules\TitanEchoAssist\Services\ConversationRouter;
 use Modules\TitanEchoAssist\Services\ConversationSessionManager;
 use Modules\TitanEchoAssist\Services\ConversationStateStore;
+use Modules\TitanEchoAssist\Services\Embedders\Contracts\EmbedderInterface;
+use Modules\TitanEchoAssist\Services\Embedders\OpenAIEmbedder;
 use Modules\TitanEchoAssist\Services\GeneratorBridge;
+use Modules\TitanEchoAssist\Services\KnowledgeRetriever;
 use Modules\TitanEchoAssist\Services\MessengerChannel;
 use Modules\TitanEchoAssist\Services\TelegramChannel;
 use Modules\TitanEchoAssist\Services\Contracts\TitanChatbotServiceContract;
@@ -61,9 +64,11 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(ConversationMemoryStore::class);
         $this->app->singleton(ChatbotAnalyticsService::class);
         $this->app->singleton(TrainingPipeline::class);
+        $this->app->singleton(KnowledgeRetriever::class);
         $this->app->singleton(TitanChatbotService::class);
         $this->app->singleton(ModuleAgentBindingService::class);
         $this->app->singleton(ModuleAgentControlService::class);
+        $this->app->singleton(EmbedderInterface::class, OpenAIEmbedder::class);
         $this->app->bind(TitanChatbotServiceContract::class, TitanChatbotService::class);
 
         // AI agents

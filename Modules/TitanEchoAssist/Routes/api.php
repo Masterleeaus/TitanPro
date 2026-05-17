@@ -13,9 +13,9 @@ use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalRecurringControlle
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalSessionController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalSiteProfileController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\Portal\PortalWorkDataController;
-use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotController;
+use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotApiController;
 use Modules\TitanEchoAssist\Http\Controllers\Api\ModuleAgentController;
-use Modules\TitanEchoAssist\Http\Controllers\Api\TitanChatbotApiController;
+use Modules\TitanEchoAssist\Http\Controllers\TitanChatbotController;
 use Modules\TitanEchoAssist\Http\Middleware\EnsureTitanChatbotEnabled;
 use Modules\TitanEchoAssist\Http\Middleware\ValidatePortalSessionToken;
 

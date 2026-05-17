@@ -6,38 +6,38 @@ use App\Models\BaseModel;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\TitanEchoAssist\Database\Factories\ChatbotPortalBookingRequestFactory;
+use Modules\TitanEchoAssist\Database\Factories\ChatbotPortalFeedbackFactory;
 
-class ChatbotPortalBookingRequest extends BaseModel
+class ChatbotPortalFeedback extends BaseModel
 {
     use HasCompany;
     use HasFactory;
 
-    protected $table = 'ext_chatbot_portal_booking_requests';
+    protected $table = 'ext_chatbot_portal_feedback';
 
     protected $fillable = [
         'company_id',
-        'chatbot_id',
         'customer_id',
+        'job_id',
+        'chatbot_id',
         'session_id',
-        'requested_at',
-        'preferred_date',
-        'preferred_time',
-        'service_type',
-        'notes',
+        'rating',
+        'comment',
+        'reclean_requested',
+        'reclean_reason',
+        'reclean_scheduled_at',
         'status',
-        'confirmed_job_id',
     ];
 
     protected $casts = [
-        'requested_at' => 'datetime',
-        'preferred_date' => 'date',
-        'preferred_time' => 'string',
+        'rating' => 'integer',
+        'reclean_requested' => 'boolean',
+        'reclean_scheduled_at' => 'datetime',
     ];
 
-    protected static function newFactory(): ChatbotPortalBookingRequestFactory
+    protected static function newFactory(): ChatbotPortalFeedbackFactory
     {
-        return ChatbotPortalBookingRequestFactory::new();
+        return ChatbotPortalFeedbackFactory::new();
     }
 
     public function chatbot(): BelongsTo
@@ -50,3 +50,4 @@ class ChatbotPortalBookingRequest extends BaseModel
         return $this->belongsTo(ChatbotCustomer::class, 'customer_id');
     }
 }
+
