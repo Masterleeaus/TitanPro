@@ -1,0 +1,14 @@
+{
+  "module": "Payroll",
+  "profile": "cleaners_mvp",
+  "features": [
+    "shift_loadings",
+    "travel_allowances",
+    "site_reconciliation",
+    "contractor_payouts",
+    "payslip_delivery",
+    "finalisation_guard",
+    "integrity_diagnostics"
+  ],
+  "generated_at": "2026-05-13"
+}

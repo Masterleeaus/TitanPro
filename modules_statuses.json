@@ -7,5 +7,6 @@
     "CleaningJobs": true,
     "BookingModule": true,
     "Biometric": true,
-    "Budgeting": true
+    "Budgeting": true,
+    "Payroll": true
 }

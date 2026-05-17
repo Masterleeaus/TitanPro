@@ -1,0 +1,13 @@
+{
+  "name": "payroll-mvp-hardening",
+  "pass": 9,
+  "features": [
+    "duplicate-run-guard",
+    "finalization-safeguards",
+    "cleaner-shift-reconciliation",
+    "ess-payslip-access-tokens",
+    "failed-delivery-retry",
+    "mvp-diagnostics"
+  ],
+  "status": "ready"
+}
