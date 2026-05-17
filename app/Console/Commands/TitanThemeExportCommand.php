@@ -55,6 +55,10 @@ class TitanThemeExportCommand extends Command
         if (! rename($export['path'], $targetPath)) {
             // Cross-filesystem moves can fail with rename(), so fallback to copy+delete.
             if (! copy($export['path'], $targetPath)) {
+                if (file_exists($export['path']) && ! unlink($export['path'])) {
+                    $this->warn('Temporary export file could not be deleted: '.$export['path']);
+                }
+
                 $this->error('Unable to copy export artifact to destination path.');
 
                 return self::FAILURE;

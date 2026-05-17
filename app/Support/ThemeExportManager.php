@@ -240,7 +240,7 @@ final class ThemeExportManager
             return [];
         }
 
-        $decoded = json_decode((string) ($row->widgets ?? '[]'), true);
+        $decoded = json_decode($row->widgets ?? '[]', true);
 
         return is_array($decoded) ? $decoded : [];
     }

@@ -5,7 +5,13 @@ use Illuminate\Support\Str;
 
 function cleanupThemeExportDirectory(string $directory): void
 {
-    if (! is_dir($directory)) {
+    if (! file_exists($directory)) {
+        return;
+    }
+
+    if (is_file($directory)) {
+        unlink($directory);
+
         return;
     }
 
@@ -18,7 +24,10 @@ function cleanupThemeExportDirectory(string $directory): void
         $path = $directory.'/'.$item;
         if (is_file($path)) {
             unlink($path);
+            continue;
         }
+
+        cleanupThemeExportDirectory($path);
     }
 
     rmdir($directory);
