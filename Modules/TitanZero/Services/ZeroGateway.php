@@ -7,7 +7,7 @@ use Modules\TitanCore\Services\AgentRegistryService;
 use Modules\TitanCore\Services\KbCollectionService;
 use Modules\TitanCore\Services\KnowledgeSearchService;
 use Modules\TitanCore\Contracts\AI\ClientInterface;
-use Modules\TitanAgents\Services\AgentPlaybookService;
+use Modules\TitanEchoAssist\Services\AgentPlaybookService;
 
 /**
  * Titan Zero Gateway Service

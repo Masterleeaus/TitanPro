@@ -5,10 +5,12 @@ use App\Events\NewCompanyCreatedEvent;
 use Modules\Complaint\Events\ComplaintEvent;
 use Modules\Complaint\Events\ComplaintReplyEvent;
 use Modules\Complaint\Events\ComplaintRequesterEvent;
+use Modules\Complaint\Listeners\FeedbackSubmittedListener;
 use Modules\Complaint\Listeners\CompanyCreatedListener;
 use Modules\Complaint\Listeners\ComplaintListener;
 use Modules\Complaint\Listeners\ComplaintRequesterListener;
 use Modules\Complaint\Listeners\ComplaintReplyListener;
+use Modules\ZeroFussPortal\Events\FeedbackSubmitted;
 use Modules\Complaint\Entities\Complaint;
 use Modules\Complaint\Entities\ComplaintAgentGroups;
 use Modules\Complaint\Entities\ComplaintChannel;
@@ -48,6 +50,8 @@ class EventServiceProvider extends ServiceProvider
         // Integration: Quality Inspections (QualityControl module) can emit a needs_reclean signal.
         // We treat it as a Quality Issue auto-escalation.
         'quality_control.needs_reclean' => [\Modules\Complaint\Listeners\QualityControlNeedsRecleanListener::class],
+        FeedbackSubmitted::class => [FeedbackSubmittedListener::class],
+        'ZeroFussPortal.FeedbackSubmitted' => [FeedbackSubmittedListener::class],
     ];
 
     protected $observers = [

@@ -12,7 +12,7 @@
   ],
   "requires": [
     "TitanCore",
-    "TitanAgents"
+    "TitanEchoAssist"
   ],
   "optional_requires": [
     "EInvoice",

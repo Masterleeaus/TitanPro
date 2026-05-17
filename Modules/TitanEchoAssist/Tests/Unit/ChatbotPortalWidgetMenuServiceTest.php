@@ -16,7 +16,6 @@ class ChatbotPortalWidgetMenuServiceTest extends TestCase
         $this->assertIsArray($menu['sections']);
         $this->assertNotEmpty($menu['sections']);
     }
-
     public function test_builds_expected_menu_shape_with_customer_fixture(): void
     {
         $service = new ChatbotPortalWidgetMenuService();

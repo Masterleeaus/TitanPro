@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Modules\InstantAds\Actions\CreateBatchVariantsAction;
 use Modules\InstantAds\Models\AiImagePro;
 use Modules\InstantAds\Services\AIImageProService;
 use Modules\InstantAds\Services\RealtimeGenerationService;
@@ -93,6 +94,20 @@ class InstantAdsController extends Controller
                 'message' => __('Generation could not be started. Please try again.'),
             ], 500);
         }
+    }
+
+
+    public function createBatchVariants(Request $request, CreateBatchVariantsAction $action): JsonResponse
+    {
+        $request->validate([
+            'prompt' => ['required', 'string', 'max:2000'],
+            'count' => ['nullable', 'integer', 'min:1', 'max:8'],
+        ]);
+
+        return response()->json($action->execute([
+            'prompt' => (string) $request->input('prompt'),
+            'count' => (int) $request->input('count', 4),
+        ]));
     }
 
     public function getImages(Request $request): JsonResponse

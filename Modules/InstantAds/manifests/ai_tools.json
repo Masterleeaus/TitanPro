@@ -1,0 +1,32 @@
+{
+  "schema": "titan.ai_tools.manifest.v1",
+  "module": "InstantAds",
+  "tools": [
+    {
+      "id": "generate_ad_image",
+      "name": "generate_ad_image",
+      "class": "Modules\\InstantAds\\AI\\Tools\\GenerateAdImageTool",
+      "description": "Generate a tenant-scoped ad creative image payload.",
+      "input_schema": {
+        "prompt": {"type": "string", "required": true},
+        "model": {"type": "string", "required": false},
+        "style": {"type": "string", "required": false},
+        "aspect_ratio": {"type": "string", "required": false}
+      },
+      "risk_class": "low",
+      "approval_mode": "auto"
+    },
+    {
+      "id": "create_batch_variants",
+      "name": "create_batch_variants",
+      "class": "Modules\\InstantAds\\AI\\Tools\\CreateBatchVariantsTool",
+      "description": "Create prompt variants for ad creative batch generation.",
+      "input_schema": {
+        "prompt": {"type": "string", "required": true},
+        "count": {"type": "integer", "required": false}
+      },
+      "risk_class": "low",
+      "approval_mode": "auto"
+    }
+  ]
+}

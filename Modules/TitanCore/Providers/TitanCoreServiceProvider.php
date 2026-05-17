@@ -23,7 +23,7 @@ use Modules\TitanCore\Console\Commands\ModulesUpgradeCommand;
 use Modules\TitanCore\Console\Commands\SyncTitanDocsKnowledgeCommand;
 use Modules\TitanCore\Console\Commands\ValidateManifestsCommand;
 use Modules\TitanCore\Console\Commands\VerifyManifestCommand;
-use Modules\TitanCore\Console\SyncTitanAgentsCommand;
+use Modules\TitanCore\Console\SyncTitanEchoAssistCommand;
 use Modules\TitanCore\Services\Providers\TitanAiProvider;
 use Modules\TitanCore\Services\TitanAiClient;
 use Modules\TitanCore\Services\TitanCoreModelGateway;
@@ -67,7 +67,7 @@ class TitanCoreServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 SyncTitanDocsKnowledgeCommand::class,
-                SyncTitanAgentsCommand::class,
+                SyncTitanEchoAssistCommand::class,
                 ModulesUpgradeCommand::class,
                 ModulesHealthCommand::class,
                 ModulesDoctorCommand::class,

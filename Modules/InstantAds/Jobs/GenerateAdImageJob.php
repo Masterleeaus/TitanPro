@@ -9,6 +9,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Modules\InstantAds\Actions\GenerateAdImageAction;
+use Modules\InstantAds\Models\AdCreative;
 use Modules\InstantAds\Models\AiImagePro;
 use Throwable;
 
@@ -57,11 +59,15 @@ class GenerateAdImageJob implements ShouldQueue
             }
 
             if (! empty($paths)) {
-                $record->markAsCompleted($paths, [
-                    'model'  => $record->model,
-                    'count'  => count($paths),
-                    'params' => $record->params,
-                ]);
+                app(GenerateAdImageAction::class)->complete(
+                    AdCreative::query()->findOrFail($record->id),
+                    $paths,
+                    [
+                        'model'  => $record->model,
+                        'count'  => count($paths),
+                        'params' => $record->params,
+                    ]
+                );
             } elseif ($record->isPending() || $record->status === 'processing') {
                 $record->markAsFailed('No images were generated');
                 $this->refundCredit();

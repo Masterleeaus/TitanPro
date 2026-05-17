@@ -3,7 +3,7 @@
   "agent": "titan-nexus.agent",
   "display_name": "Titan Nexus Agent",
   "module": "titan-nexus",
-  "owner": "TitanAgents",
+  "owner": "TitanEchoAssist",
   "runtime": "TitanCore.ProviderRouter",
   "system_supervisor": "TitanZero",
   "answer_mode": "grounded_with_citations",

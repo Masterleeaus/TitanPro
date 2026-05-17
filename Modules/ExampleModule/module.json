@@ -11,7 +11,7 @@
   ],
   "requires": [
     "TitanCore",
-    "TitanAgents"
+    "TitanEchoAssist"
   ],
   "optional_requires": [
     "TitanZero",

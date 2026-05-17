@@ -17,7 +17,7 @@ return [
     'ai' => [
         'core_runtime' => 'TitanCore',
         'system_supervisor' => 'TitanZero',
-        'agent_owner' => 'TitanAgents',
+        'agent_owner' => 'TitanEchoAssist',
         'agent_manifest' => base_path('Modules/TitanNexus/Agents/ModuleAgent/agent.manifest.json'),
         'indexing_manifest' => base_path('Modules/TitanNexus/AI/Indexing/indexing.manifest.json'),
     ],

@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\InstantAds\Entities\InstantAdsBrandKit;
 use Modules\InstantAds\Entities\InstantAdsTemplate;
+use Modules\InstantAds\Support\Scopes\ScopedByCompany;
 
 class TemplateLibraryController extends Controller
 {
@@ -36,7 +37,10 @@ class TemplateLibraryController extends Controller
         $prompt     = $template->prompt_template;
 
         if ($brandKitId) {
-            $kit = InstantAdsBrandKit::find($brandKitId);
+            $companyId = ScopedByCompany::resolveCompanyId();
+            $kit = InstantAdsBrandKit::query()
+                ->when($companyId !== null, fn ($query) => $query->where('company_id', $companyId))
+                ->find($brandKitId);
 
             if ($kit) {
                 $prompt = $template->applyBrandKit($kit);

@@ -3,7 +3,7 @@
 return [
     // Pass 2 defaults.
     // TitanZero uses `kb_general_cleaning` for general reasoning.
-    // TitanAgents are topic-Configureed via their own KB collection keys.
+    // TitanEchoAssist agents are topic-configured via their own KB collection keys.
 
     'general_collection_key' => env('TITAN_ZERO_GENERAL_KB', 'kb_general_cleaning'),
 

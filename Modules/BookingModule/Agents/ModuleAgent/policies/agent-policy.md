@@ -1,6 +1,6 @@
 # BookingModule Agent Policy
 
-The BookingModuleAgent is internal-only and routed by TitanAgents/TitanZero.
+The BookingModuleAgent is internal-only and routed by TitanEchoAssist/TitanZero.
 
 - Never cross company boundaries.
 - Reads require BookingModule policy or permission.

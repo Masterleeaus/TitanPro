@@ -2,10 +2,12 @@
 
 namespace Modules\InstantAds\Entities;
 
+use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Model;
 
 class InstantAdsBrandKit extends Model
 {
+    use HasCompany;
     protected $table = 'instant_ads_brand_kits';
 
     protected $fillable = [

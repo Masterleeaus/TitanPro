@@ -3,6 +3,7 @@
 namespace Modules\Complaint\Entities;
 
 use App\Models\BaseModel;
+use App\Traits\HasCompany;
 use App\Traits\IconTrait;
 use Modules\Complaint\Entities\ComplaintReply;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,6 +49,7 @@ class ComplaintFile extends BaseModel
 {
 
     use IconTrait;
+    use HasCompany;
 
     const FILE_PATH = 'complaint-files';
 

@@ -1,0 +1,10 @@
+{
+  "schema": "titan.api.manifest.v1",
+  "module": "InstantAds",
+  "prefix": "/api/v1/instant-ads",
+  "endpoints": [
+    "POST /generate",
+    "POST /batch-variants",
+    "POST /settings"
+  ]
+}
