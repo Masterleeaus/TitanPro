@@ -56,7 +56,8 @@ Route::middleware(['auth:sanctum'])->prefix('titan')->group(function () {
 
     // Thread history - returns messages + widgets for a persisted thread
     Route::get('/threads/{threadId}', [ThreadController::class, 'show'])
-        ->name('titan.threads.show');
+        ->name('titan.threads.show')
+        ->where('threadId', '[0-9]+');
 
     // Context-aware suggestion chips
     Route::get('/suggestions', SuggestionsController::class)
