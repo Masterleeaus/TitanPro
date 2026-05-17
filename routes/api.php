@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use App\Http\Controllers\Technician\LocationController;
+use App\Http\Controllers\TitanZero\GenerateUiController;
 use App\Http\Controllers\TitanZero\SuggestionsController;
 use App\Http\Controllers\TitanZero\ThreadController;
 use Illuminate\Support\Facades\Route;
