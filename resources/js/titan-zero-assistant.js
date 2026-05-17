@@ -334,6 +334,7 @@ const initializeTitanZeroAssistant = () => {
      */
     const callAssistantEndpoint = async (message, placeholderEl) => {
         try {
+            const DEFAULT_FALLBACK_REPLY = 'Ok.';
             const contextData = window.titanOsContext || {};
             const serverThreadId = getServerThreadId();
             const payload = {
@@ -480,7 +481,7 @@ const initializeTitanZeroAssistant = () => {
                 }
 
                 if (!firstTokenSeen) {
-                    reply = 'Ok.';
+                    reply = DEFAULT_FALLBACK_REPLY;
                 }
             } else {
                 const data = await response.json();
@@ -489,7 +490,7 @@ const initializeTitanZeroAssistant = () => {
             }
 
             if (!reply) {
-                reply = 'Ok.';
+                reply = DEFAULT_FALLBACK_REPLY;
             }
             if (placeholderEl) {
                 placeholderEl.textContent = reply;
