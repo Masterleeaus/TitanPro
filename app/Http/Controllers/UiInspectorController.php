@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 /**
  * Handles persistence of Visual UI Inspector component overrides.
  *
- * Routes (all require auth):
+ * Routes (all require auth + ui-inspector.manage permission):
  *   GET  /titan/ui-inspector/overrides          → index
  *   POST /titan/ui-inspector/overrides          → upsert
  *   DELETE /titan/ui-inspector/overrides/{key}  → reset one component

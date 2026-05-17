@@ -113,9 +113,9 @@ test('authenticated user without ui-inspector.manage permission gets 403 on DELE
         ->assertForbidden();
 });
 
-// ── Unauthenticated → redirect ────────────────────────────────────────────────
+// ── Unauthenticated → 401 ────────────────────────────────────────────────────
 
-test('unauthenticated user is redirected from GET overrides', function () {
+test('unauthenticated user gets 401 on GET overrides', function () {
     $this->getJson('/titan/ui-inspector/overrides')
         ->assertUnauthorized();
 });
