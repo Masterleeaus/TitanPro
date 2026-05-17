@@ -26,6 +26,7 @@ Route::middleware(['api'])->prefix('api/chatbots')->name('api.chatbots.')->group
 });
 
 Route::middleware(['api'])->prefix('api/v2/chatbot')->name('api.v2.chatbot.')->group(function () {
+    Route::get('/{uuid}', [TitanChatbotApiController::class, 'show'])->name('show');
     Route::get('/{uuid}/session/{sessionId}/portal/menu', [ChatbotPortalController::class, 'menu'])->name('portal.menu');
     Route::get('/{uuid}/session/{sessionId}/portal/home', PortalHomeController::class)->name('portal.home');
     Route::get('/{uuid}/session/{sessionId}/portal/work-data', PortalWorkDataController::class)->name('portal.work-data');

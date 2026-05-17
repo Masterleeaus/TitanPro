@@ -33,11 +33,13 @@
             'resources/css/titan-os.css',
             'resources/js/titan-os.js',
             'resources/css/titan-zero-assistant.css',
+            'resources/css/chatbot-bubble.css',
             'resources/js/titan-zero-assistant.js',
         ])
     @else
         <link rel="stylesheet" href="{{ asset('css/titan-os.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/titan-zero-assistant.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/chatbot-bubble.css') }}" />
         <script src="{{ asset('js/titan-os.js') }}" defer></script>
         <script src="{{ asset('js/titan-zero-assistant.js') }}" defer></script>
     @endif

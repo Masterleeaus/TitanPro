@@ -813,7 +813,7 @@
                 @lang('Position')
             </label>
             <div class="flex flex-wrap justify-between gap-2">
-                @foreach (\App\Extensions\Chatbot\System\Enums\PositionEnum::toArray() as $position)
+                @foreach (\Modules\TitanEchoAssist\Enums\PositionEnum::toArray() as $position)
                     <div class="relative text-center">
                         <input
                             class="peer invisible absolute size-0"
