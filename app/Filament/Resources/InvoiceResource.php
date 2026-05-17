@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * InvoiceResource — TitanPro (super-admin) panel.
  *
  * Restricted to super_admin only and intentionally cross-tenant so
- * platform operators can review invoices across all organisations.
+ * platform operators can review invoices across all organizations.
  * Finance operators should use the dedicated ZeroPay panel (/zeropay)
  * where bookkeeper/owner/admin roles have org-scoped access via
  * App\Filament\ZeroPay\Resources\InvoiceResource.

@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * PaymentResource — TitanPro (super-admin) panel.
  *
  * Restricted to super_admin only and intentionally cross-tenant so
- * platform operators can review payments across all organisations.
+ * platform operators can review payments across all organizations.
  * Finance operators should use the dedicated ZeroPay panel (/zeropay)
  * where bookkeeper/owner/admin roles have org-scoped access via
  * App\Filament\ZeroPay\Resources\PaymentResource.
