@@ -4,6 +4,10 @@ namespace Modules\TitanEchoAssist\Services;
 
 class ChatbotPortalWidgetMenuService
 {
+    public function menu(): array
+    {
+        return $this->build([]);
+    }
     public function build(array $context): array
     {
         $firstName = (string) ($context['first_name'] ?? 'there');

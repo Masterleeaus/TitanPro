@@ -195,7 +195,6 @@ PROMPT;
             return [];
         }
     }
-
     /**
      * Attempt AI generation via GeneratorBridge (if available) or OpenAI directly.
      * Falls back to a safe canned response so the endpoint always returns a valid shape.
