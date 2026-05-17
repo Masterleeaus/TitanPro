@@ -6,7 +6,7 @@ Minimum PWA requirements:
 
 - authenticated tenant context
 - module permission checks
-- chat endpoint bound to TitanAgents
+- chat endpoint bound to TitanEchoAssist
 - system-intent handoff to TitanZero
 - confirmation UI for write actions
 - citation panel for knowledge-backed answers

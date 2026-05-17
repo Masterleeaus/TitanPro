@@ -3,7 +3,7 @@
   "agent": "example-module.agent",
   "display_name": "Example Module Agent",
   "module": "example-module",
-  "owner": "TitanAgents",
+  "owner": "TitanEchoAssist",
   "runtime": "TitanCore.ProviderRouter",
   "system_supervisor": "TitanZero",
   "answer_mode": "grounded_with_citations",

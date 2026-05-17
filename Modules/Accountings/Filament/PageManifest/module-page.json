@@ -23,7 +23,7 @@
   },
   "chat": {
     "agent": "titanzero.money",
-    "provider": "TitanAgents",
+    "provider": "TitanEchoAssist",
     "system_supervisor": "TitanZero",
     "supports": [
       "text",

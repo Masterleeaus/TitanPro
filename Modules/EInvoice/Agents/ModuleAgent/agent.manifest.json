@@ -3,7 +3,7 @@
   "agent": "titanzero.money",
   "display_name": "TitanZero Money",
   "module": "money-manager",
-  "owner": "TitanAgents",
+  "owner": "TitanEchoAssist",
   "runtime": "TitanCore.ProviderRouter",
   "system_supervisor": "TitanZero",
   "answer_mode": "grounded_with_citations",

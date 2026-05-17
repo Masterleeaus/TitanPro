@@ -23,7 +23,7 @@
   },
   "chat": {
     "agent": "example.module.agent",
-    "provider": "TitanAgents",
+    "provider": "TitanEchoAssist",
     "system_supervisor": "TitanZero",
     "supports": [
       "text",
