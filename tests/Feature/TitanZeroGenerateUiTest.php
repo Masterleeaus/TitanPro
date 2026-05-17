@@ -95,7 +95,7 @@ test('generate-ui continues an existing thread when threadId is supplied', funct
     $this->actingAs($user)
         ->postJson('/api/titan/zero/generate-ui', [
             'message'  => 'Tell me more',
-            'threadId' => $threadId,
+            'threadId' => (int) $threadId,
             'context'  => ['appKey' => 'owner'],
         ])
         ->assertOk()

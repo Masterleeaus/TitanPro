@@ -253,9 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchServerThread(storedServerThreadId).then((data) => {
             if (!data) return;
             const msgs = data.messages || [];
-            // Clear the current message list and replay server messages
+            if (msgs.length === 0) return;
+            // Clear the current message list and replay server messages without
+            // adding an extra greeting (the history already provides context)
             while (messageList.firstChild) messageList.removeChild(messageList.firstChild);
-            appendMessage('Titan Zero is ready. Ask me to navigate, explain this screen, or open an app.', 'assistant', false, false);
             msgs.forEach((m) => {
                 if (m.role === 'user' || m.role === 'assistant') {
                     appendMessage(m.content || '', m.role === 'user' ? 'user' : 'assistant', false, false);

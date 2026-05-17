@@ -24,7 +24,7 @@ class GenerateUiController extends Controller
     {
         $validated = $request->validate([
             'message'          => ['required', 'string', 'max:4000'],
-            'threadId'         => ['nullable', 'string', 'max:64'],
+            'threadId'         => ['nullable', 'integer', 'min:1'],
             'context'          => ['nullable', 'array'],
             'context.appKey'   => ['nullable', 'string', 'max:80'],
             'context.page'     => ['nullable', 'string', 'max:255'],
@@ -144,6 +144,9 @@ PROMPT;
      * @param  array<int, array<string, mixed>>  $history
      * @return array{0: string, 1: list<array<string, mixed>>}
      */
+    /** Number of recent history messages to include as AI context. */
+    private const CONTEXT_MESSAGE_LIMIT = 6;
+
     private function generate(string $message, string $systemPrompt, array $history): array
     {
         // 1. Try GeneratorBridge from TitanEchoAssist module (safe lazy resolution)
@@ -156,7 +159,7 @@ PROMPT;
                 $contextMessages = array_map(fn ($m) => [
                     'role'    => $m['role'] ?? 'user',
                     'content' => $m['content'] ?? '',
-                ], array_slice($history, -6)); // last 6 messages for context
+                ], array_slice($history, -self::CONTEXT_MESSAGE_LIMIT));
 
                 // Use a fake chatbot config so the bridge injects our system prompt
                 $bridge->setChatbot(['instructions' => $systemPrompt]);
@@ -176,7 +179,7 @@ PROMPT;
             try {
                 $messages = [['role' => 'system', 'content' => $systemPrompt]];
 
-                foreach (array_slice($history, -6) as $m) {
+                foreach (array_slice($history, -self::CONTEXT_MESSAGE_LIMIT) as $m) {
                     $messages[] = ['role' => $m['role'] ?? 'user', 'content' => $m['content'] ?? ''];
                 }
 
