@@ -78,6 +78,9 @@ return [
             \Modules\Dispatch\Providers\FilamentServiceProvider::class,
         ]
         : []),
+    ...(class_exists(\Modules\TitanCommand\Providers\TitanCommandServiceProvider::class)
+        ? [\Modules\TitanCommand\Providers\TitanCommandServiceProvider::class]
+        : []),
     // Only registered when Telescope is installed (dev environments only)
     ...(class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)
         ? [App\Providers\TelescopeServiceProvider::class]

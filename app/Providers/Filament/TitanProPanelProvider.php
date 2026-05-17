@@ -8,6 +8,8 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -134,6 +136,52 @@ class TitanProPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->renderHook(...$this->uiInspectorHook())
-            ->renderHook(...$this->titanOsShellHooks());
+            ->renderHook(...$this->titanOsShellHooks())
+            ->navigationGroups([
+                NavigationGroup::make('Panels')
+                    ->collapsible(false),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Ground Zero')
+                    ->url('/groundzero')
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->group('Panels')
+                    ->sort(1),
+                NavigationItem::make('Titan Quotes')
+                    ->url('/titanquotes')
+                    ->icon('heroicon-o-document-text')
+                    ->group('Panels')
+                    ->sort(2),
+                NavigationItem::make('Zero Pay')
+                    ->url('/zeropay')
+                    ->icon('heroicon-o-credit-card')
+                    ->group('Panels')
+                    ->sort(3),
+                NavigationItem::make('Titan Go')
+                    ->url('/titango')
+                    ->icon('heroicon-o-truck')
+                    ->group('Panels')
+                    ->sort(4),
+                NavigationItem::make('Zero Fuss')
+                    ->url('/zerofuss')
+                    ->icon('heroicon-o-sparkles')
+                    ->group('Panels')
+                    ->sort(5),
+                NavigationItem::make('Titan Solo')
+                    ->url('/titansolo')
+                    ->icon('heroicon-o-user')
+                    ->group('Panels')
+                    ->sort(6),
+                NavigationItem::make('Titan Studio')
+                    ->url('/titanstudio')
+                    ->icon('heroicon-o-paint-brush')
+                    ->group('Panels')
+                    ->sort(7),
+                NavigationItem::make('Titan Nexus')
+                    ->url('/titannexus')
+                    ->icon('heroicon-o-building-office-2')
+                    ->group('Panels')
+                    ->sort(8),
+            ]);
     }
 }

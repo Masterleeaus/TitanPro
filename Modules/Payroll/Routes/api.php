@@ -1,0 +1,51 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Modules\Payroll\Http\Controllers\API\PayrollApprovalController;
+use Modules\Payroll\Http\Controllers\API\PayrollTaxController;
+use Modules\Payroll\Http\Controllers\API\PayrollPayslipController;
+use Modules\Payroll\Http\Controllers\API\PayrollComplianceController;
+use Modules\Payroll\Http\Controllers\API\PayrollExportController;
+use Modules\Payroll\Http\Controllers\API\PayrollHealthController;
+use Modules\Payroll\Http\Controllers\API\PayrollRunController;
+use Modules\Payroll\Http\Controllers\API\PayslipDeliveryController;
+use Modules\Payroll\Http\Controllers\API\PayrollVarianceController;
+use Modules\Payroll\Http\Controllers\API\PayrollPeriodLockController;
+use Modules\Payroll\Http\Controllers\API\PayrollJournalExportController;
+use Modules\Payroll\Http\Controllers\API\CleaningPayrollController;
+use Modules\Payroll\Http\Controllers\API\CleaningPayrollSettingsController;
+use Modules\Payroll\Http\Controllers\API\EmployeePayrollSelfServiceController;
+use Modules\Payroll\Http\Controllers\API\EmployeePayslipTokenController;
+use Modules\Payroll\Http\Controllers\API\PayrollFinalizationController;
+
+Route::prefix('payroll')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('health', PayrollHealthController::class);
+    Route::post('payslips/preview', [PayrollPayslipController::class, 'preview']);
+    Route::get('payslips/deliveries', [PayslipDeliveryController::class, 'index']);
+    Route::post('payslips/deliveries/resend', [PayslipDeliveryController::class, 'resend']);
+    Route::post('payslips/deliveries/{delivery}/acknowledge', [PayslipDeliveryController::class, 'acknowledge']);
+    Route::post('tax/estimate', PayrollTaxController::class);
+    Route::post('compliance/inspect', PayrollComplianceController::class);
+    Route::post('variance', PayrollVarianceController::class);
+    Route::post('cleaning/preview', [CleaningPayrollController::class, 'preview']);
+    Route::post('cleaning/variance', [CleaningPayrollController::class, 'variance']);
+    Route::get('cleaning/settings', [CleaningPayrollSettingsController::class, 'show']);
+    Route::post('cleaning/settings/validate', [CleaningPayrollSettingsController::class, 'validate']);
+    Route::get('me/payslips', [EmployeePayrollSelfServiceController::class, 'payslips']);
+    Route::get('me/bank-details', [EmployeePayrollSelfServiceController::class, 'bankStatus']);
+    Route::post('me/bank-details', [EmployeePayrollSelfServiceController::class, 'updateBank']);
+    Route::get('me/tax-declaration', [EmployeePayrollSelfServiceController::class, 'taxDeclaration']);
+    Route::post('me/payslips/{payslip}/token', [EmployeePayslipTokenController::class, 'issue']);
+    Route::post('me/payslips/{payslip}/token/validate', [EmployeePayslipTokenController::class, 'validateToken']);
+    Route::post('period-locks/lock', [PayrollPeriodLockController::class, 'lock']);
+    Route::post('period-locks/unlock', [PayrollPeriodLockController::class, 'unlock']);
+    Route::post('exports/journal', PayrollJournalExportController::class);
+    Route::post('runs/preview', [PayrollRunController::class, 'preview']);
+    Route::post('runs/inspect', [PayrollFinalizationController::class, 'inspect']);
+    Route::post('runs', [PayrollRunController::class, 'run']);
+    Route::post('runs/{run}/submit', [PayrollApprovalController::class, 'submit']);
+    Route::post('runs/{run}/finalize', [PayrollFinalizationController::class, 'finalize']);
+    Route::post('runs/{run}/approve', [PayrollApprovalController::class, 'approve']);
+    Route::post('runs/{run}/reject', [PayrollApprovalController::class, 'reject']);
+    Route::get('runs/{run}/exports/bank-file', [PayrollExportController::class, 'bankFile']);
+});

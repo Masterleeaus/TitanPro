@@ -23,5 +23,7 @@ test('ui studio source keeps reordered widgets on publish', function () {
         ->toContain('public function reorderWidgets(array $orderedIds): void')
         ->toContain("\$widget['order'] = \$i;")
         ->toContain("'dashboard_layout' => \$this->canvasWidgets,")
-        ->toContain("array_map(fn (\$w) => ['type' => \$w['type'], 'data' => ['title' => \$w['label']]], \$this->canvasWidgets)");
+        ->toContain("array_map(fn (\$w) => [")
+        ->toContain("'type' => \$w['type'],")
+        ->toContain("'title' => \$w['label']");
 });

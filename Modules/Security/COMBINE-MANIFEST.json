@@ -1,0 +1,752 @@
+{
+  "module": "Security",
+  "file_count": 149,
+  "total_bytes": 512542,
+  "files": [
+    {
+      "path": "Config/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Config/config.php",
+      "bytes": 44,
+      "sha256": "b6b18a114b44c7db57c2a6bd3ad7c4c47d716c6bb09e9cf0d1c220fb55790248"
+    },
+    {
+      "path": "Console/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "DataTables/CardDataTable.php",
+      "bytes": 8092,
+      "sha256": "d257699e06397326a77158364a3c24302f634208e11bdb26eb94784ee5614cdb"
+    },
+    {
+      "path": "DataTables/SecurityDataTable.php",
+      "bytes": 10399,
+      "sha256": "aeb347d93a71800001925cccaa515abd22f066e8a9f7ab9f80fa9c8a39a8f03d"
+    },
+    {
+      "path": "DataTables/SecurityWPDataTable.php",
+      "bytes": 10600,
+      "sha256": "49c1a51be32a3fde1733de9d6175566c4db3386dd52823741a986b581062ad2f"
+    },
+    {
+      "path": "DataTables/TrInOutPermitDataTable.php",
+      "bytes": 13148,
+      "sha256": "ef164069707274501aab0d8a6d1e6839f6c4cf96e0f361ec23c6aef5de111743"
+    },
+    {
+      "path": "DataTables/WorkPermitDataTable.php",
+      "bytes": 14084,
+      "sha256": "c382caaec4cc21dedb30f59ae80598e97da0e115ea55e8cb550648db36fe916b"
+    },
+    {
+      "path": "Database/Migrations/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Database/Migrations/2021_07_27_153806_add_security_permission.php",
+      "bytes": 2267,
+      "sha256": "ae34cd0a4c3171a9bb881f1c7ef4303815cf2d388715377d558b7ee3ab2d1688"
+    },
+    {
+      "path": "Database/Migrations/2023_03_21_020522_create_tenan_izin_brg_table.php",
+      "bytes": 2673,
+      "sha256": "95e9ff395f79afbdce7c764b665e9320ea63a3506a5123cc19c275f10e04c1a0"
+    },
+    {
+      "path": "Database/Migrations/2023_03_21_021030_create_tenan_card_akses_table.php",
+      "bytes": 1288,
+      "sha256": "867b671dcfc2c1b517e00f1264b6392640090c47e89146d1e733b63679dfebf4"
+    },
+    {
+      "path": "Database/Migrations/2023_03_21_021031_create_tenan_card_akses_items_table.php",
+      "bytes": 1365,
+      "sha256": "0f0439ce2c97de84b3432e3c83f96d334127495c3235322fa8251b10676e7c91"
+    },
+    {
+      "path": "Database/Migrations/2023_07_24_085655_create_workpermits_table.php",
+      "bytes": 2726,
+      "sha256": "a8d0c6b3390bb92e42e9d3b2d8697ea836bb8775cac5a0ffd56f3f1734ab7414"
+    },
+    {
+      "path": "Database/Migrations/2023_07_25_021173_create_workpermit_file_table.php",
+      "bytes": 1672,
+      "sha256": "7874bd6be8b428433b5403114a32aad2313e3f1c88e5127eacfed7096fda48f5"
+    },
+    {
+      "path": "Database/Migrations/2023_07_27_153811_add_card_akses_permission.php",
+      "bytes": 2475,
+      "sha256": "db5cad25f22534bbae3ed996dd0cb36a73888ba5575b1e1162581ff4978dea94"
+    },
+    {
+      "path": "Database/Migrations/2023_07_27_153811_add_transfer_permission.php",
+      "bytes": 2524,
+      "sha256": "25b85373eb4952a94cf9e95b0badd92048e699dcc8774e810b32b5469ab153b1"
+    },
+    {
+      "path": "Database/Migrations/2023_07_27_153811_add_work_permits_permission.php",
+      "bytes": 2450,
+      "sha256": "c411a4189db993e59741779d95d89cc2035219bfc5fff0fbde1b46c762c1dccd"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_175452_create_traccesscard_setup_tables.php",
+      "bytes": 585,
+      "sha256": "fa98da4d716f7b97adb92de9ef6dd841da1aa049c258eb7127cdb633866e7270"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_175452_create_trinoutpermit_setup_tables.php",
+      "bytes": 588,
+      "sha256": "834c7d337c248105a2810fb057a381acc01a89d29ce7ce295ffd54486e786132"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_175452_create_trworkpermits_setup_tables.php",
+      "bytes": 588,
+      "sha256": "a9cebebfc77206ac97254401c3996d19d603aa01583f50197d74b1983aaf87c6"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_180359_create_traccesscard_setup_tables.php",
+      "bytes": 358,
+      "sha256": "09a2b9eb9ddb1d755d44bf426509d391d91f53e4f6dc2b919d003ffcecb28038"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_180359_create_trinoutpermit_setup_tables.php",
+      "bytes": 360,
+      "sha256": "a06b3f1a2d91bffc99ea568a9da74a94aa2226b67bdfb666e70ae5661caece76"
+    },
+    {
+      "path": "Database/Migrations/2025_09_28_180359_create_trworkpermits_setup_tables.php",
+      "bytes": 360,
+      "sha256": "2eacfa0929af8eb9a78fa4f60c86be6572a7afe9a94884a354e48ebd127d01b3"
+    },
+    {
+      "path": "Database/Seeders/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Database/Seeders/CardAksesDatabaseSeeder.php",
+      "bytes": 361,
+      "sha256": "3e67bdca1b41e5b91b6e5d89af701f60c5f1f7556c428eb072e742a1b1b2371a"
+    },
+    {
+      "path": "Database/Seeders/SecurityDatabaseSeeder.php",
+      "bytes": 357,
+      "sha256": "7dba4f9f08168409c7d37b9f414267cc27402ecafab4d6b85e47e7ad79c8e8d0"
+    },
+    {
+      "path": "Database/Seeders/TrAccessCardDatabaseSeeder.php",
+      "bytes": 362,
+      "sha256": "ed931ea0d438c272951d71c6815e4cfc6d5525b7806e2d712985d427224c50a3"
+    },
+    {
+      "path": "Database/Seeders/TransferDatabaseSeeder.php",
+      "bytes": 361,
+      "sha256": "803e5255655ce17036fac1dcff9cc30da2bc3c8a4937fb74ae5da25053cbe1eb"
+    },
+    {
+      "path": "Database/Seeders/WorkPermitsDatabaseSeeder.php",
+      "bytes": 359,
+      "sha256": "b7234caa0686f9f1dc4284df13f88aabb1570b7ad03ad4b121024ab62a92b3b8"
+    },
+    {
+      "path": "Database/factories/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Entities/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Entities/CardItems.php",
+      "bytes": 387,
+      "sha256": "3bdc5174d2d68b1b627d863024f928055653e49040cefc9a5a2c82222a06915f"
+    },
+    {
+      "path": "Entities/Security.php",
+      "bytes": 474,
+      "sha256": "8bcca6b8e069b8e75a613dc52d8d6034ec7403f648767a880bff251259e0fd3e"
+    },
+    {
+      "path": "Entities/TrAccessCard.php",
+      "bytes": 778,
+      "sha256": "8aa1aadeebadd572a018cfa2be6dca4a7ad13f66e424bbc28d4099bdea284db5"
+    },
+    {
+      "path": "Entities/TrInOutPermit.php",
+      "bytes": 1568,
+      "sha256": "fa07e5ba573996be276d873f6176064b330799b2426d49f1f6d9353365598e63"
+    },
+    {
+      "path": "Entities/WorkPermits.php",
+      "bytes": 1128,
+      "sha256": "c3f40eadd4dc5b0c7869358b4b2410718d345a92e14a6d318570bc0de8de901f"
+    },
+    {
+      "path": "Entities/WorkPermitsFile.php",
+      "bytes": 739,
+      "sha256": "7280df09dc62e9d06f1cca3d5cef4bad67aad91f56fadad22199080321953577"
+    },
+    {
+      "path": "Http/Controllers/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Http/Controllers/CardAccessController.php",
+      "bytes": 9004,
+      "sha256": "952443667de44f5412a313a9c2a349c76b466d7cba5b8cb032d281fd68f3e2a3"
+    },
+    {
+      "path": "Http/Controllers/SecurityController.php",
+      "bytes": 4788,
+      "sha256": "67da6f3f7fc125f7a3ed611915488495295d097c78eb49c0c752595b8c8921cd"
+    },
+    {
+      "path": "Http/Controllers/SecurityWPController.php",
+      "bytes": 4537,
+      "sha256": "ae1a576728bf6073e58232132e0ae4613db81d0d0803f7e4db146c9857c0c356"
+    },
+    {
+      "path": "Http/Controllers/TrAccessCardController.php",
+      "bytes": 225,
+      "sha256": "dc24f337f5aa6e1eea769f6b4a993bdc2f08ebbf4829e8e6bca34c46eedd31dc"
+    },
+    {
+      "path": "Http/Controllers/TrInOutPermitController.php",
+      "bytes": 227,
+      "sha256": "d56327df209f225a329d34c7bedc44e64ee08ac1169c6a3afb5733191ab9a903"
+    },
+    {
+      "path": "Http/Controllers/TrInOutPermitPermissionController.php",
+      "bytes": 11499,
+      "sha256": "33734313fff40afa3ae5cefd5b43ec1bfa89078a9837fe36ce1f3a923a9027f7"
+    },
+    {
+      "path": "Http/Controllers/TrWorkPermitsController.php",
+      "bytes": 227,
+      "sha256": "369216536a9b157abac3a24a251e53e0eff6a2be95d7cf8161f7672001df3344"
+    },
+    {
+      "path": "Http/Controllers/WorkPermitsController.php",
+      "bytes": 11252,
+      "sha256": "a797463468eb036e3e2a70aeabf5b003088deb5f1b41b626b38a405d54eadda0"
+    },
+    {
+      "path": "Http/Controllers/WorkPermitsFileController.php",
+      "bytes": 2535,
+      "sha256": "3e018c63a5b3abf0e548340f10c1e99a000b9a1c76609ac75279b6cfdee37c19"
+    },
+    {
+      "path": "Http/Middleware/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Http/Requests/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Http/Requests/CardRequest.php",
+      "bytes": 577,
+      "sha256": "41edb4ec076684763f3617b464f0f6abf72042d73980a27ae7e06a93996d6319"
+    },
+    {
+      "path": "Http/Requests/GoodsInOutValidation.php",
+      "bytes": 534,
+      "sha256": "151294563851b51b46bba62768e52c7fbc26e3b115aa60b139072b5e1b618734"
+    },
+    {
+      "path": "Http/Requests/StoreTrInOutPermit.php",
+      "bytes": 739,
+      "sha256": "46352b7163567d9644e4170d5779857b2a6876f50f1d66fda1b145541b121afe"
+    },
+    {
+      "path": "Http/Requests/StoreWorkPermits.php",
+      "bytes": 1046,
+      "sha256": "d1607ef83e992b8471df7c40464f524c3090a9288d35b89d11ea81b4d2df7c9d"
+    },
+    {
+      "path": "Listeners/CompanyCreatedListener.php",
+      "bytes": 250,
+      "sha256": "830b970c615c9526691443e715765da4ac1d065b3ff54bfc2f5230ab33ec26dc"
+    },
+    {
+      "path": "Listeners/TrAccessCardCompanyCreatedListener.php",
+      "bytes": 420,
+      "sha256": "f39642672c2c2bd6d4ab8510d11179c2e034b4ba7ef7c0b4aa94b0ec43c316e9"
+    },
+    {
+      "path": "Listeners/TrInOutPermitCompanyCreatedListener.php",
+      "bytes": 423,
+      "sha256": "a92894de1b261a1da792d6dfe82a33cfd4fef1aa53427c6d14c3247edd39ea2f"
+    },
+    {
+      "path": "Listeners/TrWorkPermitsCompanyCreatedListener.php",
+      "bytes": 419,
+      "sha256": "a970853656859d05077a8da294e07dfe87218079ccb84951a9c10c4313253ca9"
+    },
+    {
+      "path": "Observers/CardItemsObserver.php",
+      "bytes": 255,
+      "sha256": "7732da335478d6c6e08ffc2ec3f92b534bfad66334025ee36d13dad56fa4eb10"
+    },
+    {
+      "path": "Observers/CardObserver.php",
+      "bytes": 2096,
+      "sha256": "da8fd5a226f0b01a7848743b51e4e45eef891ab34e14c8e0303088a996cc3d20"
+    },
+    {
+      "path": "Observers/SecurityObserver.php",
+      "bytes": 370,
+      "sha256": "b2cc3c4057f81b2617dbf29964edc91b76c289602e2cae9bed7007824f6b8bd9"
+    },
+    {
+      "path": "Observers/TrInOutPermitObserver.php",
+      "bytes": 385,
+      "sha256": "e4b5bc346bab4dd02f15ceabdaefa8ef061e631fe0cfbf52cc7b6e4a7ff38413"
+    },
+    {
+      "path": "Observers/WorkPermitsFileObserver.php",
+      "bytes": 391,
+      "sha256": "d13fdc8feb6b4b6c10e40fa4ee8ba161bd59ed2dfc7e79614433640b1dba0c11"
+    },
+    {
+      "path": "Observers/WorkPermitsObserver.php",
+      "bytes": 379,
+      "sha256": "04ec1985a4f4ce3ec02524999a172869431e27bf37fa2e217c2b5783f1801a83"
+    },
+    {
+      "path": "Providers/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Providers/EventServiceProvider.php",
+      "bytes": 1347,
+      "sha256": "2492a4eec74227dfb658c984754bc80382a58e12bbfe667495b9faaee4c0b59b"
+    },
+    {
+      "path": "Providers/RouteServiceProvider.php",
+      "bytes": 2077,
+      "sha256": "90fdd994ce15f77ee69773430f09d25bf9799a30a42dbd466c164d77b2c4b757"
+    },
+    {
+      "path": "Providers/SecurityServiceProvider.php",
+      "bytes": 3513,
+      "sha256": "e55fe6fab2c6744b758b9f4f7bb5c98a2cc4dd4d82d82b2b450a11ab7de1d31f"
+    },
+    {
+      "path": "README-combined.md",
+      "bytes": 1230,
+      "sha256": "aa25befe635e35d1956ab472a9b9de69f34c115ff6df95ea9aa38bf015897097"
+    },
+    {
+      "path": "Resources/assets/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/assets/js/app.js",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/assets/sass/app.scss",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/lang/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/lang/en/TrAccessCard_app.php",
+      "bytes": 803,
+      "sha256": "388a509590ae34ef5578fb99d7d91dc346e7223cdf6f5865642e8884fe598b66"
+    },
+    {
+      "path": "Resources/lang/en/TrAccessCard_messages.php",
+      "bytes": 359,
+      "sha256": "90eca084b725186ca69eca911c34a16dbd6d11e96040f45d7fe64635d7bdee0a"
+    },
+    {
+      "path": "Resources/lang/en/TrAccessCard_modules.php",
+      "bytes": 562,
+      "sha256": "2b91e02159f43d44a65af54574b0bb9dfda9e0bf4711db9fdfa82f903d09fe48"
+    },
+    {
+      "path": "Resources/lang/en/TrInOutPermit_app.php",
+      "bytes": 6121,
+      "sha256": "e0259e6a52a772560ffb92039a16981ccb1ba1f3d0aa6d2f7437e2906d16387e"
+    },
+    {
+      "path": "Resources/lang/en/TrInOutPermit_messages.php",
+      "bytes": 2331,
+      "sha256": "0156eb958e02c733eb8005c2acf1abb4c557ed32713d44d3661434e37fdd93e3"
+    },
+    {
+      "path": "Resources/lang/en/TrInOutPermit_modules.php",
+      "bytes": 468,
+      "sha256": "a28e274619f22413fc725560c83272e6d83c202fa3f6b21fa507105f973f5b33"
+    },
+    {
+      "path": "Resources/lang/en/TrWorkPermits_app.php",
+      "bytes": 6137,
+      "sha256": "f970f12e58c638b23542bba9cbd0c4c95a152affc2c7e49d2def605393b8fe59"
+    },
+    {
+      "path": "Resources/lang/en/TrWorkPermits_messages.php",
+      "bytes": 2306,
+      "sha256": "6e7f3531b76b5bdadebd8a36ae292e0dd4b742b6a62e20fa94e557e85d84719b"
+    },
+    {
+      "path": "Resources/lang/en/TrWorkPermits_modules.php",
+      "bytes": 388,
+      "sha256": "ef47efdacaf2bad823d208f28934cce784447ee154f107816e5f42453952344e"
+    },
+    {
+      "path": "Resources/lang/en/app.php",
+      "bytes": 1857,
+      "sha256": "bfdfc91f495975fa4f4a1c2b0304d5ec16e36afa468df097d9da994386c21f61"
+    },
+    {
+      "path": "Resources/lang/en/messages.php",
+      "bytes": 76,
+      "sha256": "4f7cf88316c99d16eb73e9865502f2a79329be59faf621d7184a63a56b4e8928"
+    },
+    {
+      "path": "Resources/lang/en/modules.php",
+      "bytes": 272,
+      "sha256": "fe7caee58d0b2bd921c8cafcd4721677b4b2768b16c9ea7ab1a24887d844eb8c"
+    },
+    {
+      "path": "Resources/views/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/ajax/create.blade.php",
+      "bytes": 13810,
+      "sha256": "1091a440ba3309cc9e8a664fb8e1e5cf156c3976762960b33108ca3a3d4f7e44"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/ajax/edit.blade.php",
+      "bytes": 19735,
+      "sha256": "c5fd4a905a9827b77f38f974aaa005902f5f77c45ef05d16269f1fa9eef157f8"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/ajax/show.blade.php",
+      "bytes": 7077,
+      "sha256": "2df90e7022f0aa37229fbbdfc376994017b78dc7177d6ff753da2c718622eaef"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/create.blade.php",
+      "bytes": 118,
+      "sha256": "bd8472d50b6edc4e21b0bb31451ed02974d8ee99bfeba1fad776cec78ffe1bd0"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/index.blade.php",
+      "bytes": 9507,
+      "sha256": "991358e8fd20fcf2bd927786c637f5eebd5f11f15915f96c134d84797c6fd553"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/card/pdf/invoice.blade.php",
+      "bytes": 11669,
+      "sha256": "4fcdfa7c2d2706587477bf5b52e4e7c2ce9af7b3255dcc5dfc68c178f53acdb1"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/index.blade.php",
+      "bytes": 180,
+      "sha256": "e4cb14c111b22fdcd24ec35a52d86441094bfde0b901df361f64013a56b76a00"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/layouts/master.blade.php",
+      "bytes": 494,
+      "sha256": "ab212bf2fe64f14ea32b5513fbe937ee76df18d84339924dd0ac09cb0bb6d6c4"
+    },
+    {
+      "path": "Resources/views/_legacy/traccesscard/sections/sidebar.blade.php",
+      "bytes": 671,
+      "sha256": "62462925c2ea8ba8e00c8c6898008844b17fcbe0f674afa92637cc85ff2bbb7f"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/index.blade.php",
+      "bytes": 180,
+      "sha256": "e4cb14c111b22fdcd24ec35a52d86441094bfde0b901df361f64013a56b76a00"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/layouts/master.blade.php",
+      "bytes": 494,
+      "sha256": "ab212bf2fe64f14ea32b5513fbe937ee76df18d84339924dd0ac09cb0bb6d6c4"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/ajax/create.blade.php",
+      "bytes": 9523,
+      "sha256": "9b3dea5728291c04a4b8265944182ed443e83e0b2926215b35aaf2a3b154f6d1"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/ajax/edit.blade.php",
+      "bytes": 7871,
+      "sha256": "db9029a6e799c80a99f1e40df0e21b567ff37158d170014c6e5e601fe179f952"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/ajax/show.blade.php",
+      "bytes": 7192,
+      "sha256": "ab0ecabc27f54e91e07fd2c6d2e276bbd768c5b83107cb38ee0848b913fa6602"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/ajax/validate.blade.php",
+      "bytes": 7887,
+      "sha256": "fcfb0048fe3090f57bd0fbe732a5f985dbbde6cf9e55edc742870957064a72a3"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/create.blade.php",
+      "bytes": 118,
+      "sha256": "bd8472d50b6edc4e21b0bb31451ed02974d8ee99bfeba1fad776cec78ffe1bd0"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/index.blade.php",
+      "bytes": 17090,
+      "sha256": "0815ef4755f47e2c4279a6e0cdff1271ef424686accff5979253ed8c6b4beac2"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/permission/pdf/invoice.blade.php",
+      "bytes": 11049,
+      "sha256": "8500c673fcfa77d864e491b546dd84bc5248341317c0c04f723a9452a6673d6c"
+    },
+    {
+      "path": "Resources/views/_legacy/trinoutpermit/sections/sidebar.blade.php",
+      "bytes": 831,
+      "sha256": "35ba2aeff0930703d933f5bd30b66d6a83540cf1a3f908716feff9a2e72ea55c"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/index.blade.php",
+      "bytes": 180,
+      "sha256": "e4cb14c111b22fdcd24ec35a52d86441094bfde0b901df361f64013a56b76a00"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/layouts/master.blade.php",
+      "bytes": 494,
+      "sha256": "ab212bf2fe64f14ea32b5513fbe937ee76df18d84339924dd0ac09cb0bb6d6c4"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/sections/sidebar.blade.php",
+      "bytes": 598,
+      "sha256": "2edd4b9500e6255eaca9d0038dc00415304b84a712e8eb91b71647d00abac3a1"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/ajax/create.blade.php",
+      "bytes": 10665,
+      "sha256": "c7cbe504fafd0f7c236030ee58db4c635382a1e0b78cdc7d857e868a8fc715c4"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/ajax/edit.blade.php",
+      "bytes": 8605,
+      "sha256": "b9fffcb8f6e34ce81715c47577034b807fb8e6ed0e85f1fa707ca083548916a6"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/ajax/show.blade.php",
+      "bytes": 15309,
+      "sha256": "e045002c4b286a7a820449a6aca58957d75984bb281a09a58e0ac6b14e3e6961"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/ajax/validate.blade.php",
+      "bytes": 7865,
+      "sha256": "1c68bd39cbd42c72eb1e5f18eef7fad63a6720bee48c1b93ee109c3a3ec020d6"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/create.blade.php",
+      "bytes": 118,
+      "sha256": "bd8472d50b6edc4e21b0bb31451ed02974d8ee99bfeba1fad776cec78ffe1bd0"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/index.blade.php",
+      "bytes": 15617,
+      "sha256": "817575906a3b5df0ca8b19b90e87230e7fbf5dd3a66c75e490a6c669c82a6f09"
+    },
+    {
+      "path": "Resources/views/_legacy/workpermits/work-permit/pdf/invoice.blade.php",
+      "bytes": 12472,
+      "sha256": "9375c4d98c11db86c928d196ba665a77552a035146bee62703e4392e92ddd133"
+    },
+    {
+      "path": "Resources/views/index.blade.php",
+      "bytes": 188,
+      "sha256": "af69885ea15f29cc424b3c93efc230474b10b530153e9a72c93174b7e7f42d9a"
+    },
+    {
+      "path": "Resources/views/layouts/master.blade.php",
+      "bytes": 494,
+      "sha256": "ab212bf2fe64f14ea32b5513fbe937ee76df18d84339924dd0ac09cb0bb6d6c4"
+    },
+    {
+      "path": "Resources/views/sections/sidebar.blade.php",
+      "bytes": 1588,
+      "sha256": "f6c83287b317edfb966d678509f5d700784ce40fd012423edc5b1b02c0056bc3"
+    },
+    {
+      "path": "Resources/views/security/ajax/create.blade.php",
+      "bytes": 9163,
+      "sha256": "2a5969b4f140c9e3aeb64cd0999174da64e2ab726a86e1cc7eee77f9bb4cdc08"
+    },
+    {
+      "path": "Resources/views/security/ajax/edit.blade.php",
+      "bytes": 7185,
+      "sha256": "0f4e91e5e474b5ecde7970b5dd55a14c6e03c70abe0b7d96aaade777767761bf"
+    },
+    {
+      "path": "Resources/views/security/ajax/show.blade.php",
+      "bytes": 6415,
+      "sha256": "e0f736e1203d9fa6ab2f2e87752caa7afd5357c4e774db3db7681782fffdc4c8"
+    },
+    {
+      "path": "Resources/views/security/ajax/validate.blade.php",
+      "bytes": 8209,
+      "sha256": "0ea1898bd32d8679969da189f4c5b9cb23a789753d0cc680496901070b720b16"
+    },
+    {
+      "path": "Resources/views/security/create.blade.php",
+      "bytes": 118,
+      "sha256": "bd8472d50b6edc4e21b0bb31451ed02974d8ee99bfeba1fad776cec78ffe1bd0"
+    },
+    {
+      "path": "Resources/views/security/index-client.blade.php",
+      "bytes": 9491,
+      "sha256": "596a85a5e7941ee76360e35223cdc39bf74ee46fa44c68d771132af839b780a3"
+    },
+    {
+      "path": "Resources/views/security/index.blade.php",
+      "bytes": 10383,
+      "sha256": "4d59cc2a590a6e654ee1df60ee69d9b3ae4de667a5b1a01c72f4045b45fd0eaf"
+    },
+    {
+      "path": "Resources/views/security/pdf/invoice.blade.php",
+      "bytes": 11058,
+      "sha256": "09b71cb3205120a12300302cb4a66a9ad2216086655ae2e081cdc20f85fa9199"
+    },
+    {
+      "path": "Resources/views/transfer/ajax/show.blade.php",
+      "bytes": 6657,
+      "sha256": "30dd82b4e0f30b251a22078062b4ed4ab36d3d2d03fef546462411aaba440dc2"
+    },
+    {
+      "path": "Resources/views/transfer/ajax/validate.blade.php",
+      "bytes": 8180,
+      "sha256": "ab79a026b042a890e891c207f76a01f0b778a8247a868d0f1f600e80e309b271"
+    },
+    {
+      "path": "Resources/views/transfer/create.blade.php",
+      "bytes": 118,
+      "sha256": "bd8472d50b6edc4e21b0bb31451ed02974d8ee99bfeba1fad776cec78ffe1bd0"
+    },
+    {
+      "path": "Resources/views/transfer/index.blade.php",
+      "bytes": 9852,
+      "sha256": "526a6a04276675a29bf62aba06f98a2673284ad2a91bd66a4ea748043eca5f9b"
+    },
+    {
+      "path": "Resources/views/transfer/pdf/invoice.blade.php",
+      "bytes": 11058,
+      "sha256": "09b71cb3205120a12300302cb4a66a9ad2216086655ae2e081cdc20f85fa9199"
+    },
+    {
+      "path": "Resources/views/work-permit/ajax/show.blade.php",
+      "bytes": 7177,
+      "sha256": "bc428ab7149cf566e1bc8ae75a2964e686dfad5ca9581d7bf590d0a78add1e15"
+    },
+    {
+      "path": "Resources/views/work-permit/ajax/validate.blade.php",
+      "bytes": 7191,
+      "sha256": "6cd3a7ab98c2b1de5de3ccb420657aa653c2725aa7acd9ce6bf3b2863607178b"
+    },
+    {
+      "path": "Resources/views/work-permit/create.blade.php",
+      "bytes": 114,
+      "sha256": "74f1e045f9d5371ce083b5671dc0e869ddca542766043bea5eadc88afb48318b"
+    },
+    {
+      "path": "Resources/views/work-permit/index.blade.php",
+      "bytes": 9084,
+      "sha256": "5f62e5dcf555c919701aa503fb8e7c09dcbf7c54d3a645e5f58537504f2ac1fe"
+    },
+    {
+      "path": "Resources/views/work-permit/pdf/invoice.blade.php",
+      "bytes": 12482,
+      "sha256": "f65598130bffa8f19e3483757c0b495084e786515f7346a4907647790128f9b7"
+    },
+    {
+      "path": "Routes/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Routes/api.php",
+      "bytes": 2215,
+      "sha256": "ceb78def1587050d9fcde8aa183ea97ab63a50bdf8edcce063a83fd4667d0435"
+    },
+    {
+      "path": "Routes/web-settings.php",
+      "bytes": 135,
+      "sha256": "93445d5e77b77ba6d70437fc220f7256d8e9853d09f47862b11b05c12855d437"
+    },
+    {
+      "path": "Routes/web.php",
+      "bytes": 6670,
+      "sha256": "fc1e65efcb4f7dbd0df19b1796d2cc8131a6dbe7904ae39899b670736d24ab0f"
+    },
+    {
+      "path": "Tests/Feature/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Tests/Unit/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "composer.json",
+      "bytes": 446,
+      "sha256": "8861751529c6236935835a6d72bf67700b08d3bde6e1e03cd3813c5401fdbdda"
+    },
+    {
+      "path": "module.json",
+      "bytes": 521,
+      "sha256": "37dd37d20155667b9c921e96489b5e31a8d0ce159bd83b0ffd3a40bc85070cca"
+    },
+    {
+      "path": "package.json",
+      "bytes": 304,
+      "sha256": "02bf28e0ef5c859ef123f738547f7d445a8c6052c895d76224b3e4fd0427fd1b"
+    },
+    {
+      "path": "vite.config.js",
+      "bytes": 682,
+      "sha256": "d9bcd0a3f7f056fa51e9f78d9ffe0d34ffdc1c2482536e7630521d2da8dff4d9"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+<?php
+
+use Modules\Payroll\Contracts\Repositories\PayrollRunRepositoryContract;
+use Modules\Payroll\Contracts\Repositories\SalarySlipRepositoryContract;
+use Modules\Payroll\Contracts\Services\PayrollApprovalServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollCalculationServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollRunServiceContract;
+use Modules\Payroll\Repositories\Eloquent\PayrollRunRepository;
+use Modules\Payroll\Repositories\Eloquent\SalarySlipRepository;
+use Modules\Payroll\Services\Core\PayrollCalculationService;
+use Modules\Payroll\Services\Core\PayrollRunService;
+use Modules\Payroll\Services\Workflow\PayrollApprovalService;
+
+use Modules\Payroll\Contracts\Services\PayrollComplianceServiceContract;
+use Modules\Payroll\Contracts\Services\PayslipGenerationServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollTaxServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollReconciliationServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollReportingServiceContract;
+use Modules\Payroll\Services\Domain\PayrollComplianceService;
+use Modules\Payroll\Services\Domain\PayrollTaxService;
+use Modules\Payroll\Services\Integrations\PayrollReconciliationService;
+use Modules\Payroll\Services\Reporting\PayslipGenerationService;
+use Modules\Payroll\Services\Reporting\PayrollReportingService;
+use Modules\Payroll\Contracts\Services\PayslipDeliveryServiceContract;
+use Modules\Payroll\Services\Notifications\PayslipDeliveryService;
+use Modules\Payroll\Contracts\Services\PayslipAccessLinkServiceContract;
+use Modules\Payroll\Contracts\Services\PayslipDeliveryAuditServiceContract;
+use Modules\Payroll\Contracts\Services\PayslipPreferenceServiceContract;
+use Modules\Payroll\Services\Notifications\PayslipDeliveryAuditService;
+use Modules\Payroll\Services\Notifications\PayslipPreferenceService;
+use Modules\Payroll\Services\Security\PayslipAccessLinkService;
+
+use Modules\Payroll\Contracts\Services\PayrollPeriodLockServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollJournalExportServiceContract;
+use Modules\Payroll\Contracts\Services\PayrollVarianceServiceContract;
+use Modules\Payroll\Services\Domain\PayrollPeriodLockService;
+use Modules\Payroll\Services\Exporters\PayrollJournalExportService;
+use Modules\Payroll\Services\Analytics\PayrollVarianceService;
+use Modules\Payroll\Contracts\Services\CleaningPayrollServiceContract;
+use Modules\Payroll\Contracts\Services\CleaningPayrollSettingsServiceContract;
+use Modules\Payroll\Contracts\Services\EmployeeSelfServicePayrollContract;
+use Modules\Payroll\Services\Domain\CleaningPayrollService;
+use Modules\Payroll\Services\Domain\CleaningPayrollSettingsService;
+use Modules\Payroll\Services\Domain\EmployeeSelfServicePayrollService;
+return static function ($app): void {
+    $app->bind(PayrollCalculationServiceContract::class, PayrollCalculationService::class);
+    $app->bind(PayrollRunServiceContract::class, PayrollRunService::class);
+    $app->bind(SalarySlipRepositoryContract::class, SalarySlipRepository::class);
+    $app->bind(PayrollRunRepositoryContract::class, PayrollRunRepository::class);
+    $app->bind(PayrollApprovalServiceContract::class, PayrollApprovalService::class);
+    $app->bind(PayrollComplianceServiceContract::class, PayrollComplianceService::class);
+    $app->bind(PayslipGenerationServiceContract::class, PayslipGenerationService::class);
+    $app->bind(PayrollTaxServiceContract::class, PayrollTaxService::class);
+    $app->bind(PayrollReconciliationServiceContract::class, PayrollReconciliationService::class);
+    $app->bind(PayrollReportingServiceContract::class, PayrollReportingService::class);
+    $app->bind(PayslipDeliveryServiceContract::class, PayslipDeliveryService::class);
+    $app->bind(PayslipDeliveryAuditServiceContract::class, PayslipDeliveryAuditService::class);
+    $app->bind(PayslipPreferenceServiceContract::class, PayslipPreferenceService::class);
+    $app->bind(PayslipAccessLinkServiceContract::class, PayslipAccessLinkService::class);
+    $app->bind(PayrollPeriodLockServiceContract::class, PayrollPeriodLockService::class);
+    $app->bind(PayrollJournalExportServiceContract::class, PayrollJournalExportService::class);
+    $app->bind(PayrollVarianceServiceContract::class, PayrollVarianceService::class);
+    $app->bind(CleaningPayrollServiceContract::class, CleaningPayrollService::class);
+    $app->bind(CleaningPayrollSettingsServiceContract::class, CleaningPayrollSettingsService::class);
+    $app->bind(EmployeeSelfServicePayrollContract::class, EmployeeSelfServicePayrollService::class);
+};

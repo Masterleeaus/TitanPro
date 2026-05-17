@@ -17,15 +17,24 @@ class EstimateLineItem extends Model
         'description',
         'unit_price',
         'quantity',
+        'total',
         'is_taxable',
         'sort_order',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $item): void {
+            $item->total = round((float) $item->unit_price * (float) $item->quantity, 2);
+        });
+    }
 
     protected function casts(): array
     {
         return [
             'unit_price' => 'decimal:2',
             'quantity'   => 'decimal:3',
+            'total'      => 'decimal:2',
             'is_taxable' => 'boolean',
         ];
     }

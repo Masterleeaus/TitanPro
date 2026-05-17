@@ -1,0 +1,9 @@
+{
+  "info": {"name": "Security Module", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "item": [
+    {"name": "Dashboard", "request": {"method": "GET", "url": "{{base_url}}/api/security/dashboard"}},
+    {"name": "Health", "request": {"method": "GET", "url": "{{base_url}}/api/security/health"}},
+    {"name": "Status", "request": {"method": "GET", "url": "{{base_url}}/api/security/status"}},
+    {"name": "Diagnostics", "request": {"method": "GET", "url": "{{base_url}}/api/security/diagnostics"}}
+  ]
+}

@@ -1,0 +1,3 @@
+extend type Query {
+  payrollRuns(company_id: ID!, status: String): [PayrollRun!]!
+}
