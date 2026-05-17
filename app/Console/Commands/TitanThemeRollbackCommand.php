@@ -14,7 +14,7 @@ class TitanThemeRollbackCommand extends Command
 {
     protected $signature = 'titan:theme:rollback {org} {version} {--panel=global}';
 
-    protected $description = 'Rollback an organisation panel theme to a saved version.';
+    protected $description = 'Rollback an organization panel theme to a saved version.';
 
     public function handle(): int
     {
