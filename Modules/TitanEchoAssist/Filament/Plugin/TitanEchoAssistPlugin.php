@@ -2,6 +2,7 @@
 
 namespace Modules\TitanEchoAssist\Filament\Plugin;
 
+use Modules\TitanEchoAssist\Filament\Pages\TrainChatbotPage;
 use Modules\TitanEchoAssist\Filament\Resources\ChatbotResource;
 use Modules\TitanEchoAssist\Filament\Resources\ChannelResource;
 use Modules\TitanEchoAssist\Filament\Resources\ConversationResource;
@@ -30,6 +31,9 @@ if (interface_exists(\Filament\Contracts\Plugin::class)) {
                     ConversationResource::class,
                     KnowledgeResource::class,
                     ChannelResource::class,
+                ])
+                ->pages([
+                    TrainChatbotPage::class,
                 ])
                 ->widgets([
                     ConversationStatsWidget::class,

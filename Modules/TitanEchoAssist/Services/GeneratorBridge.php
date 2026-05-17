@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Modules\TitanEchoAssist\Billing\Usage\UsageRecord;
 use Modules\TitanEchoAssist\Billing\Usage\UsageTracker;
 use Modules\TitanEchoAssist\Events\AI\EngineError;
+use Modules\TitanEchoAssist\Services\KnowledgeRetriever;
 
 class GeneratorBridge
 {
@@ -16,6 +17,7 @@ class GeneratorBridge
     private string $fakeResponse      = '';
     private array  $fallbackProviders = [];
     private string $fallbackMessage   = "Sorry, I can't answer right now.";
+    private ?string $ragContext       = null;
 
     public function fake(string $response = ''): self
     {
@@ -34,6 +36,8 @@ class GeneratorBridge
         if (!empty($this->fakeResponse)) {
             return $this->fakeResponse;
         }
+
+        $this->ragContext = $this->buildRagContext($prompt);
 
         $provider = config('titan-chatbot.ai.provider', 'openai');
 
@@ -83,6 +87,8 @@ class GeneratorBridge
             );
             return ['reply' => $reply, 'usage' => $usage->normalize()];
         }
+
+        $this->ragContext = $this->buildRagContext($prompt);
 
         $provider = config('titan-chatbot.ai.provider', 'openai');
         $model    = config('titan-chatbot.ai.model', 'gpt-4o-mini');
@@ -240,18 +246,72 @@ class GeneratorBridge
 
     private function buildSystemPrompt(): ?string
     {
+        $basePrompt = null;
+
+        if ($this->chatbot) {
+            if (is_object($this->chatbot) && method_exists($this->chatbot, 'getAttribute')) {
+                $basePrompt = $this->chatbot->getAttribute('instructions')
+                    ?? $this->chatbot->getAttribute('prompt')
+                    ?? null;
+            } elseif (is_array($this->chatbot)) {
+                $basePrompt = $this->chatbot['instructions'] ?? $this->chatbot['prompt'] ?? null;
+            }
+        }
+
+        if ($this->ragContext === null || $this->ragContext === '') {
+            return $basePrompt;
+        }
+
+        $contextPrompt = "Knowledge base context:\n{$this->ragContext}";
+
+        return trim(($basePrompt ? "{$basePrompt}\n\n" : '') . $contextPrompt);
+    }
+
+    private function buildRagContext(string $prompt): ?string
+    {
+        $chatbotId = $this->resolveChatbotId();
+
+        if ($chatbotId === null) {
+            return null;
+        }
+
+        try {
+            $chunks = app(KnowledgeRetriever::class)->retrieve(
+                query: $prompt,
+                chatbotId: (string) $chatbotId,
+                topK: (int) config('titan-chatbot.ai.rag_chunks_limit', 5),
+            );
+
+            if ($chunks === []) {
+                return null;
+            }
+
+            return implode("\n\n", array_column($chunks, 'content'));
+        } catch (\Throwable $e) {
+            Log::warning('GeneratorBridge: failed to retrieve RAG context.', ['error' => $e->getMessage()]);
+
+            return null;
+        }
+    }
+
+    private function resolveChatbotId(): ?int
+    {
         if (! $this->chatbot) {
             return null;
         }
 
-        if (is_object($this->chatbot) && method_exists($this->chatbot, 'getAttribute')) {
-            return $this->chatbot->getAttribute('instructions')
-                ?? $this->chatbot->getAttribute('prompt')
-                ?? null;
+        if (is_object($this->chatbot) && method_exists($this->chatbot, 'getKey')) {
+            return (int) $this->chatbot->getKey();
         }
 
-        if (is_array($this->chatbot)) {
-            return $this->chatbot['instructions'] ?? $this->chatbot['prompt'] ?? null;
+        if (is_object($this->chatbot) && method_exists($this->chatbot, 'getAttribute')) {
+            $id = $this->chatbot->getAttribute('id');
+
+            return $id !== null ? (int) $id : null;
+        }
+
+        if (is_array($this->chatbot) && isset($this->chatbot['id'])) {
+            return (int) $this->chatbot['id'];
         }
 
         return null;
