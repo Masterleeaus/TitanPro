@@ -24,6 +24,10 @@ return [
     App\Providers\FortifyServiceProvider::class,
     Modules\CRMCore\Providers\CRMCoreServiceProvider::class,
     Modules\TitanLeads\Providers\TitanLeadsServiceProvider::class,
+    Modules\Dispatch\Providers\ModuleServiceProvider::class,
+    Modules\Dispatch\Providers\RouteServiceProvider::class,
+    Modules\Dispatch\Providers\EventServiceProvider::class,
+    Modules\Dispatch\Providers\FilamentServiceProvider::class,
     // Only registered when Telescope is installed (dev environments only)
     ...(class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)
         ? [App\Providers\TelescopeServiceProvider::class]

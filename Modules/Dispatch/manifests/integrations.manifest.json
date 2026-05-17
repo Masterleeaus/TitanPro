@@ -1,0 +1,28 @@
+{
+  "module": "Dispatch",
+  "mode": "standalone",
+  "contracts": [
+    "Modules\\Dispatch\\Contracts\\Services\\DispatchSchedulerContract",
+    "Modules\\Dispatch\\Contracts\\Services\\DispatchStatusContract"
+  ],
+  "events": [
+    "Modules\\Dispatch\\Events\\Domain\\WorkOrderScheduled",
+    "Modules\\Dispatch\\Events\\Domain\\DispatchStatusChanged"
+  ],
+  "removed_external_dependencies": [
+    "CleaningJobs",
+    "BookingModule",
+    "EInvoice"
+  ],
+  "optional_integrations": [
+    "generic_work_order_source",
+    "mapping_provider",
+    "notification_provider"
+  ],
+  "removed_external_module_dependencies": [
+    "CleaningJobs",
+    "BookingModule",
+    "EInvoice"
+  ],
+  "standalone": true
+}
