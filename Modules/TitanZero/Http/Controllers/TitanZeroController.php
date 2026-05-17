@@ -92,7 +92,7 @@ class TitanZeroController extends AccountBaseController
         $user = $request->user();
         $message = trim((string) $validated['message']);
         $context = $validated['context'] ?? [];
-        $threadId = $validated['thread_id'] ?? $validated['threadId'] ?? null;
+        $threadId = $this->resolveThreadId($validated);
         $appKey = (string) ($context['appKey'] ?? $context['app_key'] ?? 'default');
         $organizationId = $user?->organization_id ?? $user?->company_id;
 
@@ -159,5 +159,15 @@ class TitanZeroController extends AccountBaseController
                 'suggestions' => $suggestions,
             ],
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     */
+    private function resolveThreadId(array $validated): ?int
+    {
+        $threadId = $validated['thread_id'] ?? $validated['threadId'] ?? null;
+
+        return is_int($threadId) ? $threadId : null;
     }
 }

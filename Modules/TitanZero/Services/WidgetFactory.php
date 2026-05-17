@@ -225,6 +225,6 @@ class WidgetFactory
 
     private function widgetId(string $prefix): string
     {
-        return sprintf('%s-%s', Str::slug($prefix), Str::lower(Str::random(8)));
+        return sprintf('%s-%s', Str::slug($prefix), Str::lower((string) Str::uuid()));
     }
 }

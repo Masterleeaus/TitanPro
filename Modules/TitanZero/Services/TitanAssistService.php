@@ -13,6 +13,7 @@ use Modules\TitanCore\Services\UsageCostLogger;
 
 class TitanZeroService
 {
+    private const MAX_PORTAL_SNAPSHOT_BYTES = 5000;
     private const UI_CONTEXT_MESSAGE_LIMIT = 6;
 
     /**
@@ -336,7 +337,7 @@ PROMPT;
 
             $snapshotJson = json_encode($snapshot);
 
-            if (is_string($snapshotJson) && strlen($snapshotJson) > 5000) {
+            if (is_string($snapshotJson) && strlen($snapshotJson) > self::MAX_PORTAL_SNAPSHOT_BYTES) {
                 $snapshot['upcoming'] = array_slice($snapshot['upcoming'], 0, 3);
                 $snapshot['invoices'] = array_slice($snapshot['invoices'], 0, 3);
                 $snapshot['quotes'] = array_slice($snapshot['quotes'], 0, 3);
