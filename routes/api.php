@@ -54,7 +54,44 @@ Route::post('/titan/zero/generate-ui', function (Request $request) {
     return response()->json([
         'message' => 'Titan Zero UI endpoint is online.',
         'reply' => 'Titan Zero is connected to the Business OS shell.',
+        'parts' => [],
         'widgets' => [],
         'thread' => null,
+        'meta' => ['suggestions' => []],
+    ]);
+})->middleware(['auth']);
+
+/**
+ * --------------------------------------------------------------------------
+ * Titan thread history stub
+ * --------------------------------------------------------------------------
+ *
+ * Returns the messages and widgets for an existing chat thread.  Replace
+ * with a real implementation when the TitanZero module is available.
+ */
+Route::get('/titan/threads/{threadId}', function (string $threadId) {
+    return response()->json([
+        'messages' => [],
+        'widgets'  => [],
+    ]);
+})->middleware(['auth']);
+
+/**
+ * --------------------------------------------------------------------------
+ * Titan suggestion chips stub
+ * --------------------------------------------------------------------------
+ *
+ * Returns context-aware suggestion chips for the chat composer.  Replace
+ * with a real implementation that reads the current thread context.
+ */
+Route::get('/titan/suggestions', function (Request $request) {
+    return response()->json([
+        'suggestions' => [
+            'Open app',
+            'Search workspace',
+            'Explain this screen',
+            'Show recent activity',
+            'Help me navigate',
+        ],
     ]);
 })->middleware(['auth']);
