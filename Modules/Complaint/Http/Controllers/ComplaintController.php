@@ -171,7 +171,7 @@ class ComplaintController extends AccountBaseController
         }
 
         return Reply::successWithData(__('messages.recordSaved'), [
-            'replyID' => $complaint->getAttribute('first_reply_id') ?? $complaint->reply()->latest('id')->value('id'),
+            'replyID' => $complaint->getAttribute('first_reply_id'),
             'redirectUrl' => $redirectUrl,
         ]);
     }
