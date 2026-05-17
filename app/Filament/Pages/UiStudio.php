@@ -65,10 +65,24 @@ class UiStudio extends Page
     public string $fontHeading    = 'Figtree';
     public string $fontBody       = 'Figtree';
     public string $fontFamily     = 'Figtree';
+    public string $fontCode       = 'JetBrains Mono';
+    public string $fontScaleBase  = '14';
+    public string $fontScaleRatio = '1.25';
+    public string $fontWeightHeading = '600';
+    public string $fontWeightBody = '400';
+    public string $lineHeightBody = '1.6';
+    public string $letterSpacingHeading = '-0.01';
+    public string $typographyPreset = 'enterprise';
+    public string $googleFontQuery = '';
+    public string $googleFontTarget = 'heading';
+    public string $fontSourceUrl = '';
+    public ?string $customFontPath = null;
+    public ?string $customFontFamily = null;
     public ?string $logoPath      = null;
     public ?string $faviconPath   = null;
     public TemporaryUploadedFile|null $logoUpload = null;
     public TemporaryUploadedFile|null $faviconUpload = null;
+    public TemporaryUploadedFile|null $customFontUpload = null;
     public string $panelName      = 'TITAN ZERO';
     public string $backgroundType = 'none';
     public ?string $backgroundValue = null;
@@ -96,7 +110,7 @@ class UiStudio extends Page
 
     // ── Right-panel tab ───────────────────────────────────────────────────────
 
-    public string $activeTab = 'branding'; // branding | layout | menu | roles | components | marketplace
+    public string $activeTab = 'branding'; // branding | typography | layout | menu | roles | components | marketplace
 
     // ── Role Profiles state ───────────────────────────────────────────────────
 
@@ -230,6 +244,9 @@ class UiStudio extends Page
         $this->fontHeading    = $branding['font_family'] ?? $tokenState['font_heading'];
         $this->fontBody       = $branding['font_family'] ?? $tokenState['font_body'];
         $this->fontFamily     = $branding['font_family'] ?? $tokenState['font_body'];
+        $this->fontSourceUrl  = $settings->font_source_url ?? '';
+        $this->customFontPath = $settings->font_path ?? null;
+        $this->customFontFamily = is_string($settings->font_heading) ? $settings->font_heading : null;
         $this->panelName      = $branding['panel_name'] ?? $settings->brandName();
         $this->backgroundType = $branding['background_type'] ?? 'none';
         $this->backgroundValue = $branding['background_value'] ?? null;
@@ -248,6 +265,7 @@ class UiStudio extends Page
         $this->componentPanel  = $currentPanel;
         $this->savedThemeSnapshot = $this->themeSnapshot();
         $this->activeTab       = 'branding';
+        $this->loadTypographyTokens();
 
         // If redirected from a share link, auto-open the import tab.
         $importToken = request()->query('import_token');
@@ -316,6 +334,120 @@ class UiStudio extends Page
     public function selectTab(string $tab): void
     {
         $this->activeTab = $tab;
+    }
+
+    public function updatedFontBody(string $value): void
+    {
+        $this->fontFamily = $this->safeFont($value);
+    }
+
+    public function typographyPresets(): array
+    {
+        return [
+            'enterprise' => ['label' => 'Enterprise', 'heading' => 'Inter', 'body' => 'Inter', 'code' => 'JetBrains Mono'],
+            'editorial' => ['label' => 'Editorial', 'heading' => 'Playfair Display', 'body' => 'Source Serif 4', 'code' => 'JetBrains Mono'],
+            'compact' => ['label' => 'Compact', 'heading' => 'DM Sans', 'body' => 'DM Sans', 'code' => 'DM Mono'],
+            'code-forward' => ['label' => 'Code-forward', 'heading' => 'JetBrains Mono', 'body' => 'Inter', 'code' => 'JetBrains Mono'],
+            'luxury' => ['label' => 'Luxury', 'heading' => 'Cormorant Garamond', 'body' => 'Jost', 'code' => 'JetBrains Mono'],
+        ];
+    }
+
+    public function availableGoogleFonts(): array
+    {
+        return [
+            'Inter', 'JetBrains Mono', 'Playfair Display', 'Source Serif 4', 'DM Sans', 'DM Mono', 'Cormorant Garamond',
+            'Jost', 'Roboto', 'Lato', 'Open Sans', 'Montserrat', 'Merriweather', 'Poppins', 'Nunito', 'Fira Sans', 'Inconsolata',
+            'Space Grotesk', 'IBM Plex Sans', 'IBM Plex Mono', 'Work Sans', 'Manrope', 'PT Serif', 'Bebas Neue', 'Oswald', 'Raleway',
+        ];
+    }
+
+    public function filteredGoogleFonts(): array
+    {
+        $query = strtolower(trim($this->googleFontQuery));
+        $fonts = $this->availableGoogleFonts();
+
+        if ($query !== '') {
+            $fonts = array_values(array_filter($fonts, static fn (string $font): bool => str_contains(strtolower($font), $query)));
+
+            if ($fonts === [] && preg_match('/^[A-Za-z0-9\s-]+$/', $this->googleFontQuery) === 1) {
+                $fonts[] = trim($this->googleFontQuery);
+            }
+        }
+
+        return $fonts;
+    }
+
+    public function applyTypographyPreset(string $preset): void
+    {
+        $definition = $this->typographyPresets()[$preset] ?? null;
+
+        if (! is_array($definition)) {
+            return;
+        }
+
+        $this->typographyPreset = $preset;
+        $this->fontHeading = $definition['heading'];
+        $this->fontBody = $definition['body'];
+        $this->fontCode = $definition['code'];
+        $this->fontFamily = $definition['body'];
+        $this->fontSourceUrl = $this->googleFontStylesheetUrl([$this->fontHeading, $this->fontBody, $this->fontCode]);
+        $this->customFontPath = null;
+        $this->customFontFamily = null;
+    }
+
+    public function applyGoogleFont(string $font): void
+    {
+        $font = $this->safeFont($font, '');
+
+        if ($font === '') {
+            return;
+        }
+
+        if ($this->googleFontTarget === 'body') {
+            $this->fontBody = $font;
+            $this->fontFamily = $font;
+        } else {
+            $this->fontHeading = $font;
+        }
+
+        $this->fontSourceUrl = $this->googleFontStylesheetUrl([$this->fontHeading, $this->fontBody, $this->fontCode]);
+        $this->customFontPath = null;
+        $this->customFontFamily = null;
+    }
+
+    public function uploadCustomFont(): void
+    {
+        $this->validate(['customFontUpload' => 'required|file|mimes:woff2|max:4096']);
+
+        $orgId = auth()->user()?->organization_id;
+
+        if (! $orgId) {
+            Notification::make()->title('No organisation context')->body('Custom font upload requires an organisation.')->warning()->send();
+
+            return;
+        }
+
+        $path = $this->customFontUpload?->store($this->brandingDirectory($orgId) . '/fonts', 'public');
+
+        if (! $path) {
+            return;
+        }
+
+        $fontFamily = trim($this->googleFontQuery) !== '' ? $this->safeFont($this->googleFontQuery, 'Custom Org Font') : 'Custom Org Font';
+
+        if ($this->customFontPath && $this->customFontPath !== $path) {
+            Storage::disk('public')->delete($this->customFontPath);
+        }
+
+        $this->customFontPath = $path;
+        $this->customFontFamily = $fontFamily;
+        $this->fontHeading = $fontFamily;
+        $this->fontBody = $fontFamily;
+        $this->fontFamily = $fontFamily;
+        $this->fontSourceUrl = '';
+        $this->customFontUpload = null;
+
+        Notification::make()->title('Custom font uploaded')->success()->send();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -864,12 +996,29 @@ class UiStudio extends Page
             $responsive['--sidebar-width'] = '64px';
         }
 
+        $scale = $this->generateTypeScale();
+
         return [
             '--color-primary-500' => $this->safeColor($this->primaryColor),
             '--color-secondary-500' => $this->safeColor($this->secondaryColor),
             '--color-accent-500' => $this->safeColor($this->accentColor),
             '--color-surface-50' => $this->safeColor($this->surfaceColor),
             '--font-family' => $this->safeFont($this->fontFamily),
+            '--font-heading' => $this->safeFont($this->fontHeading),
+            '--font-body' => $this->safeFont($this->fontBody),
+            '--font-code' => $this->safeFont($this->fontCode, 'JetBrains Mono'),
+            '--font-scale-base' => $this->sanitizeFontScaleBase($this->fontScaleBase) . 'px',
+            '--font-scale-ratio' => (string) $this->sanitizeFontScaleRatio($this->fontScaleRatio),
+            '--font-weight-heading' => (string) $this->sanitizeFontWeight($this->fontWeightHeading, '600'),
+            '--font-weight-body' => (string) $this->sanitizeFontWeight($this->fontWeightBody, '400'),
+            '--line-height-body' => (string) $this->sanitizeLineHeight($this->lineHeightBody),
+            '--letter-spacing-heading' => (string) $this->sanitizeLetterSpacing($this->letterSpacingHeading) . 'em',
+            '--font-size-sm' => $scale['sm'],
+            '--font-size-base' => $scale['base'],
+            '--font-size-lg' => $scale['lg'],
+            '--font-size-xl' => $scale['xl'],
+            '--font-size-2xl' => $scale['2xl'],
+            '--font-size-3xl' => $scale['3xl'],
             ...$responsive,
         ];
     }
@@ -1307,6 +1456,15 @@ class UiStudio extends Page
             'accentColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'surfaceColor' => ['required', 'regex:'.self::HEX_COLOR_REGEX],
             'fontFamily' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
+            'fontHeading' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
+            'fontBody' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
+            'fontCode' => ['nullable', 'regex:/^[\w\s\-]+$/', 'max:120'],
+            'fontScaleBase' => ['required', 'numeric', 'min:10', 'max:24'],
+            'fontScaleRatio' => ['required', 'numeric', 'min:1.05', 'max:1.8'],
+            'fontWeightHeading' => ['required', 'integer', 'min:300', 'max:900'],
+            'fontWeightBody' => ['required', 'integer', 'min:300', 'max:900'],
+            'lineHeightBody' => ['required', 'numeric', 'min:1.1', 'max:2.2'],
+            'letterSpacingHeading' => ['required', 'numeric', 'min:-0.08', 'max:0.2'],
             'backgroundType' => 'required|in:none,gradient,image',
             'backgroundValue' => 'nullable|string|max:500',
         ]);
@@ -1353,20 +1511,20 @@ class UiStudio extends Page
                 'panel_name' => $validated['panelName'] ?: null,
                 'primary_color' => $validated['primaryColor'],
                 'secondary_color' => $validated['secondaryColor'],
-                'font_family' => $validated['fontFamily'] ?: null,
+                'font_family' => $validated['fontBody'] ?: ($validated['fontFamily'] ?: null),
                 'background_type' => $validated['backgroundType'],
                 'background_value' => $validated['backgroundValue'] ?: null,
                 'menu_items' => $this->menuItems,
                 'dashboard_layout' => $this->canvasWidgets,
             ])->save();
         } else {
-            app(ThemeTokenManager::class)->savePlatformThemeTokens($settings, [
+                app(ThemeTokenManager::class)->savePlatformThemeTokens($settings, [
                 'primary_color' => $validated['primaryColor'],
                 'secondary_color' => $validated['secondaryColor'],
                 'accent_color' => $validated['accentColor'],
                 'surface_color' => $validated['surfaceColor'],
-                'font_heading' => $validated['fontFamily'] ?: 'Figtree',
-                'font_body' => $validated['fontFamily'] ?: 'Figtree',
+                'font_heading' => $validated['fontHeading'] ?: ($validated['fontFamily'] ?: 'Figtree'),
+                'font_body' => $validated['fontBody'] ?: ($validated['fontFamily'] ?: 'Figtree'),
             ]);
 
             app(ThemeTokenManager::class)->saveResponsiveOverrides(
@@ -1382,7 +1540,12 @@ class UiStudio extends Page
         $settings->update([
             'accent_color' => $this->accentColor,
             'surface_color' => $this->surfaceColor,
+            'font_heading' => $this->fontHeading ?: 'Figtree',
+            'font_body' => $this->fontBody ?: 'Figtree',
+            'font_source_url' => $this->fontSourceUrl ?: null,
+            'font_path' => $this->customFontPath,
         ]);
+        $this->saveTypographyTokens();
         cache()->forget('platform_settings');
 
         // Persist dashboard layout fallback row for legacy dashboard consumers.
@@ -1730,6 +1893,146 @@ class UiStudio extends Page
         return array_key_first($panels) ?? 'titanpro';
     }
 
+    /** @return array<string, string> */
+    public function generatedTypeScale(): array
+    {
+        return $this->generateTypeScale();
+    }
+
+    /** @return array<string, string> */
+    private function generateTypeScale(): array
+    {
+        $base = $this->sanitizeFontScaleBase($this->fontScaleBase);
+        $ratio = $this->sanitizeFontScaleRatio($this->fontScaleRatio);
+
+        return [
+            'sm' => number_format(max(10, $base / $ratio), 2, '.', '') . 'px',
+            'base' => number_format($base, 2, '.', '') . 'px',
+            'lg' => number_format($base * $ratio, 2, '.', '') . 'px',
+            'xl' => number_format($base * ($ratio ** 2), 2, '.', '') . 'px',
+            '2xl' => number_format($base * ($ratio ** 3), 2, '.', '') . 'px',
+            '3xl' => number_format($base * ($ratio ** 4), 2, '.', '') . 'px',
+        ];
+    }
+
+    private function sanitizeFontScaleBase(string $value): float
+    {
+        return max(10, min(24, (float) $value));
+    }
+
+    private function sanitizeFontScaleRatio(string $value): float
+    {
+        return max(1.05, min(1.8, (float) $value));
+    }
+
+    private function sanitizeFontWeight(string $value, string $fallback): int
+    {
+        return max(300, min(900, (int) ($value !== '' ? $value : $fallback)));
+    }
+
+    private function sanitizeLineHeight(string $value): float
+    {
+        return max(1.1, min(2.2, (float) $value));
+    }
+
+    private function sanitizeLetterSpacing(string $value): float
+    {
+        return max(-0.08, min(0.2, (float) $value));
+    }
+
+    /** @param array<int, string> $families */
+    private function googleFontStylesheetUrl(array $families): string
+    {
+        $families = array_values(array_unique(array_filter(array_map(function (string $font): string {
+            return $this->safeFont($font, '');
+        }, $families))));
+
+        if ($families === []) {
+            return '';
+        }
+
+        $query = implode('&family=', array_map(static fn (string $font): string => str_replace(' ', '+', $font), $families));
+
+        return 'https://fonts.googleapis.com/css2?family=' . $query . '&display=swap';
+    }
+
+    private function loadTypographyTokens(): void
+    {
+        if (! Schema::hasTable('titan_theme_tokens')) {
+            return;
+        }
+
+        $tokens = DB::table('titan_theme_tokens')
+            ->where('panel', 'global')
+            ->where('scope', 'typography')
+            ->pluck('value', 'key')
+            ->all();
+
+        $defaults = [
+            '--font-heading' => $this->fontHeading,
+            '--font-body' => $this->fontBody,
+            '--font-code' => $this->fontCode,
+            '--font-scale-base' => $this->fontScaleBase,
+            '--font-scale-ratio' => $this->fontScaleRatio,
+            '--font-weight-heading' => $this->fontWeightHeading,
+            '--font-weight-body' => $this->fontWeightBody,
+            '--line-height-body' => $this->lineHeightBody,
+            '--letter-spacing-heading' => $this->letterSpacingHeading,
+            '--font-source-url' => $this->fontSourceUrl,
+            '--font-custom-path' => $this->customFontPath ?? '',
+            '--font-custom-family' => $this->customFontFamily ?? '',
+        ];
+
+        $this->fontHeading = $this->safeFont((string) ($tokens['--font-heading'] ?? $defaults['--font-heading']));
+        $this->fontBody = $this->safeFont((string) ($tokens['--font-body'] ?? $defaults['--font-body']));
+        $this->fontFamily = $this->fontBody;
+        $this->fontCode = $this->safeFont((string) ($tokens['--font-code'] ?? $defaults['--font-code']), 'JetBrains Mono');
+        $this->fontScaleBase = (string) $this->sanitizeFontScaleBase((string) ($tokens['--font-scale-base'] ?? $defaults['--font-scale-base']));
+        $this->fontScaleRatio = (string) $this->sanitizeFontScaleRatio((string) ($tokens['--font-scale-ratio'] ?? $defaults['--font-scale-ratio']));
+        $this->fontWeightHeading = (string) $this->sanitizeFontWeight((string) ($tokens['--font-weight-heading'] ?? $defaults['--font-weight-heading']), '600');
+        $this->fontWeightBody = (string) $this->sanitizeFontWeight((string) ($tokens['--font-weight-body'] ?? $defaults['--font-weight-body']), '400');
+        $this->lineHeightBody = (string) $this->sanitizeLineHeight((string) ($tokens['--line-height-body'] ?? $defaults['--line-height-body']));
+        $this->letterSpacingHeading = (string) $this->sanitizeLetterSpacing((string) ($tokens['--letter-spacing-heading'] ?? $defaults['--letter-spacing-heading']));
+        $this->fontSourceUrl = (string) ($tokens['--font-source-url'] ?? $defaults['--font-source-url']);
+        $this->customFontPath = (string) ($tokens['--font-custom-path'] ?? $defaults['--font-custom-path']) ?: $this->customFontPath;
+        $this->customFontFamily = (string) ($tokens['--font-custom-family'] ?? $defaults['--font-custom-family']) ?: $this->customFontFamily;
+    }
+
+    private function saveTypographyTokens(): void
+    {
+        if (! Schema::hasTable('titan_theme_tokens')) {
+            return;
+        }
+
+        $rows = [
+            ['key' => '--font-heading', 'value' => $this->safeFont($this->fontHeading)],
+            ['key' => '--font-body', 'value' => $this->safeFont($this->fontBody)],
+            ['key' => '--font-code', 'value' => $this->safeFont($this->fontCode, 'JetBrains Mono')],
+            ['key' => '--font-scale-base', 'value' => (string) $this->sanitizeFontScaleBase($this->fontScaleBase)],
+            ['key' => '--font-scale-ratio', 'value' => (string) $this->sanitizeFontScaleRatio($this->fontScaleRatio)],
+            ['key' => '--font-weight-heading', 'value' => (string) $this->sanitizeFontWeight($this->fontWeightHeading, '600')],
+            ['key' => '--font-weight-body', 'value' => (string) $this->sanitizeFontWeight($this->fontWeightBody, '400')],
+            ['key' => '--line-height-body', 'value' => (string) $this->sanitizeLineHeight($this->lineHeightBody)],
+            ['key' => '--letter-spacing-heading', 'value' => (string) $this->sanitizeLetterSpacing($this->letterSpacingHeading)],
+            ['key' => '--font-source-url', 'value' => trim($this->fontSourceUrl)],
+            ['key' => '--font-custom-path', 'value' => $this->customFontPath ?? ''],
+            ['key' => '--font-custom-family', 'value' => $this->customFontFamily ?? ''],
+        ];
+
+        DB::table('titan_theme_tokens')->upsert(
+            array_map(static fn (array $row): array => [
+                'panel' => 'global',
+                'scope' => 'typography',
+                'key' => $row['key'],
+                'value' => $row['value'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], $rows),
+            ['panel', 'scope', 'key'],
+            ['value', 'updated_at']
+        );
+    }
+
     /** @return array<string, string|null> */
     private function themeSnapshot(): array
     {
@@ -1739,7 +2042,18 @@ class UiStudio extends Page
             'secondaryColor' => $this->secondaryColor,
             'accentColor' => $this->accentColor,
             'surfaceColor' => $this->surfaceColor,
+            'fontHeading' => $this->fontHeading,
+            'fontBody' => $this->fontBody,
+            'fontCode' => $this->fontCode,
             'fontFamily' => $this->fontFamily,
+            'fontScaleBase' => $this->fontScaleBase,
+            'fontScaleRatio' => $this->fontScaleRatio,
+            'fontWeightHeading' => $this->fontWeightHeading,
+            'fontWeightBody' => $this->fontWeightBody,
+            'lineHeightBody' => $this->lineHeightBody,
+            'letterSpacingHeading' => $this->letterSpacingHeading,
+            'fontSourceUrl' => $this->fontSourceUrl,
+            'customFontPath' => $this->customFontPath,
             'backgroundType' => $this->backgroundType,
             'backgroundValue' => $this->backgroundValue,
             'customCss' => $this->customCss,

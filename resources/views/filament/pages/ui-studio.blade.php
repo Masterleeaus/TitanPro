@@ -203,6 +203,9 @@
                 data-preview-width="{{ $this->previewFrameWidth() }}"
                 data-sync-scroll="{{ $syncPreviewScroll ? '1' : '0' }}"
                 data-preview-css='@json($this->previewCssVariables())'
+                data-font-source-url="{{ $fontSourceUrl }}"
+                data-custom-font-path="{{ $customFontPath }}"
+                data-custom-font-family="{{ $customFontFamily }}"
                 data-responsive-preview='@json($this->responsivePreviewPayload())'
                 hidden
             ></div>
@@ -213,7 +216,7 @@
 
             {{-- Tab strip --}}
             <div class="flex border-b border-gray-200 dark:border-white/10 overflow-x-auto">
-                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components', 'marketplace' => 'Marketplace'] as $tab => $tabLabel)
+                @foreach (['branding' => 'Branding', 'typography' => 'Typography', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components', 'marketplace' => 'Marketplace'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
@@ -355,6 +358,107 @@
                             @if ($backgroundPreviewStyle)
                                 <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ e($backgroundPreviewStyle) }}"></div>
                             @endif
+                        </div>
+                    </section>
+                @endif
+
+                {{-- ── Typography tab ─────────────────────────────────── --}}
+                @if ($activeTab === 'typography')
+                    <section class="space-y-4">
+                        <div>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Font Presets</h4>
+                            <div class="grid grid-cols-1 gap-1.5">
+                                @foreach ($this->typographyPresets() as $presetKey => $preset)
+                                    <button
+                                        type="button"
+                                        wire:click="applyTypographyPreset('{{ $presetKey }}')"
+                                        class="flex items-center justify-between rounded-md border px-2.5 py-2 text-xs transition-colors {{ $typographyPreset === $presetKey ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-300' : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5' }}"
+                                    >
+                                        <span class="font-medium">{{ $preset['label'] }}</span>
+                                        <span class="text-[10px] text-gray-400">{{ $preset['heading'] }} / {{ $preset['body'] }}</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Google Fonts</h4>
+                            <div class="space-y-2">
+                                <input type="text" wire:model.live.debounce.250ms="googleFontQuery" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" placeholder="Search Google Font (e.g. Inter)" />
+                                <select wire:model.live="googleFontTarget" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300">
+                                    <option value="heading">Apply to heading</option>
+                                    <option value="body">Apply to body</option>
+                                </select>
+                                <div class="max-h-28 overflow-y-auto rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">
+                                    @forelse ($this->filteredGoogleFonts() as $googleFont)
+                                        <button type="button" wire:click="applyGoogleFont('{{ $googleFont }}')" class="block w-full px-2 py-1.5 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5">{{ $googleFont }}</button>
+                                    @empty
+                                        <p class="px-2 py-1.5 text-[11px] text-gray-400">No matching font.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Custom WOFF2 Upload</h4>
+                            <div class="space-y-2">
+                                <input type="file" wire:model="customFontUpload" accept=".woff2,font/woff2" class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300" />
+                                @error('customFontUpload') <p class="text-[11px] text-red-500">{{ $message }}</p> @enderror
+                                <button type="button" wire:click="uploadCustomFont" class="w-full rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5">Upload Custom Font</button>
+                                @if ($customFontPath)
+                                    <p class="text-[10px] text-gray-400">Stored: {{ $customFontPath }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Typography Tokens</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Heading font
+                                    <input type="text" wire:model.live="fontHeading" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Body font
+                                    <input type="text" wire:model.live="fontBody" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Code font
+                                    <input type="text" wire:model.live="fontCode" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Scale base (px)
+                                    <input type="number" step="0.1" wire:model.live="fontScaleBase" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Scale ratio
+                                    <input type="number" step="0.01" wire:model.live="fontScaleRatio" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Heading weight
+                                    <input type="number" step="100" wire:model.live="fontWeightHeading" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Body weight
+                                    <input type="number" step="100" wire:model.live="fontWeightBody" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400">Body line-height
+                                    <input type="number" step="0.01" wire:model.live="lineHeightBody" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 col-span-2">Heading letter spacing (em)
+                                    <input type="number" step="0.001" wire:model.live="letterSpacingHeading" class="mt-1 w-full rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300" />
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Generated Type Scale</h4>
+                            <div class="grid grid-cols-3 gap-1 text-[10px] text-gray-500">
+                                @foreach ($this->generatedTypeScale() as $scaleKey => $scaleValue)
+                                    <div class="rounded border border-gray-200 dark:border-white/10 px-2 py-1 font-mono">{{ $scaleKey }}: {{ $scaleValue }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 p-3 space-y-2">
+                            @php($scale = $this->generatedTypeScale())
+                            <p style="font-family: {{ e($this->safeFont($fontHeading)) }}; font-size: {{ $scale['3xl'] ?? '32px' }}; font-weight: {{ e($fontWeightHeading) }}; letter-spacing: {{ e($letterSpacingHeading) }}em;" class="text-gray-800 dark:text-gray-100">Heading Preview — Titan Typography</p>
+                            <p style="font-family: {{ e($this->safeFont($fontBody)) }}; font-size: {{ $scale['base'] ?? '14px' }}; font-weight: {{ e($fontWeightBody) }}; line-height: {{ e($lineHeightBody) }};" class="text-gray-600 dark:text-gray-300">The quick brown fox jumps over the lazy dog. This paragraph uses current body tokens and generated scale values.</p>
+                            <p style="font-family: {{ e($this->safeFont($fontBody)) }}; font-size: {{ $scale['sm'] ?? '12px' }};" class="text-gray-500 dark:text-gray-400">Caption · 12 May 2026 · Updated 2m ago</p>
+                            <pre class="rounded bg-gray-50 dark:bg-white/5 px-2 py-2 text-[11px] text-gray-700 dark:text-gray-200 overflow-x-auto" style="font-family: {{ e($this->safeFont($fontCode, 'JetBrains Mono')) }};">const token = '--font-heading';</pre>
                         </div>
                     </section>
                 @endif
@@ -1416,6 +1520,25 @@
                                 Object.keys(data.payload.vars || {}).forEach(function (key) {
                                     root.style.setProperty(key, String(data.payload.vars[key]));
                                 });
+                                if (data.payload.fontSourceUrl) {
+                                    var existingFontLink = document.getElementById('titan-preview-font-link');
+                                    if (!existingFontLink) {
+                                        existingFontLink = document.createElement('link');
+                                        existingFontLink.id = 'titan-preview-font-link';
+                                        existingFontLink.rel = 'stylesheet';
+                                        document.head.appendChild(existingFontLink);
+                                    }
+                                    existingFontLink.href = data.payload.fontSourceUrl;
+                                }
+                                if (data.payload.customFont && data.payload.customFont.url && data.payload.customFont.family) {
+                                    var customFontStyle = document.getElementById('titan-preview-custom-font-style');
+                                    if (!customFontStyle) {
+                                        customFontStyle = document.createElement('style');
+                                        customFontStyle.id = 'titan-preview-custom-font-style';
+                                        document.head.appendChild(customFontStyle);
+                                    }
+                                    customFontStyle.textContent = '@font-face{font-family:"' + String(data.payload.customFont.family).replace(/"/g, '') + '";src:url("' + String(data.payload.customFont.url).replace(/"/g, '') + '") format("woff2");font-display:swap;}';
+                                }
                                 root.dataset.titanPreviewMode = data.payload.mode || 'desktop';
                                 document.body.classList.toggle('titan-preview-sidebar-collapsed', data.payload.mode === 'collapsed');
                                 document.body.classList.toggle('titan-preview-customer-portal', data.payload.mode === 'customer');
@@ -1426,7 +1549,7 @@
                                     style.id = 'titan-responsive-preview-style';
                                     document.head.appendChild(style);
                                 }
-                                style.textContent = '\nhtml,body{max-width:100%;overflow-x:hidden;}\n.fi-sidebar{width:var(--sidebar-width,280px)!important;}\n.fi-section,.fi-card{padding:var(--card-padding,1rem)!important;}\n.fi-main,.fi-page{gap:var(--content-gap,1rem)!important;}\nh1,.fi-header-heading{font-size:var(--heading-xl-size,2rem)!important;}\nh2,.fi-section-header-heading{font-size:var(--heading-lg-size,1.5rem)!important;}\nbody{font-size:var(--body-font-size,16px)!important;}\ntable th,table td{padding-left:var(--table-cell-padding-x,.75rem)!important;padding-right:var(--table-cell-padding-x,.75rem)!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar{width:64px!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar span:not(.fi-badge){display:none!important;}\n@media(max-width:640px){.fi-ta-table{min-width:0!important;width:100%!important}.fi-ta-table th:nth-child(1),.fi-ta-table td:nth-child(1),.fi-ta-table th:nth-child(4),.fi-ta-table td:nth-child(4){display:none!important}}';
+                                style.textContent = '\nhtml,body{max-width:100%;overflow-x:hidden;}\n.fi-sidebar{width:var(--sidebar-width,280px)!important;}\n.fi-section,.fi-card{padding:var(--card-padding,1rem)!important;}\n.fi-main,.fi-page{gap:var(--content-gap,1rem)!important;}\nh1,.fi-header-heading{font-size:var(--heading-xl-size,2rem)!important;}\nh2,.fi-section-header-heading{font-size:var(--heading-lg-size,1.5rem)!important;}\nbody{font-size:var(--body-font-size,16px)!important;font-family:var(--font-body,var(--font-family,Inter)),sans-serif!important;font-weight:var(--font-weight-body,400)!important;line-height:var(--line-height-body,1.6)!important;}\nh1,h2,h3,h4,h5,h6,.fi-header-heading{font-family:var(--font-heading,var(--font-family,Inter)),sans-serif!important;font-weight:var(--font-weight-heading,600)!important;letter-spacing:var(--letter-spacing-heading,-0.01em)!important;}\ncode,pre,.font-mono{font-family:var(--font-code,JetBrains Mono),monospace!important;}\ntable th,table td{padding-left:var(--table-cell-padding-x,.75rem)!important;padding-right:var(--table-cell-padding-x,.75rem)!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar{width:64px!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar span:not(.fi-badge){display:none!important;}\n@media(max-width:640px){.fi-ta-table{min-width:0!important;width:100%!important}.fi-ta-table th:nth-child(1),.fi-ta-table td:nth-child(1),.fi-ta-table th:nth-child(4),.fi-ta-table td:nth-child(4){display:none!important}}';
                             });
                         })();
                     `;
@@ -1446,6 +1569,11 @@
                                 vars,
                                 mode: payload.dataset.previewFrame ?? 'desktop',
                                 width: payload.dataset.previewWidth ?? '1440',
+                                fontSourceUrl: payload.dataset.fontSourceUrl ?? '',
+                                customFont: (payload.dataset.customFontPath && payload.dataset.customFontFamily) ? {
+                                    url: `/storage/${payload.dataset.customFontPath}`,
+                                    family: payload.dataset.customFontFamily,
+                                } : null,
                             },
                         },
                         window.location.origin
@@ -1541,7 +1669,7 @@
             const observer = new MutationObserver(applyState);
             observer.observe(payload, {
                 attributes: true,
-                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-preview-width', 'data-sync-scroll', 'data-preview-css'],
+                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-preview-width', 'data-sync-scroll', 'data-preview-css', 'data-font-source-url', 'data-custom-font-path', 'data-custom-font-family'],
             });
 
             applyState();
