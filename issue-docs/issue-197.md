@@ -1,52 +1,35 @@
-# Issue 197 — [FOLLOW-UP] Remove duplicate InvoiceResource / PaymentResource from app/Filament/Resources
-
-## Decision
-
-Repurpose the TitanPro `InvoiceResource` and `PaymentResource` as **cross-tenant super-admin
-views** instead of deleting them.
-
-### Why this direction
-
-- The TitanPro panel already links to these finance resources, so keeping them avoids breaking
-  existing super-admin navigation.
-- The resources were already super-admin-only; making them cross-tenant turns the fallback into
-  a purposeful platform-ops view instead of a duplicate org-scoped finance surface.
-- ZeroPay remains the authoritative finance panel for `bookkeeper`, `owner`, and `admin`.
+# Issue 197 — [FOLLOW-UP] Add theme_packs table and CRUD for user-uploaded custom themes
 
 ## Files changed
 
 | File | Action | Purpose |
 |------|--------|---------|
-| `app/Filament/Resources/InvoiceResource.php` | Modified | Removed tenant scoping from the TitanPro super-admin query and added an organization column so invoices are clearly cross-tenant. |
-| `app/Filament/Resources/PaymentResource.php` | Modified | Removed tenant scoping from the TitanPro super-admin query and added an organization column so payments are clearly cross-tenant. |
-| `tests/Feature/Admin/InvoicePaymentAccessTest.php` | Modified | Updated coverage for the repurposed TitanPro routes and added ZeroPay org-scoping checks for owner/admin/bookkeeper invoice access. |
-| `tests/Feature/CrossOrgAccessTest.php` | Modified | Updated invoice/payment TitanPro edit-page expectations to reflect intentional cross-tenant super-admin access. |
+| `database/migrations/2026_05_17_170900_create_theme_packs_table.php` | Added | Creates tenant-scoped `theme_packs` table with required columns (`organization_id`, `name`, `slug`, `description`, `tokens`, `preview_image_path`, `tags`, `is_public`, timestamps) plus indexes. |
+| `app/Models/ThemePack.php` | Added | Adds tenant-aware `ThemePack` Eloquent model implementing `TenantAware` and `BelongsToTenant`. |
+| `app/Filament/Pages/UiStudio.php` | Modified | Implements My Themes save/apply/edit/delete logic and loads saved packs into in-memory studio preview without publish. |
+| `resources/views/filament/pages/ui-studio.blade.php` | Modified | Adds Marketplace **My Themes** sub-tab UI with list + save current + edit + delete + apply actions. |
+| `tests/Feature/ThemePackMarketplaceTest.php` | Added | Covers create/list/apply/delete flows and cross-org isolation behavior. |
 
 ## Fixes applied
 
-1. **TitanPro InvoiceResource**
-   - Removed the extra org filter and bypassed the model `TenantScope` in `getEloquentQuery()`.
-   - Added an `organization.name` table column so super-admins can tell which tenant owns each invoice.
-
-2. **TitanPro PaymentResource**
-   - Removed the extra org filter and bypassed the model `TenantScope` in `getEloquentQuery()`.
-   - Added an `organization.name` table column so super-admins can tell which tenant owns each payment.
-
-3. **Access tests**
-   - Kept non-super-admin TitanPro finance access forbidden.
-   - Added cross-tenant TitanPro super-admin coverage for invoice/payment list + edit access.
-   - Added ZeroPay invoice list assertions confirming owner/admin/bookkeeper still only see their own org’s invoices.
+1. Added a new `theme_packs` migration with all acceptance-criteria fields and tenant uniqueness (`organization_id + slug`).
+2. Added a `ThemePack` model that is tenant scoped by default and casts JSON token/tag fields.
+3. Extended UI Studio Marketplace with a **My Themes** sub-tab:
+   - Save current UI token state as a pack
+   - Edit existing pack metadata
+   - Delete pack
+   - Apply pack for preview without committing
+4. Added feature tests validating create, list, apply, delete, and cross-org tenant isolation.
 
 ## Validation notes
 
-- Attempted `composer install --no-interaction --prefer-dist --no-progress`, but the lock file
-  requires PHP 8.4 packages while this runner has PHP 8.3.6, so Laravel/Pest validation could not
-  be executed locally in this environment.
+- Ran `npm ci` successfully.
+- Ran `npm run test` successfully (frontend Vitest suite passed).
+- `composer run test` could not run in this environment because `vendor/autoload.php` is missing (composer dependencies are not installed).
+- `npm run lint` reports pre-existing unrelated ESLint errors in module build files using `require()`.
 
 ## Next steps
 
-- Re-run the updated Pest targets in a PHP 8.4 environment:
-  - `./vendor/bin/pest tests/Feature/Admin/InvoicePaymentAccessTest.php`
-  - `./vendor/bin/pest tests/Feature/CrossOrgAccessTest.php`
-- If route/action codegen is regenerated in CI, confirm the generated TitanPro finance helpers
-  still match the intended cross-tenant super-admin behavior.
+- Run PHP/Pest tests in a PHP 8.4 + composer-installed environment:
+  - `./vendor/bin/pest tests/Feature/ThemePackMarketplaceTest.php`
+- Optionally add UI-level Livewire browser checks for My Themes interactions once CI PHP runtime is aligned.

@@ -1004,7 +1004,7 @@
 
                     {{-- Marketplace sub-tab strip --}}
                     <div class="flex gap-1 border-b border-gray-100 dark:border-white/10 pb-2 mb-4 overflow-x-auto">
-                        @foreach (['browse' => 'Browse', 'install' => 'Install', 'share' => 'Share', 'import' => 'Import'] as $sub => $subLabel)
+                        @foreach (['browse' => 'Browse', 'install' => 'Install', 'share' => 'Share', 'import' => 'Import', 'my-themes' => 'My Themes'] as $sub => $subLabel)
                             <button
                                 type="button"
                                 wire:click="$set('marketplaceTab', '{{ $sub }}')"
@@ -1239,6 +1239,99 @@
                                         <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
                                         Install This Theme
                                     </button>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                    {{-- ── My Themes --}}
+                    @if ($marketplaceTab === 'my-themes')
+                        @php($myThemePacks = $this->myThemePacks())
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">My Theme Packs</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Save your current UI Studio token state as reusable packs, apply them for preview, and manage them over time.
+                            </p>
+
+                            <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 space-y-2">
+                                <input
+                                    type="text"
+                                    wire:model.live="themePackName"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="Theme pack name"
+                                />
+                                <textarea
+                                    wire:model.live="themePackDescription"
+                                    rows="2"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="Description (optional)"
+                                ></textarea>
+                                <input
+                                    type="text"
+                                    wire:model.live="themePackTags"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-white/80 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="Tags (comma separated)"
+                                />
+                                <label class="inline-flex items-center gap-2 text-[11px] text-gray-600 dark:text-gray-400">
+                                    <input type="checkbox" wire:model.live="themePackIsPublic" class="rounded border-gray-300 dark:border-white/20" />
+                                    Public pack
+                                </label>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        wire:click="saveCurrentAsThemePack"
+                                        class="flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                    >
+                                        <x-heroicon-o-bookmark-square class="h-3.5 w-3.5" />
+                                        {{ $editingThemePackId ? 'Update Pack' : 'Save Current Theme' }}
+                                    </button>
+
+                                    @if ($editingThemePackId)
+                                        <button
+                                            type="button"
+                                            wire:click="cancelThemePackEdit"
+                                            class="flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                                        >
+                                            <x-heroicon-o-x-mark class="h-3.5 w-3.5" />
+                                            Cancel Edit
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            @if ($myThemePacks->isEmpty())
+                                <p class="text-[11px] text-gray-400">No saved theme packs yet.</p>
+                            @else
+                                <div class="space-y-2">
+                                    @foreach ($myThemePacks as $pack)
+                                        <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                            <div class="flex gap-1 mb-2">
+                                                @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $colorKey)
+                                                    @if (!empty($pack->tokens[$colorKey]))
+                                                        <div class="h-5 flex-1 rounded" style="background: {{ e($pack->tokens[$colorKey]) }}" title="{{ $colorKey }}"></div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                            <p class="text-xs font-semibold text-gray-700 dark:text-gray-200">{{ $pack->name }}</p>
+                                            @if ($pack->description)
+                                                <p class="text-[10px] text-gray-500 mt-0.5">{{ $pack->description }}</p>
+                                            @endif
+                                            <div class="mt-1 flex flex-wrap gap-1">
+                                                @foreach (($pack->tags ?? []) as $tag)
+                                                    <span class="inline-block rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[9px] text-gray-500 dark:text-gray-400">{{ $tag }}</span>
+                                                @endforeach
+                                                @if ($pack->is_public)
+                                                    <span class="inline-block rounded-full bg-primary-100 dark:bg-primary-900/30 px-1.5 py-0.5 text-[9px] text-primary-600 dark:text-primary-400">public</span>
+                                                @endif
+                                            </div>
+                                            <div class="mt-2 grid grid-cols-3 gap-2">
+                                                <button type="button" wire:click="applyThemePack({{ $pack->id }})" class="rounded-md bg-primary-600 py-1.5 text-[11px] font-semibold text-white hover:bg-primary-700 transition-colors">Apply</button>
+                                                <button type="button" wire:click="editThemePack({{ $pack->id }})" class="rounded-md border border-gray-200 dark:border-white/10 py-1.5 text-[11px] font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Edit</button>
+                                                <button type="button" wire:click="deleteThemePack({{ $pack->id }})" class="rounded-md border border-red-200 dark:border-red-900/40 py-1.5 text-[11px] font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">Delete</button>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             @endif
                         </section>

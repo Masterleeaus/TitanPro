@@ -10,6 +10,7 @@ use App\Models\OrganizationBranding;
 use App\Models\PlatformSetting;
 use App\Models\RoleUIProfile;
 use App\Models\SharedTheme;
+use App\Models\ThemePack;
 use App\Services\AiThemeGenerator;
 use App\Support\OrganizationBrandingResolver;
 use App\Support\ThemeTokenManager;
@@ -124,7 +125,7 @@ class UiStudio extends Page
     // ── Marketplace state ─────────────────────────────────────────────────────
 
     /** Sub-tab within the Marketplace tab. */
-    public string $marketplaceTab = 'browse'; // browse | install | share | import
+    public string $marketplaceTab = 'browse'; // browse | install | share | import | my-themes
 
     /** Uploaded ZIP for the Install flow. */
     public ?TemporaryUploadedFile $themeZipUpload = null;
@@ -143,6 +144,21 @@ class UiStudio extends Page
 
     /** Theme preview resolved from an import URL. */
     public array $importPreview = [];
+
+    /** Name used when saving or editing a custom theme pack. */
+    public string $themePackName = '';
+
+    /** Description used when saving or editing a custom theme pack. */
+    public string $themePackDescription = '';
+
+    /** Comma-separated tags used when saving or editing a custom theme pack. */
+    public string $themePackTags = '';
+
+    /** Visibility flag used when saving or editing a custom theme pack. */
+    public bool $themePackIsPublic = false;
+
+    /** Theme pack id currently being edited. */
+    public ?int $editingThemePackId = null;
 
     /** Selected export output format for the Export tab. */
     public string $exportFormat = ThemeExportManager::FORMAT_THEME_ZIP;
@@ -1224,15 +1240,7 @@ class UiStudio extends Page
             return;
         }
 
-        $tokens = $themes[$key]['tokens'];
-
-        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
-        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
-        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
-        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
-        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
-        $this->fontHeading    = $this->fontFamily;
-        $this->fontBody       = $this->fontFamily;
+        $this->applyThemeTokens($themes[$key]['tokens']);
 
         Notification::make()
             ->title("Theme \"{$themes[$key]['name']}\" applied")
@@ -1278,15 +1286,7 @@ class UiStudio extends Page
             return;
         }
 
-        $tokens = $this->zipPreview['tokens'];
-
-        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
-        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
-        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
-        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
-        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
-        $this->fontHeading    = $this->fontFamily;
-        $this->fontBody       = $this->fontFamily;
+        $this->applyThemeTokens($this->zipPreview['tokens']);
 
         $this->themeZipUpload = null;
         $this->zipPreview     = [];
@@ -1430,15 +1430,7 @@ class UiStudio extends Page
             return;
         }
 
-        $tokens = $this->importPreview['tokens'];
-
-        $this->primaryColor   = $tokens['primary_color']   ?? $this->primaryColor;
-        $this->secondaryColor = $tokens['secondary_color'] ?? $this->secondaryColor;
-        $this->accentColor    = $tokens['accent_color']    ?? $this->accentColor;
-        $this->surfaceColor   = $tokens['surface_color']   ?? $this->surfaceColor;
-        $this->fontFamily     = $tokens['font_heading']    ?? $this->fontFamily;
-        $this->fontHeading    = $this->fontFamily;
-        $this->fontBody       = $this->fontFamily;
+        $this->applyThemeTokens($this->importPreview['tokens']);
 
         $this->importUrl     = '';
         $this->importPreview = [];
@@ -1614,6 +1606,167 @@ class UiStudio extends Page
         $this->savedThemeSnapshot = $this->themeSnapshot();
     }
 
+    /** @return \Illuminate\Support\Collection<int, ThemePack> */
+    public function myThemePacks()
+    {
+        if (! Schema::hasTable('theme_packs')) {
+            return collect();
+        }
+
+        return ThemePack::query()
+            ->orderByDesc('updated_at')
+            ->get();
+    }
+
+    /**
+     * Save current UI Studio token state as a reusable custom theme pack.
+     */
+    public function saveCurrentAsThemePack(): void
+    {
+        if (! Schema::hasTable('theme_packs')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $validated = $this->validate([
+            'themePackName' => ['required', 'string', 'max:120'],
+            'themePackDescription' => ['nullable', 'string', 'max:1000'],
+            'themePackTags' => ['nullable', 'string', 'max:500'],
+            'themePackIsPublic' => ['boolean'],
+        ]);
+
+        $organizationId = auth()->user()?->organization_id;
+
+        if (! $organizationId) {
+            Notification::make()->title('No organization found for current user.')->danger()->send();
+
+            return;
+        }
+
+        $pack = $this->editingThemePackId ? ThemePack::query()->find($this->editingThemePackId) : new ThemePack();
+
+        if (! $pack) {
+            Notification::make()->title('Theme pack not found.')->warning()->send();
+
+            return;
+        }
+
+        $baseSlug = Str::slug($validated['themePackName']);
+        $pack->organization_id = $organizationId;
+        $pack->name = $validated['themePackName'];
+        $pack->slug = $this->resolveThemePackSlug($baseSlug !== '' ? $baseSlug : 'theme-pack', $pack->id);
+        $pack->description = $validated['themePackDescription'] ?: null;
+        $pack->tokens = $this->currentThemeTokens();
+        $pack->tags = $this->normalizeThemePackTags($validated['themePackTags'] ?? '');
+        $pack->is_public = (bool) $validated['themePackIsPublic'];
+        $pack->save();
+
+        $wasEditing = $this->editingThemePackId !== null;
+        $this->editingThemePackId = null;
+        $this->themePackName = '';
+        $this->themePackDescription = '';
+        $this->themePackTags = '';
+        $this->themePackIsPublic = false;
+
+        Notification::make()
+            ->title($wasEditing ? 'Theme pack updated' : 'Theme pack saved')
+            ->body('You can apply it from My Themes anytime.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Load a saved pack into the studio state for preview before publish.
+     */
+    public function applyThemePack(int $themePackId): void
+    {
+        if (! Schema::hasTable('theme_packs')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $pack = ThemePack::query()->find($themePackId);
+
+        if (! $pack) {
+            Notification::make()->title('Theme pack not found.')->warning()->send();
+
+            return;
+        }
+
+        $this->applyThemeTokens(is_array($pack->tokens) ? $pack->tokens : []);
+
+        Notification::make()
+            ->title("Theme \"{$pack->name}\" applied")
+            ->body('Click Publish to save the changes.')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Populate the form with an existing pack for edits.
+     */
+    public function editThemePack(int $themePackId): void
+    {
+        if (! Schema::hasTable('theme_packs')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $pack = ThemePack::query()->find($themePackId);
+
+        if (! $pack) {
+            Notification::make()->title('Theme pack not found.')->warning()->send();
+
+            return;
+        }
+
+        $this->editingThemePackId = $pack->id;
+        $this->themePackName = $pack->name;
+        $this->themePackDescription = $pack->description ?? '';
+        $this->themePackTags = implode(', ', is_array($pack->tags) ? $pack->tags : []);
+        $this->themePackIsPublic = (bool) $pack->is_public;
+    }
+
+    public function cancelThemePackEdit(): void
+    {
+        $this->editingThemePackId = null;
+        $this->themePackName = '';
+        $this->themePackDescription = '';
+        $this->themePackTags = '';
+        $this->themePackIsPublic = false;
+    }
+
+    /**
+     * Delete a custom pack from the current tenant's catalogue.
+     */
+    public function deleteThemePack(int $themePackId): void
+    {
+        if (! Schema::hasTable('theme_packs')) {
+            Notification::make()->title('Run migrations first.')->warning()->send();
+
+            return;
+        }
+
+        $pack = ThemePack::query()->find($themePackId);
+
+        if (! $pack) {
+            Notification::make()->title('Theme pack not found.')->warning()->send();
+
+            return;
+        }
+
+        $pack->delete();
+
+        if ($this->editingThemePackId === $themePackId) {
+            $this->cancelThemePackEdit();
+        }
+
+        Notification::make()->title('Theme pack deleted')->success()->send();
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────────────────────────────────────
@@ -1651,6 +1804,58 @@ class UiStudio extends Page
         }
 
         return null;
+    }
+
+    /** @param array<string, mixed> $tokens */
+    private function applyThemeTokens(array $tokens): void
+    {
+        $this->primaryColor = is_string($tokens['primary_color'] ?? null) ? $tokens['primary_color'] : $this->primaryColor;
+        $this->secondaryColor = is_string($tokens['secondary_color'] ?? null) ? $tokens['secondary_color'] : $this->secondaryColor;
+        $this->accentColor = is_string($tokens['accent_color'] ?? null) ? $tokens['accent_color'] : $this->accentColor;
+        $this->surfaceColor = is_string($tokens['surface_color'] ?? null) ? $tokens['surface_color'] : $this->surfaceColor;
+        $this->fontFamily = is_string($tokens['font_heading'] ?? null) ? $tokens['font_heading'] : $this->fontFamily;
+        $this->fontHeading = is_string($tokens['font_heading'] ?? null) ? $tokens['font_heading'] : $this->fontHeading;
+        $this->fontBody = is_string($tokens['font_body'] ?? null) ? $tokens['font_body'] : $this->fontBody;
+    }
+
+    /** @return array<string, string> */
+    private function currentThemeTokens(): array
+    {
+        return array_filter([
+            'primary_color' => $this->primaryColor,
+            'secondary_color' => $this->secondaryColor,
+            'accent_color' => $this->accentColor,
+            'surface_color' => $this->surfaceColor,
+            'font_heading' => $this->fontHeading ?: $this->fontFamily,
+            'font_body' => $this->fontBody ?: $this->fontFamily,
+        ]);
+    }
+
+    /** @return array<int, string> */
+    private function normalizeThemePackTags(string $tags): array
+    {
+        $normalized = array_map(static fn (string $tag): string => Str::lower(trim($tag)), explode(',', $tags));
+        $normalized = array_values(array_filter($normalized, static fn (string $tag): bool => $tag !== ''));
+
+        return array_values(array_unique($normalized));
+    }
+
+    private function resolveThemePackSlug(string $baseSlug, ?int $ignorePackId = null): string
+    {
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (
+            ThemePack::query()
+                ->when($ignorePackId !== null, fn ($query) => $query->where('id', '!=', $ignorePackId))
+                ->where('slug', $slug)
+                ->exists()
+        ) {
+            $slug = "{$baseSlug}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 
     /** @return array<string, string> */
