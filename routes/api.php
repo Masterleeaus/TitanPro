@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use App\Http\Controllers\Technician\LocationController;
+use App\Http\Controllers\TitanZero\GenerateUiController;
+use App\Http\Controllers\TitanZero\SuggestionsController;
+use App\Http\Controllers\TitanZero\ThreadController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 Route::middleware(['auth', 'role:technician'])
     ->prefix('technician')
@@ -40,58 +42,24 @@ Route::middleware(['auth', 'role:technician'])
 
 /**
  * --------------------------------------------------------------------------
- * Titan Zero UI fallback
+ * Titan Zero - Business OS AI endpoints
  * --------------------------------------------------------------------------
  *
- * Provide a safe API endpoint for the Business OS chat.  When the real
- * TitanZero module is not installed this route returns a simple JSON
- * response so the assistant does not error on submission.  Adjust the
- * middleware to match your API authentication requirements.  When the
- * TitanZero package is installed this stub can be replaced by the
- * module’s own route definitions.
+ * These three endpoints power the Business OS chat panel.
+ * All routes require an authenticated session (web/CSRF middleware is already
+ * applied by the bootstrap/app.php route group).
  */
-Route::post('/titan/zero/generate-ui', function (Request $request) {
-    return response()->json([
-        'message' => 'Titan Zero UI endpoint is online.',
-        'reply' => 'Titan Zero is connected to the Business OS shell.',
-        'parts' => [],
-        'widgets' => [],
-        'thread' => null,
-        'meta' => ['suggestions' => []],
-    ]);
-})->middleware(['auth']);
+Route::middleware(['auth'])->group(function () {
+    // Main generate-ui endpoint - accepts a message and returns an AgentUiResponse
+    Route::post('/titan/zero/generate-ui', GenerateUiController::class)
+        ->name('titan.zero.generate-ui');
 
-/**
- * --------------------------------------------------------------------------
- * Titan thread history stub
- * --------------------------------------------------------------------------
- *
- * Returns the messages and widgets for an existing chat thread.  Replace
- * with a real implementation when the TitanZero module is available.
- */
-Route::get('/titan/threads/{threadId}', function (string $threadId) {
-    return response()->json([
-        'messages' => [],
-        'widgets'  => [],
-    ]);
-})->middleware(['auth']);
+    // Thread history - returns messages + widgets for a persisted thread
+    Route::get('/titan/threads/{threadId}', [ThreadController::class, 'show'])
+        ->name('titan.threads.show')
+        ->where('threadId', '[0-9]+');
 
-/**
- * --------------------------------------------------------------------------
- * Titan suggestion chips stub
- * --------------------------------------------------------------------------
- *
- * Returns context-aware suggestion chips for the chat composer.  Replace
- * with a real implementation that reads the current thread context.
- */
-Route::get('/titan/suggestions', function (Request $request) {
-    return response()->json([
-        'suggestions' => [
-            'Open app',
-            'Search workspace',
-            'Explain this screen',
-            'Show recent activity',
-            'Help me navigate',
-        ],
-    ]);
-})->middleware(['auth']);
+    // Context-aware suggestion chips
+    Route::get('/titan/suggestions', SuggestionsController::class)
+        ->name('titan.suggestions');
+});

@@ -180,10 +180,93 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ── Server-side thread ID storage ────────────────────────────────────────
+    // After a successful generate-ui call the server returns a numeric thread ID
+    // (meta.threadId).  We persist that ID in localStorage so the thread can be
+    // restored from the server on the next page load.
+    const SERVER_THREAD_ID_KEY = 'titanZeroServerThreadId_' + appKey;
+
+    const getServerThreadId = () => localStorage.getItem(SERVER_THREAD_ID_KEY) || null;
+
+    const setServerThreadId = (id) => {
+        if (id) {
+            try { localStorage.setItem(SERVER_THREAD_ID_KEY, String(id)); } catch { /* ignore */ }
+        }
+    };
+
+    // ── Fetch thread history from the server ─────────────────────────────────
+    const fetchServerThread = async (serverThreadId) => {
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const headers = { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+            if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+            const response = await fetch(`/api/titan/threads/${serverThreadId}`, { headers });
+            if (!response.ok) return null;
+            return await response.json();
+        } catch {
+            return null;
+        }
+    };
+
+    // ── Fetch suggestion chips from the server ───────────────────────────────
+    const fetchSuggestions = async () => {
+        try {
+            const serverThreadId = getServerThreadId();
+            const query = serverThreadId ? `?appKey=${encodeURIComponent(appKey)}&threadId=${encodeURIComponent(serverThreadId)}` : `?appKey=${encodeURIComponent(appKey)}`;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const headers = { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+            if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+            const response = await fetch(`/api/titan/suggestions${query}`, { headers });
+            if (!response.ok) return;
+            const data = await response.json();
+            renderSuggestions(data.suggestions || []);
+        } catch { /* ignore */ }
+    };
+
+    // ── Render dynamic suggestion chips ──────────────────────────────────────
+    const renderSuggestions = (chips) => {
+        const container = panel.querySelector('[data-suggestions-container]');
+        if (!container) return;
+        container.innerHTML = '';
+        chips.forEach((text) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-suggestion', text);
+            btn.className = 'titan-zero-suggestion text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700';
+            btn.textContent = text;
+            btn.addEventListener('click', () => {
+                input.value = text;
+                input.focus();
+            });
+            container.appendChild(btn);
+        });
+    };
+
     // Initialize threads
     loadThreads();
     renderThreadList();
     selectThread(currentThreadId);
+
+    // Restore thread messages from server if a server thread ID exists
+    const storedServerThreadId = getServerThreadId();
+    if (storedServerThreadId) {
+        fetchServerThread(storedServerThreadId).then((data) => {
+            if (!data) return;
+            const msgs = data.messages || [];
+            if (msgs.length === 0) return;
+            // Clear the current message list and replay server messages without
+            // adding an extra greeting (the history already provides context)
+            while (messageList.firstChild) messageList.removeChild(messageList.firstChild);
+            msgs.forEach((m) => {
+                if (m.role === 'user' || m.role === 'assistant') {
+                    appendMessage(m.content || '', m.role === 'user' ? 'user' : 'assistant', false, false);
+                }
+            });
+        });
+    }
+
+    // Pre-load suggestion chips
+    fetchSuggestions();
 
     // Event listeners for dropdown toggle and new thread
     if (threadDropdownToggle) {
@@ -239,12 +322,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Call the backend assistant endpoint.  On success update the placeholder
-     * element with the reply.  On failure show a clear error message.
+     * element with the reply and render any widget parts.  On failure show a
+     * clear error message.
      */
     const callAssistantEndpoint = async (message, placeholderEl) => {
         try {
-            const context = window.titanOsContext || {};
-            const payload = { message, context, thread_id: currentThreadId };
+            const contextData = window.titanOsContext || {};
+            const serverThreadId = getServerThreadId();
+            const payload = {
+                message,
+                context: contextData,
+                threadId: serverThreadId || undefined,
+            };
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const headers = {
                 'Content-Type': 'application/json',
@@ -254,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (csrfToken) {
                 headers['X-CSRF-TOKEN'] = csrfToken;
             }
-            const response = await fetch('/titan/zero/generate-ui', {
+            const response = await fetch('/api/titan/zero/generate-ui', {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(payload),
@@ -263,13 +352,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Endpoint returned status ' + response.status);
             }
             const data = await response.json();
+
+            // Store the server-assigned thread ID for future requests / page reloads
+            if (data.meta && data.meta.threadId) {
+                setServerThreadId(data.meta.threadId);
+            }
+
+            // Update dynamic suggestions if the server returned new chips
+            if (data.meta && Array.isArray(data.meta.suggestions)) {
+                renderSuggestions(data.meta.suggestions);
+            }
+
+            // Extract the text reply
             let reply = '';
             if (typeof data === 'string') {
                 reply = data;
-            } else if (data.reply) {
-                reply = data.reply;
             } else if (data.message) {
                 reply = data.message;
+            } else if (data.reply) {
+                reply = data.reply;
             } else if (data.content) {
                 reply = data.content;
             } else if (Array.isArray(data.messages) && data.messages.length > 0) {
@@ -282,13 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (placeholderEl) {
                 placeholderEl.textContent = reply;
                 placeholderEl.className = 'titan-zero-message titan-zero-message-assistant p-2 my-1';
-                const thread = getCurrentThread();
-                if (thread) {
-                    thread.messages.push({ author: 'assistant', text: reply });
-                    saveThreads();
-                }
+                // Do not re-save to local thread; server is the source of truth
             } else {
-                appendMessage(reply, 'assistant');
+                appendMessage(reply, 'assistant', false, false);
             }
         } catch (error) {
             console.warn('Titan Zero backend unavailable', error);
@@ -296,13 +393,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (placeholderEl) {
                 placeholderEl.textContent = fallback;
                 placeholderEl.className = 'titan-zero-message titan-zero-message-assistant p-2 my-1';
-                const thread = getCurrentThread();
-                if (thread) {
-                    thread.messages.push({ author: 'assistant', text: fallback });
-                    saveThreads();
-                }
             } else {
-                appendMessage(fallback, 'assistant');
+                appendMessage(fallback, 'assistant', false, false);
             }
         }
     };
@@ -323,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentThreadTitleEl) currentThreadTitleEl.textContent = currentThread.title;
         }
         // Create a placeholder element that will be updated when the reply arrives.
-        // Do not save the placeholder itself to history; save the final response instead.
         const placeholder = appendMessage('…', 'assistant', true, false);
         callAssistantEndpoint(text, placeholder);
     });
