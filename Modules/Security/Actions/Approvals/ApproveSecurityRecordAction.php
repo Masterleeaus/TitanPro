@@ -26,7 +26,7 @@ class ApproveSecurityRecordAction
                 $record->setAttribute($approvalColumn, true);
 
                 if ($approvedByColumn && $user) {
-                    $record->setAttribute($approvedByColumn, $user->id ?? null);
+                    $record->setAttribute($approvedByColumn, $user->id);
                 }
 
                 $record->save();

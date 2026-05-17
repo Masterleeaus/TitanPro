@@ -26,7 +26,7 @@ class ValidateSecurityRecordAction
                 $record->setAttribute($validatedColumn, true);
 
                 if ($validatedByColumn && $user) {
-                    $record->setAttribute($validatedByColumn, $user->id ?? null);
+                    $record->setAttribute($validatedByColumn, $user->id);
                 }
 
                 $record->save();
