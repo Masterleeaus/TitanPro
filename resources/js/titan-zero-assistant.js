@@ -4,7 +4,14 @@
 // messages to the conversation list and displaying generic suggestions.
 // Actual AI integration is not included in this shell pass.
 
-document.addEventListener('DOMContentLoaded', () => {
+let assistantCleanup = null;
+
+const initializeTitanZeroAssistant = () => {
+    if (assistantCleanup) {
+        assistantCleanup();
+        assistantCleanup = null;
+    }
+
     const panel = document.querySelector('#titan-zero-chat-panel');
     if (!panel) return;
 
@@ -14,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestions = panel.querySelectorAll('[data-suggestion]');
 
     // Thread management elements
-    const threadHeader = panel.querySelector('[data-thread-header]');
     const currentThreadTitleEl = panel.querySelector('[data-current-thread-title]');
     const currentThreadAppEl = panel.querySelector('[data-current-thread-app]');
     const threadDropdownToggle = panel.querySelector('[data-thread-dropdown-toggle]');
@@ -171,14 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', (event) => {
+    const handleDocumentClick = (event) => {
         if (!threadDropdownPanel || !threadDropdownToggle) return;
         if (threadDropdownPanel.classList.contains('hidden')) return;
         const target = event.target;
         if (!threadDropdownPanel.contains(target) && target !== threadDropdownToggle) {
             closeThreadDropdown();
         }
-    });
+    };
+    document.addEventListener('click', handleDocumentClick);
 
     // ── Server-side thread ID storage ────────────────────────────────────────
     // After a successful generate-ui call the server returns a numeric thread ID
@@ -327,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const callAssistantEndpoint = async (message, placeholderEl) => {
         try {
+            const DEFAULT_FALLBACK_REPLY = 'Ok.';
             const contextData = window.titanOsContext || {};
             const serverThreadId = getServerThreadId();
             const payload = {
@@ -337,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const headers = {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
+                'Accept': 'text/event-stream, application/x-ndjson, application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             };
             if (csrfToken) {
@@ -351,34 +359,138 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('Endpoint returned status ' + response.status);
             }
-            const data = await response.json();
+            const extractReply = (data) => {
+                if (typeof data === 'string') return data;
+                if (!data || typeof data !== 'object') return '';
+                if (data.message) return data.message;
+                if (data.reply) return data.reply;
+                if (data.content) return data.content;
+                if (Array.isArray(data.messages) && data.messages.length > 0) {
+                    const last = data.messages[data.messages.length - 1];
+                    return last.content || last.message || '';
+                }
+                return '';
+            };
 
-            // Store the server-assigned thread ID for future requests / page reloads
-            if (data.meta && data.meta.threadId) {
-                setServerThreadId(data.meta.threadId);
-            }
+            const applyMeta = (meta) => {
+                if (!meta || typeof meta !== 'object') return;
+                if (meta.threadId) {
+                    setServerThreadId(meta.threadId);
+                }
+                if (Array.isArray(meta.suggestions)) {
+                    renderSuggestions(meta.suggestions);
+                }
+            };
 
-            // Update dynamic suggestions if the server returned new chips
-            if (data.meta && Array.isArray(data.meta.suggestions)) {
-                renderSuggestions(data.meta.suggestions);
-            }
-
-            // Extract the text reply
+            const contentType = (response.headers.get('content-type') || '').toLowerCase();
             let reply = '';
-            if (typeof data === 'string') {
-                reply = data;
-            } else if (data.message) {
-                reply = data.message;
-            } else if (data.reply) {
-                reply = data.reply;
-            } else if (data.content) {
-                reply = data.content;
-            } else if (Array.isArray(data.messages) && data.messages.length > 0) {
-                const last = data.messages[data.messages.length - 1];
-                reply = last.content || last.message || '';
+
+            if (contentType.includes('text/event-stream') || contentType.includes('application/x-ndjson')) {
+                const reader = response.body?.getReader();
+                if (!reader) {
+                    throw new Error('Streaming response body is not readable');
+                }
+
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let firstTokenSeen = false;
+                const appendToken = (token) => {
+                    if (token === null || token === undefined) return;
+                    const nextToken = String(token);
+                    if (!nextToken) return;
+                    firstTokenSeen = true;
+                    reply += nextToken;
+                    if (placeholderEl) {
+                        placeholderEl.textContent = reply;
+                    }
+                };
+                const extractToken = (chunk) => {
+                    if (typeof chunk === 'string') return chunk;
+                    if (!chunk || typeof chunk !== 'object') return '';
+                    return chunk.token ?? chunk.delta ?? chunk.content ?? chunk.message ?? chunk.text ?? '';
+                };
+                const handleStreamChunk = (chunk) => {
+                    if (!chunk || chunk === '[DONE]') return;
+                    if (typeof chunk === 'object' && chunk.meta) {
+                        applyMeta(chunk.meta);
+                    }
+                    appendToken(extractToken(chunk));
+                };
+                const parseChunkPayload = (payload) => {
+                    if (!payload) return null;
+                    try {
+                        return JSON.parse(payload);
+                    } catch {
+                        return payload;
+                    }
+                };
+
+                const processSseEvent = (rawEvent) => {
+                    const dataLines = rawEvent
+                        .split(/\r?\n/)
+                        .filter((line) => line.startsWith('data:'))
+                        .map((line) => line.slice(5).trimStart());
+                    if (dataLines.length === 0) return;
+                    const payload = dataLines.join('\n');
+                    const parsed = parseChunkPayload(payload);
+                    handleStreamChunk(parsed);
+                };
+
+                const processNdjsonLine = (line) => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return;
+                    handleStreamChunk(parseChunkPayload(trimmed));
+                };
+
+                // Keep the placeholder at typing indicator while waiting for first token.
+                if (placeholderEl) {
+                    placeholderEl.textContent = '…';
+                }
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+
+                    if (contentType.includes('text/event-stream')) {
+                        let boundary = buffer.indexOf('\n\n');
+                        while (boundary !== -1) {
+                            const rawEvent = buffer.slice(0, boundary);
+                            buffer = buffer.slice(boundary + 2);
+                            processSseEvent(rawEvent);
+                            boundary = buffer.indexOf('\n\n');
+                        }
+                    } else {
+                        let newline = buffer.indexOf('\n');
+                        while (newline !== -1) {
+                            const line = buffer.slice(0, newline);
+                            buffer = buffer.slice(newline + 1);
+                            processNdjsonLine(line);
+                            newline = buffer.indexOf('\n');
+                        }
+                    }
+                }
+
+                buffer += decoder.decode();
+                if (buffer.trim()) {
+                    if (contentType.includes('text/event-stream')) {
+                        processSseEvent(buffer);
+                    } else {
+                        processNdjsonLine(buffer);
+                    }
+                }
+
+                if (!firstTokenSeen) {
+                    reply = DEFAULT_FALLBACK_REPLY;
+                }
+            } else {
+                const data = await response.json();
+                applyMeta(data.meta);
+                reply = extractReply(data);
             }
+
             if (!reply) {
-                reply = 'Ok.';
+                reply = DEFAULT_FALLBACK_REPLY;
             }
             if (placeholderEl) {
                 placeholderEl.textContent = reply;
@@ -400,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Handle form submission
-    form.addEventListener('submit', (event) => {
+    const handleFormSubmit = (event) => {
         event.preventDefault();
         const text = input.value.trim();
         if (!text) return;
@@ -417,5 +529,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create a placeholder element that will be updated when the reply arrives.
         const placeholder = appendMessage('…', 'assistant', true, false);
         callAssistantEndpoint(text, placeholder);
-    });
+    };
+    form.addEventListener('submit', handleFormSubmit);
+
+    assistantCleanup = () => {
+        document.removeEventListener('click', handleDocumentClick);
+        form.removeEventListener('submit', handleFormSubmit);
+    };
+};
+
+document.addEventListener('DOMContentLoaded', initializeTitanZeroAssistant);
+document.addEventListener('inertia:navigate', initializeTitanZeroAssistant);
+document.addEventListener('inertia:before', () => {
+    if (assistantCleanup) {
+        assistantCleanup();
+        assistantCleanup = null;
+    }
 });
