@@ -309,6 +309,6 @@ final class ThemeExportManager
 
     private function tmpPath(string $name, string $suffix, string $extension): string
     {
-        return sys_get_temp_dir().'/titan-'.Str::slug($name).'-'.$suffix.'-'.time().'.'.$extension;
+        return sys_get_temp_dir().'/titan-'.Str::slug($name).'-'.$suffix.'-'.Str::ulid().'.'.$extension;
     }
 }

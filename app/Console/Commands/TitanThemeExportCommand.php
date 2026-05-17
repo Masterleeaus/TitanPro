@@ -49,8 +49,15 @@ class TitanThemeExportCommand extends Command
         $targetPath = rtrim($directory, '/').'/'.Str::slug($name).'-'.$format.'.'.pathinfo($export['fileName'], PATHINFO_EXTENSION);
 
         if (! rename($export['path'], $targetPath)) {
-            copy($export['path'], $targetPath);
-            @unlink($export['path']);
+            if (! copy($export['path'], $targetPath)) {
+                $this->error('Unable to copy export artifact to destination path.');
+
+                return self::FAILURE;
+            }
+
+            if (file_exists($export['path']) && ! unlink($export['path'])) {
+                $this->warn('Temporary export file could not be deleted: '.$export['path']);
+            }
         }
 
         $this->info('Theme export generated: '.$targetPath);

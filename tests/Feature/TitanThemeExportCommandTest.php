@@ -3,6 +3,22 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
+function cleanupThemeExportDirectory(string $directory): void
+{
+    if (! is_dir($directory)) {
+        return;
+    }
+
+    foreach (array_diff(scandir($directory) ?: [], ['.', '..']) as $entry) {
+        $path = $directory.'/'.$entry;
+        if (is_file($path)) {
+            unlink($path);
+        }
+    }
+
+    rmdir($directory);
+}
+
 it('exports all supported UI theme formats from titan export command', function () {
     $directory = storage_path('framework/testing/titan-theme-export-'.Str::random(8));
 
@@ -35,6 +51,8 @@ it('exports all supported UI theme formats from titan export command', function 
             expect(file_get_contents($outputFile))->toContain('semantic');
         }
     }
+
+    cleanupThemeExportDirectory($directory);
 });
 
 it('includes required files in exported package zip formats', function () {
@@ -89,4 +107,6 @@ it('includes required files in exported package zip formats', function () {
     $tenantPreset->open($directory.'/acme-ops-tenant_preset.zip');
     expect($tenantPreset->locateName('tenant-preset.json'))->not->toBeFalse();
     $tenantPreset->close();
+
+    cleanupThemeExportDirectory($directory);
 });
