@@ -64,3 +64,70 @@ test('branding resolver returns organization overrides when configured', functio
         ->and($branding['font_family'])->toBe('Poppins')
         ->and($branding['background_type'])->toBe('gradient');
 });
+
+test('installing a theme pack adds it to organization branding library', function () {
+    $organization = Organization::factory()->create();
+    $branding = OrganizationBranding::create(['organization_id' => $organization->id]);
+
+    $branding->installThemePack([
+        'slug' => 'my-private-pack',
+        'name' => 'My Private Pack',
+        'author' => 'Acme',
+        'version' => '1.2.3',
+        'tags' => ['private', 'ops'],
+        'tokens' => [
+            'primary_color' => '#123456',
+            'secondary_color' => '#654321',
+        ],
+    ]);
+
+    $branding->refresh();
+    $installed = $branding->installedThemePacks();
+
+    expect($installed)->toHaveCount(1)
+        ->and($installed[0]['slug'])->toBe('my-private-pack')
+        ->and($installed[0]['name'])->toBe('My Private Pack')
+        ->and($installed[0]['tokens']['primary_color'])->toBe('#123456');
+});
+
+test('uninstalling a theme pack removes it from organization branding library', function () {
+    $organization = Organization::factory()->create();
+    $branding = OrganizationBranding::create(['organization_id' => $organization->id]);
+
+    $branding->installThemePack(['slug' => 'pack-one', 'name' => 'Pack One', 'tokens' => ['primary_color' => '#111111']]);
+    $branding->installThemePack(['slug' => 'pack-two', 'name' => 'Pack Two', 'tokens' => ['primary_color' => '#222222']]);
+    $branding->uninstallThemePack('pack-one');
+
+    $branding->refresh();
+    $installed = $branding->installedThemePacks();
+
+    expect($installed)->toHaveCount(1)
+        ->and($installed[0]['slug'])->toBe('pack-two');
+});
+
+test('installed theme pack libraries are isolated per organization', function () {
+    $organizationA = Organization::factory()->create();
+    $organizationB = Organization::factory()->create();
+    $userA = User::factory()->create(['organization_id' => $organizationA->id]);
+    $userB = User::factory()->create(['organization_id' => $organizationB->id]);
+
+    $brandingA = OrganizationBranding::withoutGlobalScopes()->create(['organization_id' => $organizationA->id]);
+    $brandingB = OrganizationBranding::withoutGlobalScopes()->create(['organization_id' => $organizationB->id]);
+
+    $brandingA->installThemePack(['slug' => 'org-a-pack', 'name' => 'Org A Pack', 'tokens' => ['primary_color' => '#aa0000']]);
+    $brandingB->installThemePack(['slug' => 'org-b-pack', 'name' => 'Org B Pack', 'tokens' => ['primary_color' => '#00aa00']]);
+
+    $this->actingAs($userA);
+    $visibleA = OrganizationBranding::first();
+    expect($visibleA)->not->toBeNull()
+        ->and($visibleA?->organization_id)->toBe($organizationA->id)
+        ->and($visibleA?->installedThemePacks())->toHaveCount(1)
+        ->and($visibleA?->installedThemePacks()[0]['slug'])->toBe('org-a-pack');
+
+    $this->actingAs($userB);
+    $visibleB = OrganizationBranding::first();
+    expect($visibleB)->not->toBeNull()
+        ->and($visibleB?->organization_id)->toBe($organizationB->id)
+        ->and($visibleB?->installedThemePacks())->toHaveCount(1)
+        ->and($visibleB?->installedThemePacks()[0]['slug'])->toBe('org-b-pack');
+});
