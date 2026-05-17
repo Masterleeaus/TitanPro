@@ -69,6 +69,18 @@ return [
     ...(class_exists(\Modules\CRMCore\Providers\ModuleServiceProvider::class)
         ? [\Modules\CRMCore\Providers\ModuleServiceProvider::class]
         : []),
+    // Dispatch module — guard-wrapped so absent builds don't fatal.
+    ...(class_exists(\Modules\Dispatch\Providers\ModuleServiceProvider::class)
+        ? [
+            \Modules\Dispatch\Providers\ModuleServiceProvider::class,
+            \Modules\Dispatch\Providers\RouteServiceProvider::class,
+            \Modules\Dispatch\Providers\EventServiceProvider::class,
+            \Modules\Dispatch\Providers\FilamentServiceProvider::class,
+        ]
+        : []),
+    ...(class_exists(\Modules\TitanCommand\Providers\TitanCommandServiceProvider::class)
+        ? [\Modules\TitanCommand\Providers\TitanCommandServiceProvider::class]
+        : []),
     // Only registered when Telescope is installed (dev environments only)
     ...(class_exists(\Laravel\Telescope\TelescopeApplicationServiceProvider::class)
         ? [App\Providers\TelescopeServiceProvider::class]

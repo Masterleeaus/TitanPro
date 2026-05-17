@@ -1,0 +1,12 @@
+type PayrollRun {
+  id: ID!
+  company_id: ID!
+  run_number: String
+  period_start: Date!
+  period_end: Date!
+  status: String!
+  employee_count: Int!
+  gross_total: Float!
+  deduction_total: Float!
+  net_total: Float!
+}

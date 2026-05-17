@@ -1,8 +1,14 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 const EditJob = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJob.url(args, options),
@@ -11,6 +17,7 @@ const EditJob = (args: { record: string | number } | [record: string | number ] 
 
 EditJob.definition = {
     methods: ["get","head"],
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
     url: '/titansolo/jobs/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
@@ -18,6 +25,15 @@ EditJob.definition = {
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+    url: '/titanpro/jobs/{record}/edit',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 EditJob.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -42,9 +58,15 @@ EditJob.url = (args: { record: string | number } | [record: string | number ] | 
 }
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 EditJob.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJob.url(args, options),
@@ -52,9 +74,15 @@ EditJob.get = (args: { record: string | number } | [record: string | number ] | 
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 EditJob.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditJob.url(args, options),
@@ -62,9 +90,15 @@ EditJob.head = (args: { record: string | number } | [record: string | number ] |
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 const EditJobForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, options),
@@ -72,9 +106,15 @@ const EditJobForm = (args: { record: string | number } | [record: string | numbe
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 EditJobForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, options),
@@ -82,9 +122,15 @@ EditJobForm.get = (args: { record: string | number } | [record: string | number 
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.ts
 * @see \App\Filament\TitanSolo\Resources\JobResource\Pages\EditJob::__invoke
 * @see app/Filament/TitanSolo/Resources/JobResource/Pages/EditJob.php:7
 * @route '/titansolo/jobs/{record}/edit'
+========
+* @see \App\Filament\Resources\JobResource\Pages\EditJob::__invoke
+* @see app/Filament/Resources/JobResource/Pages/EditJob.php:7
+* @route '/titanpro/jobs/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/JobResource/Pages/EditJob.ts
 */
 EditJobForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJob.url(args, {

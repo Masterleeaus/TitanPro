@@ -1,0 +1,17 @@
+{
+  "module": "payroll",
+  "manifest": "workflows",
+  "version": "0.1.0",
+  "items": [],
+  "upgrade_pass_2": {
+    "status": "added",
+    "features": [
+      "persistent_runs",
+      "approvals",
+      "audit_logs",
+      "bank_exports",
+      "adjustment_imports",
+      "health_checks"
+    ]
+  }
+}

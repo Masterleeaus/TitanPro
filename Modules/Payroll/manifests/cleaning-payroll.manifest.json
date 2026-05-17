@@ -1,0 +1,16 @@
+{
+  "name": "Cleaning Payroll MVP",
+  "version": "1.0.0",
+  "features": [
+    "shift_loadings",
+    "site_allowances",
+    "travel_allowances",
+    "contractor_payouts",
+    "roster_variance_warnings",
+    "cleaner_payroll_preview_api"
+  ],
+  "routes": [
+    "POST /api/payroll/cleaning/preview",
+    "POST /api/payroll/cleaning/variance"
+  ]
+}

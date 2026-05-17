@@ -1,8 +1,14 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../../../wayfinder'
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 const EditCustomer = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCustomer.url(args, options),
@@ -11,6 +17,7 @@ const EditCustomer = (args: { record: string | number } | [record: string | numb
 
 EditCustomer.definition = {
     methods: ["get","head"],
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
     url: '/titansolo/customers/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
@@ -18,6 +25,15 @@ EditCustomer.definition = {
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+    url: '/titanpro/customers/{record}/edit',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 EditCustomer.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -42,9 +58,15 @@ EditCustomer.url = (args: { record: string | number } | [record: string | number
 }
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 EditCustomer.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditCustomer.url(args, options),
@@ -52,9 +74,15 @@ EditCustomer.get = (args: { record: string | number } | [record: string | number
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 EditCustomer.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditCustomer.url(args, options),
@@ -62,9 +90,15 @@ EditCustomer.head = (args: { record: string | number } | [record: string | numbe
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 const EditCustomerForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, options),
@@ -72,9 +106,15 @@ const EditCustomerForm = (args: { record: string | number } | [record: string | 
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 EditCustomerForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, options),
@@ -82,9 +122,15 @@ EditCustomerForm.get = (args: { record: string | number } | [record: string | nu
 })
 
 /**
+<<<<<<<< HEAD:resources/js/actions/App/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.ts
 * @see \App\Filament\TitanSolo\Resources\CustomerResource\Pages\EditCustomer::__invoke
 * @see app/Filament/TitanSolo/Resources/CustomerResource/Pages/EditCustomer.php:7
 * @route '/titansolo/customers/{record}/edit'
+========
+* @see \App\Filament\Resources\CustomerResource\Pages\EditCustomer::__invoke
+* @see app/Filament/Resources/CustomerResource/Pages/EditCustomer.php:7
+* @route '/titanpro/customers/{record}/edit'
+>>>>>>>> 33b682f987af93af087e129eddf755df6385daa8:resources/js/actions/App/Filament/Resources/CustomerResource/Pages/EditCustomer.ts
 */
 EditCustomerForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditCustomer.url(args, {

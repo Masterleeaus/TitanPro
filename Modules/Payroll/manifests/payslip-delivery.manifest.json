@@ -1,0 +1,19 @@
+{
+  "feature": "payslip_delivery_lifecycle",
+  "version": "5.0.0",
+  "tables": [
+    "payroll_payslip_deliveries",
+    "payroll_payslip_acknowledgements",
+    "payroll_payslip_delivery_preferences"
+  ],
+  "routes": [
+    "GET /api/payroll/payslips/deliveries",
+    "POST /api/payroll/payslips/deliveries/resend",
+    "POST /api/payroll/payslips/deliveries/{delivery}/acknowledge"
+  ],
+  "services": [
+    "PayslipDeliveryAuditService",
+    "PayslipPreferenceService",
+    "PayslipAccessLinkService"
+  ]
+}
