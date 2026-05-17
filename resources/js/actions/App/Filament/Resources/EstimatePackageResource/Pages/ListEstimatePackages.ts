@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 const ListEstimatePackages = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListEstimatePackages.url(options),
@@ -11,13 +11,13 @@ const ListEstimatePackages = (options?: RouteQueryOptions): RouteDefinition<'get
 
 ListEstimatePackages.definition = {
     methods: ["get","head"],
-    url: '/admin/estimate-packages',
+    url: '/titanpro/estimate-packages',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 ListEstimatePackages.url = (options?: RouteQueryOptions) => {
     return ListEstimatePackages.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListEstimatePackages.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 ListEstimatePackages.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListEstimatePackages.url(options),
@@ -36,7 +36,7 @@ ListEstimatePackages.get = (options?: RouteQueryOptions): RouteDefinition<'get'>
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 ListEstimatePackages.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListEstimatePackages.url(options),
@@ -46,7 +46,7 @@ ListEstimatePackages.head = (options?: RouteQueryOptions): RouteDefinition<'head
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 const ListEstimatePackagesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimatePackages.url(options),
@@ -56,7 +56,7 @@ const ListEstimatePackagesForm = (options?: RouteQueryOptions): RouteFormDefinit
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 ListEstimatePackagesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimatePackages.url(options),
@@ -66,7 +66,7 @@ ListEstimatePackagesForm.get = (options?: RouteQueryOptions): RouteFormDefinitio
 /**
 * @see \App\Filament\Resources\EstimatePackageResource\Pages\ListEstimatePackages::__invoke
 * @see app/Filament/Resources/EstimatePackageResource/Pages/ListEstimatePackages.php:7
-* @route '/admin/estimate-packages'
+* @route '/titanpro/estimate-packages'
 */
 ListEstimatePackagesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListEstimatePackages.url({

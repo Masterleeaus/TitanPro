@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 const CreateOrganizationSetting = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateOrganizationSetting.url(options),
@@ -11,13 +11,13 @@ const CreateOrganizationSetting = (options?: RouteQueryOptions): RouteDefinition
 
 CreateOrganizationSetting.definition = {
     methods: ["get","head"],
-    url: '/admin/organization-settings/create',
+    url: '/titanpro/organization-settings/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 CreateOrganizationSetting.url = (options?: RouteQueryOptions) => {
     return CreateOrganizationSetting.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateOrganizationSetting.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 CreateOrganizationSetting.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateOrganizationSetting.url(options),
@@ -36,7 +36,7 @@ CreateOrganizationSetting.get = (options?: RouteQueryOptions): RouteDefinition<'
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 CreateOrganizationSetting.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateOrganizationSetting.url(options),
@@ -46,7 +46,7 @@ CreateOrganizationSetting.head = (options?: RouteQueryOptions): RouteDefinition<
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 const CreateOrganizationSettingForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateOrganizationSetting.url(options),
@@ -56,7 +56,7 @@ const CreateOrganizationSettingForm = (options?: RouteQueryOptions): RouteFormDe
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 CreateOrganizationSettingForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateOrganizationSetting.url(options),
@@ -66,7 +66,7 @@ CreateOrganizationSettingForm.get = (options?: RouteQueryOptions): RouteFormDefi
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\CreateOrganizationSetting::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/CreateOrganizationSetting.php:7
-* @route '/admin/organization-settings/create'
+* @route '/titanpro/organization-settings/create'
 */
 CreateOrganizationSettingForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateOrganizationSetting.url({

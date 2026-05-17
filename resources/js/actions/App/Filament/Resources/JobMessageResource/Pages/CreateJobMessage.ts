@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 const CreateJobMessage = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateJobMessage.url(options),
@@ -11,13 +11,13 @@ const CreateJobMessage = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 
 CreateJobMessage.definition = {
     methods: ["get","head"],
-    url: '/admin/job-messages/create',
+    url: '/titanpro/job-messages/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 CreateJobMessage.url = (options?: RouteQueryOptions) => {
     return CreateJobMessage.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateJobMessage.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 CreateJobMessage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateJobMessage.url(options),
@@ -36,7 +36,7 @@ CreateJobMessage.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 CreateJobMessage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateJobMessage.url(options),
@@ -46,7 +46,7 @@ CreateJobMessage.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 const CreateJobMessageForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJobMessage.url(options),
@@ -56,7 +56,7 @@ const CreateJobMessageForm = (options?: RouteQueryOptions): RouteFormDefinition<
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 CreateJobMessageForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJobMessage.url(options),
@@ -66,7 +66,7 @@ CreateJobMessageForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\CreateJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/CreateJobMessage.php:7
-* @route '/admin/job-messages/create'
+* @route '/titanpro/job-messages/create'
 */
 CreateJobMessageForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateJobMessage.url({

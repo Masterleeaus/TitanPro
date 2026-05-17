@@ -84,7 +84,7 @@ async function viewManifest(mod: Module): Promise<void> {
     }
 }
 
-async function viewHealth(mod: Module): Promise<void> {
+async function viewInspect Health(mod: Module): Promise<void> {
     loading.value[`health_${mod.name}`] = true;
     try {
         const res = await fetch(`/admin/titan/modules/${encodeURIComponent(mod.name)}/health`, {
@@ -94,7 +94,7 @@ async function viewHealth(mod: Module): Promise<void> {
         });
         if (res.ok) {
             const json = await res.json();
-            selectedManifest.value = { name: `${mod.name} — Health`, data: json.health as ManifestPayload };
+            selectedManifest.value = { name: `${mod.name} — Inspect Health`, data: json.health as ManifestPayload };
         }
     } finally {
         loading.value[`health_${mod.name}`] = false;
@@ -109,17 +109,17 @@ function statusClass(enabled: boolean): string {
 </script>
 
 <template>
-    <PlatformLayout title="Module Admin">
-        <Head title="Module Admin" />
+    <PlatformLayout title="Module Inspect Health & Repair">
+        <Head title="Module Inspect Health & Repair" />
 
         <div class="mb-6 flex items-center justify-between">
             <div>
-                <h1 class="text-xl font-bold text-slate-900">Module Admin</h1>
-                <p class="mt-1 text-sm text-slate-500">View, enable, disable, and sync platform modules.</p>
+                <h1 class="text-xl font-bold text-slate-900">Module Inspect Health & Repair</h1>
+                <p class="mt-1 text-sm text-slate-500">Review module status, run health inspections, enable or disable modules, and sync manifest metadata.</p>
             </div>
             <div class="flex gap-3">
                 <a href="/platform/modules/audit-log" class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                    Audit log
+                    Inspect Health audit
                 </a>
                 <button
                     class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
@@ -178,9 +178,9 @@ function statusClass(enabled: boolean): string {
                                 <button
                                     class="rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200 disabled:opacity-50"
                                     :disabled="!!loading[`health_${mod.name}`]"
-                                    @click="viewHealth(mod)"
+                                    @click="viewInspect Health(mod)"
                                 >
-                                    {{ loading[`health_${mod.name}`] ? '…' : 'Health' }}
+                                    {{ loading[`health_${mod.name}`] ? '…' : 'Inspect Health' }}
                                 </button>
                             </div>
                         </td>
@@ -189,7 +189,7 @@ function statusClass(enabled: boolean): string {
             </table>
         </div>
 
-        <!-- Manifest / Health drawer -->
+        <!-- Manifest / Inspect Health drawer -->
         <div v-if="selectedManifest" class="mt-6 rounded-xl border border-slate-200 bg-white shadow-sm">
             <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
                 <h2 class="font-semibold text-slate-900">{{ selectedManifest.name }}</h2>

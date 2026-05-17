@@ -32,8 +32,8 @@ class ThemeImportController extends Controller
         }
 
         // Resolve the UI Studio URL for the authenticated user's panel.
-        // Default to the titanpro admin UI Studio page.
-        $studioUrl = '/titanpro/ui-studio?import_token=' . urlencode($token);
+        // Default to the admin UI Studio page.
+        $studioUrl = '/admin/ui-studio?import_token=' . urlencode($token);
 
         return redirect($studioUrl);
     }

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 const ListDriverLocations = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListDriverLocations.url(options),
@@ -11,13 +11,13 @@ const ListDriverLocations = (options?: RouteQueryOptions): RouteDefinition<'get'
 
 ListDriverLocations.definition = {
     methods: ["get","head"],
-    url: '/admin/driver-locations',
+    url: '/titanpro/driver-locations',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 ListDriverLocations.url = (options?: RouteQueryOptions) => {
     return ListDriverLocations.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListDriverLocations.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 ListDriverLocations.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListDriverLocations.url(options),
@@ -36,7 +36,7 @@ ListDriverLocations.get = (options?: RouteQueryOptions): RouteDefinition<'get'> 
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 ListDriverLocations.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListDriverLocations.url(options),
@@ -46,7 +46,7 @@ ListDriverLocations.head = (options?: RouteQueryOptions): RouteDefinition<'head'
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 const ListDriverLocationsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDriverLocations.url(options),
@@ -56,7 +56,7 @@ const ListDriverLocationsForm = (options?: RouteQueryOptions): RouteFormDefiniti
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 ListDriverLocationsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDriverLocations.url(options),
@@ -66,7 +66,7 @@ ListDriverLocationsForm.get = (options?: RouteQueryOptions): RouteFormDefinition
 /**
 * @see \App\Filament\Resources\DriverLocationResource\Pages\ListDriverLocations::__invoke
 * @see app/Filament/Resources/DriverLocationResource/Pages/ListDriverLocations.php:7
-* @route '/admin/driver-locations'
+* @route '/titanpro/driver-locations'
 */
 ListDriverLocationsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListDriverLocations.url({

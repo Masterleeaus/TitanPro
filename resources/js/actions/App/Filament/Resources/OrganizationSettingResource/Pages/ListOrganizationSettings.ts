@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 const ListOrganizationSettings = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListOrganizationSettings.url(options),
@@ -11,13 +11,13 @@ const ListOrganizationSettings = (options?: RouteQueryOptions): RouteDefinition<
 
 ListOrganizationSettings.definition = {
     methods: ["get","head"],
-    url: '/admin/organization-settings',
+    url: '/titanpro/organization-settings',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 ListOrganizationSettings.url = (options?: RouteQueryOptions) => {
     return ListOrganizationSettings.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListOrganizationSettings.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 ListOrganizationSettings.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListOrganizationSettings.url(options),
@@ -36,7 +36,7 @@ ListOrganizationSettings.get = (options?: RouteQueryOptions): RouteDefinition<'g
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 ListOrganizationSettings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListOrganizationSettings.url(options),
@@ -46,7 +46,7 @@ ListOrganizationSettings.head = (options?: RouteQueryOptions): RouteDefinition<'
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 const ListOrganizationSettingsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListOrganizationSettings.url(options),
@@ -56,7 +56,7 @@ const ListOrganizationSettingsForm = (options?: RouteQueryOptions): RouteFormDef
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 ListOrganizationSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListOrganizationSettings.url(options),
@@ -66,7 +66,7 @@ ListOrganizationSettingsForm.get = (options?: RouteQueryOptions): RouteFormDefin
 /**
 * @see \App\Filament\Resources\OrganizationSettingResource\Pages\ListOrganizationSettings::__invoke
 * @see app/Filament/Resources/OrganizationSettingResource/Pages/ListOrganizationSettings.php:7
-* @route '/admin/organization-settings'
+* @route '/titanpro/organization-settings'
 */
 ListOrganizationSettingsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListOrganizationSettings.url({

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 const ViewJob = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewJob.url(args, options),
@@ -11,13 +11,13 @@ const ViewJob = (args: { record: string | number } | [record: string | number ] 
 
 ViewJob.definition = {
     methods: ["get","head"],
-    url: '/admin/jobs/{record}',
+    url: '/titanpro/jobs/{record}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 ViewJob.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ ViewJob.url = (args: { record: string | number } | [record: string | number ] | 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 ViewJob.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ViewJob.url(args, options),
@@ -54,7 +54,7 @@ ViewJob.get = (args: { record: string | number } | [record: string | number ] | 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 ViewJob.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ViewJob.url(args, options),
@@ -64,7 +64,7 @@ ViewJob.head = (args: { record: string | number } | [record: string | number ] |
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 const ViewJobForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, options),
@@ -74,7 +74,7 @@ const ViewJobForm = (args: { record: string | number } | [record: string | numbe
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 ViewJobForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, options),
@@ -84,7 +84,7 @@ ViewJobForm.get = (args: { record: string | number } | [record: string | number 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ViewJob::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ViewJob.php:7
-* @route '/admin/jobs/{record}'
+* @route '/titanpro/jobs/{record}'
 */
 ViewJobForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ViewJob.url(args, {

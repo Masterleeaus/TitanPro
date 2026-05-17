@@ -66,4 +66,22 @@ class User extends Authenticatable implements FilamentUser
 
         return $this->hasRole(['super_admin', 'admin', 'owner']);
     }
+    public function hasConfirmedTwoFactor(): bool
+    {
+        return ! empty($this->two_factor_confirmed_at)
+            || ! empty($this->two_factor_secret)
+            || ! empty($this->two_factor_enabled_at);
+    }
+
+
+    public function hasEnabledTwoFactorAuthentication(): bool
+    {
+        return $this->hasConfirmedTwoFactor();
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->hasConfirmedTwoFactor();
+    }
+
 }

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Technician\JobController::store
-* @see app/Http/Controllers/Technician/JobController.php:145
+* @see app/Http/Controllers/Technician/JobController.php:155
 * @route '/api/technician/jobs/{job}/photos'
 */
 export const store = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::store
-* @see app/Http/Controllers/Technician/JobController.php:145
+* @see app/Http/Controllers/Technician/JobController.php:155
 * @route '/api/technician/jobs/{job}/photos'
 */
 store.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ store.url = (args: { job: number | { id: number } } | [job: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::store
-* @see app/Http/Controllers/Technician/JobController.php:145
+* @see app/Http/Controllers/Technician/JobController.php:155
 * @route '/api/technician/jobs/{job}/photos'
 */
 store.post = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -59,7 +59,7 @@ store.post = (args: { job: number | { id: number } } | [job: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::store
-* @see app/Http/Controllers/Technician/JobController.php:145
+* @see app/Http/Controllers/Technician/JobController.php:155
 * @route '/api/technician/jobs/{job}/photos'
 */
 const storeForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -69,7 +69,7 @@ const storeForm = (args: { job: number | { id: number } } | [job: number | { id:
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::store
-* @see app/Http/Controllers/Technician/JobController.php:145
+* @see app/Http/Controllers/Technician/JobController.php:155
 * @route '/api/technician/jobs/{job}/photos'
 */
 storeForm.post = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -81,7 +81,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::destroy
-* @see app/Http/Controllers/Technician/JobController.php:172
+* @see app/Http/Controllers/Technician/JobController.php:182
 * @route '/api/technician/jobs/{job}/photos/{attachment}'
 */
 export const destroy = (args: { job: number | { id: number }, attachment: number | { id: number } } | [job: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -96,7 +96,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::destroy
-* @see app/Http/Controllers/Technician/JobController.php:172
+* @see app/Http/Controllers/Technician/JobController.php:182
 * @route '/api/technician/jobs/{job}/photos/{attachment}'
 */
 destroy.url = (args: { job: number | { id: number }, attachment: number | { id: number } } | [job: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions) => {
@@ -126,7 +126,7 @@ destroy.url = (args: { job: number | { id: number }, attachment: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::destroy
-* @see app/Http/Controllers/Technician/JobController.php:172
+* @see app/Http/Controllers/Technician/JobController.php:182
 * @route '/api/technician/jobs/{job}/photos/{attachment}'
 */
 destroy.delete = (args: { job: number | { id: number }, attachment: number | { id: number } } | [job: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -136,7 +136,7 @@ destroy.delete = (args: { job: number | { id: number }, attachment: number | { i
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::destroy
-* @see app/Http/Controllers/Technician/JobController.php:172
+* @see app/Http/Controllers/Technician/JobController.php:182
 * @route '/api/technician/jobs/{job}/photos/{attachment}'
 */
 const destroyForm = (args: { job: number | { id: number }, attachment: number | { id: number } } | [job: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -151,7 +151,7 @@ const destroyForm = (args: { job: number | { id: number }, attachment: number | 
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::destroy
-* @see app/Http/Controllers/Technician/JobController.php:172
+* @see app/Http/Controllers/Technician/JobController.php:182
 * @route '/api/technician/jobs/{job}/photos/{attachment}'
 */
 destroyForm.delete = (args: { job: number | { id: number }, attachment: number | { id: number } } | [job: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

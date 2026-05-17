@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 const Reports = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: Reports.url(options),
@@ -11,13 +11,13 @@ const Reports = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 Reports.definition = {
     methods: ["get","head"],
-    url: '/admin/reports',
+    url: '/titanpro/reports',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 Reports.url = (options?: RouteQueryOptions) => {
     return Reports.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ Reports.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 Reports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: Reports.url(options),
@@ -36,7 +36,7 @@ Reports.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 Reports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: Reports.url(options),
@@ -46,7 +46,7 @@ Reports.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 const ReportsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Reports.url(options),
@@ -56,7 +56,7 @@ const ReportsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 ReportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Reports.url(options),
@@ -66,7 +66,7 @@ ReportsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 /**
 * @see \App\Filament\Pages\Reports::__invoke
 * @see app/Filament/Pages/Reports.php:7
-* @route '/admin/reports'
+* @route '/titanpro/reports'
 */
 ReportsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: Reports.url({

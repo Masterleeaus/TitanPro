@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 const ListJobs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobs.url(options),
@@ -11,13 +11,13 @@ const ListJobs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListJobs.definition = {
     methods: ["get","head"],
-    url: '/admin/jobs',
+    url: '/titanpro/jobs',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 ListJobs.url = (options?: RouteQueryOptions) => {
     return ListJobs.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListJobs.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 ListJobs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobs.url(options),
@@ -36,7 +36,7 @@ ListJobs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 ListJobs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListJobs.url(options),
@@ -46,7 +46,7 @@ ListJobs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 const ListJobsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobs.url(options),
@@ -56,7 +56,7 @@ const ListJobsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 ListJobsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobs.url(options),
@@ -66,7 +66,7 @@ ListJobsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 /**
 * @see \App\Filament\Resources\JobResource\Pages\ListJobs::__invoke
 * @see app/Filament/Resources/JobResource/Pages/ListJobs.php:7
-* @route '/admin/jobs'
+* @route '/titanpro/jobs'
 */
 ListJobsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobs.url({

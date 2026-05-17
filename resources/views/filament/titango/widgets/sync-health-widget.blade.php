@@ -1,7 +1,7 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">Sync Health Area</x-slot>
-        <x-slot name="description">Last PWA sync state by technician.</x-slot>
+        <x-slot name="heading">Sync Health</x-slot>
+        <x-slot name="description">Last mobile sync state by technician.</x-slot>
 
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             @forelse ($rows as $row)

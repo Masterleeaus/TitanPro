@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 const EditAttachment = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditAttachment.url(args, options),
@@ -11,13 +11,13 @@ const EditAttachment = (args: { record: string | number } | [record: string | nu
 
 EditAttachment.definition = {
     methods: ["get","head"],
-    url: '/admin/attachments/{record}/edit',
+    url: '/titanpro/attachments/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 EditAttachment.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditAttachment.url = (args: { record: string | number } | [record: string | numb
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 EditAttachment.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditAttachment.url(args, options),
@@ -54,7 +54,7 @@ EditAttachment.get = (args: { record: string | number } | [record: string | numb
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 EditAttachment.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditAttachment.url(args, options),
@@ -64,7 +64,7 @@ EditAttachment.head = (args: { record: string | number } | [record: string | num
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 const EditAttachmentForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditAttachment.url(args, options),
@@ -74,7 +74,7 @@ const EditAttachmentForm = (args: { record: string | number } | [record: string 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 EditAttachmentForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditAttachment.url(args, options),
@@ -84,7 +84,7 @@ EditAttachmentForm.get = (args: { record: string | number } | [record: string | 
 /**
 * @see \App\Filament\Resources\AttachmentResource\Pages\EditAttachment::__invoke
 * @see app/Filament/Resources/AttachmentResource/Pages/EditAttachment.php:7
-* @route '/admin/attachments/{record}/edit'
+* @route '/titanpro/attachments/{record}/edit'
 */
 EditAttachmentForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditAttachment.url(args, {

@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Modules\TitanCore\Support\ModuleDependencyGraph;
 use Nwidart\Modules\Module;
 
-function makeDiscoveryModuleStub(string $name, array $manifest = []): Module
+function makeModuleStub(string $name, array $manifest = []): Module
 {
     $stub = Mockery::mock(Module::class);
     $stub->allows('getName')->andReturn($name);
@@ -73,7 +73,7 @@ test('auto-discovery registers providers declared in module manifests', function
 
     $provider = makeDiscoveryProvider();
     $provider->testRegisterDeclaredModuleProviders(
-        makeDiscoveryModuleStub('DemoModule', ['providers' => [$discoveredProviderClass::class]])
+        makeModuleStub('DemoModule', ['providers' => [$discoveredProviderClass::class]])
     );
 
     expect(app()->bound('titan.test.discovered_provider_loaded'))->toBeTrue();
@@ -85,7 +85,7 @@ test('broken module providers are skipped and logged in safe-boot mode', functio
 
     $provider = makeDiscoveryProvider();
     $provider->testRegisterDeclaredModuleProviders(
-        makeDiscoveryModuleStub('BrokenModule', ['providers' => ['Modules\\Broken\\Providers\\MissingProvider']])
+        makeModuleStub('BrokenModule', ['providers' => ['Modules\\Broken\\Providers\\MissingProvider']])
     );
 
     $failures = app('titan.module_boot_failures')->all();
@@ -102,13 +102,13 @@ test('feature registry stores and retrieves features across modules', function (
     $provider = makeDiscoveryProvider();
 
     $provider->testRegisterDeclaredModuleFeatures(
-        makeDiscoveryModuleStub('ModuleOne', [
+        makeModuleStub('ModuleOne', [
             'capabilities' => ['capability.alpha', 'capability.beta'],
         ])
     );
 
     $provider->testRegisterDeclaredModuleFeatures(
-        makeDiscoveryModuleStub('ModuleTwo', [
+        makeModuleStub('ModuleTwo', [
             'features' => [
                 'feature.gamma' => ['enabled' => true],
                 'feature.delta',

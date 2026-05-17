@@ -9,7 +9,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -34,9 +34,9 @@ class SiteSettings extends Page implements HasSchemas
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Platform';
+    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 900;
+    protected static ?int $navigationSort = 10;
     protected static ?string $navigationLabel = 'Site Settings';
     protected string $view = 'filament.pages.site-settings';
 

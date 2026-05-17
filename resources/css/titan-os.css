@@ -1,0 +1,99 @@
+/*
+ * Titan OS base styles
+ *
+ * Define CSS variables for theming and minimal styles for the OS shell
+ * components.  These variables can be extended in future passes to
+ * implement dark glass surfaces, gradients and animations.
+ */
+
+:root {
+    --titan-os-bg: #f9fafb;
+    --titan-os-panel: #ffffff;
+    --titan-os-border: #e5e7eb;
+    --titan-os-accent: #2563eb;
+    --titan-os-danger: #dc2626;
+    --titan-os-success: #16a34a;
+    --titan-os-warning: #facc15;
+    --titan-os-radius: 0.5rem;
+    --titan-os-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.titan-os-shell {
+    position: relative;
+    min-height: 100vh;
+    background-color: var(--titan-os-bg);
+}
+
+/* Responsive styles for the Titan OS app switcher and assistant on smaller screens */
+@media (max-width: 640px) {
+    .titan-os-app-switcher .bg-white {
+        /* Use more space on mobile for the launcher */
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
+    .titan-os-assistant-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 80vh;
+        max-height: none;
+        border-radius: var(--titan-os-radius) var(--titan-os-radius) 0 0;
+    }
+    .titan-os-assistant-button {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 40;
+        background-color: var(--titan-os-accent);
+        color: white;
+        padding: 0.75rem;
+    }
+}
+
+.titan-os-header {
+    background-color: var(--titan-os-panel);
+    border-color: var(--titan-os-border);
+}
+
+.titan-os-launcher-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.titan-os-app-switcher {
+    backdrop-filter: blur(4px);
+}
+
+.titan-os-app-card {
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid var(--titan-os-border);
+    border-radius: var(--titan-os-radius);
+    background-color: var(--titan-os-panel);
+    transition: background-color 0.2s;
+}
+
+.titan-os-app-card:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.titan-os-assistant-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+}
+
+.titan-os-assistant-panel {
+    width: 24rem;
+    height: 24rem;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}

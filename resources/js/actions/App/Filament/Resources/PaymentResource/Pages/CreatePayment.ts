@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 const CreatePayment = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreatePayment.url(options),
@@ -11,13 +11,13 @@ const CreatePayment = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 CreatePayment.definition = {
     methods: ["get","head"],
-    url: '/admin/payments/create',
+    url: '/titanpro/payments/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 CreatePayment.url = (options?: RouteQueryOptions) => {
     return CreatePayment.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreatePayment.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 CreatePayment.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreatePayment.url(options),
@@ -36,7 +36,7 @@ CreatePayment.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 CreatePayment.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreatePayment.url(options),
@@ -46,7 +46,7 @@ CreatePayment.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => (
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 const CreatePaymentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreatePayment.url(options),
@@ -56,7 +56,7 @@ const CreatePaymentForm = (options?: RouteQueryOptions): RouteFormDefinition<'ge
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 CreatePaymentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreatePayment.url(options),
@@ -66,7 +66,7 @@ CreatePaymentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\CreatePayment::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/CreatePayment.php:7
-* @route '/admin/payments/create'
+* @route '/titanpro/payments/create'
 */
 CreatePaymentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreatePayment.url({
