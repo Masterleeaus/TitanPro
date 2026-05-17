@@ -433,17 +433,17 @@ class UiStudio extends Page
             return;
         }
 
-        $fontFamily = trim($this->googleFontQuery) !== '' ? $this->safeFont($this->googleFontQuery, 'Custom Org Font') : 'Custom Org Font';
+        $customFontName = trim($this->googleFontQuery) !== '' ? $this->safeFont($this->googleFontQuery, 'Custom Org Font') : 'Custom Org Font';
 
         if ($this->customFontPath && $this->customFontPath !== $path) {
             Storage::disk('public')->delete($this->customFontPath);
         }
 
         $this->customFontPath = $path;
-        $this->customFontFamily = $fontFamily;
-        $this->fontHeading = $fontFamily;
-        $this->fontBody = $fontFamily;
-        $this->fontFamily = $fontFamily;
+        $this->customFontFamily = $customFontName;
+        $this->fontHeading = $customFontName;
+        $this->fontBody = $customFontName;
+        $this->fontFamily = $customFontName;
         $this->fontSourceUrl = '';
         $this->customFontUpload = null;
 

@@ -1531,6 +1531,7 @@
                                     existingFontLink.href = data.payload.fontSourceUrl;
                                 }
                                 if (data.payload.customFont && data.payload.customFont.url && data.payload.customFont.family) {
+                                    if (!String(data.payload.customFont.url).startsWith('/storage/') || !/^[A-Za-z0-9_\\/.-]+\\.woff2$/i.test(String(data.payload.customFont.url).replace('/storage/', ''))) return;
                                     var customFontStyle = document.getElementById('titan-preview-custom-font-style');
                                     if (!customFontStyle) {
                                         customFontStyle = document.createElement('style');
@@ -1562,6 +1563,11 @@
             const postTheme = () => {
                 try {
                     const vars = JSON.parse(payload.dataset.previewCss ?? '{}');
+                    const customFontPath = payload.dataset.customFontPath ?? '';
+                    const customFontFamily = payload.dataset.customFontFamily ?? '';
+                    const safeCustomFontPath = /^[A-Za-z0-9_\/.-]+\.woff2$/i.test(customFontPath)
+                        ? customFontPath.replace(/^\/+/, '')
+                        : '';
                     iframe.contentWindow?.postMessage(
                         {
                             type: 'titan-ui-theme-vars',
@@ -1570,9 +1576,9 @@
                                 mode: payload.dataset.previewFrame ?? 'desktop',
                                 width: payload.dataset.previewWidth ?? '1440',
                                 fontSourceUrl: payload.dataset.fontSourceUrl ?? '',
-                                customFont: (payload.dataset.customFontPath && payload.dataset.customFontFamily) ? {
-                                    url: `/storage/${payload.dataset.customFontPath}`,
-                                    family: payload.dataset.customFontFamily,
+                                customFont: (safeCustomFontPath && customFontFamily) ? {
+                                    url: `/storage/${safeCustomFontPath}`,
+                                    family: customFontFamily,
                                 } : null,
                             },
                         },
