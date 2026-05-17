@@ -278,7 +278,7 @@ final class ThemeExportManager
 
     private function addBrandingAsset(ZipArchive $zip, ?string $path, string $prefix): void
     {
-        if (! is_string($path) || trim($path) === '') {
+        if ($path === null || trim($path) === '') {
             return;
         }
 
@@ -290,7 +290,9 @@ final class ThemeExportManager
         $absolutePath = $disk->path($path);
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         $filename = $prefix.($extension !== '' ? '.'.$extension : '');
-        $zip->addFile($absolutePath, $filename);
+        if (! $zip->addFile($absolutePath, $filename)) {
+            throw new \RuntimeException('Unable to add branding asset ('.$prefix.') from '.$absolutePath.' to export archive.');
+        }
     }
 
     /** @return array{path:string,archive:ZipArchive} */
@@ -302,7 +304,9 @@ final class ThemeExportManager
 
         $path = $this->tmpPath($name, $suffix, 'zip');
         $archive = new ZipArchive();
-        $archive->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        if ($archive->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new \RuntimeException('Failed to create ZIP archive at: '.$path);
+        }
 
         return ['path' => $path, 'archive' => $archive];
     }

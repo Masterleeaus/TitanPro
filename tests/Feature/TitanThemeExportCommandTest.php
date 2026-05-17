@@ -9,8 +9,13 @@ function cleanupThemeExportDirectory(string $directory): void
         return;
     }
 
-    foreach (array_diff(scandir($directory) ?: [], ['.', '..']) as $entry) {
-        $path = $directory.'/'.$entry;
+    $items = scandir($directory);
+    if ($items === false) {
+        return;
+    }
+
+    foreach (array_diff($items, ['.', '..']) as $item) {
+        $path = $directory.'/'.$item;
         if (is_file($path)) {
             unlink($path);
         }
@@ -83,28 +88,28 @@ it('includes required files in exported package zip formats', function () {
     ]);
 
     $themeZip = new \ZipArchive();
-    $themeZip->open($directory.'/acme-ops-theme_zip.zip');
+    expect($themeZip->open($directory.'/acme-ops-theme_zip.zip'))->toBeTrue();
     expect($themeZip->locateName('theme.json'))->not->toBeFalse()
         ->and($themeZip->locateName('meta.json'))->not->toBeFalse()
         ->and($themeZip->locateName('preview.png'))->not->toBeFalse();
     $themeZip->close();
 
     $uiPack = new \ZipArchive();
-    $uiPack->open($directory.'/acme-ops-ui_pack.zip');
+    expect($uiPack->open($directory.'/acme-ops-ui_pack.zip'))->toBeTrue();
     expect($uiPack->locateName('theme.json'))->not->toBeFalse()
         ->and($uiPack->locateName('component-overrides.json'))->not->toBeFalse()
         ->and($uiPack->locateName('dashboard-layout.json'))->not->toBeFalse();
     $uiPack->close();
 
     $brandingKit = new \ZipArchive();
-    $brandingKit->open($directory.'/acme-ops-branding_kit.zip');
+    expect($brandingKit->open($directory.'/acme-ops-branding_kit.zip'))->toBeTrue();
     expect($brandingKit->locateName('branding.json'))->not->toBeFalse()
         ->and($brandingKit->locateName('brand-colors.json'))->not->toBeFalse()
         ->and($brandingKit->locateName('fonts.json'))->not->toBeFalse();
     $brandingKit->close();
 
     $tenantPreset = new \ZipArchive();
-    $tenantPreset->open($directory.'/acme-ops-tenant_preset.zip');
+    expect($tenantPreset->open($directory.'/acme-ops-tenant_preset.zip'))->toBeTrue();
     expect($tenantPreset->locateName('tenant-preset.json'))->not->toBeFalse();
     $tenantPreset->close();
 

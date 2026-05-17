@@ -43,12 +43,17 @@ class TitanThemeExportCommand extends Command
         }
 
         if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+            if (! mkdir($directory, 0755, true)) {
+                $this->error('Failed to create export directory: '.$directory);
+
+                return self::FAILURE;
+            }
         }
 
         $targetPath = rtrim($directory, '/').'/'.Str::slug($name).'-'.$format.'.'.pathinfo($export['fileName'], PATHINFO_EXTENSION);
 
         if (! rename($export['path'], $targetPath)) {
+            // Cross-filesystem moves can fail with rename(), so fallback to copy+delete.
             if (! copy($export['path'], $targetPath)) {
                 $this->error('Unable to copy export artifact to destination path.');
 
