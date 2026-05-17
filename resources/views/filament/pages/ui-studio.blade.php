@@ -321,6 +321,100 @@
                     </section>
 
                     <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Theme history</h4>
+                        <div class="space-y-3 rounded-lg border border-gray-200 dark:border-white/10 p-3 text-xs">
+                            <div class="flex gap-2">
+                                <input
+                                    type="text"
+                                    wire:model.live="versionLabel"
+                                    class="flex-1 rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="Snapshot label (e.g. before client demo)"
+                                />
+                                <button
+                                    type="button"
+                                    wire:click="saveNamedSnapshot"
+                                    class="rounded bg-primary-500 px-2.5 py-1.5 text-white"
+                                >
+                                    Save snapshot
+                                </button>
+                            </div>
+
+                            @if (count($themeVersions) > 0)
+                                <div class="space-y-1.5">
+                                    @foreach ($themeVersions as $version)
+                                        <div class="flex items-center justify-between gap-2 rounded border border-gray-200/70 dark:border-white/10 px-2 py-1.5">
+                                            <div>
+                                                <p class="font-semibold text-gray-700 dark:text-gray-200">
+                                                    v{{ $version['version_number'] }} · {{ $version['label'] }}
+                                                </p>
+                                                <p class="text-[10px] text-gray-500">
+                                                    {{ $version['created_at'] }} · {{ $version['created_by'] }}
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                wire:click="rollbackThemeVersion({{ $version['version_number'] }})"
+                                                class="rounded border border-gray-200 dark:border-white/10 px-2 py-1 text-[10px] font-semibold text-gray-600 dark:text-gray-300"
+                                            >
+                                                Rollback
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <div class="space-y-2 rounded border border-dashed border-gray-200 dark:border-white/10 p-2">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Diff view</p>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <select wire:model.live="diffFromVersion" class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300">
+                                            <option value="">From version</option>
+                                            @foreach ($themeVersions as $version)
+                                                <option value="{{ $version['version_number'] }}">v{{ $version['version_number'] }}</option>
+                                            @endforeach
+                                        </select>
+                                        <select wire:model.live="diffToVersion" class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-[11px] text-gray-700 dark:text-gray-300">
+                                            <option value="">To version</option>
+                                            @foreach ($themeVersions as $version)
+                                                <option value="{{ $version['version_number'] }}">v{{ $version['version_number'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        wire:click="refreshVersionDiff"
+                                        class="rounded border border-gray-200 dark:border-white/10 px-2 py-1 text-[10px] font-semibold text-gray-600 dark:text-gray-300"
+                                    >
+                                        Compare versions
+                                    </button>
+                                    @if (count($versionDiffRows) > 0)
+                                        <div class="max-h-56 overflow-auto rounded border border-gray-200/70 dark:border-white/10">
+                                            <table class="w-full text-[10px]">
+                                                <thead class="bg-gray-50 dark:bg-white/5 text-gray-500">
+                                                    <tr>
+                                                        <th class="px-2 py-1 text-left">Token</th>
+                                                        <th class="px-2 py-1 text-left">From</th>
+                                                        <th class="px-2 py-1 text-left">To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($versionDiffRows as $row)
+                                                        <tr class="{{ $row['changed'] ? 'bg-amber-50 dark:bg-amber-900/10' : '' }}">
+                                                            <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-600 dark:text-gray-300">{{ $row['token'] }}</td>
+                                                            <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-500">{{ $row['left'] }}</td>
+                                                            <td class="border-t border-gray-100 dark:border-white/10 px-2 py-1 font-mono text-gray-500">{{ $row['right'] }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <p class="text-[11px] text-gray-500">No saved versions yet. Publish the theme to create v1.</p>
+                            @endif
+                        </div>
+                    </section>
+
+                    <section>
                         <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Custom CSS</h4>
                         <textarea
                             wire:model.live="customCss"
