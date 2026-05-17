@@ -9,17 +9,22 @@ use Modules\TitanCore\Services\UsageLogger;
 
 class AnthropicClient implements ClientInterface
 {
-    protected const ENDPOINT         = 'https://api.anthropic.com/v1/messages';
+    protected const ENDPOINT          = 'https://api.anthropic.com/v1/messages';
+    protected const EMBEDDINGS_ENDPOINT = 'https://api.openai.com/v1/embeddings';
     protected const ANTHROPIC_VERSION = '2023-06-01';
 
     protected string $apiKey;
+    protected string $openAiApiKey;
     protected string $model;
+    protected string $embeddingModel;
     protected string $provider = 'anthropic';
 
     public function __construct()
     {
-        $this->apiKey = config('ai.providers.anthropic.api_key') ?? env('ANTHROPIC_API_KEY', '');
-        $this->model  = config('ai.providers.anthropic.model', 'claude-3-haiku-20240307');
+        $this->apiKey = (string) (config('ai.providers.anthropic.api_key') ?? env('ANTHROPIC_API_KEY', ''));
+        $this->openAiApiKey = (string) (config('ai.providers.openai.api_key') ?? env('OPENAI_API_KEY', ''));
+        $this->model  = (string) config('ai.providers.anthropic.model', 'claude-3-haiku-20240307');
+        $this->embeddingModel = (string) config('ai.providers.anthropic.embedding_model', 'text-embedding-3-small');
     }
 
     public function chat(array $messages, array $opts = []): array
@@ -56,6 +61,10 @@ class AnthropicClient implements ClientInterface
             $payload['tools'] = $opts['tools'];
         }
 
+        if (!empty($opts['stream'])) {
+            $payload['stream'] = true;
+        }
+
         try {
             $response = Http::withHeaders([
                 'x-api-key'         => $this->apiKey,
@@ -80,10 +89,9 @@ class AnthropicClient implements ClientInterface
                 }
             }
 
-            $key = optional(auth()->user())->tenant_id ? ('tenant:' . auth()->user()->tenant_id) : 'global';
-            $inputTokens  = $json['usage']['input_tokens'] ?? 0;
-            $outputTokens = $json['usage']['output_tokens'] ?? 0;
-            UsageLogger::add($key, $inputTokens + $outputTokens, 1);
+            $inputTokens  = (int) ($json['usage']['input_tokens'] ?? 0);
+            $outputTokens = (int) ($json['usage']['output_tokens'] ?? 0);
+            $this->logUsage($inputTokens + $outputTokens);
 
             return [
                 'ok'      => true,
@@ -91,6 +99,7 @@ class AnthropicClient implements ClientInterface
                 'usage'   => [
                     'prompt_tokens'     => $inputTokens,
                     'completion_tokens' => $outputTokens,
+                    'total_tokens'      => $inputTokens + $outputTokens,
                 ],
                 'reason'  => null,
             ];
@@ -102,13 +111,78 @@ class AnthropicClient implements ClientInterface
 
     public function embed(array $input, array $opts = []): array
     {
-        // Anthropic does not provide a public embeddings API
-        return ['ok' => false, 'vector' => null, 'reason' => 'Anthropic does not support embeddings'];
+        if (!$this->openAiApiKey) {
+            return ['ok' => false, 'vector' => null, 'reason' => 'Anthropic does not support embeddings and OPENAI_API_KEY is missing'];
+        }
+
+        $payload = [
+            'model' => $opts['model'] ?? $this->embeddingModel,
+            'input' => $input,
+        ];
+
+        if (array_key_exists('dimensions', $opts)) {
+            $payload['dimensions'] = $opts['dimensions'];
+        }
+
+        try {
+            $response = Http::withToken($this->openAiApiKey)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->post(self::EMBEDDINGS_ENDPOINT, $payload);
+
+            if ($response->failed()) {
+                return ['ok' => false, 'vector' => null, 'reason' => 'HTTP ' . $response->status()];
+            }
+
+            $json = $response->json();
+
+            $usage = [
+                'prompt_tokens' => (int) ($json['usage']['prompt_tokens'] ?? 0),
+                'total_tokens' => (int) ($json['usage']['total_tokens'] ?? 0),
+            ];
+
+            $this->logUsage($usage['total_tokens'] ?: $usage['prompt_tokens']);
+
+            return [
+                'ok' => true,
+                'vector' => $json['data'][0]['embedding'] ?? null,
+                'usage' => $usage,
+                'reason' => null,
+                'data' => $json['data'] ?? [],
+            ];
+        } catch (\Throwable $e) {
+            Log::error('AnthropicClient: exception during embeddings fallback.', ['error' => $e->getMessage()]);
+
+            return ['ok' => false, 'vector' => null, 'reason' => $e->getMessage()];
+        }
     }
 
     public function health(): array
     {
         return ['ok' => (bool)$this->apiKey, 'provider' => $this->provider, 'reason' => $this->apiKey ? null : 'Missing API key'];
     }
-}
 
+    protected function logUsage(int $tokens): void
+    {
+        $tenantId = null;
+
+        if (function_exists('auth')) {
+            try {
+                $user = auth()->user();
+                $tenantId = $user->tenant_id ?? null;
+            } catch (\Throwable) {
+                $tenantId = null;
+            }
+        }
+
+        $key = $tenantId ? ('tenant:' . $tenantId) : 'global';
+
+        try {
+            UsageLogger::add($key, max(0, $tokens), 1);
+        } catch (\Throwable $e) {
+            Log::debug('AnthropicClient: usage logging skipped.', ['error' => $e->getMessage()]);
+        }
+    }
+}
