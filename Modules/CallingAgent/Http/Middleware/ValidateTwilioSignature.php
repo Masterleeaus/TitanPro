@@ -4,6 +4,8 @@ namespace Modules\CallingAgent\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Modules\CallingAgent\Services\CallingAgentCredentialResolver;
+use Modules\CallingAgent\Support\TenantContext;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateTwilioSignature
@@ -14,10 +16,16 @@ class ValidateTwilioSignature
             return $next($request);
         }
 
-        $authToken = config('services.twilio.token', env('TWILIO_AUTH_TOKEN', ''));
+        $expected = (string) $request->header('X-Twilio-Signature', '');
+        if ($expected === '') {
+            return response()->json(['error' => 'Missing Twilio signature'], 403);
+        }
 
-        if (empty($authToken)) {
-            return $next($request);
+        /** @var CallingAgentCredentialResolver $credentialResolver */
+        $credentialResolver = app(CallingAgentCredentialResolver::class);
+        $tokenCandidates = $credentialResolver->twilioAuthTokenCandidates();
+        if ($tokenCandidates === []) {
+            return response()->json(['error' => 'Twilio auth token is not configured'], 403);
         }
 
         $url = $request->fullUrl();
@@ -28,13 +36,19 @@ class ValidateTwilioSignature
             $str .= $key . $val;
         }
 
-        $signature = base64_encode(hash_hmac('sha1', $str, $authToken, true));
-        $expected = $request->header('X-Twilio-Signature', '');
+        foreach ($tokenCandidates as $candidate) {
+            $signature = base64_encode(hash_hmac('sha1', $str, $candidate['token'], true));
+            if (! hash_equals($signature, $expected)) {
+                continue;
+            }
 
-        if (!hash_equals($signature, $expected)) {
-            return response()->json(['error' => 'Invalid Twilio signature'], 403);
+            if ($candidate['company_id'] !== null) {
+                TenantContext::setTenantId($candidate['company_id']);
+            }
+
+            return $next($request);
         }
 
-        return $next($request);
+        return response()->json(['error' => 'Invalid Twilio signature'], 403);
     }
 }

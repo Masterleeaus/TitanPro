@@ -11,7 +11,7 @@ return new class extends Migration
         if (! Schema::hasTable('crmcore_activity_logs')) {
             Schema::create('crmcore_activity_logs', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('company_id')->nullable()->index();
+                $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
                 $table->unsignedBigInteger('actor_id')->nullable()->index();
                 $table->string('subject_type')->nullable()->index();
                 $table->unsignedBigInteger('subject_id')->nullable()->index();

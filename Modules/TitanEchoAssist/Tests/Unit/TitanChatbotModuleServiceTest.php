@@ -1,8 +1,8 @@
 <?php
-namespace Modules\TitanChatbot\Tests\Unit;
+namespace Modules\TitanEchoAssist\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Modules\TitanChatbot\Services\TitanChatbotModuleService;
+use Modules\TitanEchoAssist\Services\TitanChatbotModuleService;
 
 class TitanChatbotModuleServiceTest extends TestCase
 {

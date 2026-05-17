@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 const ListInvoices = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListInvoices.url(options),
@@ -11,13 +11,13 @@ const ListInvoices = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListInvoices.definition = {
     methods: ["get","head"],
-    url: '/admin/invoices',
+    url: '/titanpro/invoices',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 ListInvoices.url = (options?: RouteQueryOptions) => {
     return ListInvoices.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListInvoices.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 ListInvoices.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListInvoices.url(options),
@@ -36,7 +36,7 @@ ListInvoices.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 ListInvoices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListInvoices.url(options),
@@ -46,7 +46,7 @@ ListInvoices.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 const ListInvoicesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListInvoices.url(options),
@@ -56,7 +56,7 @@ const ListInvoicesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 ListInvoicesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListInvoices.url(options),
@@ -66,7 +66,7 @@ ListInvoicesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Resources\InvoiceResource\Pages\ListInvoices::__invoke
 * @see app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php:7
-* @route '/admin/invoices'
+* @route '/titanpro/invoices'
 */
 ListInvoicesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListInvoices.url({

@@ -1,0 +1,1 @@
+- After migrate, tables are ext_titan_command_agents and ext_titan_command_agent_posts (no ext_social_media_* remain)

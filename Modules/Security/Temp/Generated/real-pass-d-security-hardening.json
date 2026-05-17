@@ -1,0 +1,113 @@
+{
+  "pass": "REAL-D",
+  "name": "security hardening",
+  "php_files": 189,
+  "findings_count": 16,
+  "findings": [
+    {
+      "severity": "low",
+      "file": "Http/Controllers/CardAccessController.php",
+      "type": "pdf-rendering",
+      "detail": "PDF rendering path should keep remote resources disabled unless required"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/SecurityController.php",
+      "type": "legacy-upload-helper",
+      "detail": "Legacy upload helper remains; validate file constraints before invoking"
+    },
+    {
+      "severity": "low",
+      "file": "Http/Controllers/SecurityController.php",
+      "type": "pdf-rendering",
+      "detail": "PDF rendering path should keep remote resources disabled unless required"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/SecurityWPController.php",
+      "type": "legacy-upload-helper",
+      "detail": "Legacy upload helper remains; validate file constraints before invoking"
+    },
+    {
+      "severity": "low",
+      "file": "Http/Controllers/SecurityWPController.php",
+      "type": "pdf-rendering",
+      "detail": "PDF rendering path should keep remote resources disabled unless required"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/TrInOutPermitPermissionController.php",
+      "type": "legacy-upload-helper",
+      "detail": "Legacy upload helper remains; validate file constraints before invoking"
+    },
+    {
+      "severity": "low",
+      "file": "Http/Controllers/TrInOutPermitPermissionController.php",
+      "type": "pdf-rendering",
+      "detail": "PDF rendering path should keep remote resources disabled unless required"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/WorkPermitsController.php",
+      "type": "legacy-upload-helper",
+      "detail": "Legacy upload helper remains; validate file constraints before invoking"
+    },
+    {
+      "severity": "low",
+      "file": "Http/Controllers/WorkPermitsController.php",
+      "type": "pdf-rendering",
+      "detail": "PDF rendering path should keep remote resources disabled unless required"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/WorkPermitsFileController.php",
+      "type": "raw-query",
+      "detail": "whereRaw usage requires parameter binding audit"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Controllers/WorkPermitsFileController.php",
+      "type": "legacy-upload-helper",
+      "detail": "Legacy upload helper remains; validate file constraints before invoking"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Requests/CardRequest.php",
+      "type": "permissive-request",
+      "detail": "Request authorize() is permissive; route/policy middleware should enforce access"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Requests/GoodsInOutValidation.php",
+      "type": "permissive-request",
+      "detail": "Request authorize() is permissive; route/policy middleware should enforce access"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Requests/StoreTrInOutPermit.php",
+      "type": "permissive-request",
+      "detail": "Request authorize() is permissive; route/policy middleware should enforce access"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Requests/StoreWorkPermitFile.php",
+      "type": "permissive-request",
+      "detail": "Request authorize() is permissive; route/policy middleware should enforce access"
+    },
+    {
+      "severity": "medium",
+      "file": "Http/Requests/StoreWorkPermits.php",
+      "type": "permissive-request",
+      "detail": "Request authorize() is permissive; route/policy middleware should enforce access"
+    }
+  ],
+  "implemented_files": [
+    "Security/Sanitization/InputSanitizer.php",
+    "Security/Secrets/SensitiveValueRedactor.php",
+    "Security/RateLimiting/SecurityRateLimitRegistrar.php",
+    "Support/Validators/SecureFileUploadValidator.php",
+    "Http/Requests/StoreWorkPermitFile.php",
+    "Docs/Security/REAL-PASS-D-HARDENING.md",
+    "Tests/Security/SecureFileUploadValidatorTest.php"
+  ]
+}

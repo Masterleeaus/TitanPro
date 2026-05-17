@@ -1,0 +1,7 @@
+Pass 4 Acceptance
+- After migrate, /dashboard/user/command/jobs/{id}/assets returns assets list (empty ok).
+- POST asset link/unlink works and records events.
+- /permits link/unlink works.
+- /inspections create/show/items/submit works.
+- /evidence add works; /signoff sets compliance_state to ok.
+- /jobs/reports/performance and /jobs/reports/compliance return snapshots and persist work_jobs_reports rows.

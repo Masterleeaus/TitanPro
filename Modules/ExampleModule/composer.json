@@ -1,0 +1,9 @@
+{
+  "name": "titan/example-module",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Modules\\ExampleModule\\": ""
+    }
+  }
+}

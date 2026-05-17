@@ -1,0 +1,37 @@
+{
+  "schema": "titan.signals.manifest.v1",
+  "module": "Complaint",
+  "schema_version": "1.0",
+  "produced": [
+    "ComplaintReceived",
+    "ComplaintEscalated",
+    "ComplaintResolved"
+  ],
+  "consumed": [
+    "ZeroFussPortal.FeedbackSubmitted"
+  ],
+  "emits": [
+    {
+      "signal": "ComplaintReceived",
+      "event_class": "Modules\\Complaint\\Events\\ComplaintReceived",
+      "description": "Emitted when a complaint is created."
+    },
+    {
+      "signal": "ComplaintEscalated",
+      "event_class": "Modules\\Complaint\\Events\\ComplaintEscalated",
+      "description": "Emitted when a complaint is escalated."
+    },
+    {
+      "signal": "ComplaintResolved",
+      "event_class": "Modules\\Complaint\\Events\\ComplaintResolved",
+      "description": "Emitted when a complaint is resolved."
+    }
+  ],
+  "consumes": [
+    {
+      "signal": "ZeroFussPortal.FeedbackSubmitted",
+      "handler": "Modules\\Complaint\\Listeners\\FeedbackSubmittedListener",
+      "description": "Creates an auto complaint when feedback rating is lower than 3."
+    }
+  ]
+}

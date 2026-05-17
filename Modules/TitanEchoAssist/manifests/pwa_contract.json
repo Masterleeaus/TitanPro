@@ -1,0 +1,94 @@
+{
+  "schema": "titan.pwa.contract.v1",
+  "module": "TitanEchoAssist",
+  "offline_cards": [
+    {
+      "id": "echoassist_conversation_card",
+      "label": "Conversation",
+      "minimal_sync_fields": ["id", "session_id", "channel", "status", "company_id", "last_message_at"],
+      "ttl_seconds": 1800
+    },
+    {
+      "id": "echoassist_message_card",
+      "label": "Message",
+      "minimal_sync_fields": ["id", "conversation_id", "message", "direction", "channel", "company_id", "created_at"],
+      "ttl_seconds": 900
+    },
+    {
+      "id": "echoassist_chatbot_card",
+      "label": "Chatbot",
+      "minimal_sync_fields": ["id", "name", "status", "channel", "company_id"],
+      "ttl_seconds": 3600
+    }
+  ],
+  "action_set": [
+    {
+      "id": "send_message_offline",
+      "label": "Send Message (Offline Queue)",
+      "offline_capable": true,
+      "sync_on_reconnect": true,
+      "idempotency_key": "session_id+message+channel",
+      "job_class": "Modules\\TitanEchoAssist\\Jobs\\SyncOfflineConversationJob"
+    },
+    {
+      "id": "start_conversation",
+      "label": "Start Conversation",
+      "offline_capable": true,
+      "sync_on_reconnect": true
+    }
+  ],
+  "push_triggers": [
+    {
+      "event": "titanechoassist.message.received",
+      "notification_id": "new_message_notification",
+      "label": "New Message Received"
+    },
+    {
+      "event": "titanechoassist.conversation.started",
+      "notification_id": "conversation_started_notification",
+      "label": "Conversation Started"
+    },
+    {
+      "event": "titanechoassist.conversation.escalated",
+      "notification_id": "agent_escalation_notification",
+      "label": "Escalated to Live Agent"
+    }
+  ],
+  "service_worker": {
+    "cache_strategy": "network-first",
+    "cacheable_routes": ["/chatbot/widget", "/chatbot/conversations"],
+    "offline_fallback": "/chatbot/offline"
+  },
+  "installable_surface": true,
+  "indexed_db": {
+    "database": "titan_echoassist",
+    "version": 1,
+    "stores": [
+      {
+        "name": "conversations",
+        "key_path": "id",
+        "indexes": [
+          {"name": "session_id", "key_path": "session_id", "unique": false},
+          {"name": "company_id", "key_path": "company_id", "unique": false},
+          {"name": "channel", "key_path": "channel", "unique": false}
+        ]
+      },
+      {
+        "name": "messages",
+        "key_path": "id",
+        "indexes": [
+          {"name": "conversation_id", "key_path": "conversation_id", "unique": false},
+          {"name": "company_id", "key_path": "company_id", "unique": false}
+        ]
+      },
+      {
+        "name": "offline_queue",
+        "key_path": "idempotency_key",
+        "indexes": [
+          {"name": "status", "key_path": "status", "unique": false},
+          {"name": "company_id", "key_path": "company_id", "unique": false}
+        ]
+      }
+    ]
+  }
+}

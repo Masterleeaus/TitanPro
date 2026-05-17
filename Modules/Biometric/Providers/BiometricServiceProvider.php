@@ -91,6 +91,10 @@ class BiometricServiceProvider extends ServiceProvider
     {
         $this->publishes([module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php')], 'config');
         $this->mergeConfigFrom(module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower);
+        $this->publishes([module_path($this->moduleName, 'Config/features.php') => config_path($this->moduleNameLower . '_features.php')], 'config');
+        $this->mergeConfigFrom(module_path($this->moduleName, 'Config/features.php'), $this->moduleNameLower . '_features');
+        $this->publishes([module_path($this->moduleName, 'Config/ai.php') => config_path($this->moduleNameLower . '_ai.php')], 'config');
+        $this->mergeConfigFrom(module_path($this->moduleName, 'Config/ai.php'), $this->moduleNameLower . '_ai');
     }
 
     /**

@@ -4,23 +4,66 @@ namespace Modules\CleaningJobs\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\CleaningJobs\Traits\BelongsToTenant;
 
 class WorkOrder extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
 
     protected $table = 'work_orders';
 
     protected $fillable = [
-        // Legacy Worksuite fields
-        'wo_id', 'wo_detail', 'type', 'client', 'asset', 'due_date', 'status',
-        'priority', 'notes', 'assign', 'preferred_date', 'preferred_time',
-        'preferred_note', 'parent_id',
-        // SaaS/job-management fields introduced by the modern scaffolding
-        'client_id', 'technician_id', 'scheduled_for', 'due_by', 'total_estimate',
-        'location', 'title', 'description',
-        'budget_amount', 'actual_cost', 'actual_revenue', 'estimated_hours', 'actual_hours', 'health',
+        'wo_id',
+        'wo_detail',
+        'type',
+        'client',
+        'asset',
+        'due_date',
+        'status',
+        'priority',
+        'notes',
+        'assign',
+        'preferred_date',
+        'preferred_time',
+        'preferred_note',
+        'parent_id',
+        'company_id',
+        'client_id',
+        'technician_id',
+        'scheduled_for',
+        'due_by',
+        'total_estimate',
+        'location',
+        'title',
+        'description',
+        'budget_amount',
+        'actual_cost',
+        'actual_revenue',
+        'estimated_hours',
+        'actual_hours',
+        'health',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'scheduled_for' => 'datetime',
+            'due_by' => 'datetime',
+            'due_date' => 'date',
+            'preferred_date' => 'date',
+            'total_estimate' => 'decimal:2',
+            'budget_amount' => 'decimal:2',
+            'actual_cost' => 'decimal:2',
+            'actual_revenue' => 'decimal:2',
+            'estimated_hours' => 'decimal:2',
+            'actual_hours' => 'decimal:2',
+            'company_id' => 'integer',
+            'parent_id' => 'integer',
+            'client_id' => 'integer',
+            'technician_id' => 'integer',
+        ];
+    }
 
     public static $status = [
         'pending' => 'Pending',
@@ -45,7 +88,10 @@ class WorkOrder extends Model
     public function assets()
     {
         $class = 'Modules\\CleaningJobs\\Models\\Asset';
-        return class_exists($class) ? $this->hasOne($class, 'id', 'asset') : $this->hasOne(static::class, 'id', 'asset')->whereRaw('1 = 0');
+
+        return class_exists($class)
+            ? $this->hasOne($class, 'id', 'asset')
+            : $this->hasOne(static::class, 'id', 'asset')->whereRaw('1 = 0');
     }
 
     public function types()
@@ -97,8 +143,6 @@ class WorkOrder extends Model
             ->where('type', 'service');
     }
 
-
-
     public function jobTasks()
     {
         return $this->hasMany(JobTask::class, 'work_order_id');
@@ -141,7 +185,7 @@ class WorkOrder extends Model
         $projectClass = config('cleaningjobs.models.project', \App\Models\Project::class);
         $taskClass = config('cleaningjobs.models.task', \App\Models\Task::class);
 
-        if (!class_exists($projectClass) || !class_exists($taskClass)) {
+        if (! class_exists($projectClass) || ! class_exists($taskClass)) {
             return null;
         }
 

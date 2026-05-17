@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Listeners;
+namespace Modules\TitanEchoAssist\Listeners;
 
 class DispatchMessageToAi
 {

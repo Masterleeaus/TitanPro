@@ -1,19 +1,21 @@
 {
-    "name": "HRCore",
-    "alias": "hrcore",
-    "displayName": "HR Core",
-    "version": "1.0.0",
-    "description": "Core Human Resources Module",
-    "documentationUrl": "https://czappstudio.com/",
-    "changelogUrl": "https://czappstudio.com/",
-    "tutorialUrl": "https://czappstudio.com/",
-    "isCoreModule": true,
-    "keywords": [],
-    "priority": 0,
-    "providers": [
-        "Modules\\HRCore\\app\\Providers\\HRCoreServiceProvider"
-    ],
-    "files": [],
-    "category": "Core",
-    "dependencies": []
+  "name": "HRCore",
+  "alias": "hrcore",
+  "displayName": "HR Core",
+  "version": "1.0.0",
+  "description": "Core Human Resources Module",
+  "documentationUrl": "https://czappstudio.com/",
+  "changelogUrl": "https://czappstudio.com/",
+  "tutorialUrl": "https://czappstudio.com/",
+  "isCoreModule": true,
+  "keywords": [],
+  "priority": 0,
+  "providers": [
+    "Modules\\HRCore\\app\\Providers\\HRCoreServiceProvider"
+  ],
+  "files": [],
+  "category": "Core",
+  "dependencies": [],
+  "filament_panel": "titanpro",
+  "active": 1
 }

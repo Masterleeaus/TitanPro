@@ -1,16 +1,16 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\Contracts\ChannelDriver;
+use Modules\TitanEchoAssist\Contracts\ChannelDriver;
 
 class WhatsappChannel implements ChannelDriver
 {
     public function handle(array $payload): string
     {
         // Delegate to legacy TwilioConversationService when available
-        if (class_exists(\Modules\TitanChatbot\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService::class)) {
+        if (class_exists(\Modules\TitanEchoAssist\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService::class)) {
             return $this->handleViaTwilio($payload);
         }
 
@@ -20,8 +20,8 @@ class WhatsappChannel implements ChannelDriver
     private function handleViaTwilio(array $payload): string
     {
         try {
-            /** @var \Modules\TitanChatbot\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService $service */
-            $service = app(\Modules\TitanChatbot\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService::class);
+            /** @var \Modules\TitanEchoAssist\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService $service */
+            $service = app(\Modules\TitanEchoAssist\Channels\WhatsApp\System\Services\Twillio\TwilioConversationService::class);
 
             $service->setChatbotId((int) ($payload['chatbot_id'] ?? 0));
             $service->setPayload($payload['metadata'] ?? $payload);

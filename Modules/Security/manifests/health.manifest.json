@@ -1,0 +1,31 @@
+{
+  "module": "security",
+  "checks": [
+    "database_tables",
+    "features",
+    "permissions",
+    "routes",
+    "repository_counts",
+    "pending_approvals",
+    "pending_validations"
+  ],
+  "command": "security:health",
+  "internal_route": "internal/security/health",
+  "api_route": "api/security/health",
+  "status_route": "api/security/status",
+  "readiness": {
+    "endpoint": "/api/security/readiness",
+    "commands": [
+      "security:readiness",
+      "security:install-verify",
+      "security:cache-warm"
+    ],
+    "checks": [
+      "health",
+      "config",
+      "storage",
+      "routes",
+      "queues"
+    ]
+  }
+}

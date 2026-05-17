@@ -25,13 +25,23 @@ use App\Http\Controllers\PublicEstimateController;
 use App\Http\Controllers\Technician\DashboardController as TechnicianDashboardController;
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+// Legacy Filament panel aliases.
+// /admin is the Super Admin panel. Some iOS/Safari sessions cached an old
+// permanent /admin -> /titanpro redirect, so /titanpro must resolve back to
+// /admin until those caches age out. Titan Pro's canonical URL is /pro.
+Route::get('/titanpro', fn () => redirect('/admin', 302)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0'))->name('admin.cached-titanpro.alias');
+Route::get('/titanpro/{path}', fn (string $path) => redirect('/admin/'.$path, 302)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0'))->where('path', '.*')->name('admin.cached-titanpro.path.alias');
+Route::redirect('/platform', '/admin', 302);
+Route::redirect('/platform/{path}', '/admin/{path}', 302)->where('path', '.*');
 
 // Root: guests see the marketing page; authenticated users go to their dashboard
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
         if ($user->hasRole('super_admin')) {
-            return redirect()->route('platform.dashboard');
+            return redirect('/admin');
         }
         if ($user->hasRole('technician')) {
             return redirect()->route('technician.dashboard');
@@ -45,7 +55,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('super_admin')) {
-        return redirect()->route('platform.dashboard');
+        return redirect('/admin');
     }
     if ($user->hasRole('technician')) {
         return redirect()->route('technician.dashboard');
@@ -199,8 +209,8 @@ Route::get('/health/ready', [HealthController::class, 'readiness'])->name('healt
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])
     ->name('stripe.webhook');
 
-// ── Visual UI Inspector API — authenticated; accessible to admins & owners ──
-Route::middleware(['auth', 'role:super_admin|admin|owner'])
+// ── Visual UI Inspector API — authenticated; requires ui-inspector.manage permission ──
+Route::middleware(['auth', 'permission:ui-inspector.manage'])
     ->prefix('titan/ui-inspector')
     ->name('titan.ui-inspector.')
     ->group(function () {
@@ -232,8 +242,8 @@ Route::get('/features', fn () => app(CmsPageController::class)->show('features')
 Route::get('/faq', fn () => app(CmsPageController::class)->show('faq'))->name('faq');
 Route::get('/about', fn () => app(CmsPageController::class)->show('about'))->name('about');
 Route::get('/contact', fn () => app(CmsPageController::class)->show('contact'))->name('contact');
-// Legacy panel aliases — permanent redirects to canonical panel paths.
-Route::redirect('/admin', '/titanpro', 301)->name('titanpro.alias');
+// Legacy panel aliases — temporary redirects to canonical panel paths.
+// /admin is owned by AdminPanelProvider. Do not redirect it to Titan Pro.
 Route::redirect('/ground-zero', '/groundzero', 301)->name('groundzero.alias');
 Route::redirect('/titan-go', '/titango', 301)->name('titango.alias');
 Route::redirect('/titan-quotes', '/titanquotes', 301)->name('titanquotes.alias');
@@ -243,5 +253,58 @@ Route::get('/verticals', fn () => redirect('/service-modes'))->name('verticals.i
 Route::get('/verticals/{slug}', fn (string $slug) => redirect('/service-modes'))->name('verticals.show');
 Route::get('/pages/{slug}', [CmsPageController::class, 'show'])->name('cms.pages.show');
 
+// Theme share import — resolves a share token and redirects to UI Studio
+Route::get('/theme/import/{token}', \App\Http\Controllers\Platform\ThemeImportController::class)
+    ->name('theme.import')
+    ->middleware('auth');
+
 require __DIR__.'/esoft.php';
 require __DIR__.'/auth.php';
+
+// UI Studio motion preview — only available in local and testing environments
+if (app()->isLocal() || app()->runningUnitTests()) {
+    Route::get(
+        '/titan-ui-studio/motion-preview',
+        \App\Http\Controllers\UiStudio\MotionPreviewController::class
+    )->name('ui-studio.motion-preview');
+}
+
+Route::post('/theme-presets/apply', [\App\Http\Controllers\ThemePresetController::class, 'apply'])->middleware(['web'])->name('theme-presets.apply');
+
+Route::post('/theme-presets/duplicate', [\App\Http\Controllers\ThemePresetController::class, 'duplicate'])->middleware(['web'])->name('theme-presets.duplicate');
+
+Route::post('/theme-presets/delete', [\App\Http\Controllers\ThemePresetController::class, 'delete'])->middleware(['web'])->name('theme-presets.delete');
+
+Route::get('/theme-presets/export', [\App\Http\Controllers\ThemePresetController::class, 'export'])->middleware(['web'])->name('theme-presets.export');
+
+// -------------------------------------------------------------------------
+// Titan Zero assistant web endpoint for Business OS
+//
+// Provides a session-authenticated fallback for the assistant within the
+// Filament shell.  The response structure mirrors the API endpoint used
+// in earlier passes.  Only generic fields are returned to avoid exposing
+// unfinished module functionality.
+
+Route::post('/titan/zero/generate-ui', function (Request $request) {
+    return response()->json([
+        'ok' => true,
+        'reply' => 'Titan Zero is connected to the Business OS shell.',
+        'message' => 'Titan Zero is connected to the Business OS shell.',
+        'widgets' => [],
+        'thread' => null,
+        'context' => $request->input('context', []),
+    ]);
+})->middleware(['auth']);
+
+// ── Titan OS shell routes ───────────────────────────────────────────────────
+// Expose the Business OS shell under the /os prefix.  These simple
+// closures allow authenticated users to access the OS launcher and
+// workspace placeholders without binding to a dedicated controller.  The
+// workspace show view will attempt to resolve a module's workspace via
+// ProvidesTitanOsWorkspace when available.
+Route::middleware(['auth'])->group(function () {
+    Route::get('/os', fn () => redirect('/os/apps'))->name('os.index');
+    Route::get('/os/apps', fn () => view('titan-os.workspaces.index'))->name('os.apps');
+    Route::get('/os/workspace/{appKey}', fn (string $appKey) => view('titan-os.workspaces.show', ['appKey' => $appKey]))
+        ->name('os.workspace');
+});

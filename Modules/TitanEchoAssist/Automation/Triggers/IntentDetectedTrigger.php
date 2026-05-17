@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Triggers;
+namespace Modules\TitanEchoAssist\Automation\Triggers;
 
-use Modules\TitanChatbot\Events\IntentDetected;
+use Modules\TitanEchoAssist\Events\IntentDetected;
 
 class IntentDetectedTrigger
 {

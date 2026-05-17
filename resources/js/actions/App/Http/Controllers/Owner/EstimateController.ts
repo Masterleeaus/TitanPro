@@ -544,7 +544,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 export const destroy = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -559,7 +559,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroy.url = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -592,7 +592,7 @@ destroy.url = (args: { estimate: number | { id: number } } | [estimate: number |
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroy.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -602,7 +602,7 @@ destroy.delete = (args: { estimate: number | { id: number } } | [estimate: numbe
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 const destroyForm = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -617,7 +617,7 @@ const destroyForm = (args: { estimate: number | { id: number } } | [estimate: nu
 
 /**
 * @see \App\Http\Controllers\Owner\EstimateController::destroy
-* @see app/Http/Controllers/Owner/EstimateController.php:261
+* @see app/Http/Controllers/Owner/EstimateController.php:260
 * @route '/owner/estimates/{estimate}'
 */
 destroyForm.delete = (args: { estimate: number | { id: number } } | [estimate: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

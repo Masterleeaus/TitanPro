@@ -1,0 +1,6 @@
+{
+    "name": "Titan Operator",
+    "type": "extension",
+	"version": "5.0.0",
+    "description": "Titan Operator (manager text control) for MagicAI"
+}

@@ -15,5 +15,6 @@ class CallingAgentCallerProfile extends Model
         'preferences'  => 'array',
         'last_outcome' => 'array',
         'last_seen_at' => 'datetime',
+        'last_call_at' => 'datetime',
     ];
 }

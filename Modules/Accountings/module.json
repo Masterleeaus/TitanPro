@@ -1,5 +1,6 @@
 {
   "name": "Accountings",
+  "active": 1,
   "alias": "accountings",
   "description": "Titan AI-native accounting, ledger, GST, receivables, reconciliation records, cashflow, and late-invoice follow-up module.",
   "priority": 20,
@@ -11,7 +12,7 @@
   ],
   "requires": [
     "TitanCore",
-    "TitanAgents"
+    "TitanEchoAssist"
   ],
   "optional_requires": [
     "EInvoice",
@@ -38,6 +39,8 @@
     "permissions": "manifests/permissions.json",
     "signals": "manifests/signals.json",
     "ai": "manifests/ai-tools.json",
+    "zeropay": "manifests/zeropay.php",
+    "titanzero": "manifests/titanzero.php",
     "cms": "manifests/cms.json",
     "omni": "manifests/omni.json",
     "agent": "Agents/ModuleAgent/agent.manifest.json",
@@ -48,6 +51,7 @@
     "actions": "AI/Actions/action-map.json",
     "telemetry": "AI/Telemetry/telemetry.manifest.json"
   },
-  "boundary": "invoicing_accounting_followup_only_no_payment_execution",
-  "keywords": []
+  "boundary": "accounting_only_no_payment_execution",
+  "keywords": [],
+  "filament_panel": "zeropay"
 }

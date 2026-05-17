@@ -1,0 +1,41 @@
+{
+  "name": "Budgeting",
+  "active": 1,
+  "alias": "budgeting",
+  "description": "Titan AI-native budgeting, expense management, actuals tracking, variance analysis, and forecasting module.",
+  "priority": 25,
+  "providers": [
+    "Modules\\Budgeting\\Providers\\BudgetingServiceProvider",
+    "Modules\\Budgeting\\Providers\\RouteServiceProvider",
+    "Modules\\Budgeting\\Providers\\EventServiceProvider",
+    "Modules\\Budgeting\\Providers\\FilamentServiceProvider"
+  ],
+  "requires": [],
+  "optional_requires": [
+    "Accountings",
+    "HRCore"
+  ],
+  "permissions": [
+    "budgeting.view",
+    "budgeting.create",
+    "budgeting.update",
+    "budgeting.delete",
+    "budgeting.expense.submit",
+    "budgeting.expense.approve",
+    "budgeting.expense.reject",
+    "budgeting.receipt.upload",
+    "budgeting.reimbursement.manage",
+    "budgeting.actuals.view",
+    "budgeting.actuals.post",
+    "budgeting.variance.view",
+    "budgeting.forecast.view",
+    "budgeting.forecast.generate",
+    "budgeting.kpi.view",
+    "budgeting.threshold.manage"
+  ],
+  "manifest": {
+    "module": "manifests/module.manifest.json",
+    "expenses": "manifests/expenses.manifest.json",
+    "actuals": "manifests/actuals.manifest.json"
+  }
+}

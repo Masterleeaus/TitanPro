@@ -13,7 +13,7 @@ class MarketingController extends Controller
             $user = auth()->user();
 
             if ($user->hasRole('super_admin')) {
-                return redirect()->route('platform.dashboard');
+                return redirect('/admin');
             }
 
             if ($user->hasRole('technician')) {

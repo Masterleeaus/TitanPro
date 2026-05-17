@@ -1,18 +1,19 @@
 {
+  "enabled": true,
   "enables": [
     "RBAC seeding",
     "policy mapping",
     "feature guards"
   ],
   "permissions": [
-    "titanwork.view",
-    "titanwork.create",
-    "titanwork.update",
-    "titanwork.delete",
-    "titanwork.settings",
-    "titanwork.dispatch",
-    "titanwork.complete",
-    "titanwork.export",
-    "titanwork.import"
+    "cleaningjobs.view",
+    "cleaningjobs.create",
+    "cleaningjobs.update",
+    "cleaningjobs.delete",
+    "cleaningjobs.settings",
+    "cleaningjobs.dispatch",
+    "cleaningjobs.complete",
+    "cleaningjobs.export",
+    "cleaningjobs.import"
   ]
 }

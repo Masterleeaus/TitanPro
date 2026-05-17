@@ -4,7 +4,7 @@ import photos from './photos'
 import lineItems from './line-items'
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 export const today = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -19,7 +19,7 @@ today.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 today.url = (options?: RouteQueryOptions) => {
@@ -28,7 +28,7 @@ today.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 today.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -38,7 +38,7 @@ today.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 today.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -48,7 +48,7 @@ today.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 const todayForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ const todayForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 todayForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -68,7 +68,7 @@ todayForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::today
-* @see app/Http/Controllers/Technician/JobController.php:54
+* @see app/Http/Controllers/Technician/JobController.php:58
 * @route '/api/technician/jobs/today'
 */
 todayForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -85,7 +85,7 @@ today.form = todayForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 export const show = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -100,7 +100,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 show.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -133,7 +133,7 @@ show.url = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 show.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -143,7 +143,7 @@ show.get = (args: { job: number | { id: number } } | [job: number | { id: number
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 show.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -153,7 +153,7 @@ show.head = (args: { job: number | { id: number } } | [job: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 const showForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -163,7 +163,7 @@ const showForm = (args: { job: number | { id: number } } | [job: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 showForm.get = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -173,7 +173,7 @@ showForm.get = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::show
-* @see app/Http/Controllers/Technician/JobController.php:64
+* @see app/Http/Controllers/Technician/JobController.php:68
 * @route '/api/technician/jobs/{job}'
 */
 showForm.head = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -190,7 +190,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::status
-* @see app/Http/Controllers/Technician/JobController.php:73
+* @see app/Http/Controllers/Technician/JobController.php:77
 * @route '/api/technician/jobs/{job}/status'
 */
 export const status = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -205,7 +205,7 @@ status.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::status
-* @see app/Http/Controllers/Technician/JobController.php:73
+* @see app/Http/Controllers/Technician/JobController.php:77
 * @route '/api/technician/jobs/{job}/status'
 */
 status.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -238,7 +238,7 @@ status.url = (args: { job: number | { id: number } } | [job: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::status
-* @see app/Http/Controllers/Technician/JobController.php:73
+* @see app/Http/Controllers/Technician/JobController.php:77
 * @route '/api/technician/jobs/{job}/status'
 */
 status.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -248,7 +248,7 @@ status.patch = (args: { job: number | { id: number } } | [job: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::status
-* @see app/Http/Controllers/Technician/JobController.php:73
+* @see app/Http/Controllers/Technician/JobController.php:77
 * @route '/api/technician/jobs/{job}/status'
 */
 const statusForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -263,7 +263,7 @@ const statusForm = (args: { job: number | { id: number } } | [job: number | { id
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::status
-* @see app/Http/Controllers/Technician/JobController.php:73
+* @see app/Http/Controllers/Technician/JobController.php:77
 * @route '/api/technician/jobs/{job}/status'
 */
 statusForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -280,7 +280,7 @@ status.form = statusForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::notes
-* @see app/Http/Controllers/Technician/JobController.php:103
+* @see app/Http/Controllers/Technician/JobController.php:113
 * @route '/api/technician/jobs/{job}/notes'
 */
 export const notes = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -295,7 +295,7 @@ notes.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::notes
-* @see app/Http/Controllers/Technician/JobController.php:103
+* @see app/Http/Controllers/Technician/JobController.php:113
 * @route '/api/technician/jobs/{job}/notes'
 */
 notes.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -328,7 +328,7 @@ notes.url = (args: { job: number | { id: number } } | [job: number | { id: numbe
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::notes
-* @see app/Http/Controllers/Technician/JobController.php:103
+* @see app/Http/Controllers/Technician/JobController.php:113
 * @route '/api/technician/jobs/{job}/notes'
 */
 notes.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -338,7 +338,7 @@ notes.patch = (args: { job: number | { id: number } } | [job: number | { id: num
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::notes
-* @see app/Http/Controllers/Technician/JobController.php:103
+* @see app/Http/Controllers/Technician/JobController.php:113
 * @route '/api/technician/jobs/{job}/notes'
 */
 const notesForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -353,7 +353,7 @@ const notesForm = (args: { job: number | { id: number } } | [job: number | { id:
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::notes
-* @see app/Http/Controllers/Technician/JobController.php:103
+* @see app/Http/Controllers/Technician/JobController.php:113
 * @route '/api/technician/jobs/{job}/notes'
 */
 notesForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -370,7 +370,7 @@ notes.form = notesForm
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::customerNotes
-* @see app/Http/Controllers/Technician/JobController.php:116
+* @see app/Http/Controllers/Technician/JobController.php:126
 * @route '/api/technician/jobs/{job}/customer-notes'
 */
 export const customerNotes = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -385,7 +385,7 @@ customerNotes.definition = {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::customerNotes
-* @see app/Http/Controllers/Technician/JobController.php:116
+* @see app/Http/Controllers/Technician/JobController.php:126
 * @route '/api/technician/jobs/{job}/customer-notes'
 */
 customerNotes.url = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -418,7 +418,7 @@ customerNotes.url = (args: { job: number | { id: number } } | [job: number | { i
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::customerNotes
-* @see app/Http/Controllers/Technician/JobController.php:116
+* @see app/Http/Controllers/Technician/JobController.php:126
 * @route '/api/technician/jobs/{job}/customer-notes'
 */
 customerNotes.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -428,7 +428,7 @@ customerNotes.patch = (args: { job: number | { id: number } } | [job: number | {
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::customerNotes
-* @see app/Http/Controllers/Technician/JobController.php:116
+* @see app/Http/Controllers/Technician/JobController.php:126
 * @route '/api/technician/jobs/{job}/customer-notes'
 */
 const customerNotesForm = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -443,7 +443,7 @@ const customerNotesForm = (args: { job: number | { id: number } } | [job: number
 
 /**
 * @see \App\Http\Controllers\Technician\JobController::customerNotes
-* @see app/Http/Controllers/Technician/JobController.php:116
+* @see app/Http/Controllers/Technician/JobController.php:126
 * @route '/api/technician/jobs/{job}/customer-notes'
 */
 customerNotesForm.patch = (args: { job: number | { id: number } } | [job: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

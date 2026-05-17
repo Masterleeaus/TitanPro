@@ -1,0 +1,110 @@
+name: 📝 Auto Changelog
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-changelog
+  cancel-in-progress: false
+
+jobs:
+  changelog:
+    name: Append merged PR to CHANGELOG
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Append changelog entry
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          SHA:      ${{ github.sha }}
+        run: |
+          # Find the PR(s) that introduced this push to main
+          PR_DATA=$(gh api "repos/${REPO}/commits/${SHA}/pulls" \
+            --jq '.[] | {number: .number, title: .title, author: .user.login, labels: [.labels[].name], mergedAt: .merged_at}' \
+            2>/dev/null || echo "")
+
+          if [ -z "$PR_DATA" ]; then
+            echo "No PR found for commit $SHA — skipping changelog."
+            exit 0
+          fi
+
+          DATE=$(date -u +%Y-%m-%d)
+
+          # Ensure CHANGELOG.md exists with a header
+          if [ ! -f CHANGELOG.md ]; then
+            cat > CHANGELOG.md << 'HEADER'
+# Changelog
+
+All notable changes to TitanPro are documented here.
+Format: `## [YYYY-MM-DD] — PR #N: Title`
+
+---
+
+HEADER
+          fi
+
+          # Build entry lines for each merged PR
+          ENTRIES=""
+          while IFS= read -r PR_JSON; do
+            [ -z "$PR_JSON" ] && continue
+
+            PR_NUM=$(echo "$PR_JSON"   | python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(d['number'])")
+            PR_TITLE=$(echo "$PR_JSON" | python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(d['title'])")
+            PR_AUTHOR=$(echo "$PR_JSON"| python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(d['author'])")
+            PR_LABELS=$(echo "$PR_JSON"| python3 -c "import json,sys; d=json.loads(sys.stdin.read()); print(', '.join(d['labels']) if d['labels'] else 'none')")
+
+            ENTRY="## [${DATE}] — PR #${PR_NUM}: ${PR_TITLE}
+- **Author:** @${PR_AUTHOR}
+- **Labels:** ${PR_LABELS}
+- **Commit:** ${SHA:0:8}
+
+"
+            ENTRIES="${ENTRIES}${ENTRY}"
+          done <<< "$(echo "$PR_DATA" | python3 -c "
+import sys, json
+data = sys.stdin.read().strip()
+# Handle both single object and array
+try:
+    parsed = json.loads('[' + data.replace('}\n{', '},{') + ']')
+except:
+    parsed = [json.loads(data)]
+for item in parsed:
+    print(json.dumps(item))
+")"
+
+          if [ -z "$ENTRIES" ]; then
+            echo "No entries to add."
+            exit 0
+          fi
+
+          # Prepend new entries after the header separator
+          TEMP=$(mktemp)
+          awk '/^---$/{found=1; print; print ""; printf "%s", entries; next} 1' \
+            entries="$ENTRIES" CHANGELOG.md > "$TEMP"
+
+          # Fallback: if no --- separator found, just prepend
+          if ! grep -q "^---$" CHANGELOG.md; then
+            { echo "$ENTRIES"; cat CHANGELOG.md; } > "$TEMP"
+          fi
+
+          mv "$TEMP" CHANGELOG.md
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git diff --cached --quiet && { echo "No changes to commit."; exit 0; }
+          git commit -m "docs: update CHANGELOG for PR(s) merged in ${SHA:0:8}"
+          git push origin main
+          echo "✓ CHANGELOG updated."

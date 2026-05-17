@@ -1,7 +1,75 @@
 {
-  "module": "TitanChatbot",
-  "schema": "titan.manifest.v1",
-  "name": "omni_manifest",
-  "enabled": true,
-  "items": []
+  "schema": "titan.omni.manifest.v1",
+  "module": "TitanEchoAssist",
+  "channels": [
+    {
+      "id": "whatsapp",
+      "label": "WhatsApp",
+      "driver_class": "Modules\\TitanEchoAssist\\Services\\WhatsappChannel",
+      "webhook_path": "/webhooks/whatsapp/{channelId}",
+      "signature_header": "X-Twilio-Signature",
+      "signature_algorithm": "twilio-hmac-sha1",
+      "credential_scope": "company_id",
+      "enabled": true
+    },
+    {
+      "id": "telegram",
+      "label": "Telegram",
+      "driver_class": "Modules\\TitanEchoAssist\\Services\\TelegramChannel",
+      "webhook_path": "/webhooks/telegram/{channelId}",
+      "signature_header": "X-Telegram-Bot-Api-Secret-Token",
+      "signature_algorithm": "bearer-token",
+      "credential_scope": "company_id",
+      "enabled": true
+    },
+    {
+      "id": "messenger",
+      "label": "Facebook Messenger",
+      "driver_class": "Modules\\TitanEchoAssist\\Services\\MessengerChannel",
+      "webhook_path": "/webhooks/messenger/{channelId}",
+      "signature_header": "X-Hub-Signature-256",
+      "signature_algorithm": "hmac-sha256",
+      "credential_scope": "company_id",
+      "enabled": true
+    },
+    {
+      "id": "voice",
+      "label": "Voice",
+      "driver_class": "Modules\\TitanEchoAssist\\Services\\VoiceChannel",
+      "webhook_path": "/webhooks/voice/{channelId}",
+      "signature_header": "X-Twilio-Signature",
+      "signature_algorithm": "twilio-hmac-sha1",
+      "credential_scope": "company_id",
+      "enabled": true
+    },
+    {
+      "id": "website",
+      "label": "Website Widget",
+      "driver_class": "Modules\\TitanEchoAssist\\Services\\WebchatChannel",
+      "webhook_path": "/api/chatbot/widget/{channelId}/message",
+      "signature_header": null,
+      "signature_algorithm": null,
+      "credential_scope": "company_id",
+      "enabled": true
+    }
+  ],
+  "auto_response": {
+    "enabled": true,
+    "triggers": ["message_received", "conversation_started"]
+  },
+  "campaign_compatibility": {
+    "enabled": true,
+    "entity_types": ["contact", "lead", "customer"]
+  },
+  "inbound_routing": {
+    "enabled": true,
+    "router_class": "Modules\\TitanEchoAssist\\Services\\ChannelRouter",
+    "notes": "All inbound channel messages are routed through ChannelRouter. Webhook signature is verified per-channel before processing."
+  },
+  "security": {
+    "webhook_signature_required": true,
+    "channels_requiring_signature": ["whatsapp", "telegram", "messenger", "voice"],
+    "audit_failed_signatures": true,
+    "secret_storage": "per_company_id"
+  }
 }

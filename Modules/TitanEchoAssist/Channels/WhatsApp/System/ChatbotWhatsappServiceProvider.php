@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Extensions\ChatbotWhatsapp\System;
+namespace Modules\TitanEchoAssist\Channels\WhatsApp\System;
 
-use App\Extensions\ChatbotWhatsapp\System\Http\Controllers\ChatbotWhatsappController;
-use App\Extensions\ChatbotWhatsapp\System\Http\Controllers\Webhook\ChatbotTwilioController;
+use Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Controllers\ChatbotWhatsappController;
+use Modules\TitanEchoAssist\Channels\WhatsApp\System\Http\Controllers\Webhook\ChatbotTwilioController;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;

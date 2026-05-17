@@ -1,0 +1,65 @@
+{
+  "name": "ZeroPayModule",
+  "alias": "zeropay-module",
+  "description": "ZeroPay payment processing module \u2014 sessions, gateways, QR, bank matching, API",
+  "priority": 0,
+  "providers": [
+    "Modules\\ZeroPayModule\\Providers\\ZeroPayModuleServiceProvider",
+    "Modules\\ZeroPayModule\\Providers\\RouteServiceProvider",
+    "Modules\\ZeroPayModule\\Providers\\EventServiceProvider",
+    "Modules\\ZeroPayModule\\Providers\\FilamentServiceProvider"
+  ],
+  "requires": [
+    "TitanCore",
+    "TitanEchoAssist"
+  ],
+  "optional_requires": [
+    "TitanZero",
+    "TitanDocs",
+    "TitanChannels",
+    "TitanVoice",
+    "TitanPwa"
+  ],
+  "permissions": [
+    "zeropay.agent.control",
+    "zeropay.agent.train",
+    "zeropay.agent.use",
+    "zeropay.approve",
+    "zeropay.channel.use",
+    "zeropay.create",
+    "zeropay.delete",
+    "zeropay.export",
+    "zeropay.import",
+    "zeropay.knowledge.manage",
+    "zeropay.settings.manage",
+    "zeropay.shortcuts.use",
+    "zeropay.update",
+    "zeropay.view",
+    "zeropay.voice.use"
+  ],
+  "manifest": {
+    "lifecycle": "manifests/lifecycle.json",
+    "api": "manifests/api.json",
+    "permissions": "manifests/permissions.json",
+    "signals": "manifests/signals.json",
+    "ai": "manifests/ai-tools.json",
+    "cms": "manifests/cms.json",
+    "omni": "manifests/omni.json",
+    "agent": "Agents/ModuleAgent/agent.manifest.json",
+    "knowledge": "AI/Indexing/indexing.manifest.json",
+    "retrieval": "AI/Retrieval/retrieval.policy.json",
+    "citations": "AI/Citations/citation.schema.json",
+    "guardrails": "AI/Guardrails/guardrails.json",
+    "actions": "AI/Actions/action-map.json",
+    "telemetry": "AI/Telemetry/telemetry.manifest.json",
+    "agent_control": "AI/Control/control.manifest.json",
+    "channels": "AI/Channels/channel.manifest.json",
+    "voice": "AI/Voice/voice.manifest.json",
+    "pwa": "PWA/pwa.manifest.json",
+    "dashboard": "Filament/PageManifest/module-page.json",
+    "tables": "Filament/Tables/table-tabs.json",
+    "shortcuts": "Filament/Shortcuts/shortcuts.json",
+    "settings": "Filament/Settings/settings.schema.json"
+  },
+  "active": 1
+}

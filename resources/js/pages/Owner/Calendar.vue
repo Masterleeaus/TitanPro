@@ -59,13 +59,13 @@ const calendarOptions = ref({
             <h2 class="text-xl font-semibold text-slate-800">Calendar</h2>
             <Link
                 href="/owner/jobs/create"
-                class="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                class="inline-flex items-center gap-2 rounded-md-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
             >
                 + New Job
             </Link>
         </div>
 
-        <div class="rounded-xl bg-white p-4 shadow">
+        <div class="rounded-md-xl bg-white p-4 shadow">
             <FullCalendar :options="calendarOptions" />
         </div>
     </OwnerLayout>
@@ -74,24 +74,18 @@ const calendarOptions = ref({
 <style>
 /* Ensure FullCalendar renders cleanly inside Tailwind's reset */
 .fc .fc-button {
-    @apply rounded border border-slate-200 bg-white text-sm text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none;
 }
 .fc .fc-button-primary {
-    @apply border-slate-800 bg-slate-800 text-white hover:bg-slate-700;
 }
 .fc .fc-button-primary:not(:disabled):active,
 .fc .fc-button-primary.fc-button-active {
-    @apply border-slate-900 bg-slate-900;
 }
 .fc .fc-toolbar-title {
-    @apply text-lg font-semibold text-slate-800;
 }
 .fc-theme-standard td,
 .fc-theme-standard th {
-    @apply border-slate-100;
 }
 .fc .fc-daygrid-day.fc-day-today,
 .fc .fc-timegrid-col.fc-day-today {
-    @apply bg-blue-50;
 }
 </style>

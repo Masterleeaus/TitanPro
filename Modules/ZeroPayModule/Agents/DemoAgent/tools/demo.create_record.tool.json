@@ -1,0 +1,7 @@
+{
+  "tool": "demo.create_record",
+  "scaffold": true,
+  "replace_required": true,
+  "action": "CreateZeroPaySessionAction",
+  "confirmation_required": true
+}

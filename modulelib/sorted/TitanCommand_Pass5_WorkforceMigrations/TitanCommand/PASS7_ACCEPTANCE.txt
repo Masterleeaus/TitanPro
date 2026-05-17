@@ -1,0 +1,2 @@
+- Fresh install: migrations create ext_titan_command_agents + ext_titan_command_agent_posts (not social media)
+- Existing install: rename migration keeps DB surface free of ext_social_media_* tables

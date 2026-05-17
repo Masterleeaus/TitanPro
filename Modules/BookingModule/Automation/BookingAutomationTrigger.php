@@ -11,6 +11,15 @@ class BookingAutomationTrigger
 
     public function events(): array
     {
-        return ['booking.requested', 'booking.completed', 'booking.cancelled', 'schedule.assigned', 'schedule.rescheduled'];
+        return [
+            'booking.requested',
+            'booking.completed',
+            'booking.cancelled',
+            'booking.approval.requested',
+            'booking.approval.decided',
+            'QuoteEngine.QuoteAccepted',
+            'schedule.assigned',
+            'schedule.rescheduled',
+        ];
     }
 }

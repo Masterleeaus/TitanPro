@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\TitanChatbot\Repositories;
+namespace Modules\TitanEchoAssist\Repositories;
 
-use Modules\TitanChatbot\Models\Chatbot;
+use Modules\TitanEchoAssist\Models\Chatbot;
 
 class ChatbotRepository
 {

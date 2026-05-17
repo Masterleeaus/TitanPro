@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Services;
+namespace Modules\TitanEchoAssist\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;

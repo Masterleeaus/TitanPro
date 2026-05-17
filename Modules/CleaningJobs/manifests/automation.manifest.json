@@ -1,18 +1,40 @@
 {
-  "enables": [
-    "single-module cleaning job operations",
-    "tenant-safe feature discovery",
-    "integrated job lifecycle capabilities"
+  "enabled": true,
+  "triggers": [
+    {
+      "key": "cleaningjobs.job_scheduled",
+      "class": "Modules\\CleaningJobs\\Automation\\Triggers\\JobScheduledTrigger",
+      "event": "Modules\\CleaningJobs\\Events\\WorkOrderUpdated"
+    },
+    {
+      "key": "cleaningjobs.checklist_overdue",
+      "class": "Modules\\CleaningJobs\\Automation\\Triggers\\ChecklistOverdueTrigger"
+    },
+    {
+      "key": "cleaningjobs.timesheet_exceeded_estimate",
+      "class": "Modules\\CleaningJobs\\Automation\\Triggers\\TimesheetExceededEstimateTrigger"
+    }
   ],
-  "integrations": [
-    "cleaning_jobs.timesheets",
-    "cleaning_jobs.resource_planning",
-    "cleaning_jobs.financial_tracking",
-    "cleaning_jobs.kanban",
-    "cleaning_jobs.milestones",
-    "cleaning_jobs.subtasks",
-    "cleaning_jobs.comments",
-    "cleaning_jobs.files",
-    "cleaning_jobs.activity_logs"
+  "handlers": [
+    {
+      "key": "cleaningjobs.send_appointment_reminder",
+      "class": "Modules\\CleaningJobs\\Automation\\Handlers\\SendAppointmentReminderHandler"
+    }
+  ],
+  "pipelines": [
+    {
+      "key": "cleaningjobs.job_automation",
+      "class": "Modules\\CleaningJobs\\Automation\\Pipelines\\JobAutomationPipeline",
+      "trigger": "cleaningjobs.job_scheduled",
+      "handler": "cleaningjobs.send_appointment_reminder"
+    }
+  ],
+  "schedulers": [
+    {
+      "key": "cleaningjobs.daily_job_reminders",
+      "class": "Modules\\CleaningJobs\\Automation\\Schedulers\\DailyJobReminderScheduler",
+      "schedule": "daily",
+      "pipeline": "cleaningjobs.job_automation"
+    }
   ]
 }

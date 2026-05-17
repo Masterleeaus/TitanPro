@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Extensions\ChatbotMessenger\System\Helpers;
+namespace Modules\TitanEchoAssist\Channels\Messenger\System\Helpers;
 
 class SimpleMessengerBot
 {

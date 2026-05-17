@@ -44,8 +44,7 @@ class LeadFactory extends Factory
             // Conversion fields are null by default for new leads
             'converted_at' => null,
             'converted_to_contact_id' => null,
-            // TODO: Uncomment when deals table is created
-            // 'converted_to_deal_id' => null,
+            'converted_to_deal_id' => null,
 
             // created_by_id, updated_by_id, tenant_id are handled by your traits
         ];

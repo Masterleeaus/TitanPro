@@ -2,12 +2,13 @@
 
 namespace Modules\CRMCore\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class DealPipeline extends Model
 {
-    use HasFactory;
+    use HasFactory, UsesScopedByCompany;
 
     protected $table = 'deal_pipelines';
 
@@ -17,6 +18,7 @@ class DealPipeline extends Model
         'is_default',
         'is_active',
         'position',
+        'company_id',
         'tenant_id',
         'created_by_id',
         'updated_by_id',
@@ -26,6 +28,7 @@ class DealPipeline extends Model
         'is_default' => 'boolean',
         'is_active' => 'boolean',
         'position' => 'integer',
+        'company_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

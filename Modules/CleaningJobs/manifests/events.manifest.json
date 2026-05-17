@@ -1,10 +1,38 @@
 {
   "enables": [
-    "job lifecycle event publication"
+    "job lifecycle event publication",
+    "task and checklist events",
+    "financial events",
+    "client and appointment events",
+    "system and integration events"
   ],
   "events": [
     "WorkOrderCreated",
     "WorkOrderUpdated",
-    "WorkOrderCompleted"
+    "WorkOrderCompleted",
+    "JobCreated",
+    "JobAssigned",
+    "JobStarted",
+    "JobCompleted",
+    "JobCancelled",
+    "JobRescheduled",
+    "JobOnHold",
+    "JobReOpened",
+    "JobTaskAdded",
+    "JobTaskCompleted",
+    "JobChecklistCompleted",
+    "JobNoteAdded",
+    "ConsumablesUsed",
+    "InvoiceGenerated",
+    "JobBudgetExceeded",
+    "TimesheetLogged",
+    "ClientJobRequested",
+    "AppointmentScheduled",
+    "AppointmentReminderSent",
+    "AppointmentCompleted",
+    "JobPriorityChanged",
+    "JobStageChanged",
+    "RecurringJobTriggered",
+    "JobExportedToCsv"
   ]
 }

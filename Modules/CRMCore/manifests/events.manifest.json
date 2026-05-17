@@ -1,12 +1,16 @@
 {
   "schema": "titan.events.manifest.v1",
+  "module": "CRMCore",
   "emits": [
+    "crmcore.contact.created",
+    "crmcore.deal.won",
+    "crmcore.deal.lost",
+    "crmcore.activity.logged",
     "crmcore.lead.scored",
     "crmcore.deal.converted_to_project"
   ],
   "consumes": [
-    "worksuite.lead.created",
-    "worksuite.deal.won",
-    "worksuite.project.completed"
+    "TitanLeads::LeadConverted",
+    "BookingModule::CustomerCreated"
   ]
 }

@@ -10,6 +10,8 @@
  *
  * Persistence: CSS property overrides are persisted via
  *   POST /titan/ui-inspector/overrides  (upsert)
+ *   GET  /titan/ui-inspector/export     (download all)
+ *   POST /titan/ui-inspector/import     (bulk import)
  *   DELETE /titan/ui-inspector/overrides/{key}  (reset)
  *
  * They are also written to localStorage for instant reload-free application.
@@ -21,15 +23,31 @@
 
     const STORAGE_KEY = 'titan_ui_overrides';
     const API_BASE    = '/titan/ui-inspector/overrides';
+    const EXPORT_API  = '/titan/ui-inspector/export';
+    const IMPORT_API  = '/titan/ui-inspector/import';
 
     /**
      * Filament component selectors and human-readable labels.
      * The inspector cycles through these (most specific first) when the user
      * hovers over an element so it highlights the nearest logical component.
      */
+    const COMPONENT_DEFS = [
+        { key: 'stat-card',        selector: '.fi-wi-stats-overview-stat, .fi-stat-card',      label: 'Stat Card' },
+        { key: 'table',            selector: '.fi-ta-table, .fi-ta-content',                    label: 'Table' },
+        { key: 'modal',            selector: '.fi-modal-window, .fi-fo-section-content',        label: 'Modal' },
+        { key: 'sidebar',          selector: '.fi-sidebar, .fi-sidebar-nav',                    label: 'Sidebar' },
+        { key: 'nav-group',        selector: '.fi-sidebar-group',                                label: 'Nav Group' },
+        { key: 'widget-container', selector: '.fi-wi, .fi-widgets-container',                   label: 'Widget Container' },
+        { key: 'form-section',     selector: '.fi-fo-section, .fi-fo-section-content-ctn',      label: 'Form Section' },
+        { key: 'hero-panel',       selector: '.fi-hero-panel, .fi-page-header',                 label: 'Hero Panel' },
+        { key: 'empty-state',      selector: '.fi-ta-empty-state, .fi-fo-field-wrp-hint',       label: 'Empty State' },
+    ];
+
+    const COMPONENT_LABELS = Object.fromEntries(COMPONENT_DEFS.map(({ key, label }) => [key, label]));
+
     const COMPONENT_SELECTORS = [
-        { selector: '[data-ui-key]',              label: (el) => el.dataset.uiKey },
-        { selector: '.fi-wi-stats-overview-stat', label: () => 'Stats Card' },
+        { selector: '[data-ui-key]',              label: (el) => COMPONENT_LABELS[el.dataset.uiKey] ?? el.dataset.uiKey },
+        { selector: '.fi-wi-stats-overview-stat', label: () => 'Stat Card' },
         { selector: '.fi-wi',                     label: (el) => el.querySelector('[class*="fi-wi-"]')?.className.match(/fi-wi-([\w-]+)/)?.[1] ?? 'Widget' },
         { selector: '.fi-ta',                     label: () => 'Table' },
         { selector: '.fi-fo',                     label: () => 'Form' },
@@ -134,8 +152,30 @@
         return parts.join('>');
     }
 
+    /** Stamp stable data-ui-key values onto core Filament components. */
+    function assignStableUiKeys(root = document) {
+        for (const { key, selector } of COMPONENT_DEFS) {
+            root.querySelectorAll(selector).forEach((el) => {
+                if (!el.dataset.uiKey) {
+                    el.dataset.uiKey = key;
+                }
+            });
+        }
+    }
+
+    /** Find the first component element by stable key (component-level overrides are shared). */
+    function findComponentByKey(key) {
+        if (!key) return null;
+        return document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
+    }
+
     /** Find the nearest Filament component ancestor (or self). */
     function nearestComponent(el) {
+        const keyedMatch = el.closest('[data-ui-key]');
+        if (keyedMatch) {
+            return { el: keyedMatch, label: COMPONENT_LABELS[keyedMatch.dataset.uiKey] ?? keyedMatch.dataset.uiKey, key: elementKey(keyedMatch) };
+        }
+
         for (const { selector, label } of COMPONENT_SELECTORS) {
             const match = el.closest(selector);
             if (match) return { el: match, label: label(match), key: elementKey(match) };
@@ -217,19 +257,41 @@
         } catch { /* offline */ }
     }
 
-    /* ── Apply persisted overrides on page load ─────────────────────────── */
+    async function apiImport(payload) {
+        const response = await fetch(IMPORT_API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+            body: JSON.stringify(payload),
+        });
 
-    function applyAllStoredOverrides() {
-        const data = loadStorage();
-        for (const [key, props] of Object.entries(data)) {
-            // Best-effort: find element by data-ui-key or skip (Livewire may re-render later)
-            const el = document.querySelector(`[data-ui-key="${cssEscape(key)}"]`);
-            if (el) applyProps(el, props);
+        if (!response.ok) {
+            throw new Error('Import failed');
         }
     }
 
-    // Run on load + after Livewire re-renders
-    document.addEventListener('DOMContentLoaded', applyAllStoredOverrides);
+    /* ── Apply persisted overrides on page load ─────────────────────────── */
+
+    function applyAllStoredOverrides() {
+        assignStableUiKeys();
+        const data = loadStorage();
+        for (const [key, props] of Object.entries(data)) {
+            // Best-effort: apply to all current instances for this key; Livewire load/navigation listeners re-run this function
+            document.querySelectorAll(`[data-ui-key="${cssEscape(key)}"]`).forEach((el) => applyProps(el, props));
+        }
+    }
+
+    // Run on load + after Livewire re-renders.
+    // Skip the initial DOMContentLoaded pass when the server already injected
+    // the overrides via the SSR <style> block (id="titan-ui-override-ssr") to
+    // avoid redundant double-application on first paint.
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!document.getElementById('titan-ui-override-ssr')) {
+            applyAllStoredOverrides();
+        }
+    });
     document.addEventListener('livewire:navigated', applyAllStoredOverrides);
     document.addEventListener('livewire:load', applyAllStoredOverrides);
 
@@ -296,7 +358,22 @@
                 this._onMouseOut  = this._handleMouseOut.bind(this);
                 this._onClick     = this._handleClick.bind(this);
                 this._onKey       = this._handleKey.bind(this);
-                this._onLivewire  = applyAllStoredOverrides;
+                this._onLivewire  = () => {
+                    applyAllStoredOverrides();
+
+                    if (!this.selectedKey) return;
+
+                    const selected = findComponentByKey(this.selectedKey);
+                    if (!selected) return;
+
+                    this.selectedEl = selected;
+                    if (this.sidebarOpen) {
+                        this.selectedLabel = COMPONENT_LABELS[this.selectedKey] ?? this.selectedKey;
+                        this._loadComponentProps(selected, this.selectedKey);
+                    }
+                };
+
+                assignStableUiKeys();
 
                 document.addEventListener('livewire:navigated', this._onLivewire);
             },
@@ -468,6 +545,51 @@
 
                 // Reload from computed style
                 this._loadComponentProps(this.selectedEl, this.selectedKey);
+            },
+
+            async exportOverrides() {
+                try {
+                    const response = await fetch(EXPORT_API, { method: 'GET' });
+                    if (!response.ok) return;
+
+                    const disposition = response.headers.get('content-disposition') ?? '';
+                    const match = disposition.match(/filename="?([^"]+)"?/i);
+                    const filename = match?.[1] ?? `ui-overrides-${new Date().toISOString().slice(0, 10)}.json`;
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = url;
+                    anchor.download = filename;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                    URL.revokeObjectURL(url);
+                } catch { /* noop */ }
+            },
+
+            async importOverrides(event) {
+                const file = event?.target?.files?.[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    const parsed = JSON.parse(text);
+                    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                        return;
+                    }
+
+                    await apiImport(parsed);
+                    this.store = parsed;
+                    saveStorage(this.store);
+                    applyAllStoredOverrides();
+
+                    if (this.selectedEl && this.selectedKey) {
+                        this._loadComponentProps(this.selectedEl, this.selectedKey);
+                    }
+                } catch { /* noop */ }
+                finally {
+                    event.target.value = '';
+                }
             },
 
             closeSidebar() {

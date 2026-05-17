@@ -1,0 +1,421 @@
+// Titan Zero Assistant behaviours
+//
+// This script provides basic chat functionality such as appending user
+// messages to the conversation list and displaying generic suggestions.
+// Actual AI integration is not included in this shell pass.
+
+document.addEventListener('DOMContentLoaded', () => {
+    const panel = document.querySelector('#titan-zero-chat-panel');
+    if (!panel) return;
+
+    const messageList = panel.querySelector('[data-message-list]');
+    const input = panel.querySelector('textarea');
+    const form = panel.querySelector('[data-chat-form]');
+    const suggestions = panel.querySelectorAll('[data-suggestion]');
+
+    // Thread management elements
+    const threadHeader = panel.querySelector('[data-thread-header]');
+    const currentThreadTitleEl = panel.querySelector('[data-current-thread-title]');
+    const currentThreadAppEl = panel.querySelector('[data-current-thread-app]');
+    const threadDropdownToggle = panel.querySelector('[data-thread-dropdown-toggle]');
+    const threadDropdownPanel = panel.querySelector('[data-thread-dropdown-panel]');
+    const threadListEl = panel.querySelector('[data-thread-list]');
+    const newThreadBtn = panel.querySelector('[data-new-thread]');
+
+    // Thread state stored per app.  Threads are stored in localStorage under
+    // THREAD_STORAGE_KEY as an object keyed by appKey.  Each entry is an
+    // array of thread objects: { id, title, messages }.  The active
+    // thread ID is stored separately in memory.
+    const THREAD_STORAGE_KEY = 'titanZeroThreads';
+    const context = window.titanOsContext || {};
+    const appKey = context.app_key || 'default';
+    let threads = {};
+    let currentThreadId = null;
+
+    /**
+     * Load threads from localStorage.  If none exist for the current
+     * appKey, initialise with a default thread.  Returns the parsed
+     * threads object.
+     */
+    const loadThreads = () => {
+        try {
+            const raw = localStorage.getItem(THREAD_STORAGE_KEY);
+            threads = raw ? JSON.parse(raw) : {};
+        } catch {
+            threads = {};
+        }
+        if (!threads[appKey] || threads[appKey].length === 0) {
+            // Create a default thread
+            const threadId = Date.now().toString();
+            threads[appKey] = [
+                { id: threadId, title: 'New Thread', messages: [] },
+            ];
+            currentThreadId = threadId;
+            saveThreads();
+        } else {
+            // Use the first thread as the active if none selected
+            currentThreadId = threads[appKey][0].id;
+        }
+        return threads;
+    };
+
+    /**
+     * Persist threads back to localStorage.  Catch any errors silently.
+     */
+    const saveThreads = () => {
+        try {
+            localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(threads));
+        } catch {
+            // localStorage may be unavailable in private browsing
+        }
+    };
+
+    /**
+     * Find the thread object for the current thread ID.
+     */
+    const getCurrentThread = () => {
+        const list = threads[appKey] || [];
+        return list.find((t) => t.id === currentThreadId) || null;
+    };
+
+    /**
+     * Render the thread list inside the dropdown.  Each list item
+     * includes a click handler to switch to the selected thread.
+     */
+    const renderThreadList = () => {
+        if (!threadListEl) return;
+        threadListEl.innerHTML = '';
+        const list = threads[appKey] || [];
+        if (list.length === 0) {
+            const li = document.createElement('li');
+            li.textContent = 'No conversations yet.';
+            li.className = 'p-2 text-gray-500';
+            threadListEl.appendChild(li);
+        }
+        list.forEach((thread) => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = thread.title;
+            a.className = 'block px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800';
+            a.dataset.threadId = thread.id;
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                selectThread(thread.id);
+                closeThreadDropdown();
+            });
+            li.appendChild(a);
+            threadListEl.appendChild(li);
+        });
+    };
+
+    /**
+     * Update header labels and message list when switching threads.
+     */
+    const selectThread = (id) => {
+        currentThreadId = id;
+        const thread = getCurrentThread();
+        if (!thread) return;
+        if (currentThreadTitleEl) currentThreadTitleEl.textContent = thread.title;
+        if (currentThreadAppEl) currentThreadAppEl.textContent = appKey;
+        // Clear existing messages
+        while (messageList.firstChild) {
+            messageList.removeChild(messageList.firstChild);
+        }
+        // Show greeting without saving to the thread history
+        appendMessage('Titan Zero is ready. Ask me to navigate, explain this screen, or open an app.', 'assistant', false, false);
+        // Render stored messages (if any) without re-saving them, otherwise
+        // switching threads would duplicate the local history.
+        thread.messages.forEach((msg) => {
+            appendMessage(msg.text, msg.author, false, false);
+        });
+    };
+
+    /**
+     * Create a new thread and select it.  The new thread title is
+     * generated based on the number of existing threads.
+     */
+    const createNewThread = () => {
+        const list = threads[appKey] || [];
+        const nextNumber = list.length + 1;
+        const title = 'Thread ' + nextNumber;
+        const id = Date.now().toString();
+        const newThread = { id, title, messages: [] };
+        list.push(newThread);
+        threads[appKey] = list;
+        saveThreads();
+        renderThreadList();
+        selectThread(id);
+    };
+
+    /**
+     * Toggle the visibility of the thread dropdown panel.
+     */
+    const toggleThreadDropdown = () => {
+        if (!threadDropdownPanel) return;
+        const isHidden = threadDropdownPanel.classList.contains('hidden');
+        if (isHidden) {
+            threadDropdownPanel.classList.remove('hidden');
+        } else {
+            threadDropdownPanel.classList.add('hidden');
+        }
+    };
+
+    /**
+     * Close the thread dropdown panel.
+     */
+    const closeThreadDropdown = () => {
+        if (threadDropdownPanel) {
+            threadDropdownPanel.classList.add('hidden');
+        }
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!threadDropdownPanel || !threadDropdownToggle) return;
+        if (threadDropdownPanel.classList.contains('hidden')) return;
+        const target = event.target;
+        if (!threadDropdownPanel.contains(target) && target !== threadDropdownToggle) {
+            closeThreadDropdown();
+        }
+    });
+
+    // ── Server-side thread ID storage ────────────────────────────────────────
+    // After a successful generate-ui call the server returns a numeric thread ID
+    // (meta.threadId).  We persist that ID in localStorage so the thread can be
+    // restored from the server on the next page load.
+    const SERVER_THREAD_ID_KEY = 'titanZeroServerThreadId_' + appKey;
+
+    const getServerThreadId = () => localStorage.getItem(SERVER_THREAD_ID_KEY) || null;
+
+    const setServerThreadId = (id) => {
+        if (id) {
+            try { localStorage.setItem(SERVER_THREAD_ID_KEY, String(id)); } catch { /* ignore */ }
+        }
+    };
+
+    // ── Fetch thread history from the server ─────────────────────────────────
+    const fetchServerThread = async (serverThreadId) => {
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const headers = { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+            if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+            const response = await fetch(`/api/titan/threads/${serverThreadId}`, { headers });
+            if (!response.ok) return null;
+            return await response.json();
+        } catch {
+            return null;
+        }
+    };
+
+    // ── Fetch suggestion chips from the server ───────────────────────────────
+    const fetchSuggestions = async () => {
+        try {
+            const serverThreadId = getServerThreadId();
+            const query = serverThreadId ? `?appKey=${encodeURIComponent(appKey)}&threadId=${encodeURIComponent(serverThreadId)}` : `?appKey=${encodeURIComponent(appKey)}`;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const headers = { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+            if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+            const response = await fetch(`/api/titan/suggestions${query}`, { headers });
+            if (!response.ok) return;
+            const data = await response.json();
+            renderSuggestions(data.suggestions || []);
+        } catch { /* ignore */ }
+    };
+
+    // ── Render dynamic suggestion chips ──────────────────────────────────────
+    const renderSuggestions = (chips) => {
+        const container = panel.querySelector('[data-suggestions-container]');
+        if (!container) return;
+        container.innerHTML = '';
+        chips.forEach((text) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('data-suggestion', text);
+            btn.className = 'titan-zero-suggestion text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700';
+            btn.textContent = text;
+            btn.addEventListener('click', () => {
+                input.value = text;
+                input.focus();
+            });
+            container.appendChild(btn);
+        });
+    };
+
+    // Initialize threads
+    loadThreads();
+    renderThreadList();
+    selectThread(currentThreadId);
+
+    // Restore thread messages from server if a server thread ID exists
+    const storedServerThreadId = getServerThreadId();
+    if (storedServerThreadId) {
+        fetchServerThread(storedServerThreadId).then((data) => {
+            if (!data) return;
+            const msgs = data.messages || [];
+            if (msgs.length === 0) return;
+            // Clear the current message list and replay server messages without
+            // adding an extra greeting (the history already provides context)
+            while (messageList.firstChild) messageList.removeChild(messageList.firstChild);
+            msgs.forEach((m) => {
+                if (m.role === 'user' || m.role === 'assistant') {
+                    appendMessage(m.content || '', m.role === 'user' ? 'user' : 'assistant', false, false);
+                }
+            });
+        });
+    }
+
+    // Pre-load suggestion chips
+    fetchSuggestions();
+
+    // Event listeners for dropdown toggle and new thread
+    if (threadDropdownToggle) {
+        threadDropdownToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleThreadDropdown();
+        });
+    }
+    if (newThreadBtn) {
+        newThreadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            createNewThread();
+        });
+    }
+
+    /**
+     * Append a message to the transcript. When returnElement is true the
+     * created DOM element is returned so callers can update its contents later.
+     */
+    /**
+     * Append a message element to the chat transcript.  Messages are
+     * optionally persisted to the current thread's message history.
+     *
+     * @param {string} content The message text
+     * @param {string} author 'user' | 'assistant'
+     * @param {boolean} returnElement When true, return the created element
+     * @param {boolean} saveToThread When false, skip saving the message in the thread history
+     */
+    function appendMessage(content, author = 'user', returnElement = false, saveToThread = true) {
+        const msg = document.createElement('div');
+        msg.className = `titan-zero-message titan-zero-message-${author} p-2 my-1`;
+        msg.textContent = content;
+        messageList.appendChild(msg);
+        messageList.scrollTop = messageList.scrollHeight;
+        if (saveToThread) {
+            const thread = getCurrentThread();
+            if (thread) {
+                thread.messages.push({ author, text: content });
+                saveThreads();
+            }
+        }
+        return returnElement ? msg : undefined;
+    }
+
+    // Suggestion buttons insert the suggestion into the textarea
+    suggestions.forEach((button) => {
+        button.addEventListener('click', () => {
+            const text = button.getAttribute('data-suggestion');
+            input.value = text;
+            input.focus();
+        });
+    });
+
+    /**
+     * Call the backend assistant endpoint.  On success update the placeholder
+     * element with the reply and render any widget parts.  On failure show a
+     * clear error message.
+     */
+    const callAssistantEndpoint = async (message, placeholderEl) => {
+        try {
+            const contextData = window.titanOsContext || {};
+            const serverThreadId = getServerThreadId();
+            const payload = {
+                message,
+                context: contextData,
+                threadId: serverThreadId || undefined,
+            };
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            };
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken;
+            }
+            const response = await fetch('/api/titan/zero/generate-ui', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) {
+                throw new Error('Endpoint returned status ' + response.status);
+            }
+            const data = await response.json();
+
+            // Store the server-assigned thread ID for future requests / page reloads
+            if (data.meta && data.meta.threadId) {
+                setServerThreadId(data.meta.threadId);
+            }
+
+            // Update dynamic suggestions if the server returned new chips
+            if (data.meta && Array.isArray(data.meta.suggestions)) {
+                renderSuggestions(data.meta.suggestions);
+            }
+
+            // Extract the text reply
+            let reply = '';
+            if (typeof data === 'string') {
+                reply = data;
+            } else if (data.message) {
+                reply = data.message;
+            } else if (data.reply) {
+                reply = data.reply;
+            } else if (data.content) {
+                reply = data.content;
+            } else if (Array.isArray(data.messages) && data.messages.length > 0) {
+                const last = data.messages[data.messages.length - 1];
+                reply = last.content || last.message || '';
+            }
+            if (!reply) {
+                reply = 'Ok.';
+            }
+            if (placeholderEl) {
+                placeholderEl.textContent = reply;
+                placeholderEl.className = 'titan-zero-message titan-zero-message-assistant p-2 my-1';
+                // Do not re-save to local thread; server is the source of truth
+            } else {
+                appendMessage(reply, 'assistant', false, false);
+            }
+        } catch (error) {
+            console.warn('Titan Zero backend unavailable', error);
+            const fallback = 'Titan Zero endpoint is not available yet.';
+            if (placeholderEl) {
+                placeholderEl.textContent = fallback;
+                placeholderEl.className = 'titan-zero-message titan-zero-message-assistant p-2 my-1';
+            } else {
+                appendMessage(fallback, 'assistant', false, false);
+            }
+        }
+    };
+
+    // Handle form submission
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        appendMessage(text, 'user');
+        input.value = '';
+        // Rename brand-new threads from the first user prompt so history is clearer.
+        const currentThread = getCurrentThread();
+        if (currentThread && currentThread.title === 'New Thread') {
+            currentThread.title = text.length > 36 ? text.slice(0, 36) + '…' : text;
+            saveThreads();
+            renderThreadList();
+            if (currentThreadTitleEl) currentThreadTitleEl.textContent = currentThread.title;
+        }
+        // Create a placeholder element that will be updated when the reply arrives.
+        const placeholder = appendMessage('…', 'assistant', true, false);
+        callAssistantEndpoint(text, placeholder);
+    });
+});

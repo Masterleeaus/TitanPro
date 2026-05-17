@@ -1,0 +1,29 @@
+{
+  "module": "example-module",
+  "shortcuts": [
+    {
+      "key": "create_record",
+      "label": "Create record",
+      "action": "example.create_record",
+      "permission": "example.create"
+    },
+    {
+      "key": "ask_agent",
+      "label": "Ask module agent",
+      "action": "example.agent.ask",
+      "permission": "example.agent.use"
+    },
+    {
+      "key": "scan_knowledge",
+      "label": "Re-scan knowledge pack",
+      "action": "example.knowledge.reindex",
+      "permission": "example.agent.train"
+    },
+    {
+      "key": "open_settings",
+      "label": "Module settings",
+      "action": "example.settings.open",
+      "permission": "example.settings.manage"
+    }
+  ]
+}

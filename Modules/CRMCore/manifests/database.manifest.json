@@ -1,14 +1,20 @@
 {
   "schema": "titan.database.manifest.v1",
   "owned_tables": [
-    "crmcore_activity_logs"
-  ],
-  "external_tables": [
-    "client_details",
-    "users",
+    "companies",
+    "contacts",
+    "lead_statuses",
+    "lead_sources",
     "leads",
+    "deal_pipelines",
+    "deal_stages",
     "deals",
-    "projects",
-    "products"
+    "task_statuses",
+    "task_priorities",
+    "crm_tasks",
+    "crmcore_activity_logs",
+    "crm_notes",
+    "crm_tags",
+    "crm_taggables"
   ]
 }

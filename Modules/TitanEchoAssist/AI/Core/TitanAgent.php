@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Core;
+namespace Modules\TitanEchoAssist\AI\Core;
 
-use Modules\TitanChatbot\AI\Memory\ConversationMemoryStore;
-use Modules\TitanChatbot\AI\Tools\ToolRegistry;
-use Modules\TitanChatbot\Events\AI\BeforeSend;
-use Modules\TitanChatbot\Events\AI\AfterSend;
-use Modules\TitanChatbot\Events\AI\EngineError;
+use Modules\TitanEchoAssist\AI\Memory\ConversationMemoryStore;
+use Modules\TitanEchoAssist\AI\Tools\ToolRegistry;
+use Modules\TitanEchoAssist\Events\AI\BeforeSend;
+use Modules\TitanEchoAssist\Events\AI\AfterSend;
+use Modules\TitanEchoAssist\Events\AI\EngineError;
 use Illuminate\Support\Facades\Event;
 use Throwable;
 
@@ -96,7 +96,7 @@ abstract class TitanAgent
      */
     protected function generate(string $message, array $builtContext, array $rawContext = []): string
     {
-        return app(\Modules\TitanChatbot\Services\GeneratorBridge::class)
+        return app(\Modules\TitanEchoAssist\Services\GeneratorBridge::class)
             ->generate($message, $builtContext);
     }
 

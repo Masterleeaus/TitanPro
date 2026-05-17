@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\TitanChatbot\Http\Controllers\Api;
+namespace Modules\TitanEchoAssist\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\TitanChatbot\DTOs\MessagePayload;
-use Modules\TitanChatbot\Services\ConversationRouter;
+use Modules\TitanEchoAssist\DTOs\MessagePayload;
+use Modules\TitanEchoAssist\Services\ConversationRouter;
 
 class ConversationController extends Controller
 {
@@ -59,7 +59,7 @@ class ConversationController extends Controller
         $sessionId = $request->query('session_id');
         $limit     = (int) $request->query('limit', 50);
 
-        $query = \Modules\TitanChatbot\Models\Conversation::where('chatbot_id', $id)
+        $query = \Modules\TitanEchoAssist\Models\Conversation::where('chatbot_id', $id)
             ->with('messages')
             ->orderBy('started_at', 'desc')
             ->limit($limit);
@@ -76,11 +76,11 @@ class ConversationController extends Controller
         $request->validate([
             'content'     => 'required|string',
             'title'       => 'sometimes|string|max:255',
-            'source_type' => 'sometimes|string|in:text,qa,pdf,url',
+            'source_type' => 'sometimes|string|in:text,qa,file,website,pdf,url',
             'metadata'    => 'sometimes|array',
         ]);
 
-        $pipeline = app(\Modules\TitanChatbot\Services\TrainingPipeline::class);
+        $pipeline = app(\Modules\TitanEchoAssist\Services\TrainingPipeline::class);
         $chunks = $pipeline->ingest(
             chatbotId:  $id,
             sourceType: $request->input('source_type', 'text'),

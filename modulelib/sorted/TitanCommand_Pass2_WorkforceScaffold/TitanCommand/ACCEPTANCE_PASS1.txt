@@ -1,0 +1,6 @@
+ACCEPTANCE (Pass 1)
+
+[ ] Extension boots without PHP errors.
+[ ] /dashboard/user/jobs loads (web+auth).
+[ ] Each Jobs sidebar route loads without 404/500.
+[ ] No DB migrations required for this pass.

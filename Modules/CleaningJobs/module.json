@@ -1,5 +1,6 @@
 {
   "name": "CleaningJobs",
+  "active": 1,
   "alias": "cleaningjobs",
   "description": "Cleaning business SaaS job management module converted from repaired Worksuite work orders module.",
   "keywords": [
@@ -36,5 +37,6 @@
     "Helpers/helpers.php"
   ],
   "requires": [],
-  "version": "0.4.0"
+  "version": "0.4.0",
+  "filament_panel": "groundzero"
 }

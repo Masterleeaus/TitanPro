@@ -1,0 +1,17 @@
+WORK_SUPPORT_INVENTORY.txt
+cards/work-account-summary-card.blade.php
+cards/work-active-assistants-card.blade.php
+cards/work-affiliates-card.blade.php
+cards/work-chat-card.blade.php
+cards/work-favorite-chatbots-card.blade.php
+cards/work-ops-cards.blade.php
+cards/work-talk-campaign-focus.blade.php
+cards/work-talk-messaging-overview.blade.php
+cards/work-talk-quick-actions.blade.php
+cards/work-talk-recent-conversations.blade.php
+cards/work-trust-card.blade.php
+cards/work-wizard-card.blade.php
+routes/work-docs-proof-panel.php
+routes/work-timeengine-panel.php
+quote/WorkQuoteMakerController.php
+quote/WorkQuoteRevenueExecutionBridge.php

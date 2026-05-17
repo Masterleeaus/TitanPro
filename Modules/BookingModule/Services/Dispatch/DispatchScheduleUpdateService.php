@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Modules\BookingModule\Entities\Schedule;
 use Modules\BookingModule\Entities\ScheduleAssignment;
+use Modules\BookingModule\Events\ScheduleAssigned;
+use Modules\BookingModule\Events\ScheduleRescheduled;
 use Modules\BookingModule\Jobs\SendBookingReminderJob;
 use Modules\BookingModule\Services\ScheduleAssignmentService;
 use Modules\BookingModule\Services\ScheduleCapacityService;
@@ -29,7 +31,15 @@ class DispatchScheduleUpdateService
         if (!$schedule) {
             return ['ok' => false, 'message' => 'Schedule not found'];
         }
+        if (!$this->isWithinTenantBoundary($schedule)) {
+            return ['ok' => false, 'message' => 'Forbidden', 'status' => 403];
+        }
 
+        $oldWindow = [
+            'date' => $schedule->date,
+            'start_time' => $schedule->start_time,
+            'end_time' => $schedule->end_time,
+        ];
         $fromUserId = $schedule->assigned_to;
         $toUserId   = isset($payload['user_id']) && $payload['user_id'] ? (int)$payload['user_id'] : null;
         $isReassign = $fromUserId && $toUserId && $fromUserId !== $toUserId;
@@ -72,6 +82,12 @@ class DispatchScheduleUpdateService
 
         $schedule->save();
 
+        $newWindow = [
+            'date' => $schedule->date,
+            'start_time' => $schedule->start_time,
+            'end_time' => $schedule->end_time,
+        ];
+
         // Audit history
         $history = new ScheduleAssignment();
         $history->schedule_id = $schedule->id;
@@ -80,6 +96,28 @@ class DispatchScheduleUpdateService
         $history->action = 'dispatch_update';
         $history->notes = 'Dispatch quick edit update';
         $history->save();
+
+        if ($oldWindow !== $newWindow) {
+            event(new ScheduleRescheduled(
+                $schedule,
+                $oldWindow,
+                $newWindow,
+                (int) ($schedule->company_id ?? 0) ?: null,
+                Auth::id() ?: null,
+                ['source' => 'dispatch_quick_edit'],
+            ));
+        }
+
+        if ((int) ($fromUserId ?? 0) !== (int) ($toUserId ?? 0)) {
+            event(new ScheduleAssigned(
+                $schedule,
+                $fromUserId ? (int) $fromUserId : null,
+                $toUserId ? (int) $toUserId : null,
+                (int) ($schedule->company_id ?? 0) ?: null,
+                Auth::id() ?: null,
+                ['source' => 'dispatch_quick_edit'],
+            ));
+        }
 
         // Dispatch assignment-trigger reminders when user changes.
         if ($toUserId) {
@@ -90,5 +128,35 @@ class DispatchScheduleUpdateService
         }
 
         return ['ok' => true, 'message' => 'Updated', 'schedule_id' => $schedule->id];
+    }
+
+    private function isWithinTenantBoundary(Schedule $schedule): bool
+    {
+        $companyId = null;
+        if (function_exists('company') && company()) {
+            $companyId = (int) company()->id;
+        } elseif (Auth::check()) {
+            $companyId = (int) (Auth::user()->company_id ?? Auth::user()->organization_id ?? 0);
+        }
+
+        if ($companyId && (int) ($schedule->company_id ?? 0) !== $companyId) {
+            return false;
+        }
+
+        if (function_exists('getActiveWorkSpace')) {
+            $workspaceId = (int) getActiveWorkSpace();
+            if ($workspaceId > 0 && (int) ($schedule->workspace ?? 0) !== $workspaceId) {
+                return false;
+            }
+        }
+
+        if (function_exists('creatorId')) {
+            $creatorId = (int) creatorId();
+            if ($creatorId > 0 && (int) ($schedule->created_by ?? 0) !== $creatorId) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

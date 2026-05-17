@@ -1,0 +1,88 @@
+{
+  "module": "zeropay-module",
+  "enabled": true,
+  "route": "/app/zeropay",
+  "offline_mode": "queue_pending_payments",
+  "screens": [
+    "splash",
+    "onboarding",
+    "auth_login",
+    "auth_register",
+    "auth_forgot_password",
+    "auth_verify_email",
+    "auth_otp",
+    "dashboard",
+    "make_payment",
+    "request_money",
+    "receive_money",
+    "payment_log",
+    "transaction_history",
+    "notifications",
+    "payment_links"
+  ],
+  "capabilities": [
+    "push_notifications",
+    "camera_qr_scan",
+    "qr_generation",
+    "offline_queue",
+    "background_sync",
+    "web_share"
+  ],
+  "pwa": {
+    "name": "ZeroPay",
+    "short_name": "ZeroPay",
+    "description": "Fast, secure mobile payments",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1a1a2e",
+    "categories": ["finance", "productivity"],
+    "icons": [
+      { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+      { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+  },
+  "indexeddb": {
+    "database": "zeropay-db",
+    "version": 1,
+    "stores": [
+      { "name": "pending_payments", "keyPath": "id" },
+      { "name": "cached_transactions", "keyPath": "id" },
+      { "name": "cached_sessions", "keyPath": "session_token" }
+    ]
+  },
+  "push": {
+    "events": [
+      "session.created",
+      "payment.started",
+      "payment.pending",
+      "payment.completed",
+      "payment.failed",
+      "session.expiring"
+    ],
+    "subscribe_endpoint": "/api/zeropay/push/subscribe"
+  },
+  "api_endpoints": {
+    "auth": {
+      "login": "POST /api/zeropay/auth/login",
+      "register": "POST /api/zeropay/auth/register",
+      "forgot_password": "POST /api/zeropay/auth/forgot-password",
+      "verify_email": "POST /api/zeropay/auth/verify-email",
+      "verify_otp": "POST /api/zeropay/auth/verify-otp"
+    },
+    "wallet": {
+      "balance": "GET /api/zeropay/wallet",
+      "receive_info": "GET /api/zeropay/wallet/receive-info"
+    },
+    "sessions": {
+      "create": "POST /api/zeropay/sessions",
+      "get": "GET /api/zeropay/sessions/:token",
+      "pay": "POST /api/zeropay/sessions/:token/pay"
+    },
+    "transactions": {
+      "list": "GET /api/zeropay/transactions",
+      "get": "GET /api/zeropay/transactions/:id"
+    }
+  }
+}
+

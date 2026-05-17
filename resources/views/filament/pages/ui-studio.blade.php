@@ -1,64 +1,78 @@
 <x-filament-panels::page>
+    @vite('resources/js/filament/ui-studio.js')
+
     {{--
-        UI Studio — three-panel visual design surface.
-        Left  : component tree / layer list
-        Centre: drag-and-drop canvas preview
-        Right : context-sensitive property editor
+        UI Studio <span class="ml-2 rounded-full bg-primary-600 px-2 py-0.5 text-[10px] font-bold text-white">PASS51 STACKED</span> — split-screen visual design surface.
+        Left  : controls (component tree + property editor)
+        Right : live sandboxed panel preview
     --}}
 
     <style>
         .ui-studio-shell {
-            display: grid;
-            grid-template-columns: 260px 1fr 300px;
-            grid-template-rows: 1fr;
-            height: calc(100vh - 10rem);
-            min-height: 520px;
-            overflow: hidden;
+            /* PASS51: force one editor panel per row */
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) !important;
+            grid-template-areas:
+                "catalogue"
+                "editor"
+                "preview" !important;
+            grid-template-rows: auto auto auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            gap: 1rem !important;
             border-radius: 0.75rem;
             border: 1px solid rgba(0,0,0,0.08);
         }
         @media (max-width: 1024px) {
-            .ui-studio-shell { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; }
+            .ui-studio-shell {
+                grid-template-columns: minmax(0, 1fr) !important;
+                grid-template-areas: "catalogue" "editor" "preview" !important;
+                grid-template-rows: auto auto auto !important;
+                height: auto !important;
+            }
         }
         .studio-panel {
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow-y: visible !important;
+            overflow-x: hidden !important;
+            min-width: 0 !important;
+            width: 100% !important;
         }
-        .studio-canvas-item {
-            transition: box-shadow 0.15s ease;
-            cursor: grab;
+        .ui-studio-catalogue-panel { grid-area: catalogue; }
+        .ui-studio-editor-panel { grid-area: editor; }
+        .ui-studio-preview-panel { grid-area: preview; }
+        .ui-preview-frame {
+            width: 100%;
+            min-height: 720px;
+            height: 72vh;
+            border: 0;
+            background: white;
         }
-        .studio-canvas-item:active {
-            cursor: grabbing;
+        .ui-preview-shell {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            min-height: 720px;
+            height: auto;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            transition: max-width 0.2s ease;
         }
-        .studio-canvas-item.sortable-ghost {
-            opacity: 0.4;
-        }
-        .studio-canvas-item.sortable-chosen {
-            box-shadow: 0 0 0 2px #2563eb;
-        }
-        .resize-handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: col-resize;
-            user-select: none;
-        }
-        .preview-frame-shell {
-            overflow-x: hidden;
-        }
-        .preview-resource {
-            font-size: calc(0.95rem * var(--preview-heading-scale, 1));
-        }
-        .preview-resource-card {
-            padding: calc(var(--preview-card-padding, 16px));
-        }
+        .ui-preview-shell[data-frame="desktop"] { --ui-preview-width: 1440px; }
+        .ui-preview-shell[data-frame="tablet"] { --ui-preview-width: 1024px; }
+        .ui-preview-shell[data-frame="mobile"] { --ui-preview-width: 390px; }
+        .ui-preview-shell[data-frame="collapsed"] { --ui-preview-width: 1440px; }
+        .ui-preview-shell[data-frame="customer"] { --ui-preview-width: 390px; }
+        .ui-preview-shell[data-frame="mobile"],
+        .ui-preview-shell[data-frame="customer"] { min-width: 390px; }
+        .ui-preview-frame { min-width: 0; }
     </style>
 
     <div class="ui-studio-shell bg-white dark:bg-gray-900 shadow-sm">
 
         {{-- ── LEFT PANEL: Component tree ───────────────────────────── --}}
-        <aside class="studio-panel border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-950 flex flex-col">
+        <aside class="studio-panel ui-studio-catalogue-panel border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-950 flex flex-col">
             <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
                 <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Components</h3>
             </div>
@@ -131,159 +145,79 @@
             </div>
         </aside>
 
-        {{-- ── CENTRE PANEL: Canvas ─────────────────────────────────── --}}
-        <main class="studio-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
-            @php($previewModes = $this->previewModes())
-            @php($previewOverrides = $this->activeResponsiveOverrides())
-            @php($tablePreview = null)
-            @foreach ($canvasWidgets as $previewWidget)
-                @if ($tablePreview === null && ($previewWidget['type'] ?? null) === 'table-card')
-                    @php($tablePreview = $previewWidget)
-                @endif
-            @endforeach
-            @php($tableHiddenColumns = $this->resolvePreviewTableHiddenColumns($tablePreview['properties'] ?? []))
-            @php($mobileHiddenColumns = $tableHiddenColumns['mobile'])
-            @php($tabletHiddenColumns = $tableHiddenColumns['tablet'])
-            <div class="space-y-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
-                <div class="flex items-center justify-between gap-3">
-                    <span class="font-semibold">Live Preview</span>
-                    <span class="text-[11px] text-gray-400">Drag rows to reorder · Click to select · Resize columns in properties panel</span>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    @foreach ($previewModes as $modeKey => $mode)
-                        <button
-                            type="button"
-                            wire:click="selectPreviewMode('{{ $modeKey }}')"
-                            class="rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors
-                                {{ $previewMode === $modeKey
-                                    ? 'border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
-                                    : 'border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5' }}"
-                        >
-                            {{ $mode['label'] }} · {{ $mode['viewport'] }}px
-                        </button>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Widget canvas --}}
-            <div class="flex-1 p-4 overflow-y-auto">
-                <div
-                    class="preview-frame-shell mx-auto mb-4 rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-gray-900"
-                    style="{{ $this->previewFrameStyle() }}"
-                >
-                    <iframe
-                        title="UI Studio live preview"
-                        src="{{ $this->previewFrameUrl() }}"
-                        class="h-[340px] w-full rounded-lg border border-gray-100 dark:border-white/10"
-                        loading="lazy"
-                    ></iframe>
-                    <div class="preview-resource mt-3 overflow-x-hidden rounded-lg border border-dashed border-gray-200 bg-gray-50 text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-                        <div class="preview-resource-card space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <h5 class="text-base font-semibold">Resource preview</h5>
-                                <span class="rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-600 dark:bg-white/10 dark:text-gray-300">Sidebar {{ (int) $previewOverrides['sidebar_width'] }}px</span>
-                            </div>
-                            <div class="overflow-hidden rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900">
-                                <table class="w-full table-fixed text-left text-xs">
-                                    <thead class="bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400">
-                                        <tr>
-                                            <th class="px-2 py-2">Name</th>
-                                            <th class="px-2 py-2">Status</th>
-                                            @if ($this->shouldShowPreviewTableColumn('owner', $mobileHiddenColumns))
-                                                <th class="px-2 py-2 {{ $this->previewTableColumnClass('owner', $tabletHiddenColumns) }}">Owner</th>
-                                            @endif
-                                            @if ($this->shouldShowPreviewTableColumn('updated_at', $mobileHiddenColumns))
-                                                <th class="px-2 py-2 {{ $this->previewTableColumnClass('updated_at', $tabletHiddenColumns) }}">Updated</th>
-                                            @endif
-                                            <th class="px-2 py-2 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-t border-gray-100 dark:border-white/5">
-                                            <td class="px-2 py-2">Acme HQ</td>
-                                            <td class="px-2 py-2">Active</td>
-                                            @if ($this->shouldShowPreviewTableColumn('owner', $mobileHiddenColumns))
-                                                <td class="px-2 py-2 {{ $this->previewTableColumnClass('owner', $tabletHiddenColumns) }}">A. Lee</td>
-                                            @endif
-                                            @if ($this->shouldShowPreviewTableColumn('updated_at', $mobileHiddenColumns))
-                                                <td class="px-2 py-2 {{ $this->previewTableColumnClass('updated_at', $tabletHiddenColumns) }}">2m ago</td>
-                                            @endif
-                                            <td class="px-2 py-2 text-right">View</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+        {{-- ── RIGHT PANEL: Live preview sandbox ─────────────────────── --}}
+        <main class="studio-panel ui-studio-preview-panel bg-gray-100 dark:bg-gray-800 flex flex-col">
+            <div class="px-4 py-2.5 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-semibold">Live Preview Sandbox</span>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="text-[11px] text-gray-500 dark:text-gray-400">Panel</label>
+                        <select wire:model.live="previewPanel" class="text-[11px] rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-gray-700 dark:text-gray-300">
+                            @foreach ($this->previewPanelOptions() as $panelId => $panelMeta)
+                                <option value="{{ $panelId }}">{{ $panelMeta['label'] ?? $panelId }}</option>
+                            @endforeach
+                        </select>
+                        <div class="inline-flex rounded-md border border-gray-200 dark:border-white/10 overflow-hidden" title="Device frame switcher">
+                            @foreach ($this->previewModes() as $frameSize => $mode)
+                                <button
+                                    type="button"
+                                    wire:click="setPreviewFrameSize('{{ $frameSize }}')"
+                                    class="px-2.5 py-1 text-[11px] {{ $previewFrameSize === $frameSize ? 'bg-primary-500 text-white' : 'bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400' }}"
+                                    title="{{ $mode['description'] }}"
+                                >
+                                    {{ $mode['label'] }}
+                                </button>
+                            @endforeach
                         </div>
+                        <span class="rounded bg-gray-100 dark:bg-white/5 px-2 py-1 text-[10px] font-mono text-gray-500">{{ $this->previewFrameWidth() }}px</span>
+                        <label class="inline-flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
+                            <input type="checkbox" wire:model.live="syncPreviewScroll" class="rounded border-gray-300 dark:border-white/10" />
+                            Sync scroll
+                        </label>
                     </div>
                 </div>
-
-                @if (count($canvasWidgets) === 0)
-                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-600 py-20 select-none">
-                        <x-heroicon-o-squares-plus class="h-14 w-14 mb-4 opacity-30" />
-                        <p class="text-sm font-medium">Canvas is empty</p>
-                        <p class="text-xs mt-1">Click a widget in the left panel to add it here.</p>
-                    </div>
-                @else
-                    <div
-                        id="studio-canvas"
-                        x-data="studioCanvas($wire)"
-                        x-init="init()"
-                        class="space-y-3"
-                    >
-                        @foreach ($canvasWidgets as $widget)
-                            <div
-                                data-id="{{ $widget['id'] }}"
-                                wire:key="widget-{{ $widget['id'] }}"
-                                class="studio-canvas-item rounded-xl border bg-white dark:bg-gray-900 shadow-sm
-                                    {{ $selectedWidgetId === $widget['id'] ? 'border-primary-400 ring-1 ring-primary-400' : 'border-gray-200 dark:border-white/10' }}"
-                                style="width: {{ round($widget['columns'] / 12 * 100) }}%"
-                                @click="$wire.selectWidget('{{ $widget['id'] }}')"
-                            >
-                                <div class="flex items-center justify-between px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <x-heroicon-o-bars-3 class="h-4 w-4 text-gray-400 drag-handle cursor-grab" />
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            {{ $widget['label'] }}
-                                        </span>
-                                        <span class="text-[10px] font-mono text-gray-400 bg-gray-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
-                                            {{ $widget['type'] }}
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] text-gray-400">
-                                            {{ $widget['columns'] }}/12 cols
-                                        </span>
-                                        <button
-                                            type="button"
-                                            wire:click.stop="removeWidget('{{ $widget['id'] }}')"
-                                            class="text-gray-300 hover:text-red-400 transition-colors"
-                                        >
-                                            <x-heroicon-o-trash class="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {{-- Widget preview placeholder --}}
-                                <div class="mx-4 mb-4 h-16 rounded-lg bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 flex items-center justify-center">
-                                    <span class="text-xs text-gray-400">{{ $widget['label'] }} preview</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                <div class="flex items-center justify-between gap-2">
+                    <p id="ui-preview-current-url" class="truncate text-[10px] text-gray-400">{{ $this->previewPanelUrl() }}</p>
+                    <span class="text-[10px] font-semibold {{ $this->hasUnsavedThemeChanges() ? 'text-amber-500' : 'text-emerald-500' }}">
+                        {{ $this->hasUnsavedThemeChanges() ? 'Unsaved theme changes' : 'Theme is saved' }}
+                    </span>
+                </div>
             </div>
+
+            <div class="flex-1 p-4 overflow-y-auto">
+                <div class="ui-preview-shell shadow-sm bg-white dark:bg-gray-900" data-frame="{{ $previewFrameSize }}">
+                    <iframe
+                        id="ui-studio-preview-iframe"
+                        class="ui-preview-frame"
+                        src="{{ $this->previewPanelUrl() }}"
+                        sandbox="allow-forms allow-same-origin allow-scripts"
+                        referrerpolicy="same-origin"
+                    ></iframe>
+                </div>
+            </div>
+
+            <div
+                id="ui-studio-preview-payload"
+                data-preview-url="{{ $this->previewPanelUrl() }}"
+                data-preview-frame="{{ $previewFrameSize }}"
+                data-preview-width="{{ $this->previewFrameWidth() }}"
+                data-sync-scroll="{{ $syncPreviewScroll ? '1' : '0' }}"
+                data-preview-css='@json($this->previewCssVariables())'
+                data-responsive-preview='@json($this->responsivePreviewPayload())'
+                hidden
+            ></div>
         </main>
 
         {{-- ── RIGHT PANEL: Property editor ─────────────────────────── --}}
-        <aside class="studio-panel border-l border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 flex flex-col">
+        <aside class="studio-panel ui-studio-editor-panel border-l border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 flex flex-col">
 
             {{-- Tab strip --}}
-            <div class="flex border-b border-gray-200 dark:border-white/10">
-                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu', 'components' => 'Components'] as $tab => $tabLabel)
+            <div class="flex border-b border-gray-200 dark:border-white/10 overflow-x-auto">
+                @foreach (['branding' => 'Branding', 'layout' => 'Layout', 'menu' => 'Menu', 'roles' => 'Roles', 'components' => 'Components', 'marketplace' => 'Marketplace'] as $tab => $tabLabel)
                     <button
                         type="button"
                         wire:click="selectTab('{{ $tab }}')"
-                        class="flex-1 py-2.5 text-xs font-semibold transition-colors
+                        class="flex-none px-3 py-2.5 text-xs font-semibold transition-colors whitespace-nowrap
                             {{ $activeTab === $tab
                                 ? 'text-primary-600 border-b-2 border-primary-500 bg-primary-50 dark:bg-primary-900/10'
                                 : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300' }}"
@@ -380,6 +314,13 @@
                     </section>
 
                     <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Design token engine</h4>
+                        <div class="rounded-lg border border-dashed border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-white/5 px-3 py-3 text-xs text-gray-600 dark:text-gray-300">
+                            Theme overrides are stored as semantic tokens in <code>titan_theme_tokens</code>. Component tokens inherit from those values, and you can export the full token set with <code>php artisan titan:tokens:export</code>.
+                        </div>
+                    </section>
+
+                    <section>
                         <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Custom CSS</h4>
                         <textarea
                             wire:model.live="customCss"
@@ -408,7 +349,9 @@
                                 </div>
                             </div>
                             <div class="h-8 rounded-md border border-dashed border-gray-200" style="background: {{ e($this->safeColor($surfaceColor)) }}"></div>
-                            @php($backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue))
+                            @php
+    $backgroundPreviewStyle = $this->safeBackgroundStyle($backgroundType, $backgroundValue);
+@endphp
                             @if ($backgroundPreviewStyle)
                                 <div class="h-12 rounded-md border border-dashed border-gray-200" style="{{ e($backgroundPreviewStyle) }}"></div>
                             @endif
@@ -418,42 +361,56 @@
 
                 {{-- ── Layout / Widget tab ─────────────────────────── --}}
                 @if ($activeTab === 'layout')
-                    <section>
-                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Responsive Overrides</h4>
-                        <div class="space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-white/5">
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($this->previewModes() as $breakpointKey => $breakpoint)
+                    <section class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Responsive Overrides</h4>
+                                <p class="mt-1 text-[10px] text-gray-400">Stored separately from base tokens and applied to the selected preview breakpoint.</p>
+                            </div>
+                            <div class="inline-flex overflow-hidden rounded-md border border-gray-200 dark:border-white/10">
+                                @foreach (['desktop' => 'Desktop', 'tablet' => 'Tablet', 'mobile' => 'Mobile'] as $breakpoint => $label)
                                     <button
                                         type="button"
-                                        wire:click="selectResponsiveBreakpoint('{{ $breakpointKey }}')"
-                                        class="rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-colors
-                                            {{ $responsiveBreakpoint === $breakpointKey
-                                                ? 'border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
-                                                : 'border-gray-200 text-gray-500 hover:bg-white dark:border-white/10 dark:text-gray-300 dark:hover:bg-gray-900' }}"
-                                    >
-                                        {{ $breakpoint['label'] }}
-                                    </button>
+                                        wire:click="setActiveResponsiveBreakpoint('{{ $breakpoint }}')"
+                                        class="px-2 py-1 text-[10px] {{ $activeResponsiveBreakpoint === $breakpoint ? 'bg-primary-500 text-white' : 'bg-white dark:bg-gray-900 text-gray-500' }}"
+                                    >{{ $label }}</button>
                                 @endforeach
                             </div>
-                            <div class="grid grid-cols-1 gap-3">
-                                <div>
-                                    <label class="text-[10px] text-gray-500 block mb-1">--sidebar-width (px)</label>
-                                    <input type="number" min="56" max="420" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.sidebar_width" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
-                                </div>
-                                <div>
-                                    <label class="text-[10px] text-gray-500 block mb-1">Heading scale</label>
-                                    <input type="number" min="0.7" max="1.4" step="0.01" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.heading_scale" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
-                                </div>
-                                <div>
-                                    <label class="text-[10px] text-gray-500 block mb-1">Card padding (px)</label>
-                                    <input type="number" min="8" max="48" wire:model.live="responsiveTokenOverrides.{{ $responsiveBreakpoint }}.card_padding" class="w-full text-xs rounded border border-gray-200 bg-white px-2 py-1.5 dark:border-white/10 dark:bg-gray-900" />
-                                </div>
-                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-2">
+                            @foreach ($this->responsiveTokenDefinitions() as $token => $definition)
+                                <label class="flex items-center justify-between gap-2 text-xs">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $definition['label'] }}</span>
+                                    <input
+                                        type="text"
+                                        value="{{ $responsiveTokens[$activeResponsiveBreakpoint][$token] ?? $definition[$activeResponsiveBreakpoint] ?? $definition['desktop'] }}"
+                                        wire:change="updateResponsiveToken('{{ $activeResponsiveBreakpoint }}', '{{ $token }}', $event.target.value)"
+                                        class="w-24 rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 font-mono text-[11px] text-gray-700 dark:text-gray-300"
+                                    />
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="rounded-md border border-dashed border-gray-300 dark:border-white/10 p-2">
+                            <p class="mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Small-screen table columns</p>
+                            @foreach (($responsiveTableColumns['resource_tables'] ?? []) as $column => $visible)
+                                <label class="mr-3 inline-flex items-center gap-1 text-[11px] text-gray-500">
+                                    <input
+                                        type="checkbox"
+                                        @checked($visible)
+                                        wire:change="updateResponsiveTableColumn('resource_tables', '{{ $column }}', $event.target.checked)"
+                                        class="rounded border-gray-300"
+                                    />
+                                    {{ $column }}
+                                </label>
+                            @endforeach
                         </div>
                     </section>
-
                     @if ($selectedWidgetId !== null)
-                        @php($selectedWidget = collect($canvasWidgets)->firstWhere('id', $selectedWidgetId))
+                        @php
+    $selectedWidget = collect($canvasWidgets)->firstWhere('id', $selectedWidgetId);
+@endphp
                         @if ($selectedWidget)
                             <section>
                                 <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">
@@ -486,30 +443,81 @@
                                         <p class="text-xs font-mono text-gray-500 bg-gray-50 dark:bg-white/5 rounded px-2 py-1.5">{{ $selectedWidget['type'] }}</p>
                                     </div>
 
-                                    @if (($selectedWidget['type'] ?? null) === 'table-card')
-                                        @php($selectedHidden = $this->resolvePreviewTableHiddenColumns($selectedWidget['properties'] ?? []))
-                                        <div>
-                                            <label class="text-xs text-gray-600 dark:text-gray-400 block mb-2">Hide columns on small screens</label>
-                                            <div class="space-y-2">
-                                                @foreach (['mobile' => 'Mobile', 'tablet' => 'Tablet'] as $breakpoint => $label)
-                                                    <div class="rounded border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/5">
-                                                        <p class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">{{ $label }}</p>
-                                                        <div class="space-y-1">
-                                                            @foreach ($this->tableColumnOptions() as $columnKey => $columnLabel)
-                                                                <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        @checked(in_array($columnKey, $selectedHidden[$breakpoint] ?? [], true))
-                                                                        wire:change="updateTableColumnVisibility('{{ $selectedWidget['id'] }}', '{{ $breakpoint }}', '{{ $columnKey }}', $event.target.checked)"
-                                                                        class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                                                                    />
-                                                                    {{ $columnLabel }}
-                                                                </label>
+                                    {{-- ── Per-widget property fields ─────────────────── --}}
+                                    @php
+    $widgetSchema = \App\Filament\Pages\UiStudio\WidgetPropertyRegistry::schema($selectedWidget['type']);
+@endphp
+                                    @if (count($widgetSchema) > 0)
+                                        <div class="border-t border-gray-200 dark:border-white/10 pt-4 space-y-3">
+                                            <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Properties</p>
+
+                                            @foreach ($widgetSchema as $field)
+                                                <div>
+                                                    <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">
+                                                        {{ $field['label'] }}
+                                                    </label>
+
+                                                    @if ($field['type'] === 'textarea')
+                                                        <textarea
+                                                            rows="{{ $field['rows'] ?? 3 }}"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300 resize-y"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        >{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}</textarea>
+                                                        @if (! empty($field['helper']))
+                                                            <p class="mt-1 text-[10px] text-gray-400">{{ $field['helper'] }}</p>
+                                                        @endif
+
+                                                    @elseif ($field['type'] === 'select')
+                                                        <select
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                        >
+                                                            @foreach ($field['options'] as $optVal => $optLabel)
+                                                                <option
+                                                                    value="{{ $optVal }}"
+                                                                    @selected(($widgetPropertyValues[$field['key']] ?? $field['default']) == $optVal)
+                                                                >{{ $optLabel }}</option>
                                                             @endforeach
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                                        </select>
+
+                                                    @elseif ($field['type'] === 'toggle')
+                                                        <label class="flex items-center gap-2 cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                                wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.checked)"
+                                                                @checked((bool)($widgetPropertyValues[$field['key']] ?? $field['default']))
+                                                                class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                                            />
+                                                            <span class="text-xs text-gray-500 dark:text-gray-400">Enabled</span>
+                                                        </label>
+
+                                                    @elseif ($field['type'] === 'number')
+                                                        <input
+                                                            type="number"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            value="{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        />
+
+                                                    @else
+                                                        {{-- text (default) --}}
+                                                        <input
+                                                            type="text"
+                                                            wire:model.live="widgetPropertyValues.{{ $field['key'] }}"
+                                                            wire:change="updateWidgetProperty('{{ $field['key'] }}', $event.target.value)"
+                                                            value="{{ $widgetPropertyValues[$field['key']] ?? $field['default'] }}"
+                                                            class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                                            placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                        />
+                                                    @endif
+                                                </div>
+                                            @endforeach
                                         </div>
                                     @endif
 
@@ -597,6 +605,143 @@
                     </section>
                 @endif
 
+                {{-- ── Role Profiles tab ───────────────────────────── --}}
+                @if ($activeTab === 'roles')
+                    @php
+                        $supportedRoles = \App\Models\RoleUIProfile::SUPPORTED_ROLES;
+                        $allNavItems = [
+                            'Dashboard', 'Jobs', 'Customers', 'Invoices', 'Site Settings',
+                        ];
+                        $allWidgets = [
+                            'kpi-grid-card'        => 'KPI Grid',
+                            'map-card'             => 'Live Map',
+                            'stat-card'            => 'Stat Card',
+                            'chart-bar-card'       => 'Bar Chart',
+                            'chart-line-card'      => 'Line Chart',
+                            'recent-activity-card' => 'Recent Activity',
+                            'table-card'           => 'Data Table',
+                            'alert-notice-card'    => 'Alert / Notice',
+                        ];
+                    @endphp
+
+                    <section>
+                        <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Select a Role</h4>
+                        <div class="grid grid-cols-1 gap-1.5 mb-4">
+                            @foreach ($supportedRoles as $roleSlug => $roleLabel)
+                                <button
+                                    type="button"
+                                    wire:click="selectRole('{{ $roleSlug }}')"
+                                    class="flex items-center justify-between rounded-lg border px-3 py-2 text-xs transition-colors
+                                        {{ $selectedRole === $roleSlug
+                                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-300'
+                                            : 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5' }}"
+                                >
+                                    <span class="font-medium">{{ $roleLabel }}</span>
+                                    @if (isset($roleProfiles[$roleSlug]) && array_filter([
+                                        $roleProfiles[$roleSlug]['primary_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['secondary_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['accent_color'] ?? '',
+                                        $roleProfiles[$roleSlug]['surface_color'] ?? '',
+                                    ]))
+                                        <span class="text-[10px] text-green-500">customised</span>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+
+                        @if ($selectedRole && isset($supportedRoles[$selectedRole]))
+                            @php $profile = $roleProfiles[$selectedRole] ?? []; @endphp
+                            <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 space-y-4">
+                                <h5 class="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                                    {{ $supportedRoles[$selectedRole] }} — Theme Overrides
+                                </h5>
+                                <p class="text-[10px] text-gray-400 -mt-2">Leave blank to inherit the platform default.</p>
+
+                                {{-- Color overrides --}}
+                                @php
+                                    $colorDefaults = [
+                                        'primary_color'   => '#2563eb',
+                                        'secondary_color' => '#0f172a',
+                                        'accent_color'    => '#14b8a6',
+                                        'surface_color'   => '#f8fafc',
+                                    ];
+                                @endphp
+                                @foreach ([
+                                    'primary_color'   => 'Primary',
+                                    'secondary_color' => 'Secondary',
+                                    'accent_color'    => 'Accent',
+                                    'surface_color'   => 'Surface',
+                                ] as $colorField => $colorLabel)
+                                    @php $colorVal = $profile[$colorField] ?? ''; @endphp
+                                    <div class="flex items-center justify-between gap-2">
+                                        <label class="text-xs text-gray-600 dark:text-gray-400 flex-1">{{ $colorLabel }}</label>
+                                        <input
+                                            type="color"
+                                            value="{{ $colorVal ?: $colorDefaults[$colorField] }}"
+                                            wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
+                                            class="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-white/10 p-0.5 {{ $colorVal ? '' : 'opacity-50' }}"
+                                            title="{{ $colorLabel }} override for {{ $selectedRole }}"
+                                        />
+                                        <input
+                                            type="text"
+                                            value="{{ $colorVal }}"
+                                            wire:change="updateRoleProfile('{{ $selectedRole }}', '{{ $colorField }}', $event.target.value)"
+                                            maxlength="7"
+                                            placeholder="#inherit"
+                                            class="w-20 rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-2 py-1 text-[11px] font-mono text-gray-700 dark:text-gray-300"
+                                        />
+                                    </div>
+                                @endforeach
+
+                                {{-- Hidden nav items --}}
+                                <div>
+                                    <h6 class="text-[11px] font-semibold text-gray-500 mb-2">Hidden Navigation Items</h6>
+                                    <div class="space-y-1">
+                                        @foreach ($allNavItems as $navItem)
+                                            @php $isHidden = in_array($navItem, $profile['hidden_nav_items'] ?? [], true); @endphp
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    @checked($isHidden)
+                                                    wire:click="toggleNavItem('{{ $selectedRole }}', '{{ $navItem }}')"
+                                                    class="rounded border-gray-300 dark:border-white/20 text-primary-600"
+                                                />
+                                                <span class="text-xs text-gray-600 dark:text-gray-400 {{ $isHidden ? 'line-through opacity-50' : '' }}">
+                                                    {{ $navItem }}
+                                                </span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                {{-- Widget layout --}}
+                                <div>
+                                    <h6 class="text-[11px] font-semibold text-gray-500 mb-2">Enabled Dashboard Widgets</h6>
+                                    <div class="space-y-1">
+                                        @foreach ($allWidgets as $widgetType => $widgetLabel)
+                                            @php $isEnabled = in_array($widgetType, $profile['widget_layout'] ?? [], true); @endphp
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    @checked($isEnabled)
+                                                    wire:click="updateRoleWidgetLayout('{{ $selectedRole }}', '{{ $widgetType }}', {{ $isEnabled ? 'false' : 'true' }})"
+                                                    class="rounded border-gray-300 dark:border-white/20 text-primary-600"
+                                                />
+                                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ $widgetLabel }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-400 dark:text-gray-600">
+                                <x-heroicon-o-user-group class="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                <p class="text-xs">Select a role above to configure its UI profile.</p>
+                            </div>
+                        @endif
+                    </section>
+                @endif
+
                 {{-- ── Components tab ─────────────────────────────── --}}
                 @if ($activeTab === 'components')
                     @if ($activeComponentKey === '')
@@ -605,7 +750,9 @@
                             <p class="text-xs">Click <strong class="text-gray-500">Style</strong> next to any component in the left panel to open it here.</p>
                         </div>
                     @else
-                        @php($componentDef = \App\Platform\Ui\ComponentRegistry::get($activeComponentKey))
+                        @php
+    $componentDef = \App\Platform\Ui\ComponentRegistry::get($activeComponentKey);
+@endphp
                         @if ($componentDef)
                             {{-- Component header --}}
                             <div class="flex items-center justify-between mb-1">
@@ -623,12 +770,9 @@
                                     wire:model.live="componentPanel"
                                     class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
                                 >
-                                    <option value="admin">admin</option>
-                                    <option value="titanpro">titanpro</option>
-                                    <option value="titanstudio">titanstudio</option>
-                                    <option value="titansolo">titansolo</option>
-                                    <option value="zeropay">zeropay</option>
-                                    <option value="titannexus">titannexus</option>
+                                    @foreach ($this->previewPanelOptions() as $panelId => $panelMeta)
+                                        <option value="{{ $panelId }}">{{ $panelMeta['label'] ?? $panelId }}</option>
+                                    @endforeach
                                 </select>
                             </section>
 
@@ -752,9 +896,421 @@
                     @endif
                 @endif
 
+                @if ($activeTab === 'marketplace')
+
+                    {{-- Marketplace sub-tab strip --}}
+                    <div class="flex gap-1 border-b border-gray-100 dark:border-white/10 pb-2 mb-4 overflow-x-auto">
+                        @foreach (['browse' => 'Browse', 'install' => 'Install', 'share' => 'Share', 'import' => 'Import'] as $sub => $subLabel)
+                            <button
+                                type="button"
+                                wire:click="$set('marketplaceTab', '{{ $sub }}')"
+                                class="flex-none rounded-full px-3 py-1 text-[11px] font-semibold transition-colors
+                                    {{ $marketplaceTab === $sub
+                                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                                        : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5' }}"
+                            >
+                                {{ $subLabel }}
+                            </button>
+                        @endforeach
+                    </div>
+
+                    {{-- ── Browse --}}
+                    @if ($marketplaceTab === 'browse')
+                        <section>
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Curated Theme Packs</h4>
+                            <div class="space-y-2">
+                                @foreach (\App\Support\ThemePackManager::builtinThemes() as $key => $theme)
+                                    <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                        {{-- Color swatch strip --}}
+                                        <div class="flex gap-1 mb-2">
+                                            @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $colorKey)
+                                                <div
+                                                    class="h-5 flex-1 rounded"
+                                                    style="background: {{ e($theme['tokens'][$colorKey] ?? '#eee') }}"
+                                                    title="{{ $colorKey }}"
+                                                ></div>
+                                            @endforeach
+                                        </div>
+
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">{{ $theme['name'] }}</p>
+                                                <p class="text-[10px] text-gray-400">{{ $theme['author'] }} · v{{ $theme['version'] }}</p>
+                                                {{-- Tags --}}
+                                                <div class="flex flex-wrap gap-1 mt-1">
+                                                    @foreach ($theme['tags'] as $tag)
+                                                        <span class="inline-block rounded-full bg-gray-200 dark:bg-white/10 px-1.5 py-0.5 text-[9px] text-gray-500 dark:text-gray-400">{{ $tag }}</span>
+                                                    @endforeach
+                                                </div>
+                                                {{-- Star rating --}}
+                                                <div class="flex items-center gap-0.5 mt-1">
+                                                    @php
+    $fullStars = (int) floor($theme['rating']); $hasHalf = ($theme['rating'] - $fullStars) >= 0.5;
+@endphp
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $fullStars)
+                                                            <span class="text-amber-400 text-[11px]">★</span>
+                                                        @elseif ($i == $fullStars + 1 && $hasHalf)
+                                                            <span class="text-amber-300 text-[11px]">★</span>
+                                                        @else
+                                                            <span class="text-gray-300 text-[11px]">★</span>
+                                                        @endif
+                                                    @endfor
+                                                    <span class="ml-0.5 text-[9px] text-gray-400">{{ number_format($theme['rating'], 1) }}</span>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                wire:click="applyBuiltinTheme('{{ $key }}')"
+                                                class="flex-shrink-0 flex items-center gap-1 rounded-md bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1.5 text-[11px] font-semibold text-primary-600 dark:text-primary-400 hover:bg-primary-100 transition-colors"
+                                            >
+                                                <x-heroicon-o-paint-brush class="h-3 w-3" />
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endif
+
+                    {{-- ── Install (upload ZIP) --}}
+                    @if ($marketplaceTab === 'install')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Install from ZIP</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Upload a <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">.zip</code> containing
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">theme.json</code>,
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">meta.json</code>, and optionally
+                                <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">preview.png</code>.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Theme pack ZIP</label>
+                                <input
+                                    type="file"
+                                    wire:model="themeZipUpload"
+                                    accept=".zip"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                />
+                                @error('themeZipUpload') <p class="mt-1 text-[11px] text-red-500">{{ $message }}</p> @enderror
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="previewZip"
+                                wire:loading.attr="disabled"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                            >
+                                <x-heroicon-o-eye class="h-3.5 w-3.5" />
+                                Validate &amp; Preview
+                            </button>
+
+                            @if (!empty($zipPreview))
+                                <div class="rounded-lg border border-primary-200 dark:border-primary-900/40 bg-primary-50 dark:bg-primary-900/10 p-3 space-y-2">
+                                    <p class="text-xs font-semibold text-primary-700 dark:text-primary-400">
+                                        {{ $zipPreview['meta']['name'] ?? 'Theme' }}
+                                        <span class="ml-1 text-[10px] font-normal text-primary-500">v{{ $zipPreview['meta']['version'] ?? '1.0.0' }}</span>
+                                    </p>
+                                    <p class="text-[10px] text-gray-500">by {{ $zipPreview['meta']['author'] ?? 'Unknown' }}</p>
+                                    {{-- Token swatches --}}
+                                    <div class="flex gap-1">
+                                        @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $ck)
+                                            @if (!empty($zipPreview['tokens'][$ck]))
+                                                <div class="h-5 flex-1 rounded border border-white/20" style="background: {{ e($zipPreview['tokens'][$ck]) }}" title="{{ $ck }}"></div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                    <button
+                                        type="button"
+                                        wire:click="installFromZip"
+                                        class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                    >
+                                        <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                        Install Theme
+                                    </button>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                    {{-- ── Share --}}
+                    @if ($marketplaceTab === 'share')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Share Active Theme</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Generate a public share link that lets anyone preview and install your current theme.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Theme name (optional)</label>
+                                <input
+                                    type="text"
+                                    wire:model.live="shareThemeName"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 text-gray-700 dark:text-gray-300"
+                                    placeholder="My Custom Theme"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="shareTheme"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                            >
+                                <x-heroicon-o-share class="h-3.5 w-3.5" />
+                                Generate Share Link
+                            </button>
+
+                            @if ($generatedShareUrl !== '')
+                                <div class="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[10px] font-semibold text-gray-500 mb-1">Share URL</p>
+                                    <p class="text-[11px] font-mono text-primary-600 dark:text-primary-400 break-all select-all">{{ $generatedShareUrl }}</p>
+                                </div>
+                            @endif
+
+                            {{-- Export ZIP --}}
+                            <div class="pt-3 border-t border-gray-100 dark:border-white/10">
+                                <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Export as ZIP</h4>
+                                <p class="text-[10px] text-gray-400 mb-3 leading-relaxed">
+                                    Download the active theme as an installable <code class="bg-gray-100 dark:bg-white/10 rounded px-0.5">.zip</code> pack you can share with others.
+                                </p>
+                                <button
+                                    type="button"
+                                    wire:click="exportTheme"
+                                    class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                >
+                                    <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                    Download Theme ZIP
+                                </button>
+                            </div>
+                        </section>
+                    @endif
+
+                    {{-- ── Import from URL --}}
+                    @if ($marketplaceTab === 'import')
+                        <section class="space-y-4">
+                            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400">Import from Share Link</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">
+                                Paste a share link generated by the Share tab to preview and install a theme.
+                            </p>
+
+                            <div>
+                                <label class="text-xs text-gray-600 dark:text-gray-400 block mb-1">Share URL</label>
+                                <input
+                                    type="url"
+                                    wire:model.live="importUrl"
+                                    class="w-full text-xs rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1.5 font-mono text-gray-700 dark:text-gray-300"
+                                    placeholder="https://yoursite.com/theme/import/abc123"
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                wire:click="previewImport"
+                                class="w-full flex items-center justify-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                            >
+                                <x-heroicon-o-eye class="h-3.5 w-3.5" />
+                                Preview Theme
+                            </button>
+
+                            @if (!empty($importPreview))
+                                <div class="rounded-lg border border-primary-200 dark:border-primary-900/40 bg-primary-50 dark:bg-primary-900/10 p-3 space-y-2">
+                                    <p class="text-xs font-semibold text-primary-700 dark:text-primary-400">
+                                        {{ $importPreview['meta']['name'] ?? 'Shared Theme' }}
+                                    </p>
+                                    <p class="text-[10px] text-gray-500">by {{ $importPreview['meta']['author'] ?? 'Unknown' }}</p>
+                                    {{-- Token swatches --}}
+                                    <div class="flex gap-1">
+                                        @foreach (['primary_color', 'secondary_color', 'accent_color', 'surface_color'] as $ck)
+                                            @if (!empty($importPreview['tokens'][$ck]))
+                                                <div class="h-5 flex-1 rounded border border-white/20" style="background: {{ e($importPreview['tokens'][$ck]) }}" title="{{ $ck }}"></div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                    <button
+                                        type="button"
+                                        wire:click="installFromUrl"
+                                        class="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary-600 py-2 text-xs font-semibold text-white hover:bg-primary-700 transition-colors"
+                                    >
+                                        <x-heroicon-o-arrow-down-tray class="h-3.5 w-3.5" />
+                                        Install This Theme
+                                    </button>
+                                </div>
+                            @endif
+                        </section>
+                    @endif
+
+                @endif
+
             </div>
         </aside>
     </div>
+
+    {{-- ── AI Theme Generator Modal ──────────────────────────────────────── --}}
+    @if ($showAiModal)
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            wire:key="ai-theme-modal"
+        >
+            <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-white/10 mx-4">
+
+                {{-- Modal header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/10">
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-sparkles class="h-4 w-4 text-amber-500" />
+                        AI Theme Generator
+                    </h2>
+                    <button
+                        type="button"
+                        wire:click="closeAiModal"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                    >
+                        <x-heroicon-o-x-mark class="h-5 w-5" />
+                    </button>
+                </div>
+
+                <div class="px-6 py-5">
+
+                    {{-- ── Step 1: Prompt input ────────────────────────── --}}
+                    @if ($aiModalStep === 'prompt')
+                        <div class="space-y-4">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                                Describe the admin panel style you want. The AI will generate a complete colour palette, typography, and design tokens.
+                            </p>
+                            <div>
+                                <label class="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1.5">
+                                    Describe your design
+                                </label>
+                                <textarea
+                                    wire:model="aiPrompt"
+                                    rows="3"
+                                    class="w-full text-sm rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2 text-gray-700 dark:text-gray-300 resize-none focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                                    placeholder="e.g. Create a luxury dark fintech dashboard with gold accents"
+                                ></textarea>
+                                <p class="mt-1 text-[11px] text-gray-400">Examples: "clean SaaS admin", "dark cyberpunk ops dashboard", "warm earthy CRM"</p>
+                            </div>
+
+                            @if ($aiErrorMessage !== '')
+                                <div class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+                                    <p class="text-xs text-red-600 dark:text-red-400">{{ $aiErrorMessage }}</p>
+                                </div>
+                            @endif
+
+                            <button
+                                type="button"
+                                wire:click="generateAiTheme"
+                                class="w-full flex items-center justify-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-600 py-2.5 text-sm font-semibold text-white transition-colors"
+                            >
+                                <x-heroicon-o-sparkles class="h-4 w-4" />
+                                Generate Design System
+                            </button>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 2: Generating (loading spinner) ─────────── --}}
+                    @if ($aiModalStep === 'generating')
+                        <div class="flex flex-col items-center justify-center py-12 space-y-4">
+                            <div class="relative h-12 w-12">
+                                <div class="absolute inset-0 rounded-full border-4 border-amber-100 dark:border-amber-900/30"></div>
+                                <div class="absolute inset-0 rounded-full border-4 border-t-amber-500 animate-spin"></div>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Generating your design system…</p>
+                                <p class="text-xs text-gray-400 mt-1">This usually takes a few seconds.</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ── Step 3: Preview ──────────────────────────────── --}}
+                    @if ($aiModalStep === 'preview' && count($aiGeneratedTheme) > 0)
+                        <div class="space-y-4">
+                            {{-- Description --}}
+                            @if (!empty($aiGeneratedTheme['description']))
+                                <p class="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed">
+                                    "{{ $aiGeneratedTheme['description'] }}"
+                                </p>
+                            @endif
+
+                            {{-- Colour palette --}}
+                            <div>
+                                <h3 class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Colour Palette</h3>
+                                <div class="grid grid-cols-5 gap-2">
+                                    @foreach ([
+                                        'primary_color'   => 'Primary',
+                                        'secondary_color' => 'Secondary',
+                                        'accent_color'    => 'Accent',
+                                        'surface_color'   => 'Surface',
+                                        'sidebar_color'   => 'Sidebar',
+                                    ] as $colorKey => $colorLabel)
+                                        @php
+    $colorVal = $aiGeneratedTheme[$colorKey] ?? '#cccccc';
+@endphp
+                                        <div class="text-center">
+                                            <div
+                                                class="h-9 rounded-md border border-gray-200 dark:border-white/10 mb-1"
+                                                style="background: {{ e($this->safeColor($colorVal, '#cccccc')) }}"
+                                            ></div>
+                                            <p class="text-[9px] font-medium text-gray-500">{{ $colorLabel }}</p>
+                                            <p class="text-[9px] font-mono text-gray-400">{{ $colorVal }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Typography + tokens --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Typography</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium">{{ $aiGeneratedTheme['font_heading'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Heading · weight {{ $aiGeneratedTheme['heading_weight'] ?? '—' }}</p>
+                                    <p class="text-xs text-gray-700 dark:text-gray-300 font-medium mt-1">{{ $aiGeneratedTheme['font_body'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-400">Body</p>
+                                </div>
+                                <div class="rounded-lg border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-1.5">Tokens</p>
+                                    <p class="text-[10px] text-gray-500 mb-0.5">Radius</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['border_radius'] ?? '—' }}</p>
+                                    <p class="text-[10px] text-gray-500 mt-1.5 mb-0.5">Button hover</p>
+                                    <p class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ $aiGeneratedTheme['button_hover'] ?? '—' }}</p>
+                                </div>
+                            </div>
+
+                            {{-- Action buttons --}}
+                            <div class="flex gap-2 pt-1">
+                                <button
+                                    type="button"
+                                    wire:click="acceptAiTheme"
+                                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 py-2.5 text-xs font-semibold text-white transition-colors"
+                                >
+                                    <x-heroicon-o-check class="h-3.5 w-3.5" />
+                                    Accept & Apply
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="regenerateAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 dark:border-white/10 px-3 py-2.5 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                                    title="Edit prompt and regenerate"
+                                >
+                                    <x-heroicon-o-arrow-path class="h-3.5 w-3.5" />
+                                    Regenerate
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="discardAiTheme"
+                                    class="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 dark:border-red-800 px-3 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                    title="Discard and close"
+                                >
+                                    <x-heroicon-o-trash class="h-3.5 w-3.5" />
+                                    Discard
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{--
         Alpine.js data component for the drag-and-drop canvas.
@@ -765,28 +1321,46 @@
         function studioCanvas(wire) {
             return {
                 sortable: null,
+                sortableReadyListener: null,
 
                 init() {
                     const el = document.getElementById('studio-canvas');
                     if (!el) return;
 
-                    // If SortableJS is available (loaded via a CDN or package), initialise it.
-                    if (typeof Sortable !== 'undefined') {
-                        this.sortable = Sortable.create(el, {
-                            animation: 150,
-                            handle: '.drag-handle',
-                            ghostClass: 'sortable-ghost',
-                            chosenClass: 'sortable-chosen',
-                            onEnd: (evt) => {
-                                const ids = Array.from(el.querySelectorAll('[data-id]'))
-                                    .map(el => el.dataset.id);
-                                wire.reorderWidgets(ids);
-                            },
-                        });
+                    this.sortableReadyListener = () => this.initialiseSortable(el, wire);
+                    this.initialiseSortable(el, wire);
+
+                    if (! this.sortable) {
+                        window.addEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener, { once: true });
                     }
                 },
 
+                initialiseSortable(el, wire) {
+                    const SortableLibrary = window.Sortable;
+
+                    if (! SortableLibrary || this.sortable) {
+                        return;
+                    }
+
+                    this.sortable = new SortableLibrary(el, {
+                        animation: 150,
+                        handle: '.drag-handle',
+                        ghostClass: 'sortable-ghost',
+                        chosenClass: 'sortable-chosen',
+                        onEnd: () => {
+                            const ids = Array.from(el.querySelectorAll('[data-id]'))
+                                .map(item => item.dataset.id);
+                            wire.reorderWidgets(ids);
+                        },
+                    });
+                },
+
                 destroy() {
+                    if (this.sortableReadyListener) {
+                        window.removeEventListener('titan-ui-studio:sortable-ready', this.sortableReadyListener);
+                        this.sortableReadyListener = null;
+                    }
+
                     if (this.sortable) {
                         this.sortable.destroy();
                         this.sortable = null;
@@ -794,5 +1368,184 @@
                 },
             };
         }
+    </script>
+
+    <script>
+        (() => {
+            const iframe = document.getElementById('ui-studio-preview-iframe');
+            const payload = document.getElementById('ui-studio-preview-payload');
+            const urlLabel = document.getElementById('ui-preview-current-url');
+            if (!iframe || !payload) {
+                return;
+            }
+
+            let syncScrollEnabled = payload.dataset.syncScroll === '1';
+            let currentIframeUrl = '';
+            let syncing = false;
+            const isSameOriginFrame = () => {
+                try {
+                    return iframe.contentWindow?.location?.origin === window.location.origin;
+                } catch (error) {
+                    return false;
+                }
+            };
+
+            const injectBridge = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const doc = iframe.contentDocument;
+                    if (!doc || doc.documentElement.dataset.titanPreviewBridgeInjected === '1') {
+                        return;
+                    }
+
+                    doc.documentElement.dataset.titanPreviewBridgeInjected = '1';
+                    const script = doc.createElement('script');
+                    script.id = 'titan-preview-bridge';
+                    script.textContent = `
+                        (function () {
+                            if (window.__titanPreviewBridgeInstalled) return;
+                            window.__titanPreviewBridgeInstalled = true;
+                            window.addEventListener('message', function (event) {
+                                if (event.origin !== window.location.origin) return;
+                                var data = event.data || {};
+                                if (data.type !== 'titan-ui-theme-vars' || !data.payload) return;
+                                var root = document.documentElement;
+                                Object.keys(data.payload.vars || {}).forEach(function (key) {
+                                    root.style.setProperty(key, String(data.payload.vars[key]));
+                                });
+                                root.dataset.titanPreviewMode = data.payload.mode || 'desktop';
+                                document.body.classList.toggle('titan-preview-sidebar-collapsed', data.payload.mode === 'collapsed');
+                                document.body.classList.toggle('titan-preview-customer-portal', data.payload.mode === 'customer');
+
+                                var style = document.getElementById('titan-responsive-preview-style');
+                                if (!style) {
+                                    style = document.createElement('style');
+                                    style.id = 'titan-responsive-preview-style';
+                                    document.head.appendChild(style);
+                                }
+                                style.textContent = '\nhtml,body{max-width:100%;overflow-x:hidden;}\n.fi-sidebar{width:var(--sidebar-width,280px)!important;}\n.fi-section,.fi-card{padding:var(--card-padding,1rem)!important;}\n.fi-main,.fi-page{gap:var(--content-gap,1rem)!important;}\nh1,.fi-header-heading{font-size:var(--heading-xl-size,2rem)!important;}\nh2,.fi-section-header-heading{font-size:var(--heading-lg-size,1.5rem)!important;}\nbody{font-size:var(--body-font-size,16px)!important;}\ntable th,table td{padding-left:var(--table-cell-padding-x,.75rem)!important;padding-right:var(--table-cell-padding-x,.75rem)!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar{width:64px!important;}\n.titan-preview-sidebar-collapsed .fi-sidebar span:not(.fi-badge){display:none!important;}\n@media(max-width:640px){.fi-ta-table{min-width:0!important;width:100%!important}.fi-ta-table th:nth-child(1),.fi-ta-table td:nth-child(1),.fi-ta-table th:nth-child(4),.fi-ta-table td:nth-child(4){display:none!important}}';
+                            });
+                        })();
+                    `;
+                    doc.head.appendChild(script);
+                } catch (error) {
+                    // Ignore cross-origin or transient iframe access issues.
+                }
+            };
+
+            const postTheme = () => {
+                try {
+                    const vars = JSON.parse(payload.dataset.previewCss ?? '{}');
+                    iframe.contentWindow?.postMessage(
+                        {
+                            type: 'titan-ui-theme-vars',
+                            payload: {
+                                vars,
+                                mode: payload.dataset.previewFrame ?? 'desktop',
+                                width: payload.dataset.previewWidth ?? '1440',
+                            },
+                        },
+                        window.location.origin
+                    );
+                } catch (error) {
+                    // Ignore malformed payload data.
+                }
+            };
+
+            const syncPreviewScroll = (sourceEl) => {
+                if (!syncScrollEnabled || syncing) {
+                    return;
+                }
+
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const iframeWindow = iframe.contentWindow;
+                    const iframeDoc = iframe.contentDocument;
+                    if (!iframeWindow || !iframeDoc) {
+                        return;
+                    }
+
+                    const sourceMax = sourceEl.scrollHeight - sourceEl.clientHeight;
+                    const targetMax = iframeDoc.documentElement.scrollHeight - iframeWindow.innerHeight;
+                    const ratio = sourceMax > 0 ? sourceEl.scrollTop / sourceMax : 0;
+
+                    syncing = true;
+                    iframeWindow.scrollTo({ top: ratio * Math.max(targetMax, 0), behavior: 'auto' });
+                    window.setTimeout(() => {
+                        syncing = false;
+                    }, 32);
+                } catch (error) {
+                    syncing = false;
+                }
+            };
+
+            const refreshUrlLabel = () => {
+                if (!isSameOriginFrame()) {
+                    return;
+                }
+
+                try {
+                    const iframeUrl = iframe.contentWindow?.location?.href;
+                    if (!iframeUrl || iframeUrl === currentIframeUrl) {
+                        return;
+                    }
+
+                    currentIframeUrl = iframeUrl;
+                    if (urlLabel) {
+                        urlLabel.textContent = iframeUrl;
+                    }
+                } catch (error) {
+                    // Ignore inaccessible iframe URLs.
+                }
+            };
+
+            const applyState = () => {
+                const nextUrl = payload.dataset.previewUrl ?? '';
+                const nextFrame = payload.dataset.previewFrame ?? 'desktop';
+                const nextWidth = payload.dataset.previewWidth ?? '1440';
+                syncScrollEnabled = payload.dataset.syncScroll === '1';
+
+                const shell = iframe.closest('.ui-preview-shell');
+                if (shell) {
+                    shell.dataset.frame = nextFrame;
+                    shell.style.setProperty('--ui-preview-width', `${nextWidth}px`);
+                }
+
+                if (nextUrl && iframe.src !== nextUrl) {
+                    iframe.src = nextUrl;
+                    currentIframeUrl = '';
+                }
+
+                injectBridge();
+                postTheme();
+                refreshUrlLabel();
+            };
+
+            const controls = document.querySelectorAll('.ui-studio-catalogue-panel, .ui-studio-editor-panel');
+            controls.forEach((control) => {
+                control.addEventListener('scroll', () => syncPreviewScroll(control));
+            });
+
+            iframe.addEventListener('load', () => {
+                injectBridge();
+                postTheme();
+                refreshUrlLabel();
+            });
+
+            const observer = new MutationObserver(applyState);
+            observer.observe(payload, {
+                attributes: true,
+                attributeFilter: ['data-preview-url', 'data-preview-frame', 'data-preview-width', 'data-sync-scroll', 'data-preview-css'],
+            });
+
+            applyState();
+            window.setInterval(refreshUrlLabel, 400);
+        })();
     </script>
 </x-filament-panels::page>

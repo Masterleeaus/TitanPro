@@ -1,0 +1,7 @@
+1) Upload + unzip TitanCommand folder into your extensions directory (same as prior passes).
+2) Run migrations:
+   cd /home/saassmar/domains/<your-domain>/public_html && php artisan migrate
+3) Test:
+   /dashboard/user/command/jobs/dispatch
+   POST /dashboard/user/command/jobs/{id}/assign
+   POST /dashboard/user/command/jobs/{id}/schedule

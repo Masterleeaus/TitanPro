@@ -11,7 +11,23 @@ class RouteServiceProvider extends ServiceProvider
 
     public function map(): void
     {
+        $this->mapApiRoutes();
         $this->mapWebRoutes();
+    }
+
+    protected function mapApiRoutes(): void
+    {
+        $apiPath = __DIR__ . '/../Routes/api.php';
+
+        if (! file_exists($apiPath)) {
+            return;
+        }
+
+        Route::middleware('api')
+            ->prefix('api/v1/instant-ads')
+            ->name('instant-ads.api.')
+            ->namespace($this->moduleNamespace)
+            ->group($apiPath);
     }
 
     protected function mapWebRoutes(): void

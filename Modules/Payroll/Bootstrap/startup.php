@@ -1,0 +1,3 @@
+<?php
+
+// Payroll startup hooks.

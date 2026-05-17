@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Pipelines;
+namespace Modules\TitanEchoAssist\Automation\Pipelines;
 
 class InboundMessagePipeline
 {

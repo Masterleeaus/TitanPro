@@ -1,0 +1,34 @@
+PASS 1 (Jobs Manager App Import Wiring) - Files created/edited
+
+Edited:
+- System/Titan CommandAgentServiceProvider.php
+
+Created:
+- System/Http/Controllers/Jobs/JobsDashboardController.php
+- System/Http/Controllers/Jobs/JobsWorkordersController.php
+- System/Http/Controllers/Jobs/JobsRequestsController.php
+- System/Http/Controllers/Jobs/JobsTasksController.php
+- System/Http/Controllers/Jobs/JobsPartsController.php
+- System/Http/Controllers/Jobs/JobsAssetsController.php
+- System/Http/Controllers/Jobs/JobsPermitsController.php
+- System/Http/Controllers/Jobs/JobsInspectionsController.php
+- System/Http/Controllers/Jobs/JobsChecklistsController.php
+- System/Http/Controllers/Jobs/JobsReportsController.php
+- System/Http/Controllers/Jobs/JobsSettingsController.php
+
+- resources/views/jobs/_sidebar.blade.php
+- resources/views/jobs/dashboard.blade.php
+- resources/views/jobs/workorders.blade.php
+- resources/views/jobs/requests.blade.php
+- resources/views/jobs/tasks.blade.php
+- resources/views/jobs/parts.blade.php
+- resources/views/jobs/assets.blade.php
+- resources/views/jobs/permits.blade.php
+- resources/views/jobs/inspections.blade.php
+- resources/views/jobs/checklists.blade.php
+- resources/views/jobs/reports.blade.php
+- resources/views/jobs/settings.blade.php
+
+Notes:
+- JobManager source remains staged in Imports/JobManager_zip_extraction/JobManager (original)
+- A refactored copy exists in System/JobManager for future activation; it is NOT registered yet in Pass 1.

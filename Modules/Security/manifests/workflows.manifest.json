@@ -1,0 +1,4 @@
+{
+  "source": "Config/workflows.php",
+  "workflows": ["goods_in_out", "work_permit", "access_card"]
+}

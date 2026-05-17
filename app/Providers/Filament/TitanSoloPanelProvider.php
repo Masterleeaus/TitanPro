@@ -42,8 +42,12 @@ class TitanSoloPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
-                    'LaraZeus\\DynamicDashboard\\DynamicDashboardPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Shreejan\DashArrange\DashArrangePlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanSolo/Resources'), for: 'App\\Filament\\TitanSolo\\Resources')
@@ -70,6 +74,7 @@ class TitanSoloPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

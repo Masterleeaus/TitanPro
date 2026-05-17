@@ -1,0 +1,17 @@
+dashboard_support/customer/CUSTOMER_SUPPORT_INVENTORY.txt
+dashboard_support/customer/README.txt
+dashboard_support/customer/TITANTALK_README.md
+dashboard_support/customer/cards/brandboard-customer-brandboard-account-summary.blade.php
+dashboard_support/customer/cards/brandboard-customer-brandboard-affiliates.blade.php
+dashboard_support/customer/cards/brandboard-customer-brandboard-favorite-chatbots.blade.php
+dashboard_support/customer/cards/brandboard-customer-brandboard-hub.blade.php
+dashboard_support/customer/cards/customer-campaign-creative.blade.php
+dashboard_support/customer/cards/customer-messaging-overview.blade.php
+dashboard_support/customer/cards/customer-pipeline-leads.blade.php
+dashboard_support/customer/cards/customer-quick-actions.blade.php
+dashboard_support/customer/cards/customer-recent-conversations.blade.php
+dashboard_support/customer/cards/customer-titantalk-campaign-focus.blade.php
+dashboard_support/customer/cards/customer-titantalk-messaging-overview.blade.php
+dashboard_support/customer/cards/customer-titantalk-quick-actions.blade.php
+dashboard_support/customer/cards/customer-titantalk-recent-conversations.blade.php
+dashboard_support/customer/cards/customer-wizard-shell.blade.php

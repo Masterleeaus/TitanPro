@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
+use App\Filament\TitanQuotes\Pages\QuotePipelineDashboard;
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
@@ -11,7 +13,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -29,7 +30,7 @@ class TitanQuotesPanelProvider extends PanelProvider
         return $panel
             ->id('titanquotes')
             ->path('titanquotes')
-            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanQuotes — Estimating'))
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanQuotes'))
             ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
             ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
             ->colors(fn (): array => [
@@ -38,13 +39,19 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/TitanQuotes/Resources'), for: 'App\\Filament\\TitanQuotes\\Resources')
             ->discoverPages(in: app_path('Filament/TitanQuotes/Pages'), for: 'App\\Filament\\TitanQuotes\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                UiStudio::class,
+                QuotePipelineDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanQuotes/Widgets'), for: 'App\\Filament\\TitanQuotes\\Widgets')
             ->widgets([
@@ -64,6 +71,7 @@ class TitanQuotesPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

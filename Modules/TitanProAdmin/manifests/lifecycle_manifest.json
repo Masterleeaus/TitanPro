@@ -1,0 +1,10 @@
+{
+  "schema": "titan.lifecycle.manifest.v1",
+  "module": "TitanProAdmin",
+  "boot": [
+    "Modules\\TitanProAdmin\\Providers\\TitanProAdminServiceProvider"
+  ],
+  "health_checks": [
+    "Modules\\TitanProAdmin\\Services\\PlatformHealthService"
+  ]
+}

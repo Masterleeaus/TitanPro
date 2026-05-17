@@ -4,6 +4,7 @@ namespace Modules\Complaint\Entities;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Traits\HasCompany;
 use App\Scopes\ActiveScope;
 use Modules\Complaint\Entities\Complaint;
 use Modules\Complaint\Entities\ComplaintFile;
@@ -54,6 +55,7 @@ class ComplaintReply extends BaseModel
 {
 
     use SoftDeletes;
+    use HasCompany;
 
     protected $dates = ['deleted_at'];
 

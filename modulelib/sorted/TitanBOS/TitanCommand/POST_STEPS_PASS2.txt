@@ -1,0 +1,15 @@
+POST STEPS — Pass 2
+
+1) Upload + unzip TitanCommand into your extension directory.
+2) Run migrations:
+   cd /home/saassmar/domains/buildsm.art/public_html && php artisan migrate
+   (Use your actual domain path if different.)
+
+3) Test (must be logged in):
+   GET  /dashboard/user/command/jobs
+   POST /dashboard/user/command/jobs   (title required)
+   GET  /dashboard/user/command/jobs/{id}
+   POST /dashboard/user/command/jobs/{id}/events   (event_type required)
+   GET  /dashboard/user/command/jobs/{id}/tasks
+   POST /dashboard/user/command/jobs/{id}/tasks    (title required)
+   GET  /dashboard/user/command/jobs/{id}/checklists

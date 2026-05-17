@@ -1,33 +1,37 @@
 <?php
 
-namespace Modules\TitanChatbot\Providers;
+namespace Modules\TitanEchoAssist\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Modules\TitanChatbot\AI\Agents\BookingAgent;
-use Modules\TitanChatbot\AI\Agents\ConversationAgent;
-use Modules\TitanChatbot\AI\Agents\SupportAgent;
-use Modules\TitanChatbot\AI\Agents\VoiceAgent;
-use Modules\TitanChatbot\AI\Memory\ConversationMemoryStore;
-use Modules\TitanChatbot\Billing\Meters\ConversationMeter;
-use Modules\TitanChatbot\Billing\Meters\EmbeddingMeter;
-use Modules\TitanChatbot\Billing\Meters\VoiceSecondsMeter;
-use Modules\TitanChatbot\Services\ChannelRouter;
-use Modules\TitanChatbot\Services\ChatbotAnalyticsService;
-use Modules\TitanChatbot\Services\ConversationRouter;
-use Modules\TitanChatbot\Services\ConversationSessionManager;
-use Modules\TitanChatbot\Services\ConversationStateStore;
-use Modules\TitanChatbot\Services\GeneratorBridge;
-use Modules\TitanChatbot\Services\MessengerChannel;
-use Modules\TitanChatbot\Services\TelegramChannel;
-use Modules\TitanChatbot\Services\Contracts\TitanChatbotServiceContract;
-use Modules\TitanChatbot\Services\ModuleAgentBindingService;
-use Modules\TitanChatbot\Services\ModuleAgentControlService;
-use Modules\TitanChatbot\Services\TitanChatbotService;
-use Modules\TitanChatbot\Services\TrainingPipeline;
-use Modules\TitanChatbot\Services\VoiceChannel;
-use Modules\TitanChatbot\Services\WebchatChannel;
-use Modules\TitanChatbot\Services\WhatsappChannel;
-use Modules\TitanChatbot\Billing\Usage\UsageTracker;
+use Modules\TitanEchoAssist\AI\Agents\BookingAgent;
+use Modules\TitanEchoAssist\AI\Agents\ConversationAgent;
+use Modules\TitanEchoAssist\AI\Agents\SupportAgent;
+use Modules\TitanEchoAssist\AI\Agents\VoiceAgent;
+use Modules\TitanEchoAssist\AI\Memory\ConversationMemoryStore;
+use Modules\TitanEchoAssist\Billing\Meters\ConversationMeter;
+use Modules\TitanEchoAssist\Billing\Meters\EmbeddingMeter;
+use Modules\TitanEchoAssist\Billing\Meters\VoiceSecondsMeter;
+use Modules\TitanEchoAssist\Services\ChannelRouter;
+use Modules\TitanEchoAssist\Services\ChatbotAnalyticsService;
+use Modules\TitanEchoAssist\Services\ConversationRouter;
+use Modules\TitanEchoAssist\Services\ConversationSessionManager;
+use Modules\TitanEchoAssist\Services\ConversationStateStore;
+use Modules\TitanEchoAssist\Services\Embedders\Contracts\EmbedderInterface;
+use Modules\TitanEchoAssist\Services\Embedders\OpenAIEmbedder;
+use Modules\TitanEchoAssist\Services\GeneratorBridge;
+use Modules\TitanEchoAssist\Services\KnowledgeRetriever;
+use Modules\TitanEchoAssist\Services\MessengerChannel;
+use Modules\TitanEchoAssist\Services\ChatbotPortalAutomationService;
+use Modules\TitanEchoAssist\Services\TelegramChannel;
+use Modules\TitanEchoAssist\Services\Contracts\TitanChatbotServiceContract;
+use Modules\TitanEchoAssist\Services\ModuleAgentBindingService;
+use Modules\TitanEchoAssist\Services\ModuleAgentControlService;
+use Modules\TitanEchoAssist\Services\TitanChatbotService;
+use Modules\TitanEchoAssist\Services\TrainingPipeline;
+use Modules\TitanEchoAssist\Services\VoiceChannel;
+use Modules\TitanEchoAssist\Services\WebchatChannel;
+use Modules\TitanEchoAssist\Services\WhatsappChannel;
+use Modules\TitanEchoAssist\Billing\Usage\UsageTracker;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -52,6 +56,8 @@ class ModuleServiceProvider extends ServiceProvider
             'tenancy'      => 'titan-chatbot.tenancy',
         ]);
 
+        $this->app->register(EventServiceProvider::class);
+
         // Core services
         $this->app->singleton(ConversationRouter::class);
         $this->app->singleton(ConversationSessionManager::class);
@@ -61,9 +67,12 @@ class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(ConversationMemoryStore::class);
         $this->app->singleton(ChatbotAnalyticsService::class);
         $this->app->singleton(TrainingPipeline::class);
+        $this->app->singleton(KnowledgeRetriever::class);
+        $this->app->singleton(ChatbotPortalAutomationService::class);
         $this->app->singleton(TitanChatbotService::class);
         $this->app->singleton(ModuleAgentBindingService::class);
         $this->app->singleton(ModuleAgentControlService::class);
+        $this->app->singleton(EmbedderInterface::class, OpenAIEmbedder::class);
         $this->app->bind(TitanChatbotServiceContract::class, TitanChatbotService::class);
 
         // AI agents
@@ -88,7 +97,7 @@ class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        foreach (['api', 'web', 'admin', 'tenant', 'channels'] as $routeFile) {
+        foreach (['api', 'web', 'admin', 'tenant', 'channels', 'console'] as $routeFile) {
             $path = __DIR__ . "/../Routes/{$routeFile}.php";
             if (is_file($path)) {
                 $this->loadRoutesFrom($path);
@@ -109,10 +118,12 @@ class ModuleServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Modules\TitanChatbot\Console\Commands\AuditTitanChatbotCommand::class,
-                \Modules\TitanChatbot\Console\Commands\MakeAgentCommand::class,
-                \Modules\TitanChatbot\Console\Commands\MakeToolCommand::class,
-                \Modules\TitanChatbot\Console\Commands\ClearMemoryCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\AuditTitanChatbotCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\MakeAgentCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\MakeToolCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\ClearMemoryCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\CheckOverdueInvoicesCommand::class,
+                \Modules\TitanEchoAssist\Console\Commands\SendVisitRemindersCommand::class,
             ]);
         }
     }

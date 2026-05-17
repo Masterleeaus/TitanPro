@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Automation\Schedulers;
+namespace Modules\TitanEchoAssist\Automation\Schedulers;
 
 class ConversationScheduler
 {

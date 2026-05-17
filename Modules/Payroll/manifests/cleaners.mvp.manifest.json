@@ -1,0 +1,14 @@
+{
+  "module": "Payroll",
+  "profile": "cleaners-first-mvp",
+  "features": [
+    "cleaner_shift_loadings",
+    "travel_site_equipment_allowances",
+    "contractor_payout_preview",
+    "payslip_delivery",
+    "employee_self_service_payslips",
+    "bank_detail_update_request",
+    "cleaner_payroll_dashboard"
+  ],
+  "launch_ready_after": "stabilization-and-app-integration"
+}

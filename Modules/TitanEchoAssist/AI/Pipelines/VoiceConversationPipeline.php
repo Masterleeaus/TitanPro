@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\TitanChatbot\AI\Pipelines;
+namespace Modules\TitanEchoAssist\AI\Pipelines;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Modules\TitanChatbot\AI\Agents\VoiceAgent;
-use Modules\TitanChatbot\Events\VoiceSessionDurationRecorded;
+use Modules\TitanEchoAssist\AI\Agents\VoiceAgent;
+use Modules\TitanEchoAssist\Events\VoiceSessionDurationRecorded;
 
 class VoiceConversationPipeline
 {

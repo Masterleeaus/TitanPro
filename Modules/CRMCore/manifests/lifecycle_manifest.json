@@ -1,0 +1,35 @@
+{
+  "schema": "titan.lifecycle.manifest.v1",
+  "module": "CRMCore",
+  "entities": [
+    {
+      "entity": "Lead",
+      "stages": [
+        {"key": "new",        "label": "New",        "position": 1, "is_entry": true,  "is_exit": false, "entry_trigger": null,              "exit_trigger": "crmcore.lead.qualified"},
+        {"key": "contacted",  "label": "Contacted",  "position": 2, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.lead.contacted",  "exit_trigger": "crmcore.lead.qualified"},
+        {"key": "qualified",  "label": "Qualified",  "position": 3, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.lead.qualified",  "exit_trigger": "crmcore.lead.converted"},
+        {"key": "converted",  "label": "Converted",  "position": 4, "is_entry": false, "is_exit": true,  "entry_trigger": "crmcore.lead.converted",  "exit_trigger": null},
+        {"key": "rejected",   "label": "Rejected",   "position": 5, "is_entry": false, "is_exit": true,  "entry_trigger": "crmcore.lead.rejected",   "exit_trigger": null}
+      ]
+    },
+    {
+      "entity": "Deal",
+      "stages": [
+        {"key": "new",        "label": "New",         "position": 1, "is_entry": true,  "is_exit": false, "entry_trigger": null,              "exit_trigger": "crmcore.deal.progressed"},
+        {"key": "proposal",   "label": "Proposal",    "position": 2, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.deal.proposal_sent", "exit_trigger": "crmcore.deal.progressed"},
+        {"key": "negotiation","label": "Negotiation", "position": 3, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.deal.in_negotiation", "exit_trigger": "crmcore.deal.closed"},
+        {"key": "won",        "label": "Won",         "position": 4, "is_entry": false, "is_exit": true,  "entry_trigger": "crmcore.deal.won",       "exit_trigger": null},
+        {"key": "lost",       "label": "Lost",        "position": 5, "is_entry": false, "is_exit": true,  "entry_trigger": "crmcore.deal.lost",      "exit_trigger": null}
+      ]
+    },
+    {
+      "entity": "Contact",
+      "stages": [
+        {"key": "prospect",   "label": "Prospect",   "position": 1, "is_entry": true,  "is_exit": false, "entry_trigger": "crmcore.contact.created",   "exit_trigger": null},
+        {"key": "active",     "label": "Active",     "position": 2, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.contact.activated",  "exit_trigger": null},
+        {"key": "customer",   "label": "Customer",   "position": 3, "is_entry": false, "is_exit": false, "entry_trigger": "crmcore.contact.converted",  "exit_trigger": null},
+        {"key": "inactive",   "label": "Inactive",   "position": 4, "is_entry": false, "is_exit": true,  "entry_trigger": "crmcore.contact.deactivated","exit_trigger": null}
+      ]
+    }
+  ]
+}

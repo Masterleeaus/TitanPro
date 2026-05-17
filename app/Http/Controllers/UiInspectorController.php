@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 /**
  * Handles persistence of Visual UI Inspector component overrides.
  *
- * Routes (all require auth):
+ * Routes (all require auth + ui-inspector.manage permission):
  *   GET  /titan/ui-inspector/overrides          → index
  *   POST /titan/ui-inspector/overrides          → upsert
  *   DELETE /titan/ui-inspector/overrides/{key}  → reset one component
@@ -18,6 +18,13 @@ use Illuminate\Support\Facades\Validator;
  */
 class UiInspectorController extends Controller
 {
+    public function __construct()
+    {
+        // Defence-in-depth: enforce the permission at the controller level even
+        // if the route middleware is misconfigured or bypassed.
+        $this->middleware('can:ui-inspector.manage');
+    }
+
     /** Return all overrides for the current user's organisation. */
     public function index(Request $request): JsonResponse
     {

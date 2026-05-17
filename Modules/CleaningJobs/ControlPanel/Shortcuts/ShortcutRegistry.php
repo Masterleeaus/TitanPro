@@ -2,40 +2,42 @@
 
 namespace Modules\CleaningJobs\ControlPanel\Shortcuts;
 
-/**
- * ShortcutRegistry defines quick actions available from the TitanWork control panel.
- *
- * Each shortcut corresponds to an action that can be triggered via the AI layer
- * or a simple button on the UI. Linking these to handlers allows the
- * operator to quickly perform common tasks without navigating multiple pages.
- */
+use Modules\CleaningJobs\Actions\AI\EscalateVisitRiskAction;
+use Modules\CleaningJobs\Actions\AI\GenerateChecklistFromKnowledgeAction;
+use Modules\CleaningJobs\Actions\Booking\CreateBookingFromAgentAction;
+use Modules\CleaningJobs\Actions\Booking\EstimateCleaningJobAction;
+use Modules\CleaningJobs\Actions\Booking\LookupAvailabilityAction;
+
 class ShortcutRegistry
 {
-    /**
-     * Return an array of registered shortcuts.
-     *
-     * Each shortcut should include a unique key, a human friendly label and
-     * the fully qualified action class that implements the shortcut logic.
-     */
     public static function getShortcuts(): array
     {
         return [
             [
-                'key' => 'create_job',
-                'label' => 'Create Job',
-                'action' => \Modules\CleaningJobs\Actions\CreateJob::class,
+                'key' => 'create_booking',
+                'label' => 'Create Booking',
+                'action' => CreateBookingFromAgentAction::class,
             ],
             [
-                'key' => 'create_request',
-                'label' => 'Create Request',
-                'action' => \Modules\CleaningJobs\Actions\CreateRequest::class,
+                'key' => 'lookup_availability',
+                'label' => 'Lookup Availability',
+                'action' => LookupAvailabilityAction::class,
+            ],
+            [
+                'key' => 'estimate_job',
+                'label' => 'Estimate Job',
+                'action' => EstimateCleaningJobAction::class,
             ],
             [
                 'key' => 'generate_checklist',
                 'label' => 'Generate Checklist',
-                'action' => \Modules\CleaningJobs\Actions\GenerateChecklist::class,
+                'action' => GenerateChecklistFromKnowledgeAction::class,
             ],
-            // TODO: add more shortcuts as needed
+            [
+                'key' => 'escalate_visit_risk',
+                'label' => 'Escalate Visit Risk',
+                'action' => EscalateVisitRiskAction::class,
+            ],
         ];
     }
 }

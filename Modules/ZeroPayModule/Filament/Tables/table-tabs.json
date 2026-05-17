@@ -1,0 +1,38 @@
+{
+  "module": "zeropay-module",
+  "card": "ModuleTablesCard",
+  "tabs": [
+    {
+      "key": "records",
+      "label": "Records",
+      "resource": "ZeroPaySessionResource",
+      "permission": "zeropay.view",
+      "default": true
+    },
+    {
+      "key": "imports",
+      "label": "Imports",
+      "source": "imports",
+      "permission": "zeropay.import"
+    },
+    {
+      "key": "agent_logs",
+      "label": "Agent Logs",
+      "source": "agent_control_logs",
+      "permission": "zeropay.agent.use"
+    },
+    {
+      "key": "knowledge",
+      "label": "Knowledge",
+      "source": "knowledge_sources",
+      "permission": "zeropay.knowledge.manage"
+    }
+  ],
+  "actions": [
+    "create",
+    "import",
+    "export",
+    "bulk_action",
+    "ask_agent_about_selection"
+  ]
+}

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CmsPageResource\Pages;
 use App\Models\CmsPage;
+use App\Support\Cms\TomatoBlogBridge;
 use Filament\Forms;
 use Filament\Forms\Components\Builder;
 use Filament\Resources\Resource;
@@ -54,6 +55,22 @@ class CmsPageResource extends Resource
                         ->label('Template view')
                         ->helperText('Optional Blade view path, e.g. esoft.index or esoft.pages.pricing.')
                         ->columnSpanFull(),
+                ]),
+
+
+            Forms\Components\Section::make('Blog publishing')
+                ->description('Tomato CMS is integrated as the blog engine for the public /blog section while this custom CMS continues to manage site pages.')
+                ->columns(['sm' => 1, 'lg' => 3])
+                ->schema([
+                    Forms\Components\Placeholder::make('blog_engine_status')
+                        ->label('Engine status')
+                        ->content(fn (): string => TomatoBlogBridge::isAvailable() ? 'Tomato CMS blog tables detected' : 'Tomato CMS tables pending migration'),
+                    Forms\Components\Placeholder::make('blog_admin_link')
+                        ->label('Manage blog posts')
+                        ->content(fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString('<a class="text-primary-600 font-semibold" href="'.e(TomatoBlogBridge::adminUrl('admin')).'">Open Blog Posts</a>')),
+                    Forms\Components\Placeholder::make('blog_public_link')
+                        ->label('Public blog')
+                        ->content(fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString('<a class="text-primary-600 font-semibold" target="_blank" href="'.e(TomatoBlogBridge::publicUrl()).'">Preview /blog</a>')),
                 ]),
 
             Forms\Components\Section::make('Existing Site CMS Builder')
@@ -162,6 +179,10 @@ class CmsPageResource extends Resource
             ])
             ->recordActions([
                 Actions\EditAction::make(),
+                Actions\Action::make('blog_posts')
+                    ->label('Blog Posts')
+                    ->url(fn (): string => TomatoBlogBridge::adminUrl('admin'))
+                    ->icon('heroicon-o-newspaper'),
                 Actions\Action::make('view')
                     ->label('View')
                     ->url(fn (CmsPage $record): string => $record->slug === 'home' ? url('/') : url('/pages/'.$record->slug), true)

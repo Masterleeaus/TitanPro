@@ -1,0 +1,81 @@
+name: 💀 Stale Agent-Failed Issue Reaper
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # every 6 hours
+  workflow_dispatch:
+    inputs:
+      max_age_days:
+        description: 'Reset agent-failed issues older than N days (default 7)'
+        required: false
+        default: '7'
+        type: string
+
+permissions:
+  issues: write
+
+concurrency:
+  group: stale-agent-reaper
+  cancel-in-progress: false
+
+jobs:
+  reap:
+    name: Reset stale agent-failed issues
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Find stale agent-failed issues
+        id: find
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAX_DAYS: ${{ github.event.inputs.max_age_days || '7' }}
+        run: |
+          # Calculate cutoff date
+          CUTOFF=$(date -u -d "${MAX_DAYS} days ago" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null \
+                   || date -u -v-${MAX_DAYS}d +%Y-%m-%dT%H:%M:%SZ)
+
+          echo "Looking for agent-failed issues updated before $CUTOFF"
+
+          gh issue list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --label "agent-failed" \
+            --limit 100 \
+            --json number,title,updatedAt \
+            --jq "[.[] | select(.updatedAt < \"${CUTOFF}\")] | .[].number" \
+            > /tmp/stale.txt || true
+
+          COUNT=$(grep -c . /tmp/stale.txt 2>/dev/null || echo 0)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Found $COUNT stale agent-failed issue(s)."
+          cat /tmp/stale.txt
+
+      - name: Skip if none
+        if: steps.find.outputs.count == '0'
+        run: echo "No stale agent-failed issues to reset."
+
+      - name: Reset each stale issue
+        if: steps.find.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO:     ${{ github.repository }}
+          MAX_DAYS: ${{ github.event.inputs.max_age_days || '7' }}
+        run: |
+          while IFS= read -r ISSUE_NUM; do
+            [ -z "$ISSUE_NUM" ] && continue
+
+            TITLE=$(gh issue view "$ISSUE_NUM" --repo "$REPO" --json title --jq '.title')
+            echo "  Resetting issue #$ISSUE_NUM: $TITLE"
+
+            # Remove agent-failed so the scheduler will pick it up again
+            gh issue edit "$ISSUE_NUM" --repo "$REPO" \
+              --remove-label "agent-failed" 2>/dev/null || true
+
+            gh issue comment "$ISSUE_NUM" --repo "$REPO" \
+              --body "🔄 **Stale agent reset.** This issue had the \`agent-failed\` label for more than ${MAX_DAYS} days and has been reset for automatic reassignment. The Copilot agent scheduler will pick it up in the next run." \
+              2>/dev/null || true
+
+            echo "  ✓ Issue #$ISSUE_NUM reset."
+            sleep 1
+          done < /tmp/stale.txt

@@ -1,0 +1,8 @@
+- /dashboard/user/command/jobs?html=1 renders Jobs list UI
+- /dashboard/user/command/jobs/create?html=1 renders Create Job UI
+- /dashboard/user/command/jobs/dispatch?html=1 renders Dispatch UI
+- /dashboard/user/command/jobs/{id}/timeline?html=1 renders Timeline UI
+- /dashboard/user/command/jobs/{id}/checklists?html=1 renders Checklists UI
+- /dashboard/user/command/jobs/{id}/evidence?html=1 renders Evidence UI
+- /dashboard/user/command/jobs/reports?html=1 renders Reports UI
+- /dashboard/user/command/jobs/settings?html=1 renders Settings UI

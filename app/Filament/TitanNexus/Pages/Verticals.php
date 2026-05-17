@@ -8,11 +8,13 @@ class Verticals extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Verticals';
+    protected static string|\UnitEnum|null $navigationGroup = 'TitanNexus';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationLabel = 'Target Verticals';
 
-    protected static ?string $title = 'Vertical Packs';
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $title = 'Target Verticals';
 
     protected string $view = 'filament.titan-nexus.pages.verticals';
 }

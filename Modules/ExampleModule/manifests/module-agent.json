@@ -1,0 +1,8 @@
+{
+  "user_facing_ai": "Zero",
+  "default_agent": "demo.agent",
+  "agent_manifest": "Agents/DemoAgent/agent.manifest.json",
+  "scaffold_agent_active": true,
+  "production_requires_replacement": true,
+  "routing": "Zero resolves intent, then dispatches to the module agent."
+}

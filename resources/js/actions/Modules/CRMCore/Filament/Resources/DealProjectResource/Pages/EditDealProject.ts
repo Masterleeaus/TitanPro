@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 const EditDealProject = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditDealProject.url(args, options),
@@ -11,13 +11,13 @@ const EditDealProject = (args: { record: string | number } | [record: string | n
 
 EditDealProject.definition = {
     methods: ["get","head"],
-    url: '/admin/deal-projects/{record}/edit',
+    url: '/titanpro/deal-projects/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 EditDealProject.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditDealProject.url = (args: { record: string | number } | [record: string | num
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 EditDealProject.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditDealProject.url(args, options),
@@ -54,7 +54,7 @@ EditDealProject.get = (args: { record: string | number } | [record: string | num
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 EditDealProject.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditDealProject.url(args, options),
@@ -64,7 +64,7 @@ EditDealProject.head = (args: { record: string | number } | [record: string | nu
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 const EditDealProjectForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditDealProject.url(args, options),
@@ -74,7 +74,7 @@ const EditDealProjectForm = (args: { record: string | number } | [record: string
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 EditDealProjectForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditDealProject.url(args, options),
@@ -84,7 +84,7 @@ EditDealProjectForm.get = (args: { record: string | number } | [record: string |
 /**
 * @see \Modules\CRMCore\Filament\Resources\DealProjectResource\Pages\EditDealProject::__invoke
 * @see Modules/CRMCore/Filament/Resources/DealProjectResource/Pages/EditDealProject.php:7
-* @route '/admin/deal-projects/{record}/edit'
+* @route '/titanpro/deal-projects/{record}/edit'
 */
 EditDealProjectForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditDealProject.url(args, {

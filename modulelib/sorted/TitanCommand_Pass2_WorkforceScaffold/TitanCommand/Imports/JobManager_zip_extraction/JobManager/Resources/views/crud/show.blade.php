@@ -1,0 +1,5 @@
+
+namespace Modules\JobManager\Resources\views\crud;
+
+
+<x-app-layout><h2 class='text-xl font-semibold'>CRUD: show</h2><p>{{ \$resource ?? '' }} {% if(isset($id)) %}</p></x-app-layout>

@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 const CreateProperty = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateProperty.url(options),
@@ -11,13 +11,13 @@ const CreateProperty = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 
 CreateProperty.definition = {
     methods: ["get","head"],
-    url: '/admin/properties/create',
+    url: '/titanpro/properties/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 CreateProperty.url = (options?: RouteQueryOptions) => {
     return CreateProperty.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ CreateProperty.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 CreateProperty.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: CreateProperty.url(options),
@@ -36,7 +36,7 @@ CreateProperty.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 CreateProperty.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: CreateProperty.url(options),
@@ -46,7 +46,7 @@ CreateProperty.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 const CreatePropertyForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateProperty.url(options),
@@ -56,7 +56,7 @@ const CreatePropertyForm = (options?: RouteQueryOptions): RouteFormDefinition<'g
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 CreatePropertyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateProperty.url(options),
@@ -66,7 +66,7 @@ CreatePropertyForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\PropertyResource\Pages\CreateProperty::__invoke
 * @see app/Filament/Resources/PropertyResource/Pages/CreateProperty.php:7
-* @route '/admin/properties/create'
+* @route '/titanpro/properties/create'
 */
 CreatePropertyForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: CreateProperty.url({

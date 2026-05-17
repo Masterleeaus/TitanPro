@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Imports;
+namespace Modules\TitanEchoAssist\Imports;
 
 class KnowledgeBaseImport
 {

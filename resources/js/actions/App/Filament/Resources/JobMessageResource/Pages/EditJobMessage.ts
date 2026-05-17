@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 const EditJobMessage = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJobMessage.url(args, options),
@@ -11,13 +11,13 @@ const EditJobMessage = (args: { record: string | number } | [record: string | nu
 
 EditJobMessage.definition = {
     methods: ["get","head"],
-    url: '/admin/job-messages/{record}/edit',
+    url: '/titanpro/job-messages/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 EditJobMessage.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -44,7 +44,7 @@ EditJobMessage.url = (args: { record: string | number } | [record: string | numb
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 EditJobMessage.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: EditJobMessage.url(args, options),
@@ -54,7 +54,7 @@ EditJobMessage.get = (args: { record: string | number } | [record: string | numb
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 EditJobMessage.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: EditJobMessage.url(args, options),
@@ -64,7 +64,7 @@ EditJobMessage.head = (args: { record: string | number } | [record: string | num
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 const EditJobMessageForm = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobMessage.url(args, options),
@@ -74,7 +74,7 @@ const EditJobMessageForm = (args: { record: string | number } | [record: string 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 EditJobMessageForm.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobMessage.url(args, options),
@@ -84,7 +84,7 @@ EditJobMessageForm.get = (args: { record: string | number } | [record: string | 
 /**
 * @see \App\Filament\Resources\JobMessageResource\Pages\EditJobMessage::__invoke
 * @see app/Filament/Resources/JobMessageResource/Pages/EditJobMessage.php:7
-* @route '/admin/job-messages/{record}/edit'
+* @route '/titanpro/job-messages/{record}/edit'
 */
 EditJobMessageForm.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: EditJobMessage.url(args, {

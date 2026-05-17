@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CRMCore\Traits\HasCRMCode;
+use Modules\CRMCore\Traits\UsesScopedByCompany;
 
 class Task extends Model
 {
-    use HasCRMCode, HasFactory, SoftDeletes;
+    use HasCRMCode, HasFactory, SoftDeletes, UsesScopedByCompany;
 
     /**
      * The table associated with the model.
@@ -36,6 +37,7 @@ class Task extends Model
         'assigned_to_user_id',
         'taskable_id',
         'taskable_type',
+        'company_id',
         'estimated_hours',
         'actual_hours',
         'task_order',
@@ -62,6 +64,7 @@ class Task extends Model
         'task_priority_id' => 'integer',
         'assigned_to_user_id' => 'integer',
         'taskable_id' => 'integer',
+        'company_id' => 'integer',
         'estimated_hours' => 'decimal:2',
         'actual_hours' => 'decimal:2',
         'task_order' => 'integer',

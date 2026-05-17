@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\TitanChatbot\Http\Controllers\Webhooks\WhatsappWebhookController;
-use Modules\TitanChatbot\Http\Controllers\Webhooks\TelegramWebhookController;
-use Modules\TitanChatbot\Http\Controllers\Webhooks\MessengerWebhookController;
+use Modules\TitanEchoAssist\Http\Controllers\Webhooks\WhatsappWebhookController;
+use Modules\TitanEchoAssist\Http\Controllers\Webhooks\TelegramWebhookController;
+use Modules\TitanEchoAssist\Http\Controllers\Webhooks\MessengerWebhookController;
 
 /*
 |--------------------------------------------------------------------------

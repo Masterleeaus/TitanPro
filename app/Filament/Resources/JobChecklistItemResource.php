@@ -72,9 +72,15 @@ class JobChecklistItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where(function (Builder $query) {
-            $query->where('organization_id', auth()->user()?->organization_id)
-                ->orWhereHas('job', fn (Builder $jobQuery) => $jobQuery->where('organization_id', auth()->user()?->organization_id));
+        $organizationId = auth()->user()?->organization_id;
+
+        if ($organizationId === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()->where(function (Builder $query) use ($organizationId) {
+            $query->where('organization_id', $organizationId)
+                ->orWhereHas('job', fn (Builder $jobQuery) => $jobQuery->where('organization_id', $organizationId));
         });
     }
 }

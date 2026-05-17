@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
+use App\Filament\Pages\ThemeManager;
 use App\Support\OrganizationBrandingResolver;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -11,7 +12,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -21,7 +21,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * TitanStudio — Creative and content production panel.
+ * TitanStudio — Workflow builder, automation, and CMS studio panel.
  */
 class TitanStudioPanelProvider extends PanelProvider
 {
@@ -32,7 +32,7 @@ class TitanStudioPanelProvider extends PanelProvider
         return $panel
             ->id('titanstudio')
             ->path('titanstudio')
-            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio — Creative Hub'))
+            ->brandName(fn () => app(OrganizationBrandingResolver::class)->panelName('TitanStudio'))
             ->brandLogo(fn () => app(OrganizationBrandingResolver::class)->current()['logo_url'] ?? null)
             ->favicon(fn () => app(OrganizationBrandingResolver::class)->current()['favicon_url'] ?? null)
             ->colors(fn (): array => [
@@ -41,13 +41,31 @@ class TitanStudioPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'Awcodes\Curator\CuratorPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
+                    'Andreia\FilamentUiSwitcher\FilamentUiSwitcherPlugin',
+                    'JeffersonGoncalves\FilamentTopbar\FilamentTopbarPlugin',
+                    'TomatoPHP\FilamentCms\FilamentCMSPlugin',
+                    'TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin',
+                    'TomatoPHP\FilamentIcons\FilamentIconsPlugin',
+                    'TomatoPHP\FilamentTranslationComponent\FilamentTranslationComponentPlugin',
+                    'Devonab\FilamentEasyFooter\EasyFooterPlugin',
                 ]),
+            ])
+            ->resources([
+                \App\Filament\Resources\MessageTemplateResource::class,
+                \App\Filament\Resources\CmsPageResource::class,
+                \App\Filament\Resources\JobTypeChecklistItemResource::class,
+                \App\Filament\Resources\JobChecklistItemResource::class,
             ])
             ->discoverResources(in: app_path('Filament/TitanStudio/Resources'), for: 'App\\Filament\\TitanStudio\\Resources')
             ->discoverPages(in: app_path('Filament/TitanStudio/Pages'), for: 'App\\Filament\\TitanStudio\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                ThemeManager::class,
             ])
             ->discoverWidgets(in: app_path('Filament/TitanStudio/Widgets'), for: 'App\\Filament\\TitanStudio\\Widgets')
             ->widgets([
@@ -67,6 +85,7 @@ class TitanStudioPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }

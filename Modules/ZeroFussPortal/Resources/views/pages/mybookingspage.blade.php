@@ -1,0 +1,1 @@
+@include('zerofussportal::pages.bookinghistorypage')

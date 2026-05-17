@@ -1,0 +1,1 @@
+<?php namespace App\Extensions\TitanPulse\System\Services\Conditions\Operators; class Contains { public function passes(mixed $actual,mixed $expected): bool { return is_string($actual) && str_contains(mb_strtolower($actual), mb_strtolower((string)$expected)); } }

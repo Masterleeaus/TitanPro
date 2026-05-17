@@ -1,3 +1,11 @@
+@php
+    $titanPageUiEnabled = request()->boolean('page_ui_edit') || request()->boolean('ui_inspector');
+@endphp
+
+@if ($titanPageUiEnabled)
+@if (class_exists(\App\Support\PageUiInspectorGate::class) && ! \App\Support\PageUiInspectorGate::enabled())
+    {{-- Page UI Inspector disabled. Use ?page_ui_edit=1 to enable. --}}
+@else
 {{--
     Visual UI Inspector — injected into every Filament panel via a render hook.
 
@@ -12,6 +20,21 @@
 
     Requires: Alpine.js (provided by Filament), csrf meta tag.
 --}}
+
+@if (! empty($motionRuntimeTheme['generated_css']))
+    <style id="titan-motion-runtime-theme-css">{!! $motionRuntimeTheme['generated_css'] !!}</style>
+    <script>
+        (function () {
+            const root = document.documentElement;
+            const fallbackPreset = @js($motionRuntimeTheme['default_preset'] ?? 'none');
+            const configuredPreset = getComputedStyle(root).getPropertyValue('--motion-preset').trim() || fallbackPreset;
+
+            if (configuredPreset) {
+                root.dataset.motionPreset = configuredPreset;
+            }
+        })();
+    </script>
+@endif
 
 {{-- Alpine.js inspector controller --}}
 <div
@@ -86,7 +109,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between px-4 py-3 border-b" style="border-color:rgba(255,255,255,0.08);background:#181825">
             <div>
-                <p class="font-semibold text-sm" style="color:#cba6f7">Inspector</p>
+                <p class="font-semibold text-sm" style="color:#cba6f7">Settings</p>
                 <p class="text-[11px] truncate max-w-[220px]" style="color:#7f849c" x-text="selectedLabel"></p>
             </div>
             <button @click="closeSidebar()" class="rounded p-1 hover:bg-white/10 transition-colors">
@@ -95,6 +118,172 @@
         </div>
 
         <div class="px-4 py-4 space-y-5">
+
+            {{-- Page UI Settings --}}
+            <div class="rounded-xl p-3 space-y-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-semibold uppercase tracking-widest" style="color:#cba6f7">Page UI</p>
+                        <p class="text-[10px]" style="color:#7f849c">Live edit this dashboard · PASS55</p>
+                    </div>
+                    <button
+                        @click="resetPageSettings()"
+                        class="rounded px-2 py-1 text-[10px] font-semibold"
+                        style="background:rgba(255,255,255,0.06);color:#a6adc8;border:1px solid rgba(255,255,255,0.1)"
+                    >Reset page</button>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Layout</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="preset in pageLayoutPresets" :key="preset.value">
+                            <button
+                                @click="applyPageSetting('layout', preset.value)"
+                                class="rounded-lg py-2 text-[11px] font-semibold transition-colors"
+                                :style="{
+                                    background: pageSettings.layout === preset.value ? '#6366f1' : 'rgba(255,255,255,0.06)',
+                                    color: pageSettings.layout === preset.value ? '#fff' : '#a6adc8',
+                                    border: '1px solid ' + (pageSettings.layout === preset.value ? '#818cf8' : 'rgba(255,255,255,0.1)')
+                                }"
+                                x-text="preset.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Primary Color</label>
+                    <div class="grid grid-cols-6 gap-2">
+                        <template x-for="color in pageColorPresets" :key="color">
+                            <button
+                                @click="applyPageSetting('primary', color)"
+                                class="h-8 rounded-lg transition-transform"
+                                :style="{ background: color, outline: pageSettings.primary === color ? '2px solid #fff' : '1px solid rgba(255,255,255,0.15)' }"
+                                :title="color"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Font</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="font in pageFontPresets" :key="font.value">
+                            <button
+                                @click="applyPageSetting('font', font.value)"
+                                class="rounded-lg py-2 text-[11px] font-semibold transition-colors"
+                                :style="{
+                                    background: pageSettings.font === font.value ? '#6366f1' : 'rgba(255,255,255,0.06)',
+                                    color: pageSettings.font === font.value ? '#fff' : '#a6adc8',
+                                    border: '1px solid ' + (pageSettings.font === font.value ? '#818cf8' : 'rgba(255,255,255,0.1)'),
+                                    fontFamily: font.value
+                                }"
+                                x-text="font.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Corner Radius</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="radius in pageRadiusPresets" :key="radius.value">
+                            <button
+                                @click="applyPageSetting('radius', radius.value)"
+                                class="rounded-lg py-2 text-[11px] font-semibold transition-colors"
+                                :style="{
+                                    background: Number(pageSettings.radius) === Number(radius.value) ? '#6366f1' : 'rgba(255,255,255,0.06)',
+                                    color: Number(pageSettings.radius) === Number(radius.value) ? '#fff' : '#a6adc8',
+                                    border: '1px solid ' + (Number(pageSettings.radius) === Number(radius.value) ? '#818cf8' : 'rgba(255,255,255,0.1)')
+                                }"
+                                x-text="radius.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Card Padding</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <template x-for="padding in pagePaddingPresets" :key="padding.value">
+                            <button
+                                @click="applyPageSetting('cardPadding', padding.value)"
+                                class="rounded-lg py-2 text-[11px] font-semibold transition-colors"
+                                :style="{
+                                    background: Number(pageSettings.cardPadding) === Number(padding.value) ? '#6366f1' : 'rgba(255,255,255,0.06)',
+                                    color: Number(pageSettings.cardPadding) === Number(padding.value) ? '#fff' : '#a6adc8',
+                                    border: '1px solid ' + (Number(pageSettings.cardPadding) === Number(padding.value) ? '#818cf8' : 'rgba(255,255,255,0.1)')
+                                }"
+                                x-text="padding.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Font Scale</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <template x-for="scale in pageFontScalePresets" :key="scale.value">
+                            <button
+                                @click="applyPageSetting('fontScale', scale.value)"
+                                class="rounded-lg py-2 text-[11px] font-semibold transition-colors"
+                                :style="{
+                                    background: Number(pageSettings.fontScale) === Number(scale.value) ? '#6366f1' : 'rgba(255,255,255,0.06)',
+                                    color: Number(pageSettings.fontScale) === Number(scale.value) ? '#fff' : '#a6adc8',
+                                    border: '1px solid ' + (Number(pageSettings.fontScale) === Number(scale.value) ? '#818cf8' : 'rgba(255,255,255,0.1)')
+                                }"
+                                x-text="scale.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-semibold uppercase tracking-widest mb-2" style="color:#7f849c">Sidebar Width</label>
+                    <input
+                        type="range" min="64" max="340" step="4"
+                        :value="pageSettings.sidebarWidth"
+                        @input="applyPageSetting('sidebarWidth', $event.target.value)"
+                        class="w-full accent-indigo-500"
+                    >
+                    <div class="flex justify-between text-[10px] mt-1" style="color:#585b70">
+                        <span>64px</span>
+                        <span x-text="pageSettings.sidebarWidth + 'px'"></span>
+                        <span>340px</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button
+                        @click="applyPageSetting('density', pageSettings.density === 'compact' ? 'comfortable' : 'compact')"
+                        class="rounded-lg py-2 text-[11px] font-semibold"
+                        :style="{ background: pageSettings.density === 'compact' ? '#6366f1' : 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }"
+                    >Compact</button>
+                    <button
+                        @click="applyPageSetting('collapsed', !pageSettings.collapsed)"
+                        class="rounded-lg py-2 text-[11px] font-semibold"
+                        :style="{ background: pageSettings.collapsed ? '#6366f1' : 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }"
+                    >Icon Sidebar</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button
+                        @click="applyPageSetting('topbar', pageSettings.topbar === false ? true : false)"
+                        class="rounded-lg py-2 text-[11px] font-semibold"
+                        :style="{ background: pageSettings.topbar === false ? '#6366f1' : 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }"
+                    >Hide Topbar</button>
+                    <button
+                        @click="applyPageSetting('tableColumns', pageSettings.tableColumns === 'minimal' ? 'auto' : 'minimal')"
+                        class="rounded-lg py-2 text-[11px] font-semibold"
+                        :style="{ background: pageSettings.tableColumns === 'minimal' ? '#6366f1' : 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }"
+                    >Compact Tables</button>
+                </div>
+
+                <p class="text-[10px] leading-relaxed" style="color:#7f849c">
+                    These controls edit the dashboard you are currently viewing. Open this gear on any panel to tune that page live.
+                </p>
+            </div>
+
 
             {{-- Padding --}}
             <div>
@@ -361,7 +550,7 @@
     {{-- ── Floating toggle button ───────────────────────────────────────── --}}
     <button
         @click="toggle()"
-        title="Toggle UI Inspector"
+        title="Open UI Settings"
         class="fixed flex items-center justify-center rounded-full shadow-xl transition-all"
         :class="{ 'ring-2 ring-indigo-400 ring-offset-2': active }"
         style="bottom:1.5rem;right:1.5rem;z-index:10001;width:44px;height:44px;background:#6366f1;color:#fff;border:0;cursor:pointer"
@@ -387,4 +576,10 @@ body.titan-inspector-active #titan-inspector-sidebar * {
     cursor: auto !important;
 }
 </style>
-<script src="{{ asset('js/titan/ui-inspector.js') }}" defer></script>
+<script src="{{ asset('js/titan/ui-inspector.js') }}?v=55" defer></script>
+
+@include('filament.titan-app-launcher')
+
+@endif
+
+@endif

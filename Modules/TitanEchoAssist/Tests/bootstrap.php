@@ -5,15 +5,20 @@
 
 // ── PSR-4 autoloader for this module ────────────────────────────────────────
 spl_autoload_register(function (string $class): void {
-    $prefix  = 'Modules\\TitanChatbot\\';
     $baseDir = __DIR__ . '/../';
 
-    if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
-        return;
-    }
-    $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix))) . '.php';
-    if (file_exists($file)) {
-        require_once $file;
+    // Support both the legacy TitanChatbot namespace and the current TitanEchoAssist namespace
+    foreach (['Modules\\TitanEchoAssist\\', 'Modules\\TitanChatbot\\'] as $prefix) {
+        if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
+            continue;
+        }
+        $relative = substr($class, strlen($prefix));
+        $file     = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relative) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+        // File not found for this prefix; try next prefix
     }
 });
 
@@ -28,6 +33,13 @@ if (!function_exists('app')) {
 }
 if (!function_exists('config')) {
     function config(string $key = null, $default = null) { return $default; }
+}
+if (!function_exists('env')) {
+    function env(string $key, mixed $default = null): mixed
+    {
+        $val = $_ENV[$key] ?? getenv($key);
+        return ($val !== false && $val !== null) ? $val : $default;
+    }
 }
 if (!function_exists('now')) {
     function now()
@@ -70,9 +82,45 @@ if (!class_exists('Illuminate\\Support\\Facades\\Log')) {
 // Http
 if (!class_exists('Illuminate\\Support\\Facades\\Http')) {
     class TitanChatbotHttpStub {
+        /** @var array|null Preset response payload for the next request. */
+        private static ?array $mockResponse = null;
+        private static bool   $mockFailed   = false;
+
+        public static function fake(array $response = [], bool $failed = false): void
+        {
+            static::$mockResponse = $response;
+            static::$mockFailed   = $failed;
+        }
+
+        public static function resetFake(): void
+        {
+            static::$mockResponse = null;
+            static::$mockFailed   = false;
+        }
+
         public static function withToken(string $t): static { return new static(); }
+        public static function withHeaders(array $h): static { return new static(); }
+        public static function withQueryParameters(array $p): static { return new static(); }
+
         public function post(string $u, array $d = []): object {
-            return new class { public function failed(): bool { return true; } public function status(): int { return 503; } public function json(string $k = null, mixed $def = null): mixed { return $def; } };
+            $failed   = static::$mockFailed;
+            $response = static::$mockResponse;
+            return new class($failed, $response) {
+                public function __construct(private bool $failed, private ?array $resp) {}
+                public function failed(): bool { return $this->failed; }
+                public function status(): int  { return $this->failed ? 503 : 200; }
+                public function json(string $k = null, mixed $def = null): mixed {
+                    if ($this->resp === null) { return $def; }
+                    if ($k === null) { return $this->resp; }
+                    // Support dot-notation key access
+                    $data = $this->resp;
+                    foreach (explode('.', $k) as $segment) {
+                        if (!is_array($data) || !array_key_exists($segment, $data)) { return $def; }
+                        $data = $data[$segment];
+                    }
+                    return $data;
+                }
+            };
         }
     }
     class_alias('TitanChatbotHttpStub', 'Illuminate\\Support\\Facades\\Http');

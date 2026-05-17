@@ -1,0 +1,65 @@
+{
+  "name": "ExampleModule",
+  "alias": "example-module",
+  "description": "Titan AI-native full module blueprint skeleton with one-page Filament command center and AI-controllable PWA/channel surface",
+  "priority": 0,
+  "providers": [
+    "Modules\\ExampleModule\\Providers\\ExampleModuleServiceProvider",
+    "Modules\\ExampleModule\\Providers\\RouteServiceProvider",
+    "Modules\\ExampleModule\\Providers\\EventServiceProvider",
+    "Modules\\ExampleModule\\Providers\\FilamentServiceProvider"
+  ],
+  "requires": [
+    "TitanCore",
+    "TitanEchoAssist"
+  ],
+  "optional_requires": [
+    "TitanZero",
+    "TitanDocs",
+    "TitanChannels",
+    "TitanVoice",
+    "TitanPwa"
+  ],
+  "permissions": [
+    "example.agent.control",
+    "example.agent.train",
+    "example.agent.use",
+    "example.approve",
+    "example.channel.use",
+    "example.create",
+    "example.delete",
+    "example.export",
+    "example.import",
+    "example.knowledge.manage",
+    "example.settings.manage",
+    "example.shortcuts.use",
+    "example.update",
+    "example.view",
+    "example.voice.use"
+  ],
+  "manifest": {
+    "lifecycle": "manifests/lifecycle.json",
+    "api": "manifests/api.json",
+    "permissions": "manifests/permissions.json",
+    "signals": "manifests/signals.json",
+    "ai": "manifests/ai-tools.json",
+    "cms": "manifests/cms.json",
+    "omni": "manifests/omni.json",
+    "agent": "Agents/ModuleAgent/agent.manifest.json",
+    "knowledge": "AI/Indexing/indexing.manifest.json",
+    "retrieval": "AI/Retrieval/retrieval.policy.json",
+    "citations": "AI/Citations/citation.schema.json",
+    "guardrails": "AI/Guardrails/guardrails.json",
+    "actions": "AI/Actions/action-map.json",
+    "telemetry": "AI/Telemetry/telemetry.manifest.json",
+    "agent_control": "AI/Control/control.manifest.json",
+    "channels": "AI/Channels/channel.manifest.json",
+    "voice": "AI/Voice/voice.manifest.json",
+    "pwa": "PWA/pwa.manifest.json",
+    "dashboard": "Filament/PageManifest/module-page.json",
+    "tables": "Filament/Tables/table-tabs.json",
+    "shortcuts": "Filament/Shortcuts/shortcuts.json",
+    "settings": "Filament/Settings/settings.schema.json"
+  },
+  "active": 1
+}

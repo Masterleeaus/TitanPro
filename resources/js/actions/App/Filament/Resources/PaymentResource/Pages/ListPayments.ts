@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 const ListPayments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListPayments.url(options),
@@ -11,13 +11,13 @@ const ListPayments = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListPayments.definition = {
     methods: ["get","head"],
-    url: '/admin/payments',
+    url: '/titanpro/payments',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 ListPayments.url = (options?: RouteQueryOptions) => {
     return ListPayments.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListPayments.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 ListPayments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListPayments.url(options),
@@ -36,7 +36,7 @@ ListPayments.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 ListPayments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListPayments.url(options),
@@ -46,7 +46,7 @@ ListPayments.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 const ListPaymentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListPayments.url(options),
@@ -56,7 +56,7 @@ const ListPaymentsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 ListPaymentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListPayments.url(options),
@@ -66,7 +66,7 @@ ListPaymentsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Resources\PaymentResource\Pages\ListPayments::__invoke
 * @see app/Filament/Resources/PaymentResource/Pages/ListPayments.php:7
-* @route '/admin/payments'
+* @route '/titanpro/payments'
 */
 ListPaymentsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListPayments.url({

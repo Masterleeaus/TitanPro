@@ -3,23 +3,35 @@
 namespace Modules\EInvoice\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Modules\EInvoice\Filament\Pages\AiNotesPage;
+use Modules\EInvoice\Filament\Resources\InvoiceResource;
+use Modules\EInvoice\Filament\Widgets\GstExportWidget;
+use Modules\EInvoice\Filament\Widgets\ZeroPayHandoffWidget;
 
 /**
- * Compatibility provider for hosts that auto-load module providers listed in module.json.
- *
- * The EInvoice module uses Blade/DataTables in this package. This no-op provider keeps
- * the AI-native module manifest accurate without crashing apps that expect the provider
- * class to exist.
+ * Registers EInvoice Filament panel components (resources, pages, widgets)
+ * into the host application's Filament panel.
  */
 class FilamentServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Intentionally empty: host applications may bind Filament panels/resources here.
+        // Intentionally empty: resources are registered in boot().
     }
 
     public function boot(): void
     {
-        // Intentionally empty.
+        // Register into Filament if the panel manager is available.
+        if (! class_exists(\Filament\Panel::class)) {
+            return;
+        }
+
+        $this->callAfterResolving(\Filament\PanelRegistry::class, function (\Filament\PanelRegistry $registry): void {
+            foreach ($registry->all() as $panel) {
+                $panel->resources([InvoiceResource::class]);
+                $panel->pages([AiNotesPage::class]);
+                $panel->widgets([GstExportWidget::class, ZeroPayHandoffWidget::class]);
+            }
+        });
     }
 }

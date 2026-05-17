@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 const ListJobTypes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobTypes.url(options),
@@ -11,13 +11,13 @@ const ListJobTypes = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 ListJobTypes.definition = {
     methods: ["get","head"],
-    url: '/admin/job-types',
+    url: '/titanpro/job-types',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 ListJobTypes.url = (options?: RouteQueryOptions) => {
     return ListJobTypes.definition.url + queryParams(options)
@@ -26,7 +26,7 @@ ListJobTypes.url = (options?: RouteQueryOptions) => {
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 ListJobTypes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: ListJobTypes.url(options),
@@ -36,7 +36,7 @@ ListJobTypes.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 ListJobTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: ListJobTypes.url(options),
@@ -46,7 +46,7 @@ ListJobTypes.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 const ListJobTypesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypes.url(options),
@@ -56,7 +56,7 @@ const ListJobTypesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 ListJobTypesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypes.url(options),
@@ -66,7 +66,7 @@ ListJobTypesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 /**
 * @see \App\Filament\Resources\JobTypeResource\Pages\ListJobTypes::__invoke
 * @see app/Filament/Resources/JobTypeResource/Pages/ListJobTypes.php:7
-* @route '/admin/job-types'
+* @route '/titanpro/job-types'
 */
 ListJobTypesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: ListJobTypes.url({

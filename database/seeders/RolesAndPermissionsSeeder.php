@@ -36,6 +36,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'users.view', 'users.create', 'users.edit', 'users.delete',
             // Platform SaaS administration
             'platform.view', 'platform.organizations.manage', 'platform.subscriptions.manage',
+            // Visual UI Inspector
+            'ui-inspector.manage',
         ];
 
         foreach ($permissions as $permission) {

@@ -1,0 +1,20 @@
+TITAN BOS THEME INTEGRATION PLAN
+
+Final combo locked:
+1. Large system menu = Bolt-derived large menu (existing BOS base)
+2. Slim hub rail = Marketing dashboard navbar pattern
+3. Global spacing/padding/typography = Sleek theme
+4. Connect Core activity/comms feed patterns = Social Media Dashboard
+5. Titan runtime/cards remain the intelligence layer
+
+Recommended use by hub:
+- Command Centre: Titan runtime + Sleek spacing + Marketing rail
+- Connect Core: Social dashboard feed patterns + Brand/Marketing cards + Omni Inbox
+- Service Console: Sleek spacing + existing BOS card shell
+- Work Hub: existing BOS shell + TimeEngine + Trust/Activity cards
+- Team Portal / Supply Depot / Money Manager / Trust Vault: reuse BOS shell with Sleek spacing tokens
+
+Contents added in this pass:
+- dashboard_support/shared/theme_sleek
+- dashboard_support/shared/theme_marketing_rail
+- dashboard_support/connect/theme_social_dashboard

@@ -1,0 +1,15 @@
+{
+    "domain": "expenses",
+    "version": "2.2",
+    "status": "wired",
+    "events": [
+        "ExpenseSubmitted",
+        "ExpenseApproved",
+        "ReceiptExtracted",
+        "ReimbursementBatchPaid"
+    ],
+    "jobs": [
+        "RunReceiptOcrJob",
+        "ExportReimbursementBatchJob"
+    ]
+}

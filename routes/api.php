@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Technician\JobController as TechnicianJobController;
 use App\Http\Controllers\Technician\LocationController;
+use App\Http\Controllers\TitanZero\GenerateUiController;
+use App\Http\Controllers\TitanZero\SuggestionsController;
+use App\Http\Controllers\TitanZero\ThreadController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:technician'])
@@ -36,3 +39,27 @@ Route::middleware(['auth', 'role:technician'])
             ->middleware('throttle:60,1')
             ->name('location.store');
     });
+
+/**
+ * --------------------------------------------------------------------------
+ * Titan Zero - Business OS AI endpoints
+ * --------------------------------------------------------------------------
+ *
+ * These three endpoints power the Business OS chat panel.
+ * All routes require an authenticated session (web/CSRF middleware is already
+ * applied by the bootstrap/app.php route group).
+ */
+Route::middleware(['auth'])->group(function () {
+    // Main generate-ui endpoint - accepts a message and returns an AgentUiResponse
+    Route::post('/titan/zero/generate-ui', GenerateUiController::class)
+        ->name('titan.zero.generate-ui');
+
+    // Thread history - returns messages + widgets for a persisted thread
+    Route::get('/titan/threads/{threadId}', [ThreadController::class, 'show'])
+        ->name('titan.threads.show')
+        ->where('threadId', '[0-9]+');
+
+    // Context-aware suggestion chips
+    Route::get('/titan/suggestions', SuggestionsController::class)
+        ->name('titan.suggestions');
+});

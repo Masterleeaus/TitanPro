@@ -1,0 +1,3 @@
+{
+  "features": ["work_orders_bridge", "technician_profiles", "technician_skills", "service_zones", "customer_locations", "travel_time_estimates", "route_map", "drag_drop_scheduler", "dispatch_status_pipeline", "allocation_recommendations"]
+}

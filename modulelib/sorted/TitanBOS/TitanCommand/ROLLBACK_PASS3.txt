@@ -1,0 +1,3 @@
+Rollback:
+1) Restore previous ZIP (Pass2 patched) OR delete the new migration file and revert migrations.
+2) php artisan migrate:rollback --step=1 (menu seed) if needed.

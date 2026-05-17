@@ -1,0 +1,8 @@
+{
+  "hub_key": "work",
+  "lifecycle_key": "job_lifecycle",
+  "context": {
+    "subject_type": "job_request",
+    "source": "dashboard"
+  }
+}

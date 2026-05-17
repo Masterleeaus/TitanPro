@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\TitanChatbot\Console\Commands;
+namespace Modules\TitanEchoAssist\Console\Commands;
 
 use Illuminate\Console\Command;
 
@@ -24,10 +24,10 @@ class MakeToolCommand extends Command
         $stub = <<<PHP
 <?php
 
-namespace Modules\TitanChatbot\AI\Tools;
+namespace Modules\TitanEchoAssist\AI\Tools;
 
-use Modules\TitanChatbot\AI\Attributes\Tool;
-use Modules\TitanChatbot\AI\Attributes\Desc;
+use Modules\TitanEchoAssist\AI\Attributes\Tool;
+use Modules\TitanEchoAssist\AI\Attributes\Desc;
 
 class {$name}
 {

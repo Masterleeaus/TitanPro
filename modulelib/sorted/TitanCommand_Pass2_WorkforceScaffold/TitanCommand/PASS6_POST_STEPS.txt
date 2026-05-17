@@ -1,0 +1,1 @@
+cd /home/saassmar/domains/<your-domain>/public_html && php artisan migrate

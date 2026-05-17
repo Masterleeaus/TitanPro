@@ -163,7 +163,7 @@ technicianLocations.form = technicianLocationsForm
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 export const technicianTrail = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -178,7 +178,7 @@ technicianTrail.definition = {
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 technicianTrail.url = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -211,7 +211,7 @@ technicianTrail.url = (args: { user: number | { id: number } } | [user: number |
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 technicianTrail.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -221,7 +221,7 @@ technicianTrail.get = (args: { user: number | { id: number } } | [user: number |
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 technicianTrail.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -231,7 +231,7 @@ technicianTrail.head = (args: { user: number | { id: number } } | [user: number 
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 const technicianTrailForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -241,7 +241,7 @@ const technicianTrailForm = (args: { user: number | { id: number } } | [user: nu
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 technicianTrailForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -251,7 +251,7 @@ technicianTrailForm.get = (args: { user: number | { id: number } } | [user: numb
 
 /**
 * @see \App\Http\Controllers\Owner\DispatchController::technicianTrail
-* @see app/Http/Controllers/Owner/DispatchController.php:105
+* @see app/Http/Controllers/Owner/DispatchController.php:110
 * @route '/owner/dispatch/technicians/{user}/trail'
 */
 technicianTrailForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

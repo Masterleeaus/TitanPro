@@ -1,0 +1,34 @@
+{
+  "schema": "titan.guardrails.v1",
+  "module": "zeropay-module",
+  "tenant_scoped": true,
+  "require_permission_checks": true,
+  "require_confirmation_for_write_tools": true,
+  "block_unapproved_sources": true,
+  "log_agent_actions": true,
+  "deny_pii_in_responses": true,
+  "deny_payment_credentials_in_responses": true,
+  "deny_raw_gateway_secrets": true,
+  "redact_fields": [
+    "card_number",
+    "cvv",
+    "expiry",
+    "bank_account_number",
+    "bsb",
+    "api_key",
+    "gateway_secret",
+    "webhook_secret",
+    "access_token",
+    "private_key",
+    "password",
+    "tax_id",
+    "national_id",
+    "passport_number"
+  ],
+  "blocked_response_patterns": [
+    "gateway_credentials",
+    "raw_payment_data",
+    "unmasked_card",
+    "full_bank_account"
+  ]
+}

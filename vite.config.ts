@@ -8,7 +8,24 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/js/app.ts', 'resources/scss/esoft/main.scss', 'resources/js/esoft/main.js', 'resources/css/filament/admin/theme.css'],
+            input: [
+                'resources/js/app.ts',
+                'resources/js/filament/ui-studio.js',
+                'resources/scss/esoft/main.scss',
+                'resources/js/esoft/main.js',
+                'resources/css/filament/admin/theme.css',
+                // Titan OS shell and assistant assets must be compiled by Vite so
+                // they are available via the @vite directive. Without adding
+                // these here, the build process would skip them and the shell
+                // would not load styles/scripts in production.
+                'resources/css/titan-os.css',
+                'resources/js/titan-os.js',
+                'resources/css/titan-zero-assistant.css',
+                'resources/css/chatbot-bubble.css',
+                'resources/js/titan-zero-assistant.js',
+                // Vue-powered Business OS chat panel
+                'resources/js/titan-os-panel.ts',
+            ],
             ssr: 'resources/js/ssr.ts',
             refresh: true,
         }),

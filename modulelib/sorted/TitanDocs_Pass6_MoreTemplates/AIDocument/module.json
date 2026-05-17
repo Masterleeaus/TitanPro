@@ -1,0 +1,12 @@
+{
+    "name": "Titan Docs",
+    "alias": "titan-docs",
+    "description": "Titan Docs - SWMS & office doc generator powered by Titan Core.",
+    "keywords": [],
+    "priority": 0,
+    "version": 3.0,
+    "providers": [
+        "Modules\\AIDocument\\Providers\\AIDocumentServiceProvider"
+    ],
+    "files": []
+}

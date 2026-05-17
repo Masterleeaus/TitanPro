@@ -1,18 +1,24 @@
 {
-    "name": "TitanZero",
-    "alias": "titanzero",
-    "description": "Titan Zero – AI Orchestration Node. Single AI entry point for the platform.",
-    "keywords": ["ai", "orchestration", "titan-zero"],
-    "priority": 0,
-    "version": "4.0.0",
-    "providers": [
-        "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
-    ],
-    "files": [],
-    "manifest": {
-        "retrieval": "AI/Retrieval/retrieval.policy.json",
-        "guardrails": "AI/Guardrails/guardrails.json",
-        "citations": "AI/Citations/citation.schema.json",
-        "ai": "manifests/ai_tools.json"
-    }
+  "name": "TitanZero",
+  "active": 1,
+  "alias": "titanzero",
+  "description": "Titan Zero – AI Orchestration Node. Single AI entry point for the platform.",
+  "keywords": [
+    "ai",
+    "orchestration",
+    "titan-zero"
+  ],
+  "priority": 0,
+  "version": "4.0.0",
+  "providers": [
+    "Modules\\TitanZero\\Providers\\TitanZeroServiceProvider"
+  ],
+  "files": [],
+  "filament_panel": "titanpro",
+  "manifest": {
+    "retrieval": "AI/Retrieval/retrieval.policy.json",
+    "guardrails": "AI/Guardrails/guardrails.json",
+    "citations": "AI/Citations/citation.schema.json",
+    "ai": "manifests/ai_tools.json"
+  }
 }

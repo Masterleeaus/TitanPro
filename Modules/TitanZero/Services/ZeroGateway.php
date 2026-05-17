@@ -7,7 +7,7 @@ use Modules\TitanCore\Services\AgentRegistryService;
 use Modules\TitanCore\Services\KbCollectionService;
 use Modules\TitanCore\Services\KnowledgeSearchService;
 use Modules\TitanCore\Contracts\AI\ClientInterface;
-use Modules\TitanAgents\Services\AgentPlaybookService;
+use Modules\TitanEchoAssist\Services\AgentPlaybookService;
 
 /**
  * Titan Zero Gateway Service
@@ -144,10 +144,32 @@ class ZeroGateway
     public function ingestSignal(array $envelope, ?int $tenantId = null): array
     {
         $auditId = (string) Str::uuid();
+
+        $signalId = null;
+        if (class_exists(\App\Extensions\TitanPulse\Services\SignalBus\SignalEmitter::class)) {
+            try {
+                $signalId = \App\Extensions\TitanPulse\Services\SignalBus\SignalEmitter::emit(
+                    (string) ($envelope['type'] ?? 'unknown'),
+                    (string) ($envelope['subject_type'] ?? 'unknown'),
+                    isset($envelope['subject_id']) && is_numeric($envelope['subject_id']) ? (int) $envelope['subject_id'] : null,
+                    is_array($envelope['payload'] ?? null) ? $envelope['payload'] : $envelope,
+                    [
+                        'team_id' => $tenantId,
+                        'company_id' => $tenantId,
+                        'source' => 'titanzero.gateway',
+                        'idempotency_key' => $envelope['idempotency_key'] ?? null,
+                    ],
+                );
+            } catch (\Throwable) {
+                // Keep TitanZero ingestion safe-by-default if signal persistence is unavailable.
+            }
+        }
+
         return [
             'status' => 'ok',
             'audit_id' => $auditId,
             'mode' => 'ingested',
+            'signal_id' => $signalId,
             'signal' => [
                 'type' => $envelope['type'] ?? 'unknown',
                 'payload' => $envelope['payload'] ?? $envelope,

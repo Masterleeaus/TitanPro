@@ -2,8 +2,8 @@
   "module": "TitanChatbot",
   "enabled": true,
   "providers": [
-    "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider",
-    "Modules\\TitanChatbot\\Providers\\AuthServiceProvider"
+    "Modules\\TitanEchoAssist\\Providers\\ModuleServiceProvider",
+    "Modules\\TitanEchoAssist\\Providers\\AuthServiceProvider"
   ],
-  "boot": "Modules\\TitanChatbot\\Providers\\ModuleServiceProvider"
+  "boot": "Modules\\TitanEchoAssist\\Providers\\ModuleServiceProvider"
 }

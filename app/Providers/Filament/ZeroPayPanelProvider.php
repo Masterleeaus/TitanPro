@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\UiStudio;
 use App\Filament\ZeroPay\Pages\Dashboard;
 use App\Filament\ZeroPay\Pages\StripeSettings;
 use App\Filament\ZeroPay\Widgets\FinanceOverviewWidget;
@@ -46,7 +47,12 @@ class ZeroPayPanelProvider extends PanelProvider
             ->plugins([
                 ...$this->breezyPlugin(),
                 ...$this->availablePlugins([
-                    'BezhanSalleh\\FilamentShield\\FilamentShieldPlugin',
+
+                    'BezhanSalleh\FilamentShield\FilamentShieldPlugin',
+                    'AlizHarb\ActivityLog\ActivityLogPlugin',
+                    'TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin',
+                    'LaraZeus\DynamicDashboard\DynamicDashboardPlugin',
+                    'Pxlrbt\FilamentSpotlight\SpotlightPlugin',
                 ]),
             ])
             ->discoverResources(in: app_path('Filament/ZeroPay/Resources'), for: 'App\\Filament\\ZeroPay\\Resources')
@@ -54,6 +60,7 @@ class ZeroPayPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
                 StripeSettings::class,
+                UiStudio::class,
             ])
             ->discoverWidgets(in: app_path('Filament/ZeroPay/Widgets'), for: 'App\\Filament\\ZeroPay\\Widgets')
             ->widgets([
@@ -74,6 +81,7 @@ class ZeroPayPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->renderHook(...$this->uiInspectorHook());
+            ->renderHook(...$this->uiInspectorHook())
+            ->renderHook(...$this->titanOsShellHooks());
     }
 }
