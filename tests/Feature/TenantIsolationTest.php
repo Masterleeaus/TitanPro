@@ -1,20 +1,28 @@
 <?php
 
 use App\Contracts\TenantAware;
+use App\Models\Attachment;
 use App\Models\Customer;
+use App\Models\DriverLocation;
 use App\Models\Estimate;
 use App\Models\EstimatePackage;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Job;
+use App\Models\JobChecklistItem;
 use App\Models\JobMessage;
 use App\Models\JobType;
 use App\Models\JobTypeChecklistItem;
 use App\Models\MessageTemplate;
 use App\Models\Organization;
+use App\Models\OrganizationSetting;
 use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Scopes\TenantScope;
+use App\Models\Subscription;
+use App\Models\TitanUiComponentOverride;
+use App\Models\TitanUsageMeter;
+use App\Models\UiOverride;
 use App\Models\User;
 use App\Tenancy\CurrentTenant;
 use App\Tenancy\TenantResolver;
@@ -114,6 +122,14 @@ test('TenantAware models have TenantScope registered', function (string $modelCl
     JobMessage::class,
     EstimatePackage::class,
     JobTypeChecklistItem::class,
+    DriverLocation::class,
+    Subscription::class,
+    TitanUsageMeter::class,
+    Attachment::class,
+    JobChecklistItem::class,
+    OrganizationSetting::class,
+    UiOverride::class,
+    TitanUiComponentOverride::class,
 ]);
 
 test('TenantScope is a no-op when unauthenticated', function () {

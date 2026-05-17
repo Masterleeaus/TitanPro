@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Contracts\TenantAware;
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class JobChecklistItem extends Model
+class JobChecklistItem extends Model implements TenantAware
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = ['organization_id','job_id','job_type_checklist_item_id','label','category','instructions','estimated_minutes','sort_order','is_required','requires_photo','completed_at'];
 
