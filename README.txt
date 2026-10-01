@@ -1,11 +1,12 @@
-Upload this ZIP into:
-/home/saassmar/domains/tradiesm.art/public_html
+# Deployment note
 
-Then run:
-cd /home/saassmar/domains/tradiesm.art/public_html && unzip -o titan-platform-panel-links_PASS40.zip && bash scripts/install-panel-links.sh
+This repository contains deployment-related material, but host-specific paths, production URLs, and credentials must not be committed to the project.
 
-Open:
-https://tradiesm.art/platform/filament-panels
+For a deployment:
 
-This adds a Platform sidebar page called:
-System > Filament Panels
+1. Follow the reviewed deployment guide in `deployment/`.
+2. Use a private inventory for the host, domain, user, and document root.
+3. Validate the release artifact and backup/rollback procedure before installation.
+4. Do not run shell commands copied from unreviewed archive notes.
+
+The original host path and domain were removed from this file. Review Git history and related bundles for additional operational details that should remain private.
