@@ -1,6 +1,6 @@
 <div align="center">
 
-# TitanPro
+# Titan Pro Business Operations Console
 
 **A Laravel and Vue application workspace in the Titan product family.**
 
