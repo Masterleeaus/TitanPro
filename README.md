@@ -8,6 +8,13 @@
 
 </div>
 
+## Product architecture and engineering highlights
+
+A broad Laravel business-operations platform that brings field service, CRM, finance, workforce, communications, and customer-facing surfaces into one modular application.
+
+- **Architecture:** Laravel 12 and Filament 4 provide the backend/admin foundation; Inertia and Vue power the web interface; separate Web, Mobile, and PWA trees sit beside more than 40 business modules.
+- **Distinctive engineering:** The module set spans CRM, booking, cleaning jobs, quoting, dispatch, payroll, accounting, supply chain, customer portal, payments, messaging, AI, and owner/field interfaces. The architecture’s standout is one modular domain platform serving multiple product surfaces.
+
 > **Status: project identity and relationship under review.** The repository contains a substantial Laravel application and Mobile source tree. Its current product role and relationship to Titan Zero Field Service Workforce were not established by the inspected default-branch files.
 
 ## Repository overview
