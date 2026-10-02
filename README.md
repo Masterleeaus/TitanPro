@@ -44,8 +44,8 @@ Verify each command against the current source and deployment environment before
 
 ## Security and provenance
 
-Never commit production secrets, customer data, or local environment files. Confirm the license and upstream provenance for imported code before redistribution.
+The root `LICENSE` identifies MIT terms and names Michael Stoffer as copyright holder. Preserve that attribution. Never commit production secrets, customer data, or local environment files. Confirm ownership and upstream provenance before presenting this repository as original work or redistributing modified code.
 
 ## Banner
 
-A verified TitanPro banner was not identified in this first-pass review. The centered title is a typographic placeholder until a project-specific visual is confirmed.
+A checked-in project-specific banner is displayed above.
