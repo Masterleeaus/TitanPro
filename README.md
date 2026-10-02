@@ -1,3 +1,5 @@
+![Titan Pro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/portfolio-banner.svg)
+
 <div align="center">
 
 # Titan Pro Business Operations Console
