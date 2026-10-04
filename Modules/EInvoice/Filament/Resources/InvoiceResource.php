@@ -3,7 +3,7 @@
 namespace Modules\EInvoice\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,9 +22,9 @@ class InvoiceResource extends Resource
     protected static ?string $slug = 'einvoices';
     protected static ?int $navigationSort = 200;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\Select::make('client_id')
                 ->label('Client')
                 ->searchable()
