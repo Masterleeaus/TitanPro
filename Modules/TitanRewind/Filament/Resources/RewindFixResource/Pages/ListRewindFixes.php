@@ -9,7 +9,7 @@ class ListRewindFixes extends ListRecords
 {
     protected static string $resource = RewindFixResource::class;
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return RewindFixResource::canViewAny();
     }
