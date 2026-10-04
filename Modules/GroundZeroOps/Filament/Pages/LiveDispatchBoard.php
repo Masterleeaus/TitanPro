@@ -7,11 +7,11 @@ use Modules\GroundZeroOps\Actions\AssignJobAction;
 
 class LiveDispatchBoard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-map';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map';
     protected static ?string $navigationLabel = 'Live Dispatch Board';
-    protected static ?string $navigationGroup = 'Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
     protected static ?int $navigationSort = 10;
-    protected static string $view = 'groundzeroops::pages.livedispatchboard';
+    protected string $view = 'groundzeroops::pages.livedispatchboard';
 
     public function getTitle(): string
     {
