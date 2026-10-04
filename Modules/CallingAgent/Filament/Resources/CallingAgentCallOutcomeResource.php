@@ -2,6 +2,7 @@
 
 namespace Modules\CallingAgent\Filament\Resources;
 
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -55,14 +56,14 @@ class CallingAgentCallOutcomeResource extends Resource
                     ->options(['urgent' => 'Urgent', 'high' => 'High', 'normal' => 'Normal']),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Filament\Resources\Pages\ListRecords::class,
+            'index' => Pages\ListCallingAgentCallOutcomes::route('/'),
         ];
     }
 }
