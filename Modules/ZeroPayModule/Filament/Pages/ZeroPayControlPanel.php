@@ -282,7 +282,7 @@ class ZeroPayControlPanel extends Page implements HasForms
 
         $settings = $this->resolveSettings();
 
-        if (! $settings) {
+        if (!$settings) {
             Notification::make()
                 ->title('Settings driver not available')
                 ->body('spatie/laravel-settings is not configured. Settings cannot be persisted.')
