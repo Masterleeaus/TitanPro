@@ -36,7 +36,7 @@ if (class_exists(\Filament\Resources\Resource::class)) {
                                 \Filament\Forms\Components\Toggle::make('active')
                                     ->default(true),
                             ]),
-                        \Filament\Forms\Components\Tabs\Tab::make('Appearance')
+                        \Filament\Schemas\Components\Tabs\Tab::make('Appearance')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
