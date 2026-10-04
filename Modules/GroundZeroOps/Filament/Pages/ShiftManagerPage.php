@@ -9,11 +9,11 @@ use Modules\GroundZeroOps\Models\Shift;
 
 class ShiftManagerPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Shift Manager';
-    protected static ?string $navigationGroup = 'Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
     protected static ?int $navigationSort = 30;
-    protected static string $view = 'groundzeroops::pages.shiftmanagerpage';
+    protected string $view = 'groundzeroops::pages.shiftmanagerpage';
 
     public function getTitle(): string
     {
