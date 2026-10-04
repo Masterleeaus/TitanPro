@@ -3,7 +3,7 @@
 namespace Modules\CallingAgent\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,9 +17,9 @@ class CallingAgentCallerProfileResource extends Resource
     protected static \UnitEnum|string|null $navigationGroup = 'Calling Agent';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\TextInput::make('phone')->tel(),
             Forms\Components\TextInput::make('email')->email(),
             Forms\Components\TextInput::make('name'),
