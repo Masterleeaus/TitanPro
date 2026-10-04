@@ -11,7 +11,7 @@ use Modules\EInvoice\Entities\Invoice;
  */
 class GstExportWidget extends Widget
 {
-    protected static string $view = 'einvoice::filament.widgets.gst-export';
+    protected string $view = 'einvoice::filament.widgets.gst-export';
 
     protected int | string | array $columnSpan = 'full';
 
