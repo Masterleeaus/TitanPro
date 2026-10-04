@@ -47,6 +47,14 @@ npm run format:check
 npm test
 ```
 
+The maintenance-script path evaluator is independent of the Laravel host:
+
+```bash
+node scripts/check-portable-paths.mjs
+```
+
+It verifies that the checked-in shell helpers resolve the repository root rather than a developer or hosting account path. The check does not prove the Laravel application boots or that a deployment host is configured.
+
 `composer run setup` creates local environment/database state and installs dependencies. These commands were inspected from the manifests and `CLAUDE.md`, not executed in this portfolio pass.
 
 ## Evidence and tests

@@ -45,6 +45,15 @@ npm run format:check
 
 Verify each command against the current source and deployment environment before relying on it.
 
+The maintenance scripts resolve the checkout root at runtime; the focused portability check is:
+
+```bash
+node scripts/check-portable-paths.mjs
+```
+
+It covers the repository-relative root resolution used by `scripts/agent-issue-runner.sh` and `scripts/fix-filament-view.sh` without requiring application credentials or a deployed host.
+
+
 ## Portfolio classification
 
 **Needs owner and lineage confirmation.** Compare against [Titan BOS](https://github.com/Masterleeaus/Titan-BOS), [cleanly](https://github.com/Masterleeaus/cleanly), [modules](https://github.com/Masterleeaus/modules), and the [current workforce platform](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce). Keep it as a separate portfolio project only if it has a distinct purpose or valuable, attributable implementation.
