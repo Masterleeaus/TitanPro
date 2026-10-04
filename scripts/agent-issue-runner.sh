@@ -187,7 +187,10 @@ log "Run complete. Status: $AGENT_STATUS"
 # OPTION 1 — System cron (runs every 5 minutes while machine is on)
 # Add this line via: crontab -e
 #
-#   */5 * * * * cd "$TITANPRO_ROOT" && bash scripts/agent-issue-runner.sh >> scripts/agent-runner.log 2>&1
+# Add these lines via: crontab -e, replacing /path/to/TitanPro with the checkout path.
+#
+#   TITANPRO_ROOT=/path/to/TitanPro
+#   */5 * * * * cd "$TITANPRO_ROOT" && bash scripts/agent-issue-runner.sh >> "$TITANPRO_ROOT/scripts/agent-runner.log" 2>&1
 #
 # OPTION 2 — Run once manually
 #   bash scripts/agent-issue-runner.sh
