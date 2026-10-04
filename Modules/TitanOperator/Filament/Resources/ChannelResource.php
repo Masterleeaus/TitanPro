@@ -13,9 +13,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
 
         protected static ?string $navigationLabel = 'Operator Channels';
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([
+            return $schema->components([
                 \Filament\Forms\Components\Select::make('operator_id')
                     ->relationship('operator', 'title')
                     ->required(),
