@@ -1,14 +1,14 @@
-![Titan Pro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/portfolio-banner.svg)
+![TitanPro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/portfolio-banner.svg)
 
 <div align="center">
 
-# Titan Pro Business Operations Console
+# TitanPro
 
-**A modular Laravel and Vue operations platform for teams coordinating field work, customers, finance, communications, and AI-assisted decisions in one workspace.**
+**Business Operations Console**
 
 </div>
 
-Titan Pro is built for operations teams that need more than a collection of disconnected admin screens. It brings customer and workforce workflows into one Laravel application, then gives each surface—office, field, mobile, PWA, and customer-facing—a shared domain model and a consistent operator experience.
+TitanPro is a modular Laravel and Vue operations platform for teams coordinating field work, customers, finance, communications, and AI-assisted decisions in one workspace. It is built for operations teams that need more than a collection of disconnected admin screens. It brings customer and workforce workflows into one Laravel application, then gives each surface—office, field, mobile, PWA, and customer-facing—a shared domain model and a consistent operator experience.
 
 ## What teams can do
 
@@ -18,12 +18,12 @@ Titan Pro is built for operations teams that need more than a collection of disc
 
 ## The engineering story
 
-Titan Pro’s distinctive design choice is separation of concerns. Business modules own domain behavior; the Laravel application and Filament shell provide the operational surface; AI passes through explicit guardrail, retrieval, tool, and evidence boundaries instead of being treated as an unbounded chat feature.
+TitanPro’s distinctive design choice is separation of concerns. Business modules own domain behavior; the Laravel application and Filament shell provide the operational surface; AI passes through explicit guardrail, retrieval, tool, and evidence boundaries instead of being treated as an unbounded chat feature.
 
 ### Implemented AI boundaries
 
 - `Modules/TitanCore/AI/AIOrchestratorPipeline.php` runs the ordered path **guardrail → retrieval → tool execution → citation**. A failed guardrail returns a blocked result before later stages run.
-- `Modules/TitanCore/AI/ToolExecutor.php` resolves handlers from a manifest and applies an allowlist, permission gate, declared input validation, dry-run mode, timeout controls, and audit writes. Runtime context includes `company_id` for the tenant boundary.
+- `Modules/TitanCore/AI/ToolExecutor.php` resolves handlers from a manifest, filters tools through an allowlist, and can invoke optional permission and audit callbacks. Its simple schema helper checks required fields; dry-run mode, timeout handling, and `company_id` audit context make side effects and evidence explicit.
 - `Modules/TitanCore/Services/ProviderFailoverChain.php` tries ordered chat or embedding providers, fails over for missing status and configured 429/5xx responses, and stops on non-retryable errors.
 - `Modules/TitanZero/Evaluation/AgentEvaluator.php` records task completion, hallucination flags, tool accuracy, latency, and a weighted composite score against an evaluation snapshot.
 - `Modules/TitanNexus/README.md` documents approval gates around external outreach, payment nudges, payment plans, and booking/job handoffs; tenant policy must explicitly permit automation before those actions proceed.
@@ -84,7 +84,7 @@ Verify environment, service credentials, and deployment assumptions against the 
 
 ## Portfolio status and provenance
 
-Titan Pro is a substantial Laravel/Vue portfolio codebase and an active product-family workspace. The repository’s relationship to [Titan Zero Field Service Workforce](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce) is intentionally described separately; do not present the two repositories as one canonical implementation without lineage evidence.
+TitanPro is a substantial Laravel/Vue portfolio codebase and an active product-family workspace. The repository’s relationship to [Titan Zero Field Service Workforce](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce) is intentionally described separately; do not present the two repositories as one canonical implementation without lineage evidence.
 
 This README highlights implemented source boundaries, not a blanket production-readiness claim. The full [engineering guide](docs/PORTFOLIO.md) records the repository-specific quickstart, evidence scope, limitations, and retained-artifact decisions.
 
