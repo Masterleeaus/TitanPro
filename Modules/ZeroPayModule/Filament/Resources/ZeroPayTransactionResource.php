@@ -20,9 +20,9 @@ class ZeroPayTransactionResource extends Resource
 {
     protected static ?string $model = ZeroPayTransaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Transactions';
 
