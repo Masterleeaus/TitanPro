@@ -15,7 +15,7 @@ class DragDropSchedulerPage extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Dispatch';
     protected static ?string $navigationLabel = 'Drag Scheduler';
     protected static ?int $navigationSort = 11;
-    protected static string $view = 'dispatch::filament.pages.drag-drop-scheduler';
+    protected string $view = 'dispatch::filament.pages.drag-drop-scheduler';
 
     public function getViewData(): array
     {
