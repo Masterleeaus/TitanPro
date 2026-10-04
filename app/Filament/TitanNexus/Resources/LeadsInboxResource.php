@@ -25,7 +25,7 @@ class LeadsInboxResource extends Resource
 
     protected static ?string $navigationLabel = 'Leads Inbox';
 
-    protected static ?string $navigationGroup = 'Titan Leads';
+    protected static string|\UnitEnum|null $navigationGroup = 'Titan Leads';
 
     protected static ?int $navigationSort = 50;
 
