@@ -2,10 +2,10 @@
 
 namespace Modules\ZeroPayModule\Filament\Resources\ZeroPayTransactionResource\Pages;
 
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Modules\ZeroPayModule\Filament\Resources\ZeroPayTransactionResource;
 
 class ViewZeroPayTransaction extends ViewRecord
