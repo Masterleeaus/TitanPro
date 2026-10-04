@@ -185,8 +185,6 @@ log "Run complete. Status: $AGENT_STATUS"
 # =============================================================================
 #
 # OPTION 1 — System cron (runs every 5 minutes while machine is on)
-# Add this line via: crontab -e
-#
 # Add these lines via: crontab -e, replacing /path/to/TitanPro with the checkout path.
 #
 #   TITANPRO_ROOT=/path/to/TitanPro
