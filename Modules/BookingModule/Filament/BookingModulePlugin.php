@@ -50,8 +50,14 @@ class BookingModulePlugin implements Plugin
 
     public function widgets(): array
     {
-        return array_values(array_filter([
-            class_exists(\Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class) ? \Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class : null,
-        ]));
+        $widgets = [
+            \Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class,
+        ];
+
+        return array_values(array_filter(
+            $widgets,
+            static fn (string $widget): bool => class_exists($widget)
+                && is_subclass_of($widget, \Filament\Widgets\Widget::class),
+        ));
     }
 }
