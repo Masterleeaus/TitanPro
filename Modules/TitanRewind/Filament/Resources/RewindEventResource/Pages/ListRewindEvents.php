@@ -9,7 +9,7 @@ class ListRewindEvents extends ListRecords
 {
     protected static string $resource = RewindEventResource::class;
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return RewindEventResource::canViewAny();
     }
