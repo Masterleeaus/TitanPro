@@ -29,7 +29,7 @@ class LeadsCampaignResource extends Resource
 
     protected static ?string $navigationLabel = 'Campaigns';
 
-    protected static ?string $navigationGroup = 'Titan Leads';
+    protected static string|\UnitEnum|null $navigationGroup = 'Titan Leads';
 
     protected static ?int $navigationSort = 51;
 
