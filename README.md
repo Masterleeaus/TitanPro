@@ -25,7 +25,7 @@ TitanPro’s distinctive design choice is separation of concerns. Business modul
 - `Modules/TitanCore/AI/AIOrchestratorPipeline.php` runs the ordered path **guardrail → retrieval → tool execution → citation**. A failed guardrail returns a blocked result before later stages run.
 - `Modules/TitanCore/AI/ToolExecutor.php` provides manifest-resolved tools with configurable allowlists, optional permission and audit hooks, required-field checks, dry-run support, and elapsed-time checks.
 - `Modules/TitanCore/Services/ProviderFailoverChain.php` tries ordered chat or embedding providers, fails over for missing status and configured 429/5xx responses, and stops on non-retryable errors.
-- `Modules/TitanZero/Evaluation/AgentEvaluator.php` scores task completion, tool accuracy, hallucination flags, and latency using caller-supplied expectations and heuristics, then persists a weighted composite score with the response snapshot.
+- `Modules/TitanZero/Evaluation/AgentEvaluator.php` scores task completion, tool accuracy, and hallucination flags using caller-supplied expectations and heuristics; it records latency separately (it is not part of the composite), then persists a weighted composite score with the response snapshot.
 - `Modules/TitanNexus/README.md` documents approval gates around external outreach, payment nudges, payment plans, and booking/job handoffs; tenant policy must explicitly permit automation before those actions proceed.
 
 These are concrete implementation boundaries: they support an auditable workflow around AI-assisted work without claiming that every module in the repository is AI-powered.
