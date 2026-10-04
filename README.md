@@ -8,15 +8,65 @@
 
 </div>
 
+## Overview
+
 TitanPro brings customer, field-service and back-office workflows into one modular operations workspace. Built with Laravel, Filament and Vue, it combines role-specific interfaces with governed AI orchestration, provider failover and reviewable tool execution. It is designed for operations teams that need more than a collection of disconnected admin screens.
 
-## What teams can do
+
+## Measured evidence
+
+The strongest source-backed evidence in TitanPro is concentrated in its AI tool, tenant-boundary and evaluation tests.
+
+| Focused verification surface | Test methods present | What it exercises |
+| --- | ---: | --- |
+| TitanCore tool/orchestrator unit suite | **41** | contracts, manifest-resolved tools, validation, allowlists, permissions, dry-run behavior, timeouts, rollback hooks and ordered orchestration |
+| TitanZero cross-tenant guard suite | **10** | same-tenant acceptance, mismatch rejection, missing company context and mixed-tenant collections |
+| TitanZero evaluation scoring feature suite | **4** | score persistence, company scoping, hallucination penalty and 0–100 composite bounds |
+| Focused methods across those three files | **55** | source-backed AI/control-plane verification surface |
+
+Primary files:
+
+- `Modules/TitanCore/Tests/Unit/ToolExecutorTest.php`
+- `Modules/TitanZero/Tests/Unit/CrossTenantGuardTest.php`
+- `Modules/TitanZero/Tests/Feature/EvaluationScoringTest.php`
+
+A separate dependency-free portability gate checks repository-relative maintenance paths:
+
+```bash
+node scripts/check-portable-paths.mjs
+```
+
+These counts describe test methods present in source. They are **not** a claim that the full Laravel application currently passes from a clean checkout.
+
+## What is new
+
+TitanPro's technical signature is the combination of **domain-owned business modules** with an **ordered, permission-aware AI execution boundary**.
+
+```text
+Business / user request
+       ↓
+Guardrail
+       ↓
+Retrieval
+       ↓
+Manifest-resolved tool
+       ↓
+Permission / validation / dry-run controls
+       ↓
+Domain operation
+       ↓
+Citation / evaluation evidence
+```
+
+The important distinction is that AI orchestration is not the business source of truth. Domain modules retain their own behavior and state, while TitanCore/TitanZero supply guarded access, evaluation and evidence around AI-assisted operations.
+
+## Verified capabilities
 
 - **Run the operation:** CRM, booking, dispatch, cleaning jobs, quoting, payroll, accounting, supply chain, payments, messaging, and customer-portal workflows live in one modular application.
 - **Serve different roles:** Filament operator screens, Inertia/Vue pages, Web, Mobile, and PWA surfaces share the same product workspace while keeping their presentation concerns separate.
 - **Use governed AI capabilities:** TitanCore and TitanZero provide manifest-backed orchestration, retrieval, tool execution, citations, provider failover, and agent evaluation; TitanNexus adds approval-aware lead, outreach, payment-assist, and job-handoff workflows.
 
-## The engineering story
+## Reliability and authority boundaries
 
 TitanPro’s distinctive design choice is separation of concerns. Business modules own domain behavior; the Laravel application and Filament shell provide the operational surface; AI passes through explicit guardrail, retrieval, tool, and evidence boundaries instead of being treated as an unbounded chat feature.
 
@@ -47,7 +97,7 @@ These are concrete implementation boundaries: they support an auditable workflow
 
 At the platform level, the repository contains more than a simple CRUD shell: the challenge is keeping many domain modules coherent while making authorization, tenant scope, provider behavior, and AI side effects visible.
 
-## Local development
+## Installation and quick start
 
 Use the checked-in setup path to prepare environment, database, dependencies, and the full local process set:
 
@@ -77,7 +127,7 @@ node scripts/check-portable-paths.mjs
 
 Verify environment, service credentials, and deployment assumptions against the current source before relying on any command.
 
-## Evidence you can inspect
+## Reproducible verification
 
 Focused tests and contracts show where the strongest verification effort lives:
 
