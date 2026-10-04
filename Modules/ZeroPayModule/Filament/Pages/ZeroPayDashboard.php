@@ -10,9 +10,9 @@ use Modules\ZeroPayModule\Filament\Widgets\ZeroPayStatsWidget;
 
 class ZeroPayDashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Dashboard';
 
@@ -22,7 +22,7 @@ class ZeroPayDashboard extends Page
 
     protected static ?string $slug = 'zeropay';
 
-    protected static string $view = 'zeropay-module::filament.pages.zeropay-kpi-dashboard';
+    protected string $view = 'zeropay-module::filament.pages.zeropay-kpi-dashboard';
 
     public function getHeaderWidgets(): array
     {
@@ -39,7 +39,7 @@ class ZeroPayDashboard extends Page
         return 2;
     }
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return auth()->user()?->can('zeropay.view') ?? false;
     }
