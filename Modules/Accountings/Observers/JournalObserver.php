@@ -9,7 +9,6 @@ use Modules\Accountings\Entities\Journald;
 
 class JournalObserver
 {
-    use UnitTypeSaveTrait;
 
     public function saving(Journal $journal)
     {
