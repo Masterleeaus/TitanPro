@@ -1,4 +1,4 @@
-![Titan Pro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/portfolio-banner.svg)
+![Titan Pro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/titanpro-banner.svg)
 
 <div align="center">
 
@@ -9,6 +9,10 @@
 </div>
 
 ## Product architecture and engineering highlights
+
+<p align="center">
+  <img src="docs/images/titanpro-architecture.svg" alt="Titan Pro Business Operations Console flow from Laravel business modules through Filament, Inertia and Vue, and Web, Mobile, and PWA surfaces" width="100%" />
+</p>
 
 A broad Laravel business-operations platform that brings field service, CRM, finance, workforce, communications, and customer-facing surfaces into one modular application.
 
