@@ -23,9 +23,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
             return \Modules\TitanEchoAssist\Models\KnowledgeArticle::class;
         }
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([
+            return $schema->components([
                 \Filament\Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
