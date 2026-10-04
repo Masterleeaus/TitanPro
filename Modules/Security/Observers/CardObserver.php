@@ -9,7 +9,6 @@ use Modules\Security\Entities\CardItems;
 
 class CardObserver
 {
-    use UnitTypeSaveTrait;
     public function saving(TrAccessCard $card)
     {
         // $this->unitType($card);
