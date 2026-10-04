@@ -70,12 +70,35 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Modules\\": "Modules/"
-        }
+        },
+        "exclude-from-classmap": [
+            "Modules/*/Tests/",
+            "Modules/*/UI/Tests/",
+            "Modules/*/Database/migrations/",
+            "Modules/*/Database/Migrations/",
+            "Modules/*/Database/factories/",
+            "Modules/*/Database/Factories/",
+            "Modules/*/Database/seeders/",
+            "Modules/*/Database/Seeders/",
+            "Modules/CallingAgent/Support/LegacySources/",
+            "Modules/TitanHello/LegacyExtension/",
+            "Modules/TitanNexus/Events/LegacyLead/",
+            "Modules/TitanNexus/Models/LegacyLead/",
+            "Modules/TitanNexus/Http/Controllers/LegacyLead/",
+            "Modules/TitanNexus/Listeners/LegacyLead/",
+            "Modules/CRMCore/Providers/_original/",
+            "Modules/Accountings/PATCHES/",
+            "Modules/TitanCore/Providers/Modules/",
+            "Modules/TitanCore/Resources/views/sections/Modules/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "exclude-from-classmap": [
+            "tests/"
+        ]
     },
     "scripts": {
         "setup": [
