@@ -11,7 +11,7 @@ use Modules\EInvoice\Entities\Invoice;
  */
 class ZeroPayHandoffWidget extends Widget
 {
-    protected static string $view = 'einvoice::filament.widgets.zeropay-handoff';
+    protected string $view = 'einvoice::filament.widgets.zeropay-handoff';
 
     protected int | string | array $columnSpan = 'full';
 
