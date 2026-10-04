@@ -26,7 +26,7 @@ class LeadsSegmentResource extends Resource
 
     protected static ?string $navigationLabel = 'Segments';
 
-    protected static ?string $navigationGroup = 'Titan Leads';
+    protected static string|\UnitEnum|null $navigationGroup = 'Titan Leads';
 
     protected static ?int $navigationSort = 52;
 

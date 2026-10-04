@@ -2,9 +2,11 @@
 
 namespace Modules\CallingAgent\Filament\Resources;
 
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\CallingAgent\Filament\Resources\CallingAgentUsageRecordResource\Pages;
 use Modules\CallingAgent\Models\CallingAgentUsageRecord;
 
 class CallingAgentUsageRecordResource extends Resource
@@ -36,14 +38,14 @@ class CallingAgentUsageRecordResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Filament\Resources\Pages\ListRecords::class,
+            'index' => Pages\ListCallingAgentUsageRecords::route('/'),
         ];
     }
 }

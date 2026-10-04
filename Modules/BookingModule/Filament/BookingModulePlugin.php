@@ -37,15 +37,27 @@ class BookingModulePlugin implements Plugin
 
     public function pages(): array
     {
-        return array_values(array_filter([
-            class_exists(\Modules\BookingModule\Filament\Pages\BookingModulePage::class) ? \Modules\BookingModule\Filament\Pages\BookingModulePage::class : null,
-        ]));
+        $pages = [
+            \Modules\BookingModule\Filament\Pages\BookingModulePage::class,
+        ];
+
+        return array_values(array_filter(
+            $pages,
+            static fn (string $page): bool => class_exists($page)
+                && is_subclass_of($page, \Filament\Pages\Page::class),
+        ));
     }
 
     public function widgets(): array
     {
-        return array_values(array_filter([
-            class_exists(\Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class) ? \Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class : null,
-        ]));
+        $widgets = [
+            \Modules\BookingModule\Filament\Widgets\BookingStatsWidget::class,
+        ];
+
+        return array_values(array_filter(
+            $widgets,
+            static fn (string $widget): bool => class_exists($widget)
+                && is_subclass_of($widget, \Filament\Widgets\Widget::class),
+        ));
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Modules\ZeroPayModule\Filament\Resources;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Modules\ZeroPayModule\Filament\Resources\ZeroPayBankDepositResource\Pages;
@@ -20,9 +20,9 @@ class ZeroPayBankDepositResource extends Resource
 {
     protected static ?string $model = ZeroPayBankDeposit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-library';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Bank Deposits';
 
@@ -33,9 +33,9 @@ class ZeroPayBankDepositResource extends Resource
         return auth()->user()?->can('zeropay.view') ?? false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('amount')->numeric()->required(),
             TextInput::make('currency')->default('AUD')->maxLength(3),
             TextInput::make('depositor_name')->label('Depositor Name'),

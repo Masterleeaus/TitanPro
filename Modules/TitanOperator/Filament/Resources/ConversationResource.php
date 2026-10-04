@@ -13,9 +13,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
 
         protected static ?string $navigationLabel = 'Operator Conversations';
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([]);
+            return $schema->components([]);
         }
 
         public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table

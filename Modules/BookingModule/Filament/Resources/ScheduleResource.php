@@ -3,7 +3,7 @@
 namespace Modules\BookingModule\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +15,9 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
     protected static string|\UnitEnum|null $navigationGroup = 'Booking & Dispatch';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clock';
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\DatePicker::make('date'),
             Forms\Components\TimePicker::make('start_time'),
             Forms\Components\TimePicker::make('end_time'),

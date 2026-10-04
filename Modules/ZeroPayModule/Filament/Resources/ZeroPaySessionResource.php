@@ -2,12 +2,12 @@
 
 namespace Modules\ZeroPayModule\Filament\Resources;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -23,9 +23,9 @@ class ZeroPaySessionResource extends Resource
 {
     protected static ?string $model = ZeroPaySession::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Payment Sessions';
 
@@ -38,9 +38,9 @@ class ZeroPaySessionResource extends Resource
         return auth()->user()?->can('zeropay.view') ?? false;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('session_token')
                 ->label('Session Token')
                 ->disabled()

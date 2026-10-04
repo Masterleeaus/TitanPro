@@ -13,7 +13,7 @@ class RouteMapPage extends Page
     protected static string|\UnitEnum|null $navigationGroup = 'Dispatch';
     protected static ?string $navigationLabel = 'Route Map';
     protected static ?int $navigationSort = 12;
-    protected static string $view = 'dispatch::filament.pages.route-map';
+    protected string $view = 'dispatch::filament.pages.route-map';
 
     public function getViewData(): array
     {

@@ -6,11 +6,11 @@ use Filament\Pages\Page;
 
 class PayoutReportsPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Payout Reports';
-    protected static ?string $navigationGroup = 'Payments';
+    protected static string|\UnitEnum|null $navigationGroup = 'Payments';
     protected static ?int $navigationSort = 40;
-    protected static string $view = 'zeropayhub::pages.payoutreportspage';
+    protected string $view = 'zeropayhub::pages.payoutreportspage';
 
     public function getTitle(): string
     {

@@ -9,7 +9,7 @@ use Modules\InstantAds\Models\AdCreative;
 class AdCreativeResource extends Resource
 {
     protected static ?string $model = AdCreative::class;
-    protected static ?string $navigationIcon = 'heroicon-o-photo';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-photo';
 
     public static function canViewAny(): bool
     {

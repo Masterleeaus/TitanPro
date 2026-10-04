@@ -2,19 +2,19 @@
 
 namespace Modules\ZeroPayModule\Filament\Resources\ZeroPayTransactionResource\Pages;
 
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Modules\ZeroPayModule\Filament\Resources\ZeroPayTransactionResource;
 
 class ViewZeroPayTransaction extends ViewRecord
 {
     protected static string $resource = ZeroPayTransactionResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->components([
             Section::make('Transaction Details')
                 ->columns(2)
                 ->schema([

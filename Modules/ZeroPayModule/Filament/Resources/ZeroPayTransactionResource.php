@@ -3,10 +3,10 @@
 namespace Modules\ZeroPayModule\Filament\Resources;
 
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -20,9 +20,9 @@ class ZeroPayTransactionResource extends Resource
 {
     protected static ?string $model = ZeroPayTransaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Transactions';
 

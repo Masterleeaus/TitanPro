@@ -9,9 +9,9 @@ use Modules\ZeroPayModule\Models\ZeroPayTransaction;
 
 class ZeroPayDashboardPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $navigationLabel = 'Dashboard';
 
@@ -19,7 +19,7 @@ class ZeroPayDashboardPage extends Page
 
     protected static ?int $navigationSort = 0;
 
-    protected static string $view = 'zeropay-module::filament.pages.zeropay-dashboard';
+    protected string $view = 'zeropay-module::filament.pages.zeropay-dashboard';
 
     public int $totalSessions = 0;
 
@@ -37,7 +37,7 @@ class ZeroPayDashboardPage extends Page
         $this->pendingDeposits = ZeroPayBankDeposit::query()->where('status', 'pending_review')->count();
     }
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return auth()->user()?->can('zeropay.view') ?? false;
     }

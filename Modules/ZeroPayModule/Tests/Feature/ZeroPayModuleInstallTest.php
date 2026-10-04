@@ -2,7 +2,9 @@
 
 namespace Modules\ZeroPayModule\Tests\Feature;
 
-class ZeroPayModuleInstallTest
+use PHPUnit\Framework\TestCase;
+
+class ZeroPayModuleInstallTest extends TestCase
 {
     public function test_module_config_loads(): void
     {

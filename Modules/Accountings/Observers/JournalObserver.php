@@ -1,7 +1,6 @@
 <?php
 namespace Modules\Accountings\Observers;
 
-use App\Traits\UnitTypeSaveTrait;
 use Exception;
 use App\Models\UniversalSearch;
 use Modules\Accountings\Entities\Journal;
@@ -9,7 +8,6 @@ use Modules\Accountings\Entities\Journald;
 
 class JournalObserver
 {
-    use UnitTypeSaveTrait;
 
     public function saving(Journal $journal)
     {

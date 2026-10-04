@@ -21,11 +21,11 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->callAfterResolving('filament', function () use ($panelId): void {
-            if (! \Filament\Facades\Filament::hasPanelWithId($panelId)) {
+            $panel = \Filament\Facades\Filament::getPanel($panelId, isStrict: false);
+
+            if ($panel === null) {
                 return;
             }
-
-            $panel = \Filament\Facades\Filament::getPanel($panelId);
             $panel->plugin(TitanProAdminPlugin::make());
         });
     }

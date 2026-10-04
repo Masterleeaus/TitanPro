@@ -3,7 +3,7 @@
 namespace Modules\BookingModule\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +15,9 @@ class AppointmentResource extends Resource
     protected static ?string $model = Appointment::class;
     protected static string|\UnitEnum|null $navigationGroup = 'Booking & Dispatch';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\TextInput::make('name')->required(),
             Forms\Components\Select::make('appointment_type')->options(['free'=>'Free','paid'=>'Paid']),
             Forms\Components\DatePicker::make('date'),

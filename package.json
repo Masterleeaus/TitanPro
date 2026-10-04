@@ -9,9 +9,11 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
+        "lint:ci": "eslint .",
         "test": "vitest run",
         "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "typecheck": "vue-tsc --noEmit"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

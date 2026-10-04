@@ -2,11 +2,14 @@
 
 namespace Modules\CallingAgent\Filament\Resources;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\CallingAgent\Filament\Resources\CallingAgentCallerProfileResource\Pages;
 use Modules\CallingAgent\Models\CallingAgentCallerProfile;
 
 class CallingAgentCallerProfileResource extends Resource
@@ -17,9 +20,9 @@ class CallingAgentCallerProfileResource extends Resource
     protected static \UnitEnum|string|null $navigationGroup = 'Calling Agent';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\TextInput::make('phone')->tel(),
             Forms\Components\TextInput::make('email')->email(),
             Forms\Components\TextInput::make('name'),
@@ -46,16 +49,16 @@ class CallingAgentCallerProfileResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Filament\Resources\Pages\ListRecords::class,
-            'edit'  => \Filament\Resources\Pages\EditRecord::class,
+            'index' => Pages\ListCallingAgentCallerProfiles::route('/'),
+            'edit'  => Pages\EditCallingAgentCallerProfile::route('/{record}/edit'),
         ];
     }
 }

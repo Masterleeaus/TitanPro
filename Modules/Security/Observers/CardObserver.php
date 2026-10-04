@@ -1,7 +1,6 @@
 <?php
 namespace Modules\Security\Observers;
 
-use App\Traits\UnitTypeSaveTrait;
 use Exception;
 use App\Models\UniversalSearch;
 use Modules\Security\Entities\TrAccessCard;
@@ -9,7 +8,6 @@ use Modules\Security\Entities\CardItems;
 
 class CardObserver
 {
-    use UnitTypeSaveTrait;
     public function saving(TrAccessCard $card)
     {
         // $this->unitType($card);

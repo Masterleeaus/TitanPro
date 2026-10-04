@@ -9,11 +9,11 @@ use Modules\TitanProAdmin\Policies\SuperAdminPolicy;
 
 class ModuleManagerPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-puzzle-piece';
     protected static ?string $navigationLabel = 'Module Manager';
-    protected static ?string $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
     protected static ?int $navigationSort = 20;
-    protected static string $view = 'titanproadmin::pages.module-manager';
+    protected string $view = 'titanproadmin::pages.module-manager';
 
     public function getTitle(): string
     {

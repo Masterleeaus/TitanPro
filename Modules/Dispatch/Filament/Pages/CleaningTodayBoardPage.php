@@ -9,10 +9,10 @@ use Modules\Dispatch\Services\Cleaning\CleaningDispatchBoardService;
 
 class CleaningTodayBoardPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
-    protected static ?string $navigationGroup = 'Cleaning Dispatch';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string|\UnitEnum|null $navigationGroup = 'Cleaning Dispatch';
     protected static ?string $title = 'Today\'s Cleaning Board';
-    protected static string $view = 'dispatch::filament.pages.cleaning-today-board';
+    protected string $view = 'dispatch::filament.pages.cleaning-today-board';
 
     public array $lanes = [];
 

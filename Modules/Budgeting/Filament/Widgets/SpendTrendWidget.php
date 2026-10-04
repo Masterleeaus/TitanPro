@@ -8,7 +8,7 @@ use Filament\Widgets\Widget;
 
 class SpendTrendWidget extends Widget
 {
-    protected static string $view = 'budgeting::widgets.spend-trend';
+    protected string $view = 'budgeting::widgets.spend-trend';
 
     protected static ?int $sort = 2;
 
