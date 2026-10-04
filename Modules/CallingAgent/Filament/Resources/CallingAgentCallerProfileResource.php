@@ -2,6 +2,8 @@
 
 namespace Modules\CallingAgent\Filament\Resources;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -46,16 +48,16 @@ class CallingAgentCallerProfileResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Filament\Resources\Pages\ListRecords::class,
-            'edit'  => \Filament\Resources\Pages\EditRecord::class,
+            'index' => Pages\ListCallingAgentCallerProfiles::route('/'),
+            'edit'  => Pages\EditCallingAgentCallerProfile::route('/{record}/edit'),
         ];
     }
 }
