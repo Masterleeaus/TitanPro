@@ -7,11 +7,11 @@ use Modules\GroundZeroOps\Actions\LogIncidentAction;
 
 class IncidentLogPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-exclamation-triangle';
     protected static ?string $navigationLabel = 'Incident Log';
-    protected static ?string $navigationGroup = 'Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
     protected static ?int $navigationSort = 40;
-    protected static string $view = 'groundzeroops::pages.incidentlogpage';
+    protected string $view = 'groundzeroops::pages.incidentlogpage';
 
     public function getTitle(): string
     {
