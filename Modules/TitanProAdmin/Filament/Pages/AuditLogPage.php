@@ -12,11 +12,11 @@ class AuditLogPage extends Page
     private const MIN_LOG_LIMIT = 1;
     private const MAX_LOG_LIMIT = 100;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Audit Log';
-    protected static ?string $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
     protected static ?int $navigationSort = 30;
-    protected static string $view = 'titanproadmin::pages.audit-log';
+    protected string $view = 'titanproadmin::pages.audit-log';
 
     public function getTitle(): string
     {
