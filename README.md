@@ -1,4 +1,4 @@
-![TitanPro Business Operations Console — LARAVEL + VUE WORKSPACE](docs/images/portfolio-banner.svg)
+![TitanPro — Laravel, Filament, Vue, governed AI orchestration, provider failover, and reviewable tool execution](docs/images/titanpro-banner.svg)
 
 <div align="center">
 
@@ -29,6 +29,10 @@ TitanPro’s distinctive design choice is separation of concerns. Business modul
 - `Modules/TitanNexus/README.md` documents approval gates around external outreach, payment nudges, payment plans, and booking/job handoffs; tenant policy must explicitly permit automation before those actions proceed.
 
 These are concrete implementation boundaries: they support an auditable workflow around AI-assisted work without claiming that every module in the repository is AI-powered.
+
+<p align="center">
+  <img src="docs/images/titanpro-architecture.svg" alt="TitanPro architecture map of the Laravel application, TitanCore and TitanZero modules, presentation surfaces, persistence, routes, and tests." width="100%" />
+</p>
 
 ## Architecture and code map
 
