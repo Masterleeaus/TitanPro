@@ -2,12 +2,12 @@
 
 namespace Modules\ZeroPayModule\Filament\Resources;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -193,11 +193,11 @@ class ZeroPaySessionResource extends Resource
     {
         $qrCode = $record->qrCode;
 
-        if (!$qrCode) {
+        if (! $qrCode) {
             return '<p class="text-center text-gray-500 py-4">No QR code available for this session.</p>';
         }
 
-        if (!$qrCode->qr_image_path) {
+        if (! $qrCode->qr_image_path) {
             return '<p class="text-center text-gray-500 py-4">QR image has not been generated yet.</p>';
         }
 
