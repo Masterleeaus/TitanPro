@@ -3,13 +3,14 @@
 namespace Modules\ZeroPayModule\Filament\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Pages\Page;
 use Modules\ZeroPayModule\Models\ZeroPayBankDeposit;
 use Modules\ZeroPayModule\Models\ZeroPayGatewayLog;
@@ -282,7 +283,7 @@ class ZeroPayControlPanel extends Page implements HasForms
 
         $settings = $this->resolveSettings();
 
-        if (!$settings) {
+        if (! $settings) {
             Notification::make()
                 ->title('Settings driver not available')
                 ->body('spatie/laravel-settings is not configured. Settings cannot be persisted.')
@@ -316,7 +317,7 @@ class ZeroPayControlPanel extends Page implements HasForms
         ];
     }
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return auth()->user()?->can('zeropay.settings.manage') ?? false;
     }
