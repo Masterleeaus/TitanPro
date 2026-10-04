@@ -6,6 +6,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\CallingAgent\Filament\Resources\CallingAgentCallOutcomeResource\Pages;
 use Modules\CallingAgent\Models\CallingAgentCallOutcome;
 
 class CallingAgentCallOutcomeResource extends Resource
