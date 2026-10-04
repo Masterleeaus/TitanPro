@@ -9,7 +9,7 @@ class ListRewindRequests extends ListRecords
 {
     protected static string $resource = RewindRequestResource::class;
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return RewindRequestResource::canViewAny();
     }
