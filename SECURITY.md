@@ -1,6 +1,6 @@
 # Security Policy
 
-FieldOps Hub handles sensitive business data — customer personally identifiable information, service location details, financial records, and payment history. We take security seriously and appreciate responsible disclosure from the security community.
+TitanPro handles sensitive business data — customer personally identifiable information, service location details, financial records, and payment history. We take security seriously and appreciate responsible disclosure from the security community.
 
 ---
 
@@ -82,7 +82,7 @@ The following are explicitly excluded:
 
 ## Security Controls
 
-For context when evaluating the attack surface, FieldOps Hub includes the following security controls:
+For context when evaluating the attack surface, TitanPro includes the following security controls:
 
 | Control | Implementation |
 |---------|---------------|
@@ -120,7 +120,7 @@ We ask that you:
 
 ## Hall of Fame
 
-We gratefully acknowledge security researchers who have helped improve FieldOps Hub. Researchers who responsibly disclose valid vulnerabilities will be listed here (with permission).
+We gratefully acknowledge security researchers who have helped improve TitanPro. Researchers who responsibly disclose valid vulnerabilities will be listed here (with permission).
 
 *No entries yet.*
 
