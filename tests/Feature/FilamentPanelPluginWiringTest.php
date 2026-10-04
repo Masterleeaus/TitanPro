@@ -4,31 +4,31 @@ use App\Providers\Filament\Concerns\RegistersFilamentPlugins;
 use Filament\Contracts\Plugin;
 
 dataset('panel_plugin_wiring', [
-    [app_path('Providers/Filament/QualityAuditsPanelProvider.php'), 'Modules\CleanQuality\Filament\Plugin\CleanQualityPlugin'],
-    [app_path('Providers/Filament/TitanSuppliersAndInventoryPanelProvider.php'), 'Modules\SupplyChain\Filament\Plugin\SupplyChainPlugin'],
-    [app_path('Providers/Filament/ZeroFussPanelProvider.php'), 'Modules\ZeroFussPortal\Filament\Plugin\ZeroFussPortalPlugin'],
-    [app_path('Providers/Filament/ZeroPayPanelProvider.php'), 'Modules\ZeroPayModule\Filament\ZeroPayModulePlugin'],
-    [app_path('Providers/Filament/ZeroPayPanelProvider.php'), 'Modules\EInvoice\Filament\Plugin\EInvoicePlugin'],
-    [app_path('Providers/Filament/DocsAndContractsPanelProvider.php'), 'Modules\TitanDocs\Filament\Plugin\TitanDocsPlugin'],
-    [app_path('Providers/Filament/TitanEchoPanelProvider.php'), 'Modules\TitanEchoAssist\Filament\Plugin\TitanEchoAssistPlugin'],
-    [app_path('Providers/Filament/TitanEchoPanelProvider.php'), 'Modules\CallingAgent\Filament\Plugin\CallingAgentPlugin'],
-    [app_path('Providers/Filament/TitanEchoPanelProvider.php'), 'Modules\TitanHello\Filament\Plugin\TitanHelloPlugin'],
-    [app_path('Providers/Filament/TitanGoPanelProvider.php'), 'Modules\TitanGoField\Filament\Plugin\TitanGoFieldPlugin'],
-    [app_path('Providers/Filament/TitanSoloPanelProvider.php'), 'Modules\TitanSoloDash\Filament\Plugin\TitanSoloDashPlugin'],
-    [app_path('Providers/Filament/TitanStudioPanelProvider.php'), 'Modules\TitanStudioHub\Filament\Plugin\TitanStudioHubPlugin'],
-    [app_path('Providers/Filament/TitanProPanelProvider.php'), 'Modules\TitanProAdmin\Filament\Plugin\TitanProAdminPlugin'],
-    [app_path('Providers/Filament/TitanProPanelProvider.php'), 'Modules\TitanOperator\Filament\Plugin\TitanOperatorPlugin'],
-    [app_path('Providers/Filament/TitanQuotesPanelProvider.php'), 'Modules\QuoteEngine\Filament\Plugin\QuoteEnginePlugin'],
-    [app_path('Providers/Filament/TitanMoneyPanelProvider.php'), 'Modules\ZeroPayHub\Filament\Plugin\ZeroPayHubPlugin'],
-    [app_path('Providers/Filament/LeadScorerPanelProvider.php'), 'Modules\TitanLeads\Filament\Plugin\TitanLeadsPlugin'],
-    [app_path('Providers/Filament/TitanNexusPanelProvider.php'), 'Modules\NexusGrowth\Filament\Plugin\NexusGrowthPlugin'],
-    [app_path('Providers/Filament/TitanPixelPanelProvider.php'), 'Modules\InstantAds\Filament\Plugin\InstantAdsPlugin'],
-    [app_path('Providers/Filament/TitanPixelPanelProvider.php'), 'Modules\ProShots\Filament\Plugin\ProShotsPlugin'],
-    [app_path('Providers/Filament/ComplianceAndSafetyPanelProvider.php'), 'Modules\Biometric\Filament\Plugin\BiometricPlugin'],
+    ['Providers/Filament/QualityAuditsPanelProvider.php', 'Modules\CleanQuality\Filament\Plugin\CleanQualityPlugin'],
+    ['Providers/Filament/TitanSuppliersAndInventoryPanelProvider.php', 'Modules\SupplyChain\Filament\Plugin\SupplyChainPlugin'],
+    ['Providers/Filament/ZeroFussPanelProvider.php', 'Modules\ZeroFussPortal\Filament\Plugin\ZeroFussPortalPlugin'],
+    ['Providers/Filament/ZeroPayPanelProvider.php', 'Modules\ZeroPayModule\Filament\ZeroPayModulePlugin'],
+    ['Providers/Filament/ZeroPayPanelProvider.php', 'Modules\EInvoice\Filament\Plugin\EInvoicePlugin'],
+    ['Providers/Filament/DocsAndContractsPanelProvider.php', 'Modules\TitanDocs\Filament\Plugin\TitanDocsPlugin'],
+    ['Providers/Filament/TitanEchoPanelProvider.php', 'Modules\TitanEchoAssist\Filament\Plugin\TitanEchoAssistPlugin'],
+    ['Providers/Filament/TitanEchoPanelProvider.php', 'Modules\CallingAgent\Filament\Plugin\CallingAgentPlugin'],
+    ['Providers/Filament/TitanEchoPanelProvider.php', 'Modules\TitanHello\Filament\Plugin\TitanHelloPlugin'],
+    ['Providers/Filament/TitanGoPanelProvider.php', 'Modules\TitanGoField\Filament\Plugin\TitanGoFieldPlugin'],
+    ['Providers/Filament/TitanSoloPanelProvider.php', 'Modules\TitanSoloDash\Filament\Plugin\TitanSoloDashPlugin'],
+    ['Providers/Filament/TitanStudioPanelProvider.php', 'Modules\TitanStudioHub\Filament\Plugin\TitanStudioHubPlugin'],
+    ['Providers/Filament/TitanProPanelProvider.php', 'Modules\TitanProAdmin\Filament\Plugin\TitanProAdminPlugin'],
+    ['Providers/Filament/TitanProPanelProvider.php', 'Modules\TitanOperator\Filament\Plugin\TitanOperatorPlugin'],
+    ['Providers/Filament/TitanQuotesPanelProvider.php', 'Modules\QuoteEngine\Filament\Plugin\QuoteEnginePlugin'],
+    ['Providers/Filament/TitanMoneyPanelProvider.php', 'Modules\ZeroPayHub\Filament\Plugin\ZeroPayHubPlugin'],
+    ['Providers/Filament/LeadScorerPanelProvider.php', 'Modules\TitanLeads\Filament\Plugin\TitanLeadsPlugin'],
+    ['Providers/Filament/TitanNexusPanelProvider.php', 'Modules\NexusGrowth\Filament\Plugin\NexusGrowthPlugin'],
+    ['Providers/Filament/TitanPixelPanelProvider.php', 'Modules\InstantAds\Filament\Plugin\InstantAdsPlugin'],
+    ['Providers/Filament/TitanPixelPanelProvider.php', 'Modules\ProShots\Filament\Plugin\ProShotsPlugin'],
+    ['Providers/Filament/ComplianceAndSafetyPanelProvider.php', 'Modules\Biometric\Filament\Plugin\BiometricPlugin'],
 ]);
 
-test('target panels include required module plugins in available plugins lists', function (string $providerPath, string $pluginClass) {
-    $providerContent = file_get_contents($providerPath);
+test('target panels include required module plugins in available plugins lists', function (string $providerRelativePath, string $pluginClass) {
+    $providerContent = file_get_contents(app_path($providerRelativePath));
 
     expect($providerContent)->toContain($pluginClass);
 })->with('panel_plugin_wiring');
