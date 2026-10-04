@@ -193,11 +193,11 @@ class ZeroPaySessionResource extends Resource
     {
         $qrCode = $record->qrCode;
 
-        if (! $qrCode) {
+        if (!$qrCode) {
             return '<p class="text-center text-gray-500 py-4">No QR code available for this session.</p>';
         }
 
-        if (! $qrCode->qr_image_path) {
+        if (!$qrCode->qr_image_path) {
             return '<p class="text-center text-gray-500 py-4">QR image has not been generated yet.</p>';
         }
 
