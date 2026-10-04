@@ -6,11 +6,11 @@ use Filament\Pages\Page;
 
 class GrowthDashboardPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-arrow-trending-up';
     protected static ?string $navigationLabel = 'Growth Dashboard';
-    protected static ?string $navigationGroup = 'Intelligence';
+    protected static string|\UnitEnum|null $navigationGroup = 'Intelligence';
     protected static ?int $navigationSort = 10;
-    protected static string $view = 'nexusgrowth::pages.growthdashboardpage';
+    protected string $view = 'nexusgrowth::pages.growthdashboardpage';
 
     public function getTitle(): string
     {
