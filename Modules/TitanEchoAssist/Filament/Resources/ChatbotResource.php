@@ -18,9 +18,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
             return 'Chatbot';
         }
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([
+            return $schema->components([
                 \Filament\Forms\Components\Tabs::make('Chatbot')
                     ->tabs([
                         \Filament\Forms\Components\Tabs\Tab::make('General')
