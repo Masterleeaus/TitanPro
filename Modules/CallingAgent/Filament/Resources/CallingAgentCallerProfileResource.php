@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Modules\CallingAgent\Filament\Resources\CallingAgentCallerProfileResource\Pages;
 use Modules\CallingAgent\Models\CallingAgentCallerProfile;
 
 class CallingAgentCallerProfileResource extends Resource
