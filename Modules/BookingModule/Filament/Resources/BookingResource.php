@@ -3,7 +3,7 @@
 namespace Modules\BookingModule\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,9 +16,9 @@ class BookingResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Booking & Dispatch';
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Forms\Components\TextInput::make('heading')->maxLength(255),
             Forms\Components\Select::make('booking_status')->options([
                 'draft' => 'Draft',
