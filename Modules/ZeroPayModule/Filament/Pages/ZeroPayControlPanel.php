@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Modules\ZeroPayModule\Models\ZeroPayBankDeposit;
@@ -22,9 +22,9 @@ class ZeroPayControlPanel extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Settings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'ZeroPay';
+    protected static string|\UnitEnum|null $navigationGroup = 'ZeroPay';
 
     protected static ?string $slug = 'zeropay/settings';
 
@@ -32,7 +32,7 @@ class ZeroPayControlPanel extends Page implements HasForms
 
     protected static ?int $navigationSort = 99;
 
-    protected static string $view = 'zeropay-module::filament.pages.zeropay-control-panel';
+    protected string $view = 'zeropay-module::filament.pages.zeropay-control-panel';
 
     // -----------------------------------------------------------------------
     // Form state (mirrors ZeroPaySettings fields)
@@ -134,10 +134,10 @@ class ZeroPayControlPanel extends Page implements HasForms
         $this->loadHealthMetrics();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 // -----------------------------------------------------------
                 // Gateway Settings
                 // -----------------------------------------------------------
