@@ -22,11 +22,11 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->callAfterResolving('filament', function (): void {
-            if (! \Filament\Facades\Filament::hasPanelWithId('budgeting')) {
+            $panel = \Filament\Facades\Filament::getPanel('budgeting', isStrict: false);
+
+            if ($panel === null) {
                 return;
             }
-
-            $panel = \Filament\Facades\Filament::getPanel('budgeting');
             $panel->plugin(BudgetingPlugin::make());
         });
     }
