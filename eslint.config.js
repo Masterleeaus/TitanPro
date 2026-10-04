@@ -7,7 +7,21 @@ export default defineConfigWithVueTs(
     vue.configs['flat/essential'],
     vueTsConfigs.recommended,
     {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js', 'resources/js/components/ui/*'],
+        ignores: [
+            'vendor',
+            'node_modules',
+            'public',
+            'bootstrap/ssr',
+            'tailwind.config.js',
+            'resources/js/components/ui/*',
+            'modulelib/**',
+            'resources/esoft/**',
+            'resources/js/esoft/**',
+            'Modules/**/Resources/assets/**/*.min.js',
+            'Modules/**/Resources/assets/**/libs/**',
+            'Modules/**/Resources/assets_combined_reference/**',
+            'Modules/**/Resources/assets/legacy-*/**',
+        ],
     },
     {
         rules: {
