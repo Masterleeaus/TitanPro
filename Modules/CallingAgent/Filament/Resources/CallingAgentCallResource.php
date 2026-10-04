@@ -2,11 +2,12 @@
 
 namespace Modules\CallingAgent\Filament\Resources;
 
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Http;
 use Modules\CallingAgent\Models\CallingAgentCall;
@@ -61,7 +62,7 @@ class CallingAgentCallResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
                 Action::make('transfer')
                     ->label('Transfer')
                     ->icon('heroicon-o-arrows-right-left')
@@ -117,7 +118,7 @@ class CallingAgentCallResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Filament\Resources\Pages\ListRecords::class,
+            'index' => Pages\ListCallingAgentCalls::route('/'),
         ];
     }
 }
