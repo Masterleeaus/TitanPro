@@ -14,9 +14,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
 
         protected static ?string $navigationLabel = 'Knowledge Base';
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([
+            return $schema->components([
                 \Filament\Forms\Components\TextInput::make('title')->required()->maxLength(500),
                 \Filament\Forms\Components\Textarea::make('description')->rows(2),
                 \Filament\Forms\Components\Textarea::make('content')->rows(8),
