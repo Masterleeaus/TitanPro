@@ -21,9 +21,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
         public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
             return $schema->components([
-                \Filament\Forms\Components\Tabs::make('Chatbot')
+                \Filament\Schemas\Components\Tabs::make('Chatbot')
                     ->tabs([
-                        \Filament\Forms\Components\Tabs\Tab::make('General')
+                        \Filament\Schemas\Components\Tabs\Tab::make('General')
                             ->schema([
                                 \Filament\Forms\Components\TextInput::make('title')
                                     ->required()
@@ -38,7 +38,7 @@ if (class_exists(\Filament\Resources\Resource::class)) {
                             ]),
                         \Filament\Forms\Components\Tabs\Tab::make('Appearance')
                             ->schema([
-                                \Filament\Forms\Components\Grid::make(2)
+                                \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
                                         \Filament\Forms\Components\Select::make('bubble_design')
                                             ->options([
