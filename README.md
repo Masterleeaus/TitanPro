@@ -8,7 +8,7 @@
 
 </div>
 
-TitanPro is a modular Laravel and Vue operations platform for teams coordinating field work, customers, finance, communications, and AI-assisted decisions in one workspace. It is built for operations teams that need more than a collection of disconnected admin screens. It brings customer and workforce workflows into one Laravel application, then gives each surface—office, field, mobile, PWA, and customer-facing—a shared domain model and a consistent operator experience.
+TitanPro brings customer, field-service and back-office workflows into one modular operations workspace. Built with Laravel, Filament and Vue, it combines role-specific interfaces with governed AI orchestration, provider failover and reviewable tool execution. It is designed for operations teams that need more than a collection of disconnected admin screens.
 
 ## What teams can do
 
@@ -23,9 +23,9 @@ TitanPro’s distinctive design choice is separation of concerns. Business modul
 ### Implemented AI boundaries
 
 - `Modules/TitanCore/AI/AIOrchestratorPipeline.php` runs the ordered path **guardrail → retrieval → tool execution → citation**. A failed guardrail returns a blocked result before later stages run.
-- `Modules/TitanCore/AI/ToolExecutor.php` resolves handlers from a manifest, filters tools through an allowlist, and can invoke optional permission and audit callbacks. Its simple schema helper checks required fields; dry-run mode, timeout handling, and `company_id` audit context make side effects and evidence explicit.
+- `Modules/TitanCore/AI/ToolExecutor.php` provides manifest-resolved tools with configurable allowlists, optional permission and audit hooks, required-field checks, dry-run support, and elapsed-time checks.
 - `Modules/TitanCore/Services/ProviderFailoverChain.php` tries ordered chat or embedding providers, fails over for missing status and configured 429/5xx responses, and stops on non-retryable errors.
-- `Modules/TitanZero/Evaluation/AgentEvaluator.php` records task completion, hallucination flags, tool accuracy, latency, and a weighted composite score against an evaluation snapshot.
+- `Modules/TitanZero/Evaluation/AgentEvaluator.php` scores task completion, tool accuracy, hallucination flags, and latency using caller-supplied expectations and heuristics, then persists a weighted composite score with the response snapshot.
 - `Modules/TitanNexus/README.md` documents approval gates around external outreach, payment nudges, payment plans, and booking/job handoffs; tenant policy must explicitly permit automation before those actions proceed.
 
 These are concrete implementation boundaries: they support an auditable workflow around AI-assisted work without claiming that every module in the repository is AI-powered.
@@ -42,6 +42,36 @@ These are concrete implementation boundaries: they support an auditable workflow
 | `database/`, `routes/`, `tests/` | Persistence, application boundaries, and PHPUnit/Pest/Vitest/Dusk-oriented verification. |
 
 At the platform level, the repository contains more than a simple CRUD shell: the challenge is keeping many domain modules coherent while making authorization, tenant scope, provider behavior, and AI side effects visible.
+
+## Local development
+
+Use the checked-in setup path to prepare environment, database, dependencies, and the full local process set:
+
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+php artisan migrate
+npm install
+composer run dev
+```
+
+`composer run dev` starts the Laravel server, queue listener, log viewer, and Vite together. `npm run dev` is the Vite frontend process only. For production assets and focused frontend checks:
+
+```bash
+npm run build
+npm test
+npm run format:check
+```
+
+The maintenance helpers have a dependency-free portability check:
+
+```bash
+node scripts/check-portable-paths.mjs
+```
+
+Verify environment, service credentials, and deployment assumptions against the current source before relying on any command.
 
 ## Evidence you can inspect
 
@@ -62,33 +92,13 @@ node scripts/check-portable-paths.mjs
 
 The [Portable Shell Paths workflow](.github/workflows/portable-shell-paths.yml) runs that focused check on relevant pull requests and pushes. It proves repository-relative script paths; it does not prove that the Laravel application boots or that a deployment host is configured.
 
-## Local development
+## Maturity and provenance
 
-Review `.env.example` and the Composer/npm manifests, configure a local environment, then use the checked-in commands:
-
-```bash
-composer install
-npm install
-npm run dev
-```
-
-For production assets and available checks:
-
-```bash
-npm run build
-npm test
-npm run format:check
-```
-
-Verify environment, service credentials, and deployment assumptions against the current source before relying on any command.
-
-## Portfolio status and provenance
-
-TitanPro is a substantial Laravel/Vue portfolio codebase and an active product-family workspace. The repository’s relationship to [Titan Zero Field Service Workforce](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce) is intentionally described separately; do not present the two repositories as one canonical implementation without lineage evidence.
-
-This README highlights implemented source boundaries, not a blanket production-readiness claim. The full [engineering guide](docs/PORTFOLIO.md) records the repository-specific quickstart, evidence scope, limitations, and retained-artifact decisions.
+TitanPro is an active portfolio codebase; focused source checks do not constitute a blanket production-readiness claim. The relationship to [Titan Zero Field Service Workforce](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce) is intentionally separate until lineage evidence establishes otherwise.
 
 The root `LICENSE` identifies MIT terms and names Michael Stoffer as copyright holder. Preserve that attribution, confirm ownership and upstream provenance, and never commit production secrets, customer data, or local environment files.
+
+For the detailed code map, evidence boundaries, and retained-artifact decisions, see [docs/PORTFOLIO.md](docs/PORTFOLIO.md).
 
 ## Continue exploring
 
