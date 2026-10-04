@@ -9,7 +9,7 @@ class ListRewindCases extends ListRecords
 {
     protected static string $resource = RewindCaseResource::class;
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return RewindCaseResource::canViewAny();
     }
