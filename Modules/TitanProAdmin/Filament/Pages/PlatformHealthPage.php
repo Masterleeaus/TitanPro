@@ -8,7 +8,7 @@ use Modules\TitanProAdmin\Services\PlatformHealthService;
 
 class PlatformHealthPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-heart';
     protected static ?string $navigationLabel = 'Platform Health';
     protected static string|\UnitEnum|null $navigationGroup = 'System';
     protected static ?int $navigationSort = 10;
