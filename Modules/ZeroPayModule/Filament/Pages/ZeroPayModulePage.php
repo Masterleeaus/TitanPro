@@ -6,9 +6,9 @@ use Filament\Pages\Page;
 
 class ZeroPayModulePage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationGroup = 'Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?string $navigationLabel = 'Example Module';
 
@@ -16,9 +16,9 @@ class ZeroPayModulePage extends Page
 
     protected static ?int $navigationSort = 100;
 
-    protected static string $view = 'zeropay-module::filament.pages.zeropay-module-page';
+    protected string $view = 'zeropay-module::filament.pages.zeropay-module-page';
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return auth()->user()?->can('zeropay.view') ?? false;
     }
