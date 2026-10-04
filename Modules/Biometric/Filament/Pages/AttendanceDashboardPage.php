@@ -17,7 +17,7 @@ class AttendanceDashboardPage extends Dashboard
     protected static string|\UnitEnum|null $navigationGroup = 'Biometric';
     protected static ?int $navigationSort = 0;
 
-    protected function getWidgets(): array
+    public function getWidgets(): array
     {
         return [
             ShiftCoverageWidget::class,
