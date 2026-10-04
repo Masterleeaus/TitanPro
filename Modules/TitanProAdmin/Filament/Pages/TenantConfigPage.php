@@ -11,11 +11,11 @@ use Modules\TitanProAdmin\Services\TenantService;
 
 class TenantConfigPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationLabel = 'Tenant Config';
-    protected static ?string $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
     protected static ?int $navigationSort = 40;
-    protected static string $view = 'titanproadmin::pages.tenant-config';
+    protected string $view = 'titanproadmin::pages.tenant-config';
 
     public function getTitle(): string
     {
