@@ -13,9 +13,9 @@ if (class_exists(\Filament\Resources\Resource::class)) {
 
         protected static ?string $navigationLabel = 'Operators';
 
-        public static function form(\Filament\Forms\Form $form): \Filament\Forms\Form
+        public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
         {
-            return $form->schema([
+            return $schema->components([
                 \Filament\Forms\Components\TextInput::make('title')->required()->maxLength(255),
                 \Filament\Forms\Components\TextInput::make('ai_model')->required()->maxLength(255)->default('gpt-4.1'),
                 \Filament\Forms\Components\TextInput::make('ai_embedding_model')->required()->maxLength(255)->default('text-embedding-3-small'),
